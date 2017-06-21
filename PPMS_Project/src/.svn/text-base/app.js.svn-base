@@ -1,0 +1,18 @@
+import 'bootstrap';
+import 'bootstrap/css/bootstrap.css!';
+
+export class App {
+  configureRouter(config, router){
+    config.title = 'PPMS';
+    config.map([
+      { route: ['','mainview'], name: 'mainview', moduleId: 'mainview', nav: true, title:'Budget Template' },
+      { route: 'group_individual', name: 'group_individual', moduleId: 'group_individual', nav: true, title:'Talent Groups' },
+      { route: 'actual_cost', name: 'actual_cost', moduleId: 'actual_cost', nav: true, title:'Actual Cost' }
+      
+      /*{ route: 'users',         name: 'users',        moduleId: 'users',        nav: true, title:'Github Users' },
+      { route: 'child-router',  name: 'child-router', moduleId: 'child-router', nav: true, title:'Child Router' }*/
+    ]);
+
+    this.router = router;
+  }
+}

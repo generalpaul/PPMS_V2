@@ -1,0 +1,46 @@
+export class service{
+	serviceBase = 'http://absppms2:8088/WcfDataService.svc/';
+    getSvcUrl(method) {
+			return serviceBase + method;
+		};
+	serviceBaseUpdate = 'home/';
+	getSvcUrlUpdate(method) {
+			return serviceBaseUpdate + method;
+		};
+
+	GetJson(method, jsonIn, callback) {
+		$.ajax({
+			url: getSvcUrl(method),
+			type: "GET",
+			dataType: "json",
+			success: function(json) {
+				callback(json);
+			}
+		});
+	};
+	PostJson(method, jsonIn, callback) {
+
+		$.ajax({
+			url: getSvcUrl(method),
+			type: "POST",
+			data: jsonIn, //ko.toJSON(jsonIn)
+			dataType: "json",
+			contentType: "application/json",
+			success: function(json) {
+				callback(json);
+			}
+		});
+	};
+	PostUpdateJson(method, jsonIn, callback) {
+		$.ajax({
+			url: getSvcUrlUpdate(method),
+			type: "POST",
+			data: jsonIn,
+			dataType: "json",
+			contentType: "application/json",
+			success: function(json) {
+				callback(json);
+			}
+		});
+	};
+}

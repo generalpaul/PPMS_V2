@@ -1,0 +1,50 @@
+<template>
+          <ux-dialog><!--         <button type="button" click.trigger="controller.cancel()" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+            <!--<ux-dialog-header class="colorHeader">
+
+                    <h4 class="modal-title">SELECT JOB</h4>
+</ux-dialog-header>-->
+            <ux-dialog-header class="colorHeader"><span style="position:relative;top:-8px;"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>
+          <ux-dialog-body>
+          <require from="converters/take"></require>
+<require from="converters/sorttext"></require>
+<require from="tools/gridpaging"></require>
+<table class="table table-hover table-condensed table-bordered table-striped ">
+        <thead class="table-default">
+            <tr>
+                <td class="colorCell2">
+                    JOB GROUP
+                </td>
+                <td class="colorCell2">
+                    JOB DESCRIPTION
+                </td>
+            </tr>
+            <tr ref="_rJOB_TITLE">
+                <td class="colorCell2">
+                    <input class="input-sm form-control" value.bind="_bJOB_GRP" searchable="_sJOB_GRP" />
+                </td>
+                <td class="colorCell2">
+                    <input class="input-sm form-control" value.bind="_bJOB_DESC" searchable="_sJOB_DESC" ref="refJobDesc"  keyup.delegate="fnKeyup($event,'')"/>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+             <!-- | sorttext:'JOB_DESC':'ascending' -->
+            <tr repeat.for="item of varFilterArray | take:20:pageindex" click.delegate="$parent.selectedJob(item)">
+                <td>
+                    ${item.JOB_GRP}
+                </td>
+                <td>
+                    ${item.JOB_DESC}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+       <gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex"  divby.bind="20"></gridpaging>
+   </ux-dialog-body>
+         <ux-dialog-footer>
+         <button click.trigger="controller.cancel()">Cancel</button>
+       </ux-dialog-footer>
+          </ux-dialog>
+          
+</template>

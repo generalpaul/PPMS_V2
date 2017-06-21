@@ -1,0 +1,65 @@
+<template>
+
+	<ux-dialog>
+      <ux-dialog-header class="colorHeader"><span style="position:relative;top:-10px;font-size:15px;">LOG-IN</span></ux-dialog-header>
+
+<!-- 	    <button type="button" click.trigger="controller.cancel()" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                    <!--<h4 class="modal-title">LOG-IN</h4>-->
+    
+
+	<ux-dialog-body>
+	<div style="width:450px;">
+		<table style="margin-left:70px;">
+			<tr>
+				<td>
+					COMPANY:
+				</td>
+				<td>
+					<select value.bind="_COMPANY" style="width:172px;">
+						<option repeat.for="company of _companies"  model.bind="company">${company.COMPANY_NAME}</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					USER ID:
+				</td>
+				<td>
+					<select  value.bind="_USER" style="width:136px;">
+						<option repeat.for="user of _user_content"  model.bind="user">${user.USER_ID}</option>
+					</select> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					PASSWORD:
+				</td>
+				<td>
+					<input value.bind="_PASSWORD" type="password" keyup.trigger="keyPressed($event)"/> &nbsp;<a href="#" click.trigger="resetPassword()">Reset</a>
+				</td>
+			</tr>
+          <tr if.bind="user_expired">
+            <td>
+              NEW PASSWORD:
+            </td>
+            <td>
+              <input value.bind="_NEW_PASSWORD" type="password"/>
+            </td>
+          </tr>
+			<tr>
+				<td colspan=2 class="text-center">
+					<input type="button"  disabled.bind="disableLogButton" click.trigger="tryLogin()" value="LOG-IN" class="btn customButton" />
+				</td>
+			</tr>
+		</table>
+		
+	</div>
+</ux-dialog-body>
+
+<!--<ux-dialog-footer>
+<button text="Cancel" class="btn" style="background-color: #e6e6e6;margin-bottom:5px;" click.trigger="controller.cancel()">Cancel</button>
+</ux-dialog-footer>-->
+
+</ux-dialog>
+</template>

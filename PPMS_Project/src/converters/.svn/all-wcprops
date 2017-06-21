@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters
+END
+take.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters/take.js
+END
+sort.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters/sort.js
+END
+datepattern.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters/datepattern.js
+END
+sorttext.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters/sorttext.js
+END
+number-format.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters/number-format.js
+END
+filtercustom.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters/filtercustom.js
+END
+signals.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/PPMSV2.BUDGET/!svn/ver/1/PPMS.Budget.Web/src/converters/signals.js
+END

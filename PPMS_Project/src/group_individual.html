@@ -1,0 +1,74 @@
+<template>
+  <!-- <require from="modals/modalcontainer"></require> -->
+  <require from="converters/filtercustom"></require>
+  <require from="converters/sorttext"></require>
+  <div style="margin-left:10%!important;margin-right:10%!important;margin-top:3%;text-align:center" class="text-center divBackground" >
+  	<table class="table table-hover table-condensed table-bordered table-striped" style="width:80%;">
+     <tr>
+        <td style="width:50%;text-align:center;" colspan=3><strong>TALENT LIST</strong></td>
+      </tr>
+  		<tr>
+        <!-- class="typeahead" -->
+        <td style="width:20%;" class="text-left">Global ID: ${_GLOBAL_GRP_ID}</td>
+        <!-- class="typeahead" -->
+        <td style="width:45%;"class="text-left">Name: ${_GROUP_NAME}
+          <!-- <input id="idTalentManager" class="typeahead"/> -->
+        </td>
+        <td style="width:30%;">
+          <!-- <modalcontainer to.bind="modalTalentManager"></modalcontainer> -->
+          <input type="button" class="btn btn-xs customButton" value="Find Talent Manager" style="padding-left:15px;padding-right:15px;" click.delegate="findTalentManager()" disabled.bind="disabledfindTM" />
+
+          <button class="btn btn-xs customButton" click.trigger="clear()">Clear</button>
+          <button class="btn btn-xs customButton" click.trigger="saveGroupIndiv()"  disabled.bind="isDisableSave" >Save</button>
+
+        </td>
+      </tr>
+     
+      <tr>
+        <td colspan=3 style="text-align:right;">
+          <!-- <modalcontainer style="text-align:left;" to.bind="modalIndivMstr"></modalcontainer> -->
+          <input type="button" class="btn btn-xs customButton" value="Search Talent" style="padding-left:15px;padding-right:15px;" disabled.bind="disabledfindTalent" click.delegate="findTalent()"/>
+        </td>
+      </tr>
+      <tr>
+       <td colspan=3>
+         <table class="table table-hover table-condensed table-bordered table-striped" style="width:100%;">
+          <thead>
+           <tr><td style="width:30%;">GLOBAL ID</td><td style="width:60%;">TALENTS</td><td></td></tr>
+         </thead>
+         <tbody>
+           <tr repeat.for="item of grpMembers | filtercustom:'STATUS_CD':'ACTV':_signal | sorttext:'PERSONNEL_NAME':'ascending'">
+            <td style="width:20%;">${item.GLOBAL_INDIV_ID}</td>
+            <td style="width:60%;">${item.PERSONNEL_NAME}</td>
+            <td><button click.delegate="$parent.deleteItem(item)">X</button>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<!-- <modalcontainer to.bind="modalLogin"></modalcontainer> -->
+<!--<div style="margin-right:200px!important;">
+    <input type="button" class="btn btn-xs customButton" disabled.bind="loginDisabled" value="LOG-IN" style="padding-left:15px;padding-right:15px;" click.delegate="fnLogin()"/>
+    <input type="button" click.delegate="logout()" value="LOG-OUT"  disabled.bind="logoutDisabled"  css="visibility: ${showingLogout}" class="btn btn-xs customButton"> 
+</div>-->
+<div>
+  <br/>
+  <br/>
+  <table class= "table-bordered">
+    <tr>
+      <td>
+        LOGGED AS:
+      </td>
+      <td>
+        <strong>${_objBudget.USER.USER_ID}</strong> 
+      </td>
+    </tr>
+  </table>
+</div>
+</div>
+
+</template>

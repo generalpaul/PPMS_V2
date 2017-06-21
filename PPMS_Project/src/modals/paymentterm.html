@@ -1,0 +1,24 @@
+<template>
+  <ux-dialog>
+    <!--<ux-dialog-header class="colorHeader">
+      <h4 class="modal-title">SELECT PAYMENT TERM</h4>
+    </ux-dialog-header>-->
+    <ux-dialog-header class="colorHeader"><span style="position:relative;top:-8px;"><b>SELECT PAYMENT TERM</b></span></ux-dialog-header>
+
+    <ux-dialog-body>
+      <table keyup.delegate="fnKeyup($event,'')"  class="table table-hover table-condensed table-bordered table-striped ">
+        <tbody>
+          <tr repeat.for="item of varFilterArray" click.delegate="$parent.selectedTerm(item)">
+            <td>
+              ${item.REF_DESC}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex"  divby.bind="20"></gridpaging>
+    </ux-dialog-body>
+    <ux-dialog-footer>
+     <button click.trigger="controller.cancel()">Cancel</button>
+   </ux-dialog-footer>
+ </ux-dialog>
+</template>

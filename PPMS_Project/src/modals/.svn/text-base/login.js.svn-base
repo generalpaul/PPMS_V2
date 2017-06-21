@@ -1,0 +1,219 @@
+import {getLookups} from '../masterfiles';
+import {MultiObserver} from 'multi-observer'; 
+import {inject, ObserverLocator,bindable} from 'aurelia-framework';
+import _ from 'underscore';
+import $ from 'jquery';
+//import {Dispatcher, handle} from 'aurelia-flux';  
+import {EntityManager, EntityQuery} from '../entity-manager-factory';
+import toastr from "toastr";
+import {HttpClient} from 'aurelia-http-client';
+import {ModalWizard} from 'modals/modal-wizard';
+import {objBudget} from 'objBudget';
+
+@inject(MultiObserver, ObserverLocator, Element, HttpClient, ModalWizard,objBudget)
+export class login {
+	items = [];
+	observerLocator = null;
+
+	varFilterArray = [];
+	varFilterArraySelected = [];
+
+	//_dispatcher;
+	_HttpClient;
+	_user_content = [];
+	_content = [];
+	_USER;
+	_COMPANY;
+	_PASSWORD;
+	_ModalWizard;
+	_objBudget;
+
+	constructor(multiObserver, observerLocator, Element, httpClient, ModalWizard, objBudget) {
+		this._ModalWizard=ModalWizard;
+		//this._dispatcher=Dispatcher;
+		this._objBudget=objBudget;
+		httpClient.configure(config => {
+			config
+				.withBaseUrl('http://absppms2:8089/search/')
+				//.withHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+		});
+
+		this._HttpClient = httpClient;
+
+		this._HttpClient.post("get_users").then(response => {
+			this._content = JSON.parse(response.content);
+		});
+		
+		
+		
+		getLookups().USER_ROLE_TRX.forEach((all)=>{
+
+			if(all.ROLE_CD==null || all.ROLE_CD==undefined)
+			{
+				this._user_content.push(all);
+			}
+			else if(all.ROLE_CD.includes('ACCESSALL') || all.ROLE_CD.includes('PPFCS-HR'))
+			{
+				this._user_content.push(all);
+			}
+
+		});
+
+		// multiObserver.observe(
+		// 	[
+		// 		[this._objBudget.CALLER, 'ACTION'],[this._objBudget.CALLER, 'ACTION_CALLER']
+		// 	], (newValue, oldValue) => {
+
+		// 	    if(this._objBudget.CALLER.ACTION=='')
+  //           	  return;
+		// 		else if(this._objBudget.CALLER.ACTION=='clear.log')
+		// 		{
+		// 			this.ClearLogin();
+		// 		}
+		// 		else if(this._objBudget.CALLER.ACTION=='clear.login.modal')
+		// 		{
+		// 			this.ClearSearch();
+		// 		}
+		// 		else
+		// 		{
+		// 			return;
+		// 		}
+				
+		// 		//this._objBudget.CALLER.ACTION='';
+
+		// 	});
+    
+
+		this._objBudget.OBSERVERS.clear_log.push(() => {
+			this.ClearLogin();
+		});
+
+		this._objBudget.OBSERVERS.clear_login_modal.push(() => {
+			this.ClearSearch();
+		});
+
+	}
+
+	keyPressed($event) {
+		if ($event.which === 13) {
+			this.tryLogin();
+		}
+	}
+
+
+	tryLogin() {
+		// 	$.post("http://absppms2:8089/search/Check_User", {
+		// 	"USER_ID": "KARRENA",
+		// 	"COMPANY_ID": "1",
+		// 	"PASSWORD": "12345678",
+		// 	"UPDATE_EXPIRED": false
+		// }).done((response)=>{
+		// 	this.loginSuccess(response,this._dispatcher)
+		// 	 this._ModalWizard.ids.pop();
+		// });
+		
+		$.post("http://absppms2:8089/search/Check_User", {
+			"USER_ID": this._USER.USER_ID,
+			"COMPANY_ID": this._COMPANY.COMPANY_ID,
+			"PASSWORD": this._PASSWORD,
+			"UPDATE_EXPIRED": false
+		}).done((response)=>{
+			this.loginSuccess(response)//,this._dispatcher
+ 			this._ModalWizard.ids.pop();
+		});
+	}
+
+	loginSuccess(response, CALLER) {
+
+		if (response == "") {
+			toastr.error("USER ID Not found", "Searching USER..");
+		} else {
+			toastr.success("Welcome.. " + JSON.parse(response).USER_ID, "User Found");
+			
+			//pdispatcher.dispatch('login.passed', JSON.parse(response));
+			
+
+			// this._objBudget.CALLER.VALUE1=JSON.parse(response);
+			// this._objBudget.CALLER.ACTION='login.passed';
+
+
+			this._objBudget.OBSERVERS.login_passed.forEach((all) => {
+				all(JSON.parse(response));
+			});
+
+			this._objBudget.USER = JSON.parse(response);
+
+			this._objBudget.ALLOW_PASS_CONFIDENTIAL = false;
+
+			var checkRole = EntityQuery().from('MODULE_ACCESS_TRX').where("ROLE_CD", "==", this._USER.ROLE_CD)
+				.select('ROLE_CD,MODULE_MSTR.MODULE_NAME,ACCESS_FL')
+				.expand('MODULE_MSTR');
+
+			EntityManager().executeQuery(checkRole).then((success) => {
+				success.results.forEach((all) => {
+					if (all.ROLE_CD == this._USER.ROLE_CD) {
+
+						if (all.MODULE_MSTR.MODULE_NAME.includes("CONCEAL") && all.ACCESS_FL == "1") {
+							this._objBudget.ALLOW_PASS_CONFIDENTIAL = true;
+						}
+					}
+				});
+			});
+
+
+		}
+	}
+
+	//@handle('clear.log')
+	ClearLogin(){
+		this._USER="";
+		this._COMPANY="";
+		this._PASSWORD="";
+
+		this._objBudget.USER={};
+	}		
+
+	//@handle('clear.login.modal')
+	ClearSearch(){
+		this._USER="";
+		this._COMPANY=null;
+		this._PASSWORD="";
+	}
+}
+
+//console.log(JSON.parse('{"USER_ID":"KARRENA","COMPANY_ID":"1","PASSWORD":"12345678","UPDATE_EXPIRED":false}'));
+		 
+		// this._HttpClient.post("Check_User",
+		// {"USER_ID":"KARRENA","COMPANY_ID":"1","PASSWORD":"12345678","UPDATE_EXPIRED":false}
+		// 	)
+		// .then(response=>{
+		// 	this._user_content=JSON.parse(response.content);
+		// 	console.log(this._user_content);	
+		// },failed=>{
+		// 	console.log(failed);
+
+		// });
+
+
+
+					// $.ajax({
+     //                url: 'http://localhost:15253/search/Check_User',
+     //                type: 'POST',
+     //                data: '{"USER_ID":"KARRENA","COMPANY_ID":"1","PASSWORD":"12345678","UPDATE_EXPIRED":false}' ,
+     //                dataType: 'json',
+     //                contentType: 'application/json',
+     //                success: function (json) {
+     //                       console.log(json);
+                        
+     //                },
+     //                error: function(a,b,c)
+     //                {
+     //                   // callbackError(a);
+     //                    console.log(a);
+     //                    console.log(b);
+     //                    console.log(c);
+     //                }
+                    
+     //            });
+
+		

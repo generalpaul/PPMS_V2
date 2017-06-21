@@ -1,0 +1,44 @@
+<template>
+    <ux-dialog>
+  <ux-dialog-body>
+  <require from="converters/take"></require>
+  <require from="converters/sort"></require>
+  <require from="tools/gridpaging"></require>
+  <table class="table table-hover table-condensed table-bordered table-striped ">
+    <thead class="table-default">
+        <tr>
+            <td class="colorCell2">
+                GLOBAL ID
+            </td>
+            <td class="colorCell2">
+                GROUP NAME
+            </td>
+        </tr>
+        <tr ref="_rGROUP_TITLE">
+            <td class="colorCell2">
+                <input class="input-sm form-control" value.bind="_bGLOBAL_GRP_ID" searchable="_sGLOBAL_GRP_ID" keyup.delegate="fnKeyup($event,'')"/>
+            </td>
+            <td class="colorCell2">
+                <input class="input-sm form-control" value.bind="_bGROUP_NAME" searchable="_sGROUP_NAME" keyup.delegate="fnKeyup($event,'')"/>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr repeat.for="item of varFilterArray | sort:'GROUP_NAME':'ascending' | take:10:pageindex" click.delegate="$parent.selectedTalent(item)">
+            <td>
+                ${item.GLOBAL_GRP_ID}
+            </td>
+            <td>
+                ${item.GROUP_NAME}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex" divby.bind="10"></gridpaging>
+</ux-dialog-body>
+
+<ux-dialog-footer>
+    <button text="Cancel" click.trigger="controller.cancel()">Close</button>
+  </ux-dialog-footer>
+</ux-dialog>
+</template>

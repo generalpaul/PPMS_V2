@@ -1,0 +1,186 @@
+<template>
+  <require from="modals/modalcontainer"></require>
+  <require from="converters/number-format"></require>
+  <require from="converters/filtercustom"></require>
+  <require from="converters/signals"></require>
+                <div style="overflow:scroll;height:600px !important; padding-left:10px;padding-top:10px;!important; " scroll.trigger="scrollDiv()" ref="divRegular">
+                 <table class= "table-hover table-condensed table-bordered table-striped" style="position:absolute;z-index:1000;visibility:hidden;top:100px;" ref="tblHeader">
+                <thead>
+                    <tr>
+                      <td style="width:51px !important;background-color: white;" class="text-center colorCell">
+                        <div style="width:15px !important;cursor: pointer;" class="glyphicon glyphicon-chevron-up" click.trigger="moveTrigger('up')"></div>
+                        <div style="width:15px !important;cursor: pointer;" class="glyphicon glyphicon-chevron-down" click.trigger="moveTrigger('down')"></div>
+                         </td>
+                      <td style="width:30px !important;background-color: white;" class="text-center colorCell">
+                        <div style="width:20px !important;cursor: pointer;"  click.trigger="collapse_expand_head()"><strong>${_ce_head}</strong></div></td>
+                      <td style="width:200px !important;background-color: white;" class="colorCell"><input placeholder="PERSONNEL NAME" value.bind="_personnelSearch" style="border:0px !important;"/></td>
+                      <td style="width:130px !important;background-color: white;" class="colorCell">Job</td>
+                      <td style="width:100px !important;background-color: white;" class="colorCell">Pay Mode</td>
+                      <td style="width:100px !important;background-color: white;" class="colorCell">Pay Factor</td>
+                      <td style="width:110px !important;background-color: white;" class="colorCell">Contract</td>
+                      <td style="width:100px !important;background-color: white;" class="colorCell">Rate</td>
+                      <td style="width:100px !important;background-color: white;" class="text-center colorCell">Delete</td>
+                    </tr>
+                </thead>
+              </table>
+              <table class= "table-hover table-condensed table-bordered table-striped" onload="myFunction()"  ref="tblData">
+                <thead>
+                    <tr>
+                        <td style="width:51px !important;background-color: white;" class="text-center colorCell">
+                        <div style="width:15px !important;cursor: pointer;" class="glyphicon glyphicon-chevron-up" click.trigger="moveTrigger('up')"></div>
+                        <div style="width:15px !important;cursor: pointer;" class="glyphicon glyphicon-chevron-down" click.trigger="moveTrigger('down')"></div>
+                         </td>
+                      <td style="width:30px !important;background-color: white;" class="text-center colorCell">
+                        <div style="width:20px !important;cursor: pointer;"  click.trigger="collapse_expand_head()"><strong>${_ce_head}</strong></div></td>
+                      <td style="width:200px !important;background-color: white;" class="colorCell"><input placeholder="PERSONNEL NAME" value.bind="_personnelSearch" style="border:0px !important;"/></td>
+                      <td style="width:130px !important;background-color: white;" class="colorCell">Job</td>
+                      <td style="width:100px !important;background-color: white;" class="colorCell" class="colorCell">Pay Mode</td>
+                      <td style="width:100px !important;background-color: white;" class="colorCell">Pay Factor</td>
+                      <td style="width:110px !important;background-color: white;" class="colorCell">Contract</td>
+                      <td style="width:100px !important;background-color: white;" class="colorCell">Rate</td>
+                      <td style="width:100px !important;background-color: white;" class="text-center colorCell">Delete</td>
+                    </tr>
+                </thead>
+                <tbody repeat.for="item of _Personnel | filtercustom:'visible':true:_signal ">
+                    <tr>
+                      <td style="width:41px !important;"> 
+                        <input disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" class="text-center" value.one-way="$index+1" style="width:40px !important;color:gray;border:0px;" click.trigger="$parent.focusTrigger($index)"/>
+                        </td>
+                      <td style="width:5px !important;">
+                        <button class="btn btn-xs " click.trigger="$parent.collapse_expand(item)">${item.ce_value}</button></td>
+                      <td style="width:5px !important;" if.bind="item.GLOBAL_ID">${item.PERSONNEL_NAME}</td>
+                      <td style="width:5px !important;" if.bind="!item.GLOBAL_ID"><input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.BLANK_PERSONNEL_NAME"/></td>
+                      <td style="width:5px !important;">
+                         <input readonly disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" class="jobclass" value.bind="item.JOB_DESC" style="width:120px !important;" blur.trigger="$parent.fnRegularBlurEvt(item,'JOB', $index, item.BDGT_TMPL_DTL_ID)" focus.trigger="$parent.fnRegularFocus($index,'JOB')" />
+                      </td>   
+                      <td style="width:100px !important;">
+                         <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" class="pymnttrmclass" value.bind="item.PAYMENT_TERM" style="width:90px !important;" blur.trigger="$parent.fnRegularBlurEvt(item,'TERM', $index)" focus.trigger="$parent.fnRegularFocus($index,'TERM')"/>
+                      </td>
+                      <td style="width:50px !important;" class="text-right  ">
+                                  <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.PAY_RATE_FACTOR_TMP"  blur.trigger="$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')" class="text-right"  style="width:90px !important;"/>
+                        </td>
+
+                      <td class="text-right " style="width:110px !important;" >
+                        <!-- ${item.CONFIDENTIAL_TMP}
+                        ${$parent._objBudget.ALLOW_PASS_CONFIDENTIAL} -->
+                          <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.CONTRACT_AMT_TMP"   blur.trigger="$parent.AmountBlur(item,'CONTRACT_AMT_TMP')" class="text-right" style="width:90px !important;"/>
+                      </td>
+                      <td style="width:100px !important;" class="text-right ">
+                        <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.INPUT_AMT_TMP" blur.trigger="$parent.AmountBlur(item,'INPUT_AMT_TMP')" class="text-right" style="width:90px !important;"/>
+                      </td>
+                      <!-- click.delegate="$parent.chkRemove(item)" -->
+                      <td style="width:100px !important;" class="text-center" >
+                          <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'"type="checkbox" checked.bind="item.REMOVE" if.bind="item.BDGT_TMPL_DTL_ID && $parent.fnCheckExistingTalents(item.TALENTS,item)"/>
+                          <button class="btn btn-xs" click.trigger="$parent.removeRegular($index)"  if.bind="!item.BDGT_TMPL_DTL_ID">-</button>
+                      </td>
+                    </tr>
+                     <tr>
+                      <td colspan=9 style.bind="item.styleString">
+                        <div>
+                         <table style="margin-left:10px !important;" class="table-hover table-condensed table-bordered table-striped">
+                          <tr>
+                            <td>CATEGORY</td>
+                            <td>CONFIDENTIAL</td>
+                            <td>STAFF WORK</td>
+                            <td>REMARKS</td>
+                            <td>TALENT MANAGER</td>
+                            <!-- <td>TALENTS</td> -->
+                            <td if.bind="!item.PERSONNEL_NAME">IS POOL</td>
+                          </tr>
+                          <tr>
+                            <td>${item.CATEGORY_DESC}</td>
+                            <td class="text-center">
+                               <!-- if.bind="$parent._objBudget.ALLOW_PASS_CONFIDENTIAL" -->
+                               <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" type="checkbox" checked.bind="item.CONFIDENTIAL_TMP" />
+                            </td>
+                            <td>
+                              <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" type="checkbox" checked.bind="item.STAFF_WORK_TMP"/>
+                            </td>
+                            <td>
+                              <textarea  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.REMARKS" style="height:20px !important;"></textarea>
+                            </td>
+                            <td> 
+                                <button  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" class="btn btn-xs" if.bind="!item.TALENT_MANAGER.PERSONNEL_NAME" click.trigger="$parent.showTalentMngr(item)" >+</button>
+                                <button  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" class="btn btn-xs" if.bind="item.TALENT_MANAGER.PERSONNEL_NAME" click.trigger="$parent.removeTalentMngr(item)">-</button>
+                            </td>
+                           <!--  <td>
+                                 <table class="table-hover table-condensed table-bordered table-striped">
+                                    <thead>
+                                      <tr>
+                                        <td>NAME</td> 
+                                        <td><button class="btn btn-xs" click.trigger="$parent.showTalents(item)" >+</button>
+                                            
+                                        </td>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr repeat.for="itemTalent of item.TALENTS">
+                                        <td>${itemTalent.PERSONNEL_NAME}</td>
+                                        <td><button class="btn btn-xs" click.trigger="$parent.$parent.removeTalent($parent,itemTalent,$index)">-</button></td>
+                                      </tr>
+                                    </tbody>
+                                 </table>
+                            </td> -->
+                            <td if.bind="!item.PERSONNEL_NAME"> <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" type="checkbox" checked.bind="item.POOL_RECORD_TMP"/></td>
+                          </tr>
+                        </table>
+                        </div>
+                         <div if.bind="item.TALENT_MANAGER.PERSONNEL_NAME" style="margin-left:20%;margin-top:5px;">
+                              <table style="margin-topin-left:10px !important;" class="table-hover table-condensed table-bordered table-striped">
+                              <tr>
+                              <td class="colorCell">Talent Manager</td>
+                              <td class="colorCell">Pay Factor</td>
+                              <td class="colorCell">Contract</td>
+                              <td class="colorCell">Rate</td>
+                              <td class="colorCell">Remarks</td>
+                              </tr>
+                              <tr>
+                                   <td> ${item.TALENT_MANAGER.PERSONNEL_NAME}</td>
+                               <td style="width:50px !important;" class="text-right  ">
+                                  <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP"  blur.trigger="$parent.AmountBlur(item.TALENT_MANAGER,'PAY_RATE_FACTOR_TMP')" class="text-right"  style="width:90px !important;"/>
+                        </td>
+
+                      <td class="text-right " style="width:110px !important;" >
+                          <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.TALENT_MANAGER.CONTRACT_AMT_TMP"   blur.trigger="$parent.AmountBlur(item.TALENT_MANAGER,'CONTRACT_AMT_TMP')" class="text-right" style="width:90px !important;"/>
+                      </td>
+                      <td style="width:100px !important;" class="text-right ">
+                        <input   disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'"value.bind="item.TALENT_MANAGER.INPUT_AMT_TMP" blur.trigger="$parent.AmountBlur(item.TALENT_MANAGER,'INPUT_AMT_TMP')" class="text-right" style="width:90px !important;"/>
+                      </td>
+                    <td style="width:100px !important;" class="text-right ">
+                        <input  disabled.bind="$parent._objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'" value.bind="item.TALENT_MANAGER.REMARKS" style="width:90px !important;"/>
+                      </td>
+                              </tr>
+
+                              </table>
+                          </div>  
+                      </td>
+                    </tr>
+               </tbody>
+            </table>
+            </div>
+           
+            <!-- ${_Personnel.length} -->
+            
+                
+               <div style="position:absolute;top:20px;left:0px;">
+                <modalcontainer style="text-align:left;" to.bind="modalIndivMstrTalents" ></modalcontainer>
+                <modalcontainer style="text-align:left;" to.bind="modalIndivMstrManager" ></modalcontainer>
+                <modalcontainer to.bind="modalJob"></modalcontainer>
+               </div>   
+               <table>
+                <tr>
+                  <td><modalcontainer style="text-align:left;" to.bind="modalIndivMstr"></modalcontainer></td>
+                <td><button class="btn btn-xs customButton" click.delegate="fnBlankPersonnelRegular()"  disabled.bind="_objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'">Blank Personnel</button></td>
+                <td><button class="btn btn-xs customButton" click.delegate="savePersonnel(0)"  disabled.bind="_objBudget.HEADER.APPR_STAT_CD!='APP-DRAFT'">Save</button></td>
+               
+               
+                <td if.bind="toPersonModel.USE=='REGULAR'" style="display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;">(Regular) <strong>TOTAL</strong> : <input value.bind="_objBudget._INPUT_AMT_REGULAR" class="text-right" readonly style="width:110px;font-weight:bold;"  /></td>
+
+                <td if.bind="toPersonModel.USE=='SEMI_REGULAR'" style="display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;">(Semi-Regular) <strong>TOTAL</strong> : <input value.bind="_objBudget._INPUT_AMT_SEMI_REGULAR" class="text-right" readonly style="width:110px;font-weight:bold;"  /></td>
+
+               <td if.bind="toPersonModel.USE=='STAFF'" style="display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;">(Staff) <strong>TOTAL</strong> : <input value.bind="_objBudget._INPUT_AMT_STAFF" class="text-right" readonly style="width:110px;font-weight:bold;"  /></td>
+
+                </tr>
+                </table>
+
+</template>
