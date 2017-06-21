@@ -1,0 +1,53 @@
+<template>
+ <ux-dialog>
+   <!--<ux-dialog-header class="colorHeader">
+        
+                    <h4 class="modal-title">SELECT PERSONNEL(S)</h4>
+</ux-dialog-header>-->
+   <ux-dialog-header class="colorHeader"><span style="position:relative;top:-8px;"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>
+          <ux-dialog-body>
+          <require from="converters/take"></require>
+<require from="converters/sorttext"></require>
+<require from="tools/gridpaging"></require>
+<div style="height:420px; overflow: auto;">
+<table class="table table-hover table-condensed table-bordered table-striped ">
+        <thead class="table-default">
+            <tr>
+                <td class="colorCell2">
+                    GLOBAL ID
+                </td>
+                <td class="colorCell2">
+                    PERSONNEL NAME
+                </td>
+            </tr>
+            <tr ref="_rGROUP_TITLE">
+                <td class="colorCell2">
+                    <input class="input-sm form-control" value.bind="_bGLOBAL_INDIV_ID" searchable="_sGLOBAL_INDIV_ID" keyup.delegate="fnKeyup($event,'')" />
+                </td>
+                <td class="colorCell2">
+                    <input class="input-sm form-control" value.bind="_bPERSONNEL_NAME" searchable="_sPERSONNEL_NAME" keyup.delegate="fnKeyup($event,'')" />
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex" click.delegate="$parent.selectedIndiv(item)">
+                <td>
+                    ${item.GLOBAL_INDIV_ID}
+                </td>
+                <td>
+                    ${item.PERSONNEL_NAME}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+    <gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex" divby.bind="10"></gridpaging>
+          </ux-dialog-body>
+
+  <ux-dialog-footer>
+      <button click.trigger="controller.cancel()">Cancel</button>
+<!--       <button click.trigger="controller.ok(person)">Ok</button> -->
+    </ux-dialog-footer>    
+     </ux-dialog>
+</template>
+

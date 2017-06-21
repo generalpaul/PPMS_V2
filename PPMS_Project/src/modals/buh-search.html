@@ -1,0 +1,75 @@
+<template>
+
+  <ux-dialog>
+    <ux-dialog-body>
+
+
+      <require from="converters/take"></require>
+      <require from="converters/sorttext"></require>
+      <require from="tools/gridpaging"></require>
+      <div style="height:500px!important;overflow:auto;">
+        <table class="table table-hover table-condensed table-bordered table-striped ">
+          <thead class="table-default">
+            <tr>
+              <td class="colorCell2">
+                GLOBAL ID (OPTIONAL)
+              </td>
+              <td class="colorCell2">
+                FIRST NAME
+              </td>
+              <td class="colorCell2">
+                MIDDLE NAME
+              </td>
+              <td class="colorCell2">
+                LAST NAME
+              </td>
+              <td class="colorCell2">
+               E-MAIL
+             </td>
+           </tr>
+           <tr ref="_rBUH_SEARCH">
+            <td class="colorCell2">
+              <input class="input-sm form-control" value.bind="_bOPTIONAL_GLOBAL_ID" searchable="_sOPTIONAL_GLOBAL_ID" />
+            </td>
+            <td class="colorCell2">
+              <input class="input-sm form-control" value.bind="_bFIRST_NAME" searchable="_sFIRST_NAME" />
+            </td>
+            <td class="colorCell2">
+              <input class="input-sm form-control" value.bind="_bMIDDLE_NAME" searchable="_sMIDDLE_NAME" />
+            </td>
+            <td class="colorCell2">
+              <input class="input-sm form-control" value.bind="_bLAST_NAME" searchable="_sLAST_NAME" />
+            </td>
+            <td class="colorCell2">
+              <input class="input-sm form-control" value.bind="_bEMAIL_ADDRESS" searchable="_sEMAIL_ADDRESS" />
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="item of varFilterArray | sorttext:'LAST_NAME':'ascending' | take:20:pageindex" click.delegate="$parent.selectedBUH(item)">
+            <td>
+              ${item.OPTIONAL_GLOBAL_ID}
+            </td>
+            <td>
+              ${item.FIRST_NAME}
+            </td>
+            <td>
+              ${item.MIDDLE_NAME}
+            </td>
+            <td>
+              ${item.LAST_NAME}
+            </td>
+            <td>
+              ${item.EMAIL_ADDRESS}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex"  divby.bind="20"></gridpaging>
+  </ux-dialog-body>
+  <ux-dialog-footer>
+    <button text="Cancel" click.trigger="controller.cancel()">Close</button>
+  </ux-dialog-footer>
+</ux-dialog>
+</template>

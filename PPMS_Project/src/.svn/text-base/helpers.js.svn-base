@@ -1,0 +1,87 @@
+export function substringMatcher (strs) {
+	
+  return function findMatches(q, cb) {
+    var matches;
+
+    // an array that will be populated with substring matches
+    matches = [];
+
+    // regex used to determine if a string contains the substring `q`
+    var substrRegex = new RegExp(q, 'i');
+
+    // iterate through the pool of strings and for any string that
+    // contains the substring `q`, add it to the `matches` array
+    $.each(strs, function(i, str) {
+      if (substrRegex.test(str)) {
+        matches.push(str);
+      }
+    });
+
+    cb(matches);
+  };
+}
+
+
+export function getFilter(varFilterArray, propertyName: object, propertyText: string)
+{
+    if (varFilterArray === undefined || varFilterArray === null || propertyName === undefined || propertyName === null || propertyName === '') {
+        return varFilterArray;
+    }
+    
+    return varFilterArray.filter(x => 
+      (x[propertyText]===undefined?"":x[propertyText].toString()).indexOf(
+      (propertyName===undefined?"":propertyName).toUpperCase()) !== -1
+
+      )
+}
+
+export function checkCookie(value) {
+  var user = getCookie(value);
+  if (user != "") {
+    //alert("Welcome again " + user);
+    return user;
+  } else {
+    return "";
+    // user = prompt("Please enter your name:", "");
+    // if (user != "" && user != null) {
+    //   setCookie("username", user, 30);
+    // }
+  }
+}
+
+export function setCookie(cname, cvalue, mins) {
+  var d = new Date();
+  //d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  d.setTime(d.getTime() +  (60 * 60 * mins * 200));
+  var expires = "expires=" + d.toUTCString();
+  document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+export function removeCookie() {
+
+  //document.cookie = undefined;
+
+  var  expireAt = new Date;
+  expireAt.setMonth(expireAt.getMonth() - 1);
+
+  if (document.cookie != "") {
+    var crumbs = document.cookie.split(";");
+    for (var i = 0; i < crumbs.length; i++) {
+      var crumbName = crumbs[i].split("=")[0];
+      document.cookie = crumbName + "=;expires=" + expireAt.toGMTString();
+    }
+  }
+}
+
+
+
+export function getCookie(cname) {
+   var name = cname + "=";
+   var ca = document.cookie.split(';');
+   for (var i = 0; i < ca.length; i++) {
+     var c = ca[i];
+     while (c.charAt(0) == ' ') c = c.substring(1);
+     if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+   }
+   return "";
+ }

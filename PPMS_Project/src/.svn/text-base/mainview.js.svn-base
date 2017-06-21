@@ -1,0 +1,303 @@
+import {inject} from 'aurelia-framework';
+import {computedFrom,customElement} from 'aurelia-framework';
+import {  objBudget } from 'objBudget';
+import {initializeBreeze} from './entity-manager-factory';
+import {loadMasterfiles, loadTables, loadLookups, getLookups} from './masterfiles';
+import toastr from "toastr";
+import  jquery from "jquery";
+import {generateID} from './entity-manager-factory';
+//import {handle, Dispatcher} from 'aurelia-flux';  
+import {checkCookie,setCookie,removeCookie} from './helpers';
+import { MultiObserver }from 'multi-observer';
+ 
+//@customElement('main-header')
+@inject(toastr, objBudget,MultiObserver)
+export class mainview {
+
+
+
+  _toastr = null;
+  //_dispatcher;
+  showingLogout="hidden";
+  _objBudget;
+ 
+  constructor(toastr,objBudget,multiObserver) {
+
+    //console.log(elem);
+    this._objBudget=objBudget;
+   
+
+    // multiObserver.observe(
+    //   [
+    //     [this._objBudget.CALLER, 'ACTION'],[this._objBudget.CALLER, 'ACTION_CALLER']
+    //   ], (newValue, oldValue) => {
+
+    //     if (this._objBudget.CALLER.ACTION == '')
+    //       return;
+        
+    //     if(this._objBudget.CALLER.ACTION=='login.passed')
+    //     {
+    //         this.LoginPassed(this._objBudget.CALLER.ACTION,this._objBudget.CALLER.VALUE1);
+    //     }
+    //     else
+    //     {
+    //       return;
+    //     }
+
+    //     //this._objBudget.CALLER.ACTION='';
+    //   });
+
+
+    this._objBudget.OBSERVERS.login_passed.push((val) => {
+      this.LoginPassed(val);
+    });
+
+    
+    this.modalLogin = {
+      title: 'LOG-IN',
+      content: 'modals/login',
+      value: "",
+      id: generateID(),
+      buttonTitle: "LOG-IN",
+      width:500
+    };
+
+    toastr.options = {
+      "closeButton": true,
+      "debug": false,
+      "positionClass": "toast-bottom-right",
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "1000",
+      //"timeOut": "300000",
+      //"extendedTimeOut": "1000",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    };
+    //$('.datepicker').datepicker();
+
+    //this._dispatcher = Dispatcher;
+
+
+
+    initializeBreeze().then(() => {
+      //have to set timeout because of IE, other templates are not loading
+      // quickly and loading at same time with functions
+      setTimeout(() => {
+
+
+        this._toastr = toastr;
+        toastr.info("Masterfiles...", "Loading..");
+
+        loadMasterfiles().then(() => {
+          loadLookups().then(() => {
+
+            this._objBudget.OBSERVERS.init_modal.forEach((all)=>{
+                all();
+              });
+
+            //this._objBudget.CALLER.ACTION='init.modal';
+            //this._dispatcher.dispatch('init.modal');
+
+             
+            if (checkCookie("PPMS_USER") != "") {
+
+              var varCookie = checkCookie("PPMS_USER");
+              var varSplitCookie = varCookie.split('^');
+              this._user = {
+                USER_ID: varSplitCookie[0],
+                COMPANY_ID: varSplitCookie[1],
+                Is_HR: varSplitCookie[2],
+                Is_Branch: varSplitCookie[0]
+              };
+              this._objBudget.USER = this._user;
+              //this._objBudget.TESTT(this._user); 
+
+              this._objBudget.OBSERVERS.login_passed.forEach((all) => {
+                all(this._user);
+              });
+
+              // this._objBudget.TESTT1.forEach((all)=>{
+              //     all();
+              // });
+
+              // setTimeout(() => {
+              //   this._objBudget.CALLER.ACTION='';
+              //   this._objBudget.CALLER.VALUE1 = this._user;
+              //   this._objBudget.CALLER.ACTION = 'login.passed';
+              // }, 200);
+
+              //this._dispatcher.dispatch('login.passed', this._user);
+
+
+              return;
+            }
+
+            // setTimeout(() => {
+            //   this._objBudget.CALLER.ACTION='';
+            //   this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+            //   this._objBudget.CALLER.VALUE2 = true;
+            //   this._objBudget.CALLER.ACTION = 'open.modal';
+            // }, 200);
+
+            //  setTimeout(() => {
+            //   this._objBudget.CALLER.ACTION='';
+            //   this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+            //   this._objBudget.CALLER.VALUE2 = true;
+            //   this._objBudget.CALLER.ACTION = 'enable.modal.button';
+            // }, 400);
+
+            this._objBudget.OBSERVERS.open_modal.forEach((all) => {
+              all(this.modalLogin.id, true);
+            });
+
+             this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+              all(this.modalLogin.id, true);
+            });
+
+            //this._dispatcher.dispatch('open.modal', this.modalLogin.id, true);
+            //this._dispatcher.dispatch('enable.modal.button', this.modalLogin.id, true);
+            
+            //        toastr.success("Let's Start...", "Success");
+            //console.log(getLookups().REFERENCE_CD_MSTR);
+
+          });
+        });
+
+
+      }, 2000);
+    });
+
+      // $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+      //         if($(e.target)[0].text=="Regular")
+      //         {
+      //           console.log("ok");
+      //         }
+      //         // e.target // newly activated tab
+      //         // e.relatedTarget // previous active tab
+      //       });
+
+  }
+
+  clickTab(index){
+      if(index==0){
+
+      }
+      else if(index==1){
+
+          this._objBudget.OBSERVERS.refreshPersonnelTab.forEach((all) => {
+            all('REGULAR');
+          });
+
+          // this._objBudget.CALLER.VALUE1 = 'REGULAR';
+          // this._objBudget.CALLER.ACTION = 'refreshPersonnelTab';
+           //this._dispatcher.dispatch('refreshPersonnelTab','REGULAR');
+      }
+      else if(index==2){
+
+         this._objBudget.OBSERVERS.refreshPersonnelTab.forEach((all) => {
+            all('SEMI_REGULAR');
+          });
+            // this._objBudget.CALLER.VALUE1 = 'SEMI_REGULAR';
+            // this._objBudget.CALLER.ACTION = 'refreshPersonnelTab';
+           //this._dispatcher.dispatch('refreshPersonnelTab','SEMI_REGULAR');
+      }
+      else if(index==3){
+
+          this._objBudget.OBSERVERS.refreshPersonnelTab.forEach((all) => {
+            all('STAFF');
+          });
+
+            // this._objBudget.CALLER.VALUE1 = 'STAFF';
+            // this._objBudget.CALLER.ACTION = 'refreshPersonnelTab';
+           //this._dispatcher.dispatch('refreshPersonnelTab','STAFF');
+      }
+  }
+
+   // @handle('login.passed')
+    LoginPassed(user) {
+      
+      this._user = user; 
+      // total 6 hours
+      setCookie("PPMS_USER", user.USER_ID+"^"+user.COMPANY_ID+"^"+user.Is_HR+"^"+user.Is_Branch, 30);
+      toastr.success("Let's Start...", "Success");
+
+      // this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+      // this._objBudget.CALLER.ACTION = 'close.modal';
+
+      // setTimeout(() => {
+      //   this._objBudget.CALLER.ACTION='';
+      //   this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+      //   this._objBudget.CALLER.VALUE2 = false;
+      //   this._objBudget.CALLER.ACTION = 'enable.modal.button';
+      // }, 200);
+
+        this._objBudget.OBSERVERS.close_modal.forEach((all) => {
+          all(this.modalLogin.id);
+        });
+
+        this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+          all(this.modalLogin.id, false);
+        });
+
+      // this._dispatcher.dispatch('close.modal', this.modalLogin.id);
+      // this._dispatcher.dispatch('enable.modal.button', this.modalLogin.id, false);
+      this.showingLogout = "visible";
+
+    }
+
+    logout() {
+      //this.clear();
+
+        // this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+        // this._objBudget.CALLER.VALUE2 = true;
+        // this._objBudget.CALLER.ACTION = 'open.modal';
+
+        // setTimeout(() => {
+        //   this._objBudget.CALLER.ACTION='';
+        //   this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+        //   this._objBudget.CALLER.VALUE2 = true;
+        //   this._objBudget.CALLER.ACTION = 'enable.modal.button';
+        // }, 200);
+
+        // setTimeout(() => {
+        //   this._objBudget.CALLER.ACTION='';
+        //   this._objBudget.CALLER.ACTION = 'loggedout';
+        // }, 300);
+
+        // setTimeout(() => {
+        //   this._objBudget.CALLER.ACTION='';
+        //   this._objBudget.CALLER.ACTION = 'clear.log';
+        // }, 400);
+
+        this._objBudget.OBSERVERS.open_modal.forEach((all) => {
+          all(this.modalLogin.id, true);
+        });
+
+        this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+          all(this.modalLogin.id, true);
+        });
+
+        this._objBudget.OBSERVERS.loggedout.forEach((all) => {
+          all();
+        });
+
+        this._objBudget.OBSERVERS.clear_log.forEach((all) => {
+          all();
+        });
+
+      // this._dispatcher.dispatch('open.modal', this.modalLogin.id, true);
+      // this._dispatcher.dispatch('enable.modal.button', this.modalLogin.id, true);
+      // this._dispatcher.dispatch('loggedout');
+      // this._dispatcher.dispatch('clear.log');
+
+
+
+      this._objBudget.USER={};
+      removeCookie();
+      this.showingLogout = "hidden";
+
+    }
+}
