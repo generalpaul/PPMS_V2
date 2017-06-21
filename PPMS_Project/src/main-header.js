@@ -233,7 +233,7 @@ export class MainHeaderCustomElement {
     // this._objBudget.CALLER.VALUE1=this._objBudget.HEADER.BDGT_TMPL_ID; 
     // this._objBudget.CALLER.ACTION='budget.dialog';
 
-
+    settings.isNavigating = true;
     this._objBudget.OBSERVERS.budget_dialog.forEach((all)=>{
       all(this._objBudget.HEADER.BDGT_TMPL_ID);
     });
@@ -816,6 +816,10 @@ export class MainHeaderCustomElement {
                       var new_date = moment(varMaxDate, "MM-DD-YYYY");
                       new_date.add(1, 'days');
                       new_date = moment(new Date(new_date)).format('MM-DD-YYYY');
+
+                      //console.log(new_date);
+                      //console.log(new Date(this._objBudget.HEADER.BDGT_FROM));
+                      //if (new_date > new Date(this._objBudget.HEADER.BDGT_FROM))
                       toastr.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." +
                         " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
 
@@ -938,6 +942,8 @@ export class MainHeaderCustomElement {
                 if (foundVtr.results === undefined) {
                    resolve_2(true);
                 }
+                var varDataFromCompare = new Date(this._objBudget.HEADER.BDGT_FROM);
+                var varDataToCompare = new Date(this._objBudget.HEADER.BDGT_FROM);
 
                 var varMaxDate = null;
                 foundVtr.results.forEach((allDate) => {
@@ -945,7 +951,11 @@ export class MainHeaderCustomElement {
                   //var varVtr = new Date(all.VTR_LIVE_DT.getFullYear(), all.VTR_LIVE_DT.getMonth(), all.VTR_LIVE_DT.getDate());
                   var varVtr = moment(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
                  
-                  if (this._objBudget.HEADER.BDGT_FROM <= varVtr && varVtr <= this._objBudget.HEADER.BDGT_TO) {
+                //  if (this._objBudget.HEADER.BDGT_FROM <= varVtr && varVtr <= this._objBudget.HEADER.BDGT_TO) {
+                  var varVtr = moment(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
+                  var varDateCompare = new Date(varVtr);
+
+                  if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
                     if (varMaxDate == null)
                       varMaxDate = varVtr;
                     else if (varMaxDate < varVtr)
@@ -966,6 +976,9 @@ export class MainHeaderCustomElement {
                   //console.log(new_date);
                   new_date.add(1, 'days');
                   new_date = moment(new Date(new_date)).format('MM-DD-YYYY');
+                 //    console.log(new_date);
+                  //   console.log(new Date(this._objBudget.HEADER.BDGT_FROM));
+                 //    if (new_date > new Date(this._objBudget.HEADER.BDGT_FROM))
                   toastr.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." +
                     " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
 
@@ -1062,8 +1075,9 @@ export class MainHeaderCustomElement {
     // if (this._objBudget.HEADER.BDGT_TO !== undefined)
     //   this._objBudget.HEADER.BDGT_TO = moment(new Date(this._objBudget.HEADER.BDGT_TO)).add(8, 'hours');
      //this._objBudget.HEADER.APPR_STAT_CD
-    if (passed_status.includes('EXPIRE') || passed_status.includes('CLOSE')) {
-      Promise.all([this.fnBudgetValidation_1(), this.fnBudgetValidation_2()]).then((passed) => {
+     if (passed_status.includes('EXPIRE') || passed_status.includes('CLOSE')) {
+        //this.fnBudgetValidation_1(),  removed
+      Promise.all([this.fnBudgetValidation_2()]).then((passed) => {
        if(passed_status!='')
          this._objBudget.HEADER.APPR_STAT_CD=passed_status;
          this.fnExecuteSaveBudgetHeader();
@@ -1129,7 +1143,7 @@ export class MainHeaderCustomElement {
       // console.log(varFrom);
       // console.log(varTo);
 
-      if (this._objBudget.HEADER.REMARKS === undefined) {
+      if (this._objBudget.HEADER.REMARKS === undefined || this._objBudget.HEADER.REMARKS == null) {
         this._objBudget.HEADER.REMARKS="NONE";
       }
       else if (this._objBudget.HEADER.REMARKS.trim()=="")
