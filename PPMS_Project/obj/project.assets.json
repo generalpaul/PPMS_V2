@@ -9813,10 +9813,10 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pmveluya\\Documents\\PPMS_Project_MVC\\PPMS_Project\\PPMS_Project.csproj",
+      "projectUniqueName": "C:\\Users\\pmveluya\\Documents\\GitHub\\PPMS_V2\\PPMS_Project\\PPMS_Project.csproj",
       "projectName": "PPMS_Project",
-      "projectPath": "C:\\Users\\pmveluya\\Documents\\PPMS_Project_MVC\\PPMS_Project\\PPMS_Project.csproj",
-      "outputPath": "C:\\Users\\pmveluya\\Documents\\PPMS_Project_MVC\\PPMS_Project\\obj\\",
+      "projectPath": "C:\\Users\\pmveluya\\Documents\\GitHub\\PPMS_V2\\PPMS_Project\\PPMS_Project.csproj",
+      "outputPath": "C:\\Users\\pmveluya\\Documents\\GitHub\\PPMS_V2\\PPMS_Project\\obj\\",
       "projectStyle": "PackageReference",
       "originalTargetFrameworks": [
         "netcoreapp1.1"

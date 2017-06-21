@@ -2268,6 +2268,7 @@ define('main-header',['exports', 'aurelia-framework', 'objBudget', './entity-man
 
       if (evt.keyCode == 13) {
 
+        _settings2.default.isNavigating = true;
         this._objBudget.OBSERVERS.budget_dialog.forEach(function (all) {
           all(_this2._objBudget.HEADER.BDGT_TMPL_ID);
         });
@@ -2667,6 +2668,7 @@ define('main-header',['exports', 'aurelia-framework', 'objBudget', './entity-man
                     var new_date = (0, _moment2.default)(varMaxDate, "MM-DD-YYYY");
                     new_date.add(1, 'days');
                     new_date = (0, _moment2.default)(new Date(new_date)).format('MM-DD-YYYY');
+
                     _toastr2.default.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." + " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
 
                     reject_2(false);
@@ -2714,12 +2716,17 @@ define('main-header',['exports', 'aurelia-framework', 'objBudget', './entity-man
                   if (foundVtr.results === undefined) {
                     resolve_2(true);
                   }
+                  var varDataFromCompare = new Date(_this7._objBudget.HEADER.BDGT_FROM);
+                  var varDataToCompare = new Date(_this7._objBudget.HEADER.BDGT_FROM);
 
                   var varMaxDate = null;
                   foundVtr.results.forEach(function (allDate) {
                     var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
 
-                    if (_this7._objBudget.HEADER.BDGT_FROM <= varVtr && varVtr <= _this7._objBudget.HEADER.BDGT_TO) {
+                    var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
+                    var varDateCompare = new Date(varVtr);
+
+                    if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
                       if (varMaxDate == null) varMaxDate = varVtr;else if (varMaxDate < varVtr) varMaxDate = varVtr;
                     }
                   });
@@ -2731,6 +2738,7 @@ define('main-header',['exports', 'aurelia-framework', 'objBudget', './entity-man
 
                     new_date.add(1, 'days');
                     new_date = (0, _moment2.default)(new Date(new_date)).format('MM-DD-YYYY');
+
                     _toastr2.default.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." + " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
 
                     reject_2(false);
@@ -2795,7 +2803,7 @@ define('main-header',['exports', 'aurelia-framework', 'objBudget', './entity-man
       }
 
       if (passed_status.includes('EXPIRE') || passed_status.includes('CLOSE')) {
-        Promise.all([this.fnBudgetValidation_1(), this.fnBudgetValidation_2()]).then(function (passed) {
+        Promise.all([this.fnBudgetValidation_2()]).then(function (passed) {
           if (passed_status != '') _this8._objBudget.HEADER.APPR_STAT_CD = passed_status;
           _this8.fnExecuteSaveBudgetHeader();
         }, function (fail) {
@@ -2833,7 +2841,7 @@ define('main-header',['exports', 'aurelia-framework', 'objBudget', './entity-man
       var varTo = (0, _moment2.default)(new Date(this._objBudget.HEADER.BDGT_TO)).add(8, 'hours');
       varTo = new Date(varTo);
 
-      if (this._objBudget.HEADER.REMARKS === undefined) {
+      if (this._objBudget.HEADER.REMARKS === undefined || this._objBudget.HEADER.REMARKS == null) {
         this._objBudget.HEADER.REMARKS = "NONE";
       } else if (this._objBudget.HEADER.REMARKS.trim() == "") {
         this._objBudget.HEADER.REMARKS = "NONE";
@@ -5484,8 +5492,9 @@ define('settings',["exports"], function (exports) {
         value: true
     });
     exports.default = {
-        serviceName: "http://localhost:30313/odata",
-        serviceNameBase: "http://localhost:30313",
+
+        serviceName: "http://absppms2:8072/odata",
+        serviceNameBase: "http://absppms2:8072",
 
         pageSize: 100,
         STATIONS: ["", "CEBU", "DAVAO"],
@@ -7516,23 +7525,6 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
             (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('USER_PROFILE_MSTR')).then(function (found) {
                 _this._USER_PROFILE_MSTR = found.results;
             });
-
-            _jquery2.default.ajax({
-                type: "GET",
-                dataType: 'jsonp',
-                headers: {
-                    'Access-Control-Allow-Origin': '*'
-                },
-                data: {
-                    "USER_ID": "KARRENA",
-                    "COMPANY_ID": 1,
-                    "PASSWORD": "12345678",
-                    "UPDATE_EXPIRED": false },
-                url: _settings2.default.serviceNameBase + "/UserAccess/Check_User",
-                success: function success(data) {
-                    alert(9);
-                }
-            });
         }
 
         login.prototype.keyPressed = function keyPressed($event) {
@@ -7600,29 +7592,34 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
         };
 
         login.prototype.fnCheckUser = function fnCheckUser() {
+            var _this3 = this;
+
             _settings2.default.isNavigating = false;
             _toastr2.default.clear();
-            _jquery2.default.ajax({
-                dataType: "json",
-                type: "GET",
-                url: _settings2.default.serviceNameBase + "/UserAccess/Check_User",
-                success: function success(result) {
-                    console.log(result);
-                }
+
+
+            _jquery2.default.post(_settings2.default.serviceNameBase + "/UserAccess/Check_User", {
+                "USER_ID": this._USER.USER_ID,
+                "COMPANY_ID": this._COMPANY.COMPANY_ID,
+                "PASSWORD": this._PASSWORD,
+                "UPDATE_EXPIRED": false
+            }).done(function (response) {
+                _this3.loginSuccess(response);
+                _this3._ModalWizard.ids.pop();
             });
         };
 
         login.prototype.loginSuccess = function loginSuccess(response, CALLER) {
-            var _this3 = this;
+            var _this4 = this;
 
             if (response == "") {
                 _toastr2.default.error("USER ID Not found", "Searching USER..");
                 this.disableLogButton = false;
                 return;
             } else {
-                _toastr2.default.success("Welcome.. " + JSON.parse(response).USER_ID, "User Found");
+                _toastr2.default.success("Welcome.. " + response.USER_ID, "User Found");
 
-                var varUserAtt = JSON.parse(response);
+                var varUserAtt = response;
                 varUserAtt.ROLE_CD = this._USER.ROLE_CD;
 
                 this.controller.ok(varUserAtt);
@@ -7635,16 +7632,16 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
 
                 (0, _entityManagerFactory.EntityManager)().executeQuery(checkRole).then(function (success) {
                     success.results.forEach(function (all) {
-                        if (all.ROLE_CD == _this3._USER.ROLE_CD) {
+                        if (all.ROLE_CD == _this4._USER.ROLE_CD) {
 
                             if (all.MODULE_MSTR.MODULE_NAME.includes("CONCEAL") && all.ACCESS_FL == "1") {
-                                _this3._objBudget.ALLOW_PASS_CONFIDENTIAL = true;
+                                _this4._objBudget.ALLOW_PASS_CONFIDENTIAL = true;
                             }
                         }
                     });
                 });
 
-                _jquery2.default.get(_settings2.default.serviceNameBase + "/UserAccess/User_Access", {
+                _jquery2.default.post(_settings2.default.serviceNameBase + "/UserAccess/User_Access", {
                     "USER_ID": this._USER.USER_ID,
                     "HASH": this._USER.HASH
                 }).done(function (response) {
@@ -7668,7 +7665,7 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
         };
 
         login.prototype.resetPassword = function resetPassword() {
-            var _this4 = this;
+            var _this5 = this;
 
             if (_underscore2.default.isUndefined(this._USER.USER_ID) || _underscore2.default.isNull(this._USER.USER_ID) || this._USER.USER_ID.trim().length === 0 || _underscore2.default.isUndefined(this._COMPANY.COMPANY_ID) || _underscore2.default.isNull(this._COMPANY.COMPANY_ID)) {
                 _toastr2.default.error("Invalid USER/COMPANY", "Reset Password");
@@ -7681,8 +7678,8 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
                     _toastr2.default.info("Please wait..", "Resetting Password");
                     _settings2.default.isNavigating = true;
                     _jquery2.default.post(_settings2.default.ActualCostService + "/home/Reset_Password", {
-                        "USER_ID": _this4._USER.USER_ID,
-                        "COMPANY_ID": _this4._COMPANY.COMPANY_ID
+                        "USER_ID": _this5._USER.USER_ID,
+                        "COMPANY_ID": _this5._COMPANY.COMPANY_ID
                     }).done(function (response) {
                         _settings2.default.isNavigating = false;
                         if (response == "false") {
@@ -7690,7 +7687,7 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
                         } else {
                             _toastr2.default.success("Password has been reset and emailed to you.", "Reset Password");
 
-                            if (_this4.user_expired) setTimeout(function () {
+                            if (_this5.user_expired) setTimeout(function () {
                                 location.reload();
                             }, 3000);
                         }
@@ -7700,11 +7697,11 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
         };
 
         login.prototype._USERChanged = function _USERChanged() {
-            var _this5 = this;
+            var _this6 = this;
 
             if (_underscore2.default.isUndefined(this._USER.USER_ID) || _underscore2.default.isNull(this._USER.USER_ID) || this._USER.USER_ID.trim().length === 0) {} else {
                 var varFound = this._USER_PROFILE_MSTR.find(function (all) {
-                    return all.USER_ID == _this5._USER.USER_ID;
+                    return all.USER_ID == _this6._USER.USER_ID;
                 });
                 if (!_underscore2.default.isUndefined(varFound.EXPIRE_DT) && !_underscore2.default.isNull(varFound.EXPIRE_DT)) {
 
@@ -8416,7 +8413,6 @@ define('text!personnel.html', ['module'], function(module) { module.exports = "<
 define('text!summary.html', ['module'], function(module) { module.exports = "<template>\r\n\t\t\t<table class= \"table-hover table-condensed table-bordered table-striped\" style=\"margin-left:50px;margin-top:40px;margin-botton:20px;\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"width:150px;\">\r\n\t\t\t\t\t\t\t<strong>CLASSIFICATION</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"width:150px;text-align:center;\">\r\n\t\t\t\t\t\t\t<strong>TOTAL PROGRAM</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tMAINSTAY\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_MAINSTAY}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tSTAFF\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_STAFF}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tGUEST\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_GUEST}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t<strong>TOTAL</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;border-top-width:3px;\">\r\n\t\t\t\t\t\t\t<strong>${_INPUT_AMT_TOTAL}</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\t\t\t\t\t\r\n\t\t\t</table>\r\n            <br/>\r\n</template>"; });
 define('text!users.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"blur-image\"></require>\n\n  <section class=\"au-animate\">\n      <h2>${heading}</h2>\n      <div class=\"row au-stagger\">\n        <div class=\"col-sm-6 col-md-3 card-container au-animate\" repeat.for=\"user of users\">\n            <div class=\"card\">\n                <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n                <div class=\"avatar\">\n                    <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n                </div>\n                <div class=\"content\">\n                    <p class=\"name\">${user.login}</p>\n                    <p><a target=\"_blank\" class=\"btn btn-default\" href.bind=\"user.html_url\">Contact</a></p>\n                </div>\n            </div>\n        </div>\n      </div>\n  </section>\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h2>${heading}</h2>\n\n    <form role=\"form\" submit.delegate=\"submit()\">\n      <div class=\"form-group\">\n        <label for=\"fn\">First Name</label>\n        <input type=\"text\" value.bind=\"firstName\" class=\"form-control\" id=\"fn\" placeholder=\"first name\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"ln\">Last Name</label>\n        <input type=\"text\" value.bind=\"lastName\" class=\"form-control\" id=\"ln\" placeholder=\"last name\">\n      </div>\n      <div class=\"form-group\">\n        <label>Full Name</label>\n        <p class=\"help-block\">${fullName | upper}</p>\n      </div>\n      <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n    </form>\n  </section>\n</template>\n"; });
-define('text!tools/gridpaging.html', ['module'], function(module) { module.exports = "<template>\r\n\t<nav>\r\n        <ul class=\"pagination\">\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Previous\" click.delegate=\"endClick(0)\" if.bind=\"_currentIndex!=0 && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&laquo;</span>\r\n                </a>\r\n            </li>\r\n            <li repeat.for=\"item of _PagesShow\">\r\n                    <a style=\"cursor:pointer\" click.delegate=\"$parent.selectedClick($index)\" >${item}</a>\r\n            </li>\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Next\"  click.delegate=\"endClick(1)\" if.bind=\"_Pages.length-1>_currentIndex && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&raquo;</span>\r\n                </a>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</template>"; });
 define('text!modals/budget.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n     \r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>BUDGET TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    BUDGET ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM IO\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bBDGT_TMPL_ID\" searchable=\"_sBDGT_TMPL_ID\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_IO\" searchable=\"_sPROGRAM_IO\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bAPPR_STAT_CD\" searchable=\"_sAPPR_STAT_CD\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <!-- | sorttext:'PROGRAM_TITLE':'ascending'  -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedBudget(item)\">\r\n                <td>\r\n                    ${item.BDGT_TMPL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_TITLE}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_IO}\r\n                </td>\r\n                <td>\r\n                    ${item.APPR_STAT_CD}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
 define('text!modals/buh-program-dialog.html', ['module'], function(module) { module.exports = "<template>\n  <ux-dialog>\n  <!--<ux-dialog-header class=\"colorHeader\">\n        \n                    <h4 class=\"modal-title\">SELECT PROGRAMS</h4>\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PROGRAMS</b></span></ux-dialog-header>\n  <ux-dialog-body>\n  <require from=\"converters/take\"></require>\n  <require from=\"converters/sorttext\"></require>\n  <require from=\"tools/gridpaging\"></require>\n  <div style=\"height:420px; overflow: auto;\">\n  <table>\n    <tr>\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\n                <thead class=\"table-default\">\n                    <tr>\n                        <td class=\"colorCell2\" style=\"width:140px\">PROGRAM CODE</td>\n                        <td class=\"colorCell2\">PROGRAM TITLE</td>\n                    </tr>\n                    <tr ref=\"_rGROUP_TITLE\">\n                        <td class=\"colorCell2\" style=\"width:140px\">\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\n                        </td>\n                        <td class=\"colorCell2\" >\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" keyup.delegate=\"fnKeyup($event,'')\" />\n                        </td>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\n                        <td>${item.PROGRAM_CD}</td>\n                        <td>${item.PROGRAM_TITLE}</td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\n    </td>\n    <td style=\"vertical-align:top;\">\n\n\n        <div style=\"height:350px; overflow: auto;\">\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\n                <thead class=\"table-default\">\n                    <tr>\n                        <td colspan=3 class=\"colorCell2\" >\n                            SELECTED\n                        </td>\n                    </tr>\n                    <tr>\n                        <td class=\"colorCell2\"  style=\"width:140px\">\n                            PROGRAM CODE\n                        </td>\n                        <td colspan=2 class=\"colorCell2\" >\n                            PROGRAM TITLE\n                        </td>\n\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr repeat.for=\"item of varFilterArraySelected\">\n                        <td style=\"width:140px\">\n                            ${item.PROGRAM_CD}\n                        </td>\n                        <td>\n                            ${item.PROGRAM_TITLE}\n                        </td>\n                        <td>\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\n                        </td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n\n    </td>\n</tr>\n<tr>\n    <td colspan=2>\n        <div style=\"width:100%;text-align:center;\">\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\n        </div>\n    </td>\n</tr>\n</table>\n</div>\n</ux-dialog-body>\n\n<ux-dialog-footer>\n<button click.trigger=\"controller.cancel()\">Cancel</button>\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\n</ux-dialog-footer>    \n\n</ux-dialog>\n</template>\n\n"; });
 define('text!modals/buh-search.html', ['module'], function(module) { module.exports = "<template>\n\n  <ux-dialog>\n    <ux-dialog-body>\n\n\n      <require from=\"converters/take\"></require>\n      <require from=\"converters/sorttext\"></require>\n      <require from=\"tools/gridpaging\"></require>\n      <div style=\"height:500px!important;overflow:auto;\">\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\n          <thead class=\"table-default\">\n            <tr>\n              <td class=\"colorCell2\">\n                GLOBAL ID (OPTIONAL)\n              </td>\n              <td class=\"colorCell2\">\n                FIRST NAME\n              </td>\n              <td class=\"colorCell2\">\n                MIDDLE NAME\n              </td>\n              <td class=\"colorCell2\">\n                LAST NAME\n              </td>\n              <td class=\"colorCell2\">\n               E-MAIL\n             </td>\n           </tr>\n           <tr ref=\"_rBUH_SEARCH\">\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bOPTIONAL_GLOBAL_ID\" searchable=\"_sOPTIONAL_GLOBAL_ID\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bFIRST_NAME\" searchable=\"_sFIRST_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bEMAIL_ADDRESS\" searchable=\"_sEMAIL_ADDRESS\" />\n            </td>\n          </tr>\n        </thead>\n        <tbody>\n          <tr repeat.for=\"item of varFilterArray | sorttext:'LAST_NAME':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedBUH(item)\">\n            <td>\n              ${item.OPTIONAL_GLOBAL_ID}\n            </td>\n            <td>\n              ${item.FIRST_NAME}\n            </td>\n            <td>\n              ${item.MIDDLE_NAME}\n            </td>\n            <td>\n              ${item.LAST_NAME}\n            </td>\n            <td>\n              ${item.EMAIL_ADDRESS}\n            </td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\n  </ux-dialog-body>\n  <ux-dialog-footer>\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\n  </ux-dialog-footer>\n</ux-dialog>\n</template>"; });
@@ -8431,4 +8427,5 @@ define('text!modals/modalcontainer.html', ['module'], function(module) { module.
 define('text!modals/paymentterm.html', ['module'], function(module) { module.exports = "<template>\n  <ux-dialog>\n    <!--<ux-dialog-header class=\"colorHeader\">\n      <h4 class=\"modal-title\">SELECT PAYMENT TERM</h4>\n    </ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PAYMENT TERM</b></span></ux-dialog-header>\n\n    <ux-dialog-body>\n      <table keyup.delegate=\"fnKeyup($event,'')\"  class=\"table table-hover table-condensed table-bordered table-striped \">\n        <tbody>\n          <tr repeat.for=\"item of varFilterArray\" click.delegate=\"$parent.selectedTerm(item)\">\n            <td>\n              ${item.REF_DESC}\n            </td>\n          </tr>\n        </tbody>\n      </table>\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\n    </ux-dialog-body>\n    <ux-dialog-footer>\n     <button click.trigger=\"controller.cancel()\">Cancel</button>\n   </ux-dialog-footer>\n </ux-dialog>\n</template>"; });
 define('text!modals/program.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM CODE\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM NAME\r\n              </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" />\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" />\r\n              </td>\r\n            </tr>\r\n          </thead>\r\n          <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedProgram(item)\">\r\n              <td>\r\n                ${item.PROGRAM_CD}\r\n              </td>\r\n              <td>\r\n                ${item.PROGRAM_TITLE}\r\n              </td>\r\n            </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n      <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
 define('text!modals/talentmanagergroups.html', ['module'], function(module) { module.exports = "<template>\r\n    <ux-dialog>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sort\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n    <thead class=\"table-default\">\r\n        <tr>\r\n            <td class=\"colorCell2\">\r\n                GLOBAL ID\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                GROUP NAME\r\n            </td>\r\n        </tr>\r\n        <tr ref=\"_rGROUP_TITLE\">\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_GRP_ID\" searchable=\"_sGLOBAL_GRP_ID\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGROUP_NAME\" searchable=\"_sGROUP_NAME\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n        </tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr repeat.for=\"item of varFilterArray | sort:'GROUP_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n            <td>\r\n                ${item.GLOBAL_GRP_ID}\r\n            </td>\r\n            <td>\r\n                ${item.GROUP_NAME}\r\n            </td>\r\n        </tr>\r\n    </tbody>\r\n</table>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
+define('text!tools/gridpaging.html', ['module'], function(module) { module.exports = "<template>\r\n\t<nav>\r\n        <ul class=\"pagination\">\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Previous\" click.delegate=\"endClick(0)\" if.bind=\"_currentIndex!=0 && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&laquo;</span>\r\n                </a>\r\n            </li>\r\n            <li repeat.for=\"item of _PagesShow\">\r\n                    <a style=\"cursor:pointer\" click.delegate=\"$parent.selectedClick($index)\" >${item}</a>\r\n            </li>\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Next\"  click.delegate=\"endClick(1)\" if.bind=\"_Pages.length-1>_currentIndex && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&raquo;</span>\r\n                </a>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map

@@ -99,6 +99,22 @@ export class login {
             this._USER_PROFILE_MSTR=found.results;
         });
 
+        //$.ajax({
+        //    type: 'get',
+        //    url: settings.serviceNameBase + "/UserAccess/Check_User",
+        //    data: {
+        //        "USER_ID": "KARRENA",
+        //        "COMPANY_ID": 1,
+        //        "PASSWORD": "12345678",
+        //        "UPDATE_EXPIRED": false
+        //    },
+        //    xhrFields: {
+        //        withCredentials: true
+        //    },
+        //         success: function () { alert("Success"); },
+        //    error: function () { alert('Failed!'); }
+        //});
+
         //$.post(settings.serviceNameBase + "/UserAccess/Check_User", {
         //    "USER_ID": "KARRENA",
         //    "COMPANY_ID": 1,
@@ -126,7 +142,7 @@ export class login {
         //    //beforeSend: xhr.setRequestHeader('Authorization', token)
         //});
 
-        $.ajax({
+       /* $.ajax({
             type: "GET",
             dataType: 'jsonp',
             headers: {
@@ -141,7 +157,7 @@ export class login {
             success: function (data) {
                 alert(9);
             }
-        });
+        });*/
 	}
 
 	keyPressed($event)
@@ -244,37 +260,38 @@ export class login {
     {
         settings.isNavigating = false;
         toastr.clear();
-        $.ajax({
-            dataType: "json",
-            type: "GET",
-            url: settings.serviceNameBase + "/UserAccess/Check_User",
-            success: function (result) {
-                console.log(result);
-            }
-        });
-        //$.get(settings.serviceNameBase + "/UserAccess/Check_User", {
-        //    "USER_ID": this._USER.USER_ID,
-        //    "COMPANY_ID": this._COMPANY.COMPANY_ID,
-        //    "PASSWORD": this._PASSWORD,
-        //    "UPDATE_EXPIRED": false
-        //}).done((response) => {
-        //    console.log(response);
-        //    this.loginSuccess(response)//,this._dispatcher
-        //    this._ModalWizard.ids.pop();
+        //$.ajax({
+        //    dataType: "json",
+        //    type: "GET",
+        //    url: settings.serviceNameBase + "/UserAccess/Check_User",
+        //    success: function (result) {
+        //        console.log(result);
+        //    }
         //});
+
+        $.post(settings.serviceNameBase + "/UserAccess/Check_User", {
+            "USER_ID": this._USER.USER_ID,
+            "COMPANY_ID": this._COMPANY.COMPANY_ID,
+            "PASSWORD": this._PASSWORD,
+            "UPDATE_EXPIRED": false
+        }).done((response) => {
+            //console.log(response);
+            this.loginSuccess(response)//,this._dispatcher
+            this._ModalWizard.ids.pop();
+        });
     }
 
 	loginSuccess(response, CALLER)
 	{
-       
+        //console.log(response);
 		if (response == "") {
             toastr.error("USER ID Not found", "Searching USER..");
             this.disableLogButton = false;
             return;
 		} else {
-            toastr.success("Welcome.. " + JSON.parse(response).USER_ID, "User Found");
+            toastr.success("Welcome.. " + response.USER_ID, "User Found");
             
-            var varUserAtt = JSON.parse(response);
+            var varUserAtt = response;//JSON.parse(response);
             varUserAtt.ROLE_CD = this._USER.ROLE_CD;
             
             this.controller.ok(varUserAtt);
@@ -299,12 +316,13 @@ export class login {
 				});
             });
 
-            $.get(settings.serviceNameBase + "/UserAccess/User_Access", {
+
+            $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
                 "USER_ID": this._USER.USER_ID,
                 "HASH": this._USER.HASH
             }).done((response) => {
                 console.log(response);
-            });
+                });
 
 
 		}
