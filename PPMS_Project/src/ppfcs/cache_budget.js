@@ -18,9 +18,9 @@ export class cache_budget{
    
     CALLER={ACTION:null,ACTION_CALLER:null,VALUE1:null,VALUE2:null,VALUE3:null,VALUE4:null};
     OBSERVERS = {
-       
-        clear_budget_modal:[], //0, 
-        budget_dialog: [], 
+        pass_group: [], 
+        pass_indiv: [], 
+        enable_approved: [], 
         copy_template_guest:[],
         copy_template:[],
         budget_refresh:[], //0
@@ -29,6 +29,7 @@ export class cache_budget{
         reset_summary:[],//0
         pass_program:[],
         budget_loaded: [],
-        disable_search_personnel:[]
+        disable_search_personnel: [],
+        pass_job: []
     };
 }

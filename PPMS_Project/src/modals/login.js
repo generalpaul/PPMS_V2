@@ -323,6 +323,7 @@ export class login {
                 "HASH": this._USER.HASH
             }).done((response) => {
                 this._cache_obj._ACCESS = response;
+                //console.log(this._cache_obj._ACCESS);
                 });
 
 

@@ -26,14 +26,25 @@ export class mainpage {
     talentgroupAccess = false;
     buhAccess = false;
     headerVisible = false;
+    _application = [];
+    _application_desc = [{ ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' },
+        { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
+        { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
+        { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
+        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' }
+    ];
+    _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+    _ppfcs_modules = [];
+    _roles = [];
+    _application_on = true;
     constructor(toastr, cache_obj, dialogService, Router) { //multiObserver
         
         this._cache_obj = cache_obj;
         this.router = Router;
 
         setTimeout(() => {
-           
-            
+
+            if (this._cache_obj.USER !== undefined)
             if (this._cache_obj.USER.ROLE_CD !== undefined)
             {
                 //console.log(this._cache_obj.USER.ROLE_CD);
@@ -51,12 +62,46 @@ export class mainpage {
                       "USER_ID": this._cache_obj.USER.USER_ID,
                       "HASH": this._cache_obj.USER.HASH
                   }).done((response) => {
+
                       this._cache_obj._ACCESS = response;
+
+                      //console.log(this._cache_obj._ACCESS);
+
+                      this._application = this._cache_obj._ACCESS.APPLICATION;
+
+                      for (var i = 0; i < this._application.length; i++) {
+                          for (var j = 0; j < this._application_desc.length; j++) {
+                              if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {
+                                  this._application[i].APPLICATION_DESC = this._application_desc[j].desc;
+                              }
+                          }
+
+                          if (this._remove.includes(this._application[i].APPLICATION_DESC))
+                          {
+                              this._ppfcs_modules.push(this._application[i]);
+                          }
+                      }
+
                       this.fnCheckAccess();
                   });
                 }
                 else
                 {
+                    this._application = this._cache_obj._ACCESS.APPLICATION;
+                    //console.log(this._cache_obj._ACCESS);
+                    for (var i = 0; i < this._application.length; i++) {
+                        for (var j = 0; j < this._application_desc.length; j++) {
+                            if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {
+                                this._application[i].APPLICATION_DESC = this._application_desc[j].desc;
+                            }
+                        }
+
+                        if (this._remove.includes(this._application[i].APPLICATION_DESC)) {
+                            this._ppfcs_modules.push(this._application[i]);
+                        }
+                    }
+
+
                     this.fnCheckAccess();
                 }
 
@@ -120,8 +165,41 @@ export class mainpage {
        
     }
 
+    applicationClick(item)
+    {
+        if (item.APPLICATION_DESC == 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM')
+        {
+            this._roles= this._cache_obj._ACCESS.ROLES.filter((all) => all.APPLICATION_ID == item.APPLICATION_ID);
+            this._application_on = false;
+        }
+        else
+        {
+            //console.log(item.APPLICATION_URL.replace('.ASPX', ''));
+            this.router.navigateToRoute(item.APPLICATION_URL.replace('.ASPX',''));
+        }
+        
+       
+    }
+
+    rolesClick(item) {
+        //console.log(item.APPLICATION_URL);
+        if (item.APPLICATION_URL == "PROGRAMBUDGETTEMPLATE.ASPX")
+        {
+            this.router.navigateToRoute('mainview');
+        }
+        else if (item.APPLICATION_URL == "ACTUALSCOSTPROCESSING.ASPX") {
+            this.router.navigateToRoute('actual_cost');
+        }
+    }
+    
+    applicationOn()
+    {
+        this._application_on = true;
+    }
+
     fnCheckAccess()
     {
+        if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
         
         var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
         var varFound = this._cache_obj._ACCESS.APPLICATION.filter(all => filterMenu.includes(all.APPLICATION_DESC));

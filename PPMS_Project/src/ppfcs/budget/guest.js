@@ -12,8 +12,9 @@ import toastr from "toastr";
 import { MultiObserver }from 'multi-observer';
 import { paymentterm } from '../../modals/paymentterm';
 import {DialogService} from 'aurelia-dialog';
+import { cache_obj } from 'cache_obj';
 
-@inject(MultiObserver,DialogService)
+@inject(cache_obj,cache_budget,MultiObserver,DialogService)
 export class GuestCustomElement {
 
   @bindable to;
@@ -23,17 +24,18 @@ export class GuestCustomElement {
   _enableRemove=false;
   _signal;
   _PYMNTTERM;
-  dialogService=null;
-  constructor(cache_budget, multiObserver, dialogService) {
+  dialogService = null;
+  _cache_obj = null;
+  constructor(cache_obj, cache_budget, multiObserver, dialogService) {
       if (EntityManager() === undefined) {
           return;
       }
 
-      this._cache_budget = cache_budget;
+    this._cache_budget = cache_budget;
     this.dialogService=dialogService;
-   
+    this._cache_obj = cache_obj;
     
-    this._cache_budget.OBSERVERS.budget_dialog.push((val) => {
+    this._cache_obj.OBSERVERS.budget_dialog.push((val) => {
       this.fnCheckBudget(val);
     });
 

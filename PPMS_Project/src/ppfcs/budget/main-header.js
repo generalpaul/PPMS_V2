@@ -76,7 +76,7 @@ export class MainHeaderCustomElement {
 
     this.LoginPassed(this._cache_obj.USER);
     
-    this._cache_budget.OBSERVERS.budget_dialog.push((val) => {
+    this._cache_obj.OBSERVERS.budget_dialog.push((val) => {
       this.CloseBudgetDialog(val);
     });
 

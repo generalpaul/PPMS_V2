@@ -85,7 +85,7 @@ export class PersonnelCustomElement
       this.resetView();
     });
 
-    this._cache_budget.OBSERVERS.budget_dialog.push((val) => {
+    this._cache_obj.OBSERVERS.budget_dialog.push((val) => {
       this.CloseBudgetDialog(val);
     });
 
@@ -276,7 +276,7 @@ export class PersonnelCustomElement
   ButtonStatus(value) 
   {
 
-    this._cache_budget.OBSERVERS.enable_modal_button.forEach((all)=>
+      this._cache_obj.OBSERVERS.enable_modal_button.forEach((all)=>
     {
       this.isIndivMstrDisabled=!value;
       this.isIndivMstrTalentsDisabled=!value;
@@ -316,7 +316,7 @@ fnCheckBudget(BDGT_TMPL_ID)
 {
 
 
-  this._cache_budget.OBSERVERS.enable_modal_button.forEach((all)=>
+    this._cache_obj.OBSERVERS.enable_modal_button.forEach((all)=>
   {
     this.isIndivMstrDisabled=false;
     this.isIndivMstrTalentsDisabled=false;

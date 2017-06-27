@@ -13,7 +13,7 @@ import numeral from 'numeral';
 import toastr from "toastr";
 import {  MultiObserver }from 'multi-observer';
 
-@inject(cache_obj,MultiObserver)
+@inject(cache_obj,cache_budget,MultiObserver)
 export class SummaryCustomElement {
 
   @bindable to;
@@ -35,7 +35,7 @@ export class SummaryCustomElement {
     this._cache_budget = cache_budget;
     this._multiObserver=multiObserver;
 
-    this._cache_budget.OBSERVERS.budget_dialog.push((val) => {
+    this._cache_obj.OBSERVERS.budget_dialog.push((val) => {
       this.fnCheckSummary(val);
     });
 

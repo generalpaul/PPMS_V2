@@ -393,16 +393,14 @@ define('cache_obj',["exports"], function (exports) {
             clear_talentmanager_modal: [],
             pass_value: [],
             login_passed: [],
-            pass_group: [],
             loggedout: [],
             confirm_dialog: [],
-            enable_approved: [],
-            pass_indiv: [],
-            pass_job: [],
             clear_job_modal: [],
             budget_loaded: [],
             logoutPage: [],
-            loginPage: []
+            loginPage: [],
+            clear_budget_modal: [],
+            budget_dialog: []
         };
     };
 });
@@ -1361,6 +1359,161 @@ define('main',['exports'], function (exports) {
     });
   }
 });
+define('mainpage',['exports', 'aurelia-framework', 'cache_obj', './entity-manager-factory', './masterfiles', 'toastr', 'aurelia-dialog', './helpers', './settings', 'aurelia-router', 'underscore'], function (exports, _aureliaFramework, _cache_obj, _entityManagerFactory, _masterfiles, _toastr, _aureliaDialog, _helpers, _settings, _aureliaRouter, _underscore) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.mainpage = undefined;
+
+    var _toastr2 = _interopRequireDefault(_toastr);
+
+    var _settings2 = _interopRequireDefault(_settings);
+
+    var _underscore2 = _interopRequireDefault(_underscore);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _dec, _class;
+
+    var mainpage = exports.mainpage = (_dec = (0, _aureliaFramework.inject)(_toastr2.default, _cache_obj.cache_obj, _aureliaDialog.DialogService, _aureliaRouter.Router), _dec(_class = function () {
+        function mainpage(toastr, cache_obj, dialogService, Router) {
+            var _this = this;
+
+            _classCallCheck(this, mainpage);
+
+            this._toastr = null;
+            this.budgetAccess = false;
+            this.actualAccess = false;
+            this.talentgroupAccess = false;
+            this.buhAccess = false;
+            this.headerVisible = false;
+            this._application = [];
+            this._application_desc = [{ ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' }, { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' }, { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' }, { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' }, { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' }];
+            this._remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+            this._ppfcs_modules = [];
+            this._roles = [];
+            this._application_on = true;
+
+
+            this._cache_obj = cache_obj;
+            this.router = Router;
+
+            setTimeout(function () {
+
+                if (_this._cache_obj.USER !== undefined) if (_this._cache_obj.USER.ROLE_CD !== undefined) {
+                    if (_this._cache_obj.USER.ROLE_CD.includes('ACCESSALL')) {
+                        _this.budgetAccess = true;
+                        _this.talentgroupAccess = true;
+                        _this.buhAccess = true;
+                        _this.actualAccess = true;
+                        _this.headerVisible = true;
+                    }
+
+                    if (_underscore2.default.isEmpty(_this._cache_obj._ACCESS)) {
+                        $.post(_settings2.default.serviceNameBase + "/UserAccess/User_Access", {
+                            "USER_ID": _this._cache_obj.USER.USER_ID,
+                            "HASH": _this._cache_obj.USER.HASH
+                        }).done(function (response) {
+
+                            _this._cache_obj._ACCESS = response;
+
+                            _this._application = _this._cache_obj._ACCESS.APPLICATION;
+
+                            for (var i = 0; i < _this._application.length; i++) {
+                                for (var j = 0; j < _this._application_desc.length; j++) {
+                                    if (_this._application_desc[j].ref == _this._application[i].APPLICATION_DESC) {
+                                        _this._application[i].APPLICATION_DESC = _this._application_desc[j].desc;
+                                    }
+                                }
+
+                                if (_this._remove.includes(_this._application[i].APPLICATION_DESC)) {
+                                    _this._ppfcs_modules.push(_this._application[i]);
+                                }
+                            }
+
+                            _this.fnCheckAccess();
+                        });
+                    } else {
+                        _this._application = _this._cache_obj._ACCESS.APPLICATION;
+
+                        for (var i = 0; i < _this._application.length; i++) {
+                            for (var j = 0; j < _this._application_desc.length; j++) {
+                                if (_this._application_desc[j].ref == _this._application[i].APPLICATION_DESC) {
+                                    _this._application[i].APPLICATION_DESC = _this._application_desc[j].desc;
+                                }
+                            }
+
+                            if (_this._remove.includes(_this._application[i].APPLICATION_DESC)) {
+                                _this._ppfcs_modules.push(_this._application[i]);
+                            }
+                        }
+
+                        _this.fnCheckAccess();
+                    }
+                }
+            }, 1000);
+        }
+
+        mainpage.prototype.applicationClick = function applicationClick(item) {
+            if (item.APPLICATION_DESC == 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM') {
+                this._roles = this._cache_obj._ACCESS.ROLES.filter(function (all) {
+                    return all.APPLICATION_ID == item.APPLICATION_ID;
+                });
+                this._application_on = false;
+            } else {
+                this.router.navigateToRoute(item.APPLICATION_URL.replace('.ASPX', ''));
+            }
+        };
+
+        mainpage.prototype.rolesClick = function rolesClick(item) {
+            if (item.APPLICATION_URL == "PROGRAMBUDGETTEMPLATE.ASPX") {
+                this.router.navigateToRoute('mainview');
+            } else if (item.APPLICATION_URL == "ACTUALSCOSTPROCESSING.ASPX") {
+                this.router.navigateToRoute('actual_cost');
+            }
+        };
+
+        mainpage.prototype.applicationOn = function applicationOn() {
+            this._application_on = true;
+        };
+
+        mainpage.prototype.fnCheckAccess = function fnCheckAccess() {
+            if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
+
+            var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+            var varFound = this._cache_obj._ACCESS.APPLICATION.filter(function (all) {
+                return filterMenu.includes(all.APPLICATION_DESC);
+            });
+            if (varFound.length == 1) {
+                if (varFound == 'PROGRAM BUDGET TEMPLATE') this.router.navigateToRoute('mainview');else this.router.navigateToRoute('actual_cost');
+            } else {
+                this.budgetAccess = true;
+                this.talentgroupAccess = true;
+                this.buhAccess = true;
+                this.actualAccess = true;
+                this.headerVisible = true;
+            }
+        };
+
+        mainpage.prototype.navigateTo = function navigateTo(title) {
+            this.router.navigateToRoute(title);
+        };
+
+        return mainpage;
+    }()) || _class);
+});
 define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-client'], function (exports, _entityManagerFactory, _toastr, _breezeClient) {
   'use strict';
 
@@ -2296,8 +2449,8 @@ define('settings',["exports"], function (exports) {
     });
     exports.default = {
 
-        serviceName: "http://absppms2:8072/odata",
-        serviceNameBase: "http://absppms2:8072",
+        serviceName: "http://localhost:30313/odata",
+        serviceNameBase: "http://localhost:30313",
         pageSize: 100,
         STATIONS: ["", "CEBU", "DAVAO"],
 
@@ -5225,9 +5378,9 @@ define('ppfcs/cache_budget',["exports"], function (exports) {
         this._LOADING_BUDGET = 0;
         this.CALLER = { ACTION: null, ACTION_CALLER: null, VALUE1: null, VALUE2: null, VALUE3: null, VALUE4: null };
         this.OBSERVERS = {
-
-            clear_budget_modal: [],
-            budget_dialog: [],
+            pass_group: [],
+            pass_indiv: [],
+            enable_approved: [],
             copy_template_guest: [],
             copy_template: [],
             budget_refresh: [],
@@ -5236,7 +5389,8 @@ define('ppfcs/cache_budget',["exports"], function (exports) {
             reset_summary: [],
             pass_program: [],
             budget_loaded: [],
-            disable_search_personnel: []
+            disable_search_personnel: [],
+            pass_job: []
         };
     };
 });
@@ -5427,7 +5581,7 @@ define('ppfcs/actual_cost/actual_cost',['exports', 'aurelia-framework', 'cache_o
         this._cache_obj = cache_obj;
     }) || _class);
 });
-define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'numeral', 'toastr', 'multi-observer', '../../modals/paymentterm', 'aurelia-dialog'], function (exports, _aureliaFramework, _cache_budget, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _numeral, _toastr, _multiObserver, _paymentterm, _aureliaDialog) {
+define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'numeral', 'toastr', 'multi-observer', '../../modals/paymentterm', 'aurelia-dialog', 'cache_obj'], function (exports, _aureliaFramework, _cache_budget, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _numeral, _toastr, _multiObserver, _paymentterm, _aureliaDialog, _cache_obj) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -5502,8 +5656,8 @@ define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget
 
   var _dec, _class, _desc, _value, _class2, _descriptor;
 
-  var GuestCustomElement = exports.GuestCustomElement = (_dec = (0, _aureliaFramework.inject)(_multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
-    function GuestCustomElement(cache_budget, multiObserver, dialogService) {
+  var GuestCustomElement = exports.GuestCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
+    function GuestCustomElement(cache_obj, cache_budget, multiObserver, dialogService) {
       var _this = this;
 
       _classCallCheck(this, GuestCustomElement);
@@ -5514,6 +5668,7 @@ define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget
       this._enableAdd = false;
       this._enableRemove = false;
       this.dialogService = null;
+      this._cache_obj = null;
 
       if ((0, _entityManagerFactory.EntityManager)() === undefined) {
         return;
@@ -5521,8 +5676,9 @@ define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget
 
       this._cache_budget = cache_budget;
       this.dialogService = dialogService;
+      this._cache_obj = cache_obj;
 
-      this._cache_budget.OBSERVERS.budget_dialog.push(function (val) {
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
         _this.fnCheckBudget(val);
       });
 
@@ -5816,7 +5972,7 @@ define('ppfcs/budget/main-header',['exports', 'aurelia-framework', 'cache_obj', 
 
       this.LoginPassed(this._cache_obj.USER);
 
-      this._cache_budget.OBSERVERS.budget_dialog.push(function (val) {
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
         _this.CloseBudgetDialog(val);
       });
 
@@ -6871,7 +7027,7 @@ define('ppfcs/budget/personnel',['exports', 'aurelia-framework', 'ppfcs/cache_bu
         _this.resetView();
       });
 
-      this._cache_budget.OBSERVERS.budget_dialog.push(function (val) {
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
         _this.CloseBudgetDialog(val);
       });
 
@@ -7008,7 +7164,7 @@ define('ppfcs/budget/personnel',['exports', 'aurelia-framework', 'ppfcs/cache_bu
     PersonnelCustomElement.prototype.ButtonStatus = function ButtonStatus(value) {
       var _this5 = this;
 
-      this._cache_budget.OBSERVERS.enable_modal_button.forEach(function (all) {
+      this._cache_obj.OBSERVERS.enable_modal_button.forEach(function (all) {
         _this5.isIndivMstrDisabled = !value;
         _this5.isIndivMstrTalentsDisabled = !value;
       });
@@ -7033,7 +7189,7 @@ define('ppfcs/budget/personnel',['exports', 'aurelia-framework', 'ppfcs/cache_bu
     PersonnelCustomElement.prototype.fnCheckBudget = function fnCheckBudget(BDGT_TMPL_ID) {
       var _this6 = this;
 
-      this._cache_budget.OBSERVERS.enable_modal_button.forEach(function (all) {
+      this._cache_obj.OBSERVERS.enable_modal_button.forEach(function (all) {
         _this6.isIndivMstrDisabled = false;
         _this6.isIndivMstrTalentsDisabled = false;
       });
@@ -8070,7 +8226,7 @@ define('ppfcs/budget/summary',['exports', 'aurelia-framework', 'cache_obj', 'ppf
 
   var _dec, _class, _desc, _value, _class2, _descriptor;
 
-  var SummaryCustomElement = exports.SummaryCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _multiObserver.MultiObserver), _dec(_class = (_class2 = function () {
+  var SummaryCustomElement = exports.SummaryCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _multiObserver.MultiObserver), _dec(_class = (_class2 = function () {
     function SummaryCustomElement(cache_obj, cache_budget, multiObserver) {
       var _this = this;
 
@@ -8092,7 +8248,7 @@ define('ppfcs/budget/summary',['exports', 'aurelia-framework', 'cache_obj', 'ppf
       this._cache_budget = cache_budget;
       this._multiObserver = multiObserver;
 
-      this._cache_budget.OBSERVERS.budget_dialog.push(function (val) {
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
         _this.fnCheckSummary(val);
       });
 
@@ -8296,6 +8452,7 @@ define('text!app.html', ['module'], function(module) { module.exports = "<templa
 define('text!blankpage.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\n      \n\n    </div>\n    \n\r\n</template>"; });
 define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h2>${heading}</h2>\n    <div>\n      <div class=\"col-md-2\">\n        <ul class=\"well nav nav-pills nav-stacked\">\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n            <a href.bind=\"row.href\">${row.title}</a>\n          </li>\n        </ul>\n      </div>\n      <div class=\"col-md-10\" style=\"padding: 0\">\n        <router-view></router-view>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!group_individual.html', ['module'], function(module) { module.exports = "<template>\r\n  <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n  <require from=\"converters/filtercustom\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;text-align:center\" class=\"text-center divBackground\" >\r\n  \t<table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:80%;\">\r\n     <tr>\r\n        <td style=\"width:50%;text-align:center;\" colspan=3><strong>TALENT LIST</strong></td>\r\n      </tr>\r\n  \t\t<tr>\r\n        <!-- class=\"typeahead\" -->\r\n        <td style=\"width:20%;\" class=\"text-left\">Global ID: ${_GLOBAL_GRP_ID}</td>\r\n        <!-- class=\"typeahead\" -->\r\n        <td style=\"width:45%;\"class=\"text-left\">Name: ${_GROUP_NAME}\r\n          <!-- <input id=\"idTalentManager\" class=\"typeahead\"/> -->\r\n        </td>\r\n        <td style=\"width:30%;\">\r\n          <!-- <modalcontainer to.bind=\"modalTalentManager\"></modalcontainer> -->\r\n          <input type=\"button\" class=\"btn btn-xs customButton\" value=\"Find Talent Manager\" style=\"padding-left:15px;padding-right:15px;\" click.delegate=\"findTalentManager()\" disabled.bind=\"disabledfindTM\" />\r\n\r\n          <button class=\"btn btn-xs customButton\" click.trigger=\"clear()\">Clear</button>\r\n          <button class=\"btn btn-xs customButton\" click.trigger=\"saveGroupIndiv()\"  disabled.bind=\"isDisableSave\" >Save</button>\r\n\r\n        </td>\r\n      </tr>\r\n     \r\n      <tr>\r\n        <td colspan=3 style=\"text-align:right;\">\r\n          <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstr\"></modalcontainer> -->\r\n          <input type=\"button\" class=\"btn btn-xs customButton\" value=\"Search Talent\" style=\"padding-left:15px;padding-right:15px;\" disabled.bind=\"disabledfindTalent\" click.delegate=\"findTalent()\"/>\r\n        </td>\r\n      </tr>\r\n      <tr>\r\n       <td colspan=3>\r\n         <table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:100%;\">\r\n          <thead>\r\n           <tr><td style=\"width:30%;\">GLOBAL ID</td><td style=\"width:60%;\">TALENTS</td><td></td></tr>\r\n         </thead>\r\n         <tbody>\r\n           <tr repeat.for=\"item of grpMembers | filtercustom:'STATUS_CD':'ACTV':_signal | sorttext:'PERSONNEL_NAME':'ascending'\">\r\n            <td style=\"width:20%;\">${item.GLOBAL_INDIV_ID}</td>\r\n            <td style=\"width:60%;\">${item.PERSONNEL_NAME}</td>\r\n            <td><button click.delegate=\"$parent.deleteItem(item)\">X</button>\r\n            </td>\r\n          </tr>\r\n\r\n        </tbody>\r\n      </table>\r\n    </td>\r\n  </tr>\r\n</table>\r\n\r\n<!-- <modalcontainer to.bind=\"modalLogin\"></modalcontainer> -->\r\n<!--<div style=\"margin-right:200px!important;\">\r\n    <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.delegate=\"fnLogin()\"/>\r\n    <input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\"> \r\n</div>-->\r\n<div>\r\n  <br/>\r\n  <br/>\r\n  <table class= \"table-bordered\">\r\n    <tr>\r\n      <td>\r\n        LOGGED AS:\r\n      </td>\r\n      <td>\r\n        <strong>${_cache_obj.USER.USER_ID}</strong> \r\n      </td>\r\n    </tr>\r\n  </table>\r\n</div>\r\n</div>\r\n\r\n</template>"; });
+define('text!mainpage.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\n    <!--<div class=\"panel panel-info\">...</div>-->\n    <center>\r\n      <div class=\"row\">\r\n        <div class=\"list-group\" style=\"padding-top:2%;margin-left:4%;margin-right:4%;\">\r\n          <a href=\"#\" class=\"list-group-item active\" if.bind=\"headerVisible\" style=\"background-color: #d9edf7; color: #31708f;   border: 1px solid #a4d4e6;\">\r\n            <h3 style=\"margin-left:10px;margin-top:10px;margin-right:10px;\" class=\"list-group-item-heading\">PLEASE SELECT..</h3>\r\n          </a>\r\n          <!--<a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('mainview')\" if.bind=\"budgetAccess\" style=\" padding-top:15px;\">\r\n\r\n                      <h3 style=\"margin:0px;color: #31708f;\">\r\n                        BUDGET TEMPLATE\r\n                      </h3>\r\n\r\n        </a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('actual_cost')\"  if.bind=\"actualAccess\"><h3 style=\"margin:0px;color: #31708f;\">ACTUAL COST</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('group_individual')\" if.bind=\"talentgroupAccess\"><h3 style=\"margin:0px;color: #31708f;\">TALENT GROUP</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('buh')\"  if.bind=\"buhAccess\"><h3 style=\"margin:0px;color: #31708f;\">BUH</h3></a>-->\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _application\" click.trigger=\"applicationClick(item)\" if.bind=\"!_remove.includes(item.APPLICATION_DESC) && _application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC}</h3></a>\n\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _ppfcs_modules\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC.toUpperCase()}</h3></a>\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _roles\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.MODULE_NAME.toUpperCase()}</h3></a>\n          <a href=\"#\" class=\"list-group-item\" if.bind=\"!_application_on\" click.trigger=\"applicationOn()\"><h3 style=\"margin:0px;color: #31708f;\">BACK..</h3></a>\n\r\n          <!--<a href=\"#\" class=\"list-group-item\">IPS</a>-->\r\n\r\n\r\n        </div>\r\n\r\n        <div class=\"col-xs-0 col-md-4\"></div>\r\n      </div>\r\n    </center>\n    </div>\n    \n\r\n</template>"; });
 define('text!nav-bar.html', ['module'], function(module) { module.exports = "<template>\n  <nav class=\"navbar navbar-default navbar-fixed-top backroundTab\" role=\"navigation\" >\n    <div class=\"navbar-header\" style=\"background-color:#2191c0;margin-right:20px;margin-left:20px;\">\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\n        <span class=\"sr-only\">Toggle Navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\" >\n        <i class=\"fa fa-home\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\n        <span style=\"color:white\">${router.title}</span>\n      </a>\n    </div>\n\n    <div class=\"collapse navbar-collapse  .navbar-right\" id=\"bs-example-navbar-collapse-1\">\n      <!--<ul class=\"nav navbar-nav\">\n        <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n          <a if.bind=\"row.title!='PPMS'\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\n        </li>\n      </ul>-->\n      \n      <ul class=\"nav navbar-nav\">\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"home()\" href=\"#\">HOME</a>\n         \r\n        </li>\n          \n        <!--<li  if.bind=\"_cache_obj.USER.USER_ID===undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" click.trigger=\"fnLogin()\" href=\"#\">LOG-IN</a>\r\n        </li>-->\n      </ul>\n      <ul class=\"nav navbar-nav\">\r\n        <li class=\"loader\" if.bind=\"router.isNavigating || settings.isNavigating\">\r\n          <i class=\"fa fa-spinner fa-spin fa-2x\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\r\n        </li>\r\n      </ul>\n      <ul class=\"nav navbar-nav navbar-right\" style=\"background-color:#2191c0;height:50px;\"  if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n        <li style=\"color:white;font-size:13px;margin-top:16px;margin-right:20px;margin-left:20px;\">\r\n          ${_cache_obj.USER.USER_ID}\r\n        </li>\n        <li class=\"dropdown\">\r\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"  style=\"color:white;font-size:13px;\">PASSWORD<span class=\"caret\"></span></a>\r\n          <ul class=\"dropdown-menu\">\r\n            <li><a href=\"#\" click.trigger=\"changePassword()\">CHANGE PASSWORD</a></li>\r\n            <!--<li role=\"separator\" class=\"divider\"></li>-->\r\n            <!--<li><a href=\"#\">EMAIL PASSWORD</a></li>-->\r\n          </ul>\r\n        </li>\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"logout()\" href=\"#\">LOG-OUT</a>\r\n        </li>\r\n      </ul>\n    </div>\n  </nav>\n</template>\n"; });
 define('text!users.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"blur-image\"></require>\n\n  <section class=\"au-animate\">\n      <h2>${heading}</h2>\n      <div class=\"row au-stagger\">\n        <div class=\"col-sm-6 col-md-3 card-container au-animate\" repeat.for=\"user of users\">\n            <div class=\"card\">\n                <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n                <div class=\"avatar\">\n                    <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n                </div>\n                <div class=\"content\">\n                    <p class=\"name\">${user.login}</p>\n                    <p><a target=\"_blank\" class=\"btn btn-default\" href.bind=\"user.html_url\">Contact</a></p>\n                </div>\n            </div>\n        </div>\n      </div>\n  </section>\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h2>${heading}</h2>\n\n    <form role=\"form\" submit.delegate=\"submit()\">\n      <div class=\"form-group\">\n        <label for=\"fn\">First Name</label>\n        <input type=\"text\" value.bind=\"firstName\" class=\"form-control\" id=\"fn\" placeholder=\"first name\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"ln\">Last Name</label>\n        <input type=\"text\" value.bind=\"lastName\" class=\"form-control\" id=\"ln\" placeholder=\"last name\">\n      </div>\n      <div class=\"form-group\">\n        <label>Full Name</label>\n        <p class=\"help-block\">${fullName | upper}</p>\n      </div>\n      <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n    </form>\n  </section>\n</template>\n"; });
