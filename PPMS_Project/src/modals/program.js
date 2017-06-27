@@ -6,11 +6,11 @@ import _ from 'underscore';
 import $ from 'jquery';  
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import {DialogController} from 'aurelia-dialog';
 import breeze from 'breeze-client';
 
-@inject(MultiObserver,ObserverLocator,Element, objBudget,DialogController)
+@inject(MultiObserver,ObserverLocator,Element, cache_obj,DialogController)
 export class program {
 	items = [];
 	observerLocator = null;
@@ -19,7 +19,7 @@ export class program {
 	varFilterArray = [];
 	currPredicate=null;
 	controller=null;
-	constructor(multiObserver,observerLocator,Element, objBudget, controller) {
+	constructor(multiObserver,observerLocator,Element, cache_obj, controller) {
 		this.controller=controller;
 	
 		
@@ -27,7 +27,7 @@ export class program {
 		
 		this.items=getLookups().BDGT_TMPL_HDR;
 
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 	
 		multiObserver.observe(
 			[
@@ -36,7 +36,7 @@ export class program {
 			], (newValue, oldValue) => this.onSpeculateProp(newValue, oldValue));
 
 
-		this._objBudget.OBSERVERS.clear_program_modal.push(() => {
+		this._cache_obj.OBSERVERS.clear_program_modal.push(() => {
 			this.ClearSearch();
 		});
 
@@ -44,7 +44,7 @@ export class program {
 
 	selectedTalent(item){
 
-		this._objBudget.OBSERVERS.pass_value.forEach((all) => {
+		this._cache_obj.OBSERVERS.pass_value.forEach((all) => {
 			all(item);
 		});
 
@@ -100,14 +100,14 @@ export class program {
 		}
 
 
-		if(this._objBudget.PROGRAM_USER.length==0)
+		if(this._cache_obj.PROGRAM_USER.length==0)
 		{
 
 			var _query = EntityQuery().from('PROGRAM_USER_TRX');
 			EntityManager().executeQuery(_query).then((success) => {
 				success.results.forEach((all)=>{
-					if(all.USER_ID==this._objBudget.USER.USER_ID)
-						this._objBudget.PROGRAM_USER.push(all);
+					if(all.USER_ID==this._cache_obj.USER.USER_ID)
+						this._cache_obj.PROGRAM_USER.push(all);
 				});
 
 			});
@@ -129,7 +129,7 @@ export class program {
 				_.each(success.results, (all) => {
 
 					
-					var findProgramUser=this._objBudget.PROGRAM_USER.find((allP)=>allP.PROGRAM_ID==all.PROGRAM_ID);
+					var findProgramUser=this._cache_obj.PROGRAM_USER.find((allP)=>allP.PROGRAM_ID==all.PROGRAM_ID);
 					if(findProgramUser!== undefined)
 					{
 						tmpVar.push({
@@ -158,10 +158,10 @@ export class program {
 
 	selectedProgram(item){
 
-		// this._objBudget.CALLER.VALUE1 = item;
-		// this._objBudget.CALLER.ACTION="pass.program";
+		// this._cache_obj.CALLER.VALUE1 = item;
+		// this._cache_obj.CALLER.ACTION="pass.program";
 
-		this._objBudget.OBSERVERS.pass_program.forEach((all) => {
+		this._cache_obj.OBSERVERS.pass_program.forEach((all) => {
 			all(item);
 		});
 

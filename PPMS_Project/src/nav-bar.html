@@ -21,12 +21,12 @@
       </ul>-->
       
       <ul class="nav navbar-nav">
-        <li if.bind="_objBudget.USER.USER_ID!==undefined">
+        <li if.bind="_cache_obj.USER.USER_ID!==undefined">
           <a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" style="color:white;font-size:13px;" click.trigger="home()" href="#">HOME</a>
          
         </li>
           
-        <!--<li  if.bind="_objBudget.USER.USER_ID===undefined">
+        <!--<li  if.bind="_cache_obj.USER.USER_ID===undefined">
           <a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" click.trigger="fnLogin()" href="#">LOG-IN</a>
         </li>-->
       </ul>
@@ -35,9 +35,9 @@
           <i class="fa fa-spinner fa-spin fa-2x" style="color:white;margin-top:0px;padding-top:0px;"></i>
         </li>
       </ul>
-      <ul class="nav navbar-nav navbar-right" style="background-color:#2191c0;height:50px;"  if.bind="_objBudget.USER.USER_ID!==undefined">
+      <ul class="nav navbar-nav navbar-right" style="background-color:#2191c0;height:50px;"  if.bind="_cache_obj.USER.USER_ID!==undefined">
         <li style="color:white;font-size:13px;margin-top:16px;margin-right:20px;margin-left:20px;">
-          ${_objBudget.USER.USER_ID}
+          ${_cache_obj.USER.USER_ID}
         </li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"  style="color:white;font-size:13px;">PASSWORD<span class="caret"></span></a>
@@ -47,7 +47,7 @@
             <!--<li><a href="#">EMAIL PASSWORD</a></li>-->
           </ul>
         </li>
-        <li if.bind="_objBudget.USER.USER_ID!==undefined">
+        <li if.bind="_cache_obj.USER.USER_ID!==undefined">
           <a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" style="color:white;font-size:13px;" click.trigger="logout()" href="#">LOG-OUT</a>
         </li>
       </ul>

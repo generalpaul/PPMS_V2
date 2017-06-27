@@ -1,6 +1,6 @@
 ﻿import { inject } from 'aurelia-framework';
 import { computedFrom, customElement } from 'aurelia-framework';
-import { objBudget } from 'objBudget';
+import { cache_obj } from 'cache_obj';
 import { initializeBreeze } from './entity-manager-factory';
 import { loadMasterfiles, loadTables, loadLookups, getLookups } from './masterfiles';
 import toastr from "toastr";
@@ -9,16 +9,16 @@ import { DialogService } from 'aurelia-dialog';
 import { generateID } from './entity-manager-factory';
 //import {handle, Dispatcher} from 'aurelia-flux';  
 import { checkCookie, setCookie, removeCookie, getCookie } from './helpers';
-import { MultiObserver } from 'multi-observer';
-
+//import { MultiObserver } from 'multi-observer';
+import settings from './settings';
 import { Router } from 'aurelia-router';
-
-@inject(toastr, objBudget, MultiObserver, DialogService, Router)
+import _ from 'underscore';
+@inject(toastr, cache_obj, DialogService, Router) //MultiObserver
 export class mainpage {
 
 
     _toastr = null;
-    _objBudget;
+    _cache_obj;
     
     router;
     budgetAccess=false;
@@ -26,47 +26,63 @@ export class mainpage {
     talentgroupAccess = false;
     buhAccess = false;
     headerVisible = false;
-    constructor(toastr, objBudget, multiObserver, dialogService, Router) {
+    constructor(toastr, cache_obj, dialogService, Router) { //multiObserver
         
-        this._objBudget = objBudget;
+        this._cache_obj = cache_obj;
         this.router = Router;
 
         setTimeout(() => {
            
             
-            if (this._objBudget.USER.ROLE_CD !== undefined)
+            if (this._cache_obj.USER.ROLE_CD !== undefined)
             {
-                //console.log(this._objBudget.USER.ROLE_CD);
-                if (this._objBudget.USER.ROLE_CD.includes('ACCESSALL')) {
+                //console.log(this._cache_obj.USER.ROLE_CD);
+                if (this._cache_obj.USER.ROLE_CD.includes('ACCESSALL')) {
                     this.budgetAccess = true;
                     this.talentgroupAccess = true;
                     this.buhAccess = true;
                     this.actualAccess = true;
                     this.headerVisible = true;
                 }
-                else if (this._objBudget.USER.ROLE_CD.includes('HR'))
+                
+                if (_.isEmpty(this._cache_obj._ACCESS))
                 {
-                    //this.budgetAccess = true;
-                    this.router.navigateToRoute('mainview');
+                  $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
+                      "USER_ID": this._cache_obj.USER.USER_ID,
+                      "HASH": this._cache_obj.USER.HASH
+                  }).done((response) => {
+                      this._cache_obj._ACCESS = response;
+                      this.fnCheckAccess();
+                  });
                 }
-                else if (this._objBudget.USER.ROLE_CD.includes('PPFCS')) {
-                    this.router.navigateToRoute('actual_cost'); return;
-                    //this.actualAccess = true;
-                    this.headerVisible = true;
+                else
+                {
+                    this.fnCheckAccess();
                 }
+
+                //else if (this._cache_obj.USER.ROLE_CD.includes('HR'))
+                //{
+                //    //this.budgetAccess = true;
+                //    this.router.navigateToRoute('mainview');
+                //}
+                //else if (this._cache_obj.USER.ROLE_CD.includes('PPFCS')) {
+                //    this.router.navigateToRoute('actual_cost'); return;
+                //    //this.actualAccess = true;
+                //    this.headerVisible = true;
+                //}
                 
             }
             
         }, 1000);
         
 
-        //if (this._objBudget.OBSERVERS.loggedout.length==0)
-        //this._objBudget.OBSERVERS.loggedout.push(() => {
+        //if (this._cache_obj.OBSERVERS.loggedout.length==0)
+        //this._cache_obj.OBSERVERS.loggedout.push(() => {
         //    this.logout();
         //});
 
-        //if (this._objBudget.OBSERVERS.loginPage.length == 0)
-        //    this._objBudget.OBSERVERS.loginPage.push(() => {
+        //if (this._cache_obj.OBSERVERS.loginPage.length == 0)
+        //    this._cache_obj.OBSERVERS.loginPage.push(() => {
         //    //    alert(1);
         //    this.fnLogin();
         //});
@@ -97,11 +113,33 @@ export class mainpage {
      
 
 
-        //this._objBudget.OBSERVERS.logoutPage.push(() => {
+        //this._cache_obj.OBSERVERS.logoutPage.push(() => {
         //    this.logout();
         //});
 
        
+    }
+
+    fnCheckAccess()
+    {
+        
+        var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+        var varFound = this._cache_obj._ACCESS.APPLICATION.filter(all => filterMenu.includes(all.APPLICATION_DESC));
+        if (varFound.length == 1)
+        {
+            if (varFound == 'PROGRAM BUDGET TEMPLATE')
+                this.router.navigateToRoute('mainview');
+            else
+                this.router.navigateToRoute('actual_cost');
+        }
+        else
+        {
+            this.budgetAccess = true;
+            this.talentgroupAccess = true;
+            this.buhAccess = true;
+            this.actualAccess = true;
+            this.headerVisible = true;
+        }
     }
 
     navigateTo(title)
@@ -121,7 +159,7 @@ export class mainpage {
     //        loadMasterfiles().then(() => {
     //            loadLookups().then(() => {
 
-    //                this._objBudget.OBSERVERS.init_modal.forEach((all) => {
+    //                this._cache_obj.OBSERVERS.init_modal.forEach((all) => {
     //                    all();
     //                });
 
@@ -159,9 +197,9 @@ export class mainpage {
     //            EMAIL_ADDRESS: varSplitCookie[6],
     //        };
 
-    //        this._objBudget.USER = this._user;
-    //        console.log(this._objBudget.USER);
-    //        this._objBudget.OBSERVERS.login_passed.forEach((all) => {
+    //        this._cache_obj.USER = this._user;
+    //        console.log(this._cache_obj.USER);
+    //        this._cache_obj.OBSERVERS.login_passed.forEach((all) => {
     //            all(this._user);
     //        });
 
@@ -175,7 +213,7 @@ export class mainpage {
     //    }
 
     //    this.LoginPassed(output);
-    //    this._objBudget.OBSERVERS.login_passed.forEach((all) => {
+    //    this._cache_obj.OBSERVERS.login_passed.forEach((all) => {
     //        all(output);
     //    });
     //}
@@ -196,13 +234,13 @@ export class mainpage {
     //    toastr.success("Let's Start...", "Success");
 
     //    this.showMenus = true;
-    //    // this._objBudget.OBSERVERS.close_modal.forEach((all) => {
+    //    // this._cache_obj.OBSERVERS.close_modal.forEach((all) => {
     //    //   all(this.modalLogin.id);
     //    // });
 
     //    this.loginDisabled = true;
     //    this.logoutDisabled = false;
-    //    // this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+    //    // this._cache_obj.OBSERVERS.enable_modal_button.forEach((all) => {
     //    //   all(this.modalLogin.id, false);
     //    // });
 
@@ -214,24 +252,24 @@ export class mainpage {
     //logout() {
     //    this.showMenus = false;
       
-    //    // this._objBudget.OBSERVERS.open_modal.forEach((all) => {
+    //    // this._cache_obj.OBSERVERS.open_modal.forEach((all) => {
     //    //   all(this.modalLogin.id, true);
     //    // });
     
     //    this.fnLogin();
-    //    // this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+    //    // this._cache_obj.OBSERVERS.enable_modal_button.forEach((all) => {
     //    //   all(this.modalLogin.id, true);
     //    // });
 
-    //    //this._objBudget.OBSERVERS.loggedout.forEach((all) => {
+    //    //this._cache_obj.OBSERVERS.loggedout.forEach((all) => {
     //    //    all();
     //    //});
 
-    //    this._objBudget.OBSERVERS.clear_log.forEach((all) => {
+    //    this._cache_obj.OBSERVERS.clear_log.forEach((all) => {
     //        all();
     //    });
 
-    //    this._objBudget.USER = {};
+    //    this._cache_obj.USER = {};
     //    removeCookie();
     //    this.showingLogout = "hidden";
 

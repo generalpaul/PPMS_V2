@@ -1,0 +1,32 @@
+export class cache_obj{
+
+    ALLOW_PASS_CONFIDENTIAL=false;
+
+    PROGRAM_USER=[];
+    _ACCESS = {};
+    CALLER={ACTION:null,ACTION_CALLER:null,VALUE1:null,VALUE2:null,VALUE3:null,VALUE4:null};
+    OBSERVERS = {
+        init_modal:[], 
+        close_modal:[], 
+        open_modal:[], 
+        enable_modal_button: [], 
+        open_modal_message:[],
+        clear_indiv_modal: [], 
+        clear_program_modal: [], 
+        clear_log:[], 
+        clear_login_modal:[], 
+        clear_talentmanager_modal: [],
+        pass_value:[],
+        login_passed:[],
+        pass_group:[], 
+        loggedout:[], 
+        confirm_dialog:[],
+        enable_approved:[], 
+        pass_indiv:[], 
+        pass_job:[],
+        clear_job_modal:[],
+        budget_loaded: [],
+        logoutPage: [],
+        loginPage:[]
+    };
+}

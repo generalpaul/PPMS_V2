@@ -8,16 +8,14 @@ import typeahead from 'typeahead';
 import _ from 'underscore';
 import {EntityManager, EntityQuery} from './entity-manager-factory';
 //import {handle, Dispatcher} from 'aurelia-flux';  
-
 import { MultiObserver }from 'multi-observer';
-import {  objBudget } from 'objBudget';
 import {DialogService} from 'aurelia-dialog';
 import {login} from 'modals/login';
 import {globalindivmstr} from 'modals/globalindivmstr';
 import {talentmanagergroups} from 'modals/talentmanagergroups';
 import settings from './settings';
 
-@inject(MultiObserver,objBudget,DialogService)
+@inject(MultiObserver,DialogService)
 export class group_individual {
 	masterFilesLoaded=false;
 	modalTalentManager;
@@ -30,12 +28,11 @@ export class group_individual {
 	isDisableSave = true;
 	showingLogout="hidden";
 	_user="";
-	_objBudget;
+
 	disabledfindTalent=true;
 	disabledfindTM=false;
-	constructor(multiObserver,objBudget,dialogService) {
+	constructor(multiObserver,dialogService) {
 
-		this._objBudget=objBudget;
 		this.dialogService=dialogService;
 		if(this.dialogService.controllers.length>0)
 		{
@@ -214,12 +211,6 @@ export class group_individual {
 				this.loginDisabled = true;
 				loadMasterfiles().then(() => {
 					loadLookups().then(() => {
-
-						//this._objBudget.OBSERVERS.init_modal.forEach((all) => {
-						//	all();
-						//});
-
-
 
 						this.masterFilesLoaded = true;
 

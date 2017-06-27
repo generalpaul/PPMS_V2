@@ -1,5 +1,5 @@
 import {bindable} from 'aurelia-framework';
-import { objBudget } from 'objBudget';
+import { cache_obj } from 'cache_obj';
 import { inject } from 'aurelia-framework';
 import { Router } from 'aurelia-router';
 import { checkCookie, setCookie, removeCookie, getCookie } from './helpers';
@@ -12,16 +12,16 @@ import { loadMasterfiles, loadTables, loadLookups, getLookups } from './masterfi
 import settings from './settings';
 
 
-@inject(objBudget, Router, DialogService)
+@inject(cache_obj, Router, DialogService)
 export class NavBar {
     @bindable router = null;
-    _objBudget;
+    _cache_obj;
     router;
     masterFilesLoaded = false;
-    constructor(objBudget, Router, DialogService)
+    constructor(cache_obj, Router, DialogService)
     {
         this.router = Router;
-        this._objBudget = objBudget;
+        this._cache_obj = cache_obj;
         
         this.dialogService = DialogService;
         this.settings = settings;
@@ -49,7 +49,7 @@ export class NavBar {
         //                EMAIL_ADDRESS: varSplitCookie[6],
         //            };
 
-        //            this._objBudget.USER = _user;
+        //            this._cache_obj.USER = _user;
         //        }
 
         //    }, 2000);
@@ -80,7 +80,7 @@ export class NavBar {
                         EMAIL_ADDRESS: varSplitCookie[6],
                     };
 
-                    this._objBudget.USER = _user;
+                    this._cache_obj.USER = _user;
                 }
 
                 this.fnInitMasterfiles(0, "");
@@ -102,7 +102,7 @@ export class NavBar {
             loadMasterfiles().then(() => {
                 loadLookups().then(() => {
 
-                    //this._objBudget.OBSERVERS.init_modal.forEach((all) => {
+                    //this._cache_obj.OBSERVERS.init_modal.forEach((all) => {
                     //    all();
                     //});
 
@@ -129,6 +129,8 @@ export class NavBar {
         } else {
             var varCookie = checkCookie("PPMS_USER");
 
+            
+
             var varSplitCookie = varCookie.split('^');
             this._user = {
                 USER_ID: varSplitCookie[0],
@@ -141,7 +143,7 @@ export class NavBar {
                 ROLE_CD: varSplitCookie[7]
             };
 
-            this._objBudget.USER = this._user;
+            this._cache_obj.USER = this._user;
             
             toastr.clear();
             toastr.success("Let's Start...", "Success");
@@ -150,6 +152,8 @@ export class NavBar {
             {
                 this.router.navigateToRoute('mainpage');
             }
+
+      
 
             return;
         }
@@ -167,6 +171,9 @@ export class NavBar {
         setCookie("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^"
             + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD, 30);
         settings.isNavigating = false;
+
+       
+        
       //  console.log(checkCookie("PPMS_USER"));
         toastr.clear();
         toastr.success("Let's Start...", "Success");
@@ -181,15 +188,18 @@ export class NavBar {
         if (this.router.currentInstruction.config.name != "blankpage")
             this.router.navigateToRoute('blankpage');
         else
-            this._objBudget.OBSERVERS.loggedout.forEach((all) => {
+            this._cache_obj.OBSERVERS.loggedout.forEach((all) => {
                 all();
             });
 
-        this._objBudget.OBSERVERS.clear_log.forEach((all) => {
+        this._cache_obj.OBSERVERS.clear_log.forEach((all) => {
             all();
         });
 
-        this._objBudget.USER = {};
+        this._cache_obj.USER = {};
+        this._cache_obj._ACCESS = {};
+
+   
         removeCookie();
 
         this.fnLogin();

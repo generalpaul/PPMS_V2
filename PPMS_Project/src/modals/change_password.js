@@ -7,11 +7,11 @@ import $ from 'jquery';
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
 //import {HttpClient} from 'aurelia-http-client';
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import { DialogController } from 'aurelia-dialog';
 import settings from '../settings';
 
-@inject(MultiObserver, ObserverLocator, Element, objBudget,DialogController)
+@inject(MultiObserver, ObserverLocator, Element, cache_obj,DialogController)
 export class change_password {
 	items = [];
 	observerLocator = null;
@@ -22,13 +22,13 @@ export class change_password {
 	_COMPANY;
 	_PASSWORD;
 
-    _objBudget;
+    _cache_obj;
     _NEW_PASSWORD;
 
-	constructor(multiObserver, observerLocator, Element, objBudget,controller) 
+	constructor(multiObserver, observerLocator, Element, cache_obj,controller) 
 	{
 		this.controller=controller;
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 	}
 
     keyPressed($event) {
@@ -48,11 +48,11 @@ export class change_password {
         settings.isNavigating = true;
         toastr.info("Please wait..", "Saving Password");
         
-        $.post(settings.ActualCostService +"/home/Set_Password", {
-            "USER_ID": this._objBudget.USER.USER_ID,
-            "COMPANY_ID": this._objBudget.USER.COMPANY_ID,
+        $.post(settings.serviceNameBase +"/useraccess/Set_Password", {
+            "USER_ID": this._cache_obj.USER.USER_ID,
+            "COMPANY_ID": this._cache_obj.USER.COMPANY_ID,
             "Password": this._NEW_PASSWORD,
-            "HASH": this._objBudget.USER.HASH
+            "HASH": this._cache_obj.USER.HASH
         }).done((response) => {
             settings.isNavigating = false;
             toastr.clear();

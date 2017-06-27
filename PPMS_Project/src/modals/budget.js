@@ -7,11 +7,11 @@ import $ from 'jquery';
 //import {Dispatcher, handle} from 'aurelia-flux';  
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import { DialogController } from 'aurelia-dialog';
 import breeze from 'breeze-client';
 
-@inject(MultiObserver,ObserverLocator,Element,objBudget,DialogController)
+@inject(MultiObserver,ObserverLocator,Element,cache_obj,DialogController)
 export class budget {
 	items = [];
 	observerLocator = null;
@@ -19,13 +19,13 @@ export class budget {
 	varFilterArrayLength=0;
 	varFilterArray = [];
 	currPredicate=null;
-	_objBudget;
+	_cache_obj;
 	lstPredicates=[];
 	controller=null;
-	constructor(multiObserver,observerLocator,Element,objBudget,controller) {
+	constructor(multiObserver,observerLocator,Element,cache_obj,controller) {
 		this.controller=controller;
 		//this._dispatcher=Dispatcher;
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 		this.observerLocator=observerLocator;
 		
 		this.items=getLookups().BDGT_TMPL_HDR;
@@ -42,7 +42,7 @@ export class budget {
 			], (newValue, oldValue) => this.onSpeculateProp(newValue, oldValue));
 
 
-		this._objBudget.OBSERVERS.clear_budget_modal.push(()=>{
+		this._cache_obj.OBSERVERS.clear_budget_modal.push(()=>{
 			this.ClearSearch();
 		});
 
@@ -140,7 +140,7 @@ export class budget {
 
 	selectedBudget(item){
 		
-		this._objBudget.OBSERVERS.budget_dialog.forEach((all)=>{
+		this._cache_obj.OBSERVERS.budget_dialog.forEach((all)=>{
 			all(item.BDGT_TMPL_ID);
 		});
 
