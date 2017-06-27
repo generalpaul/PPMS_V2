@@ -5,10 +5,10 @@ import {getFilter} from '../helpers';
 import _ from 'underscore';
 import $ from 'jquery';
 //import {Dispatcher, handle} from 'aurelia-flux';  
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import {DialogController} from 'aurelia-dialog';
 
-@inject(MultiObserver,ObserverLocator,Element,objBudget,DialogController)
+@inject(MultiObserver,ObserverLocator,Element,cache_obj,DialogController)
 export class talentmanagergroups {
 	items = [];
 	observerLocator = null;
@@ -17,13 +17,13 @@ export class talentmanagergroups {
 	//_dispatcher;
 	varFilterArrayLength=0;
 	pageindex=0;
-	_objBudget;
+	_cache_obj;
 	controller=null;
 
-	constructor(multiObserver,observerLocator,Element,objBudget,controller) {
+	constructor(multiObserver,observerLocator,Element,cache_obj,controller) {
 		this.controller=controller;
 		//this._dispatcher=Dispatcher;
-		this._objBudget = objBudget;
+		this._cache_obj = cache_obj;
 		this.observerLocator=observerLocator;
 		
 		this.items=getLookups().GLOBAL_GRP_MSTR;
@@ -33,7 +33,7 @@ export class talentmanagergroups {
 			[this, '_bGROUP_NAME']
 			], (newValue, oldValue) => this.onSpeculateProp(newValue, oldValue));
 
-		this._objBudget.OBSERVERS.clear_talentmanager_modal.push(() => {
+		this._cache_obj.OBSERVERS.clear_talentmanager_modal.push(() => {
 			this.ClearSearch();
 		});
 
@@ -51,7 +51,7 @@ export class talentmanagergroups {
 		if(evt.keyCode==13){
 			if(this.varFilterArray.length==1)
 			{
-				this._objBudget.OBSERVERS.pass_value.forEach((all) => {
+				this._cache_obj.OBSERVERS.pass_value.forEach((all) => {
 					all(this.varFilterArray[0]);
 				});
 			}
