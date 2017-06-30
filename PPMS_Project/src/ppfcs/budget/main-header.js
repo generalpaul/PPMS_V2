@@ -227,7 +227,7 @@ export class MainHeaderCustomElement {
     // this._cache_budget.CALLER.ACTION='budget.dialog';
 
 
-    this._cache_budget.OBSERVERS.budget_dialog.forEach((all)=>{
+    this._cache_obj.OBSERVERS.budget_dialog.forEach((all)=>{
       all(this._cache_budget.HEADER.BDGT_TMPL_ID);
     });
 
@@ -560,7 +560,7 @@ export class MainHeaderCustomElement {
         this._disableRefreshBudget=false;
         this._disablePrintBudget = true;
     
-        this._cache_budget.OBSERVERS.budget_dialog.forEach((all) => {
+        this._cache_obj.OBSERVERS.budget_dialog.forEach((all) => {
           all(this._cache_budget.HEADER.BDGT_TMPL_ID);
         });
 
@@ -904,12 +904,27 @@ export class MainHeaderCustomElement {
 
                   //var varVtr = new Date(all.VTR_LIVE_DT.getFullYear(), all.VTR_LIVE_DT.getMonth(), all.VTR_LIVE_DT.getDate());
                   var varVtr = moment(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
-                 
-                  if (this._cache_budget.HEADER.BDGT_FROM <= varVtr && varVtr <= this._cache_budget.HEADER.BDGT_TO) {
-                    if (varMaxDate == null)
-                      varMaxDate = varVtr;
-                    else if (varMaxDate < varVtr)
-                      varMaxDate = varVtr;
+
+                  if ((varTmpFrom <= new Date(this._cache_budget.HEADER.BDGT_FROM) && varTmpFrom >= new Date(this._cache_budget.HEADER.BDGT_TO)) ||
+                      (varTmpTo <= new Date(this._cache_budget.HEADER.BDGT_FROM) && varTmpTo >= new Date(this._cache_budget.HEADER.BDGT_TO)) ||
+                      (varTmpFrom >= new Date(this._cache_budget.HEADER.BDGT_TO)) ||
+                      (varTmpFrom >= new Date(this._cache_budget.HEADER.BDGT_FROM) && varTmpTo <= new Date(this._cache_budget.HEADER.BDGT_TO))
+                  ) {
+                  //if (this._cache_budget.HEADER.BDGT_FROM <= varVtr && varVtr <= this._cache_budget.HEADER.BDGT_TO) {
+
+                      var varVtr = moment(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
+                      var varDateCompare = new Date(varVtr);
+
+                      if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
+                          if (varMaxDate == null)
+                              varMaxDate = varVtr;
+                          else if (varMaxDate < varVtr)
+                              varMaxDate = varVtr;
+                      }
+                    //  if (varMaxDate == null)
+                    //  varMaxDate = varVtr;
+                    //else if (varMaxDate < varVtr)
+                    //  varMaxDate = varVtr;
 
                     //toastr.error("Please enter range beyond the created budget (AC:" + all.ACTUAL_COST_ID + ")");
                   }

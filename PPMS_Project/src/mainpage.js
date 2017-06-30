@@ -35,6 +35,14 @@ export class mainpage {
     ];
     _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
     _ppfcs_modules = [];
+
+//    { APPLICATION_DESC: 'SPECIAL PROVISION MASTERLIST' },
+//{ APPLICATION_DESC: 'MAINTAINED FEE ADJUSTMENT' },
+//{ APPLICATION_DESC: 'BUDGET TEMPLATE PER JOB' },
+//{ APPLICATION_DESC: 'ADDTL FEE MAINTENANCE' },
+//{ APPLICATION_DESC: 'ALLOWED TAPING DAYS' },
+//{ APPLICATION_DESC: 'DOWNLOAD IPS FILE' }
+
     _roles = [];
     _application_on = true;
     constructor(toastr, cache_obj, dialogService, Router) { //multiObserver
@@ -88,7 +96,7 @@ export class mainpage {
                 else
                 {
                     this._application = this._cache_obj._ACCESS.APPLICATION;
-                    //console.log(this._cache_obj._ACCESS);
+                    
                     for (var i = 0; i < this._application.length; i++) {
                         for (var j = 0; j < this._application_desc.length; j++) {
                             if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {

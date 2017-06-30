@@ -361,7 +361,7 @@ export class login {
 
                 toastr.info("Please wait..", "Resetting Password");
                 settings.isNavigating = true;
-                $.post(settings.serviceNameBase + "/home/Reset_Password", {
+                $.post(settings.serviceNameBase + "/UserAccess/Reset_Password", {
                     "USER_ID": this._USER.USER_ID,
                     "COMPANY_ID": this._COMPANY.COMPANY_ID
                 }).done((response) => {

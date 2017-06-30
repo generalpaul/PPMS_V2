@@ -786,7 +786,7 @@ setPersonnelValues(obj,varJobLength,varCategoryLength)
 
   fnPassedPersonnels(value)
   {
-      console.log(value);
+    //  console.log(value);
     this.getDefaultPymntTerm();
 
     value.forEach((val) => {
