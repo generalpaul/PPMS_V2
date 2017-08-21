@@ -264,30 +264,40 @@ export function getGLOBALINDIVandALIAS(){
   var varGlobalGrp = globalGrp;
 
   varGlobalIndiv.forEach((all) => {
-//    console.log(varGlobalIndiv);
+
+    var varAliases=[];
     var varAlias = "";
+
     if (all.ALIAS != "" && all.ALIAS != null) {
-      varAlias = "(" + all.ALIAS;
+      varAlias = " (" + all.ALIAS;
+      varAliases.push(all.ALIAS);
     }
 
-    var varFoundAlias=varGlobalAlias.find(item=>item.GLOBAL_ID==all.GLOBAL_INDIV_ID);
+    var varFoundAlias=varGlobalAlias.filter(item=>item.GLOBAL_ID==all.GLOBAL_INDIV_ID);
 
-    if(varFoundAlias!==undefined)
-    if (varAlias == "")
-      varAlias = "(" + varFoundAlias.ALIAS_NAME;
-    else if (varAlias == "(")
-      varAlias = varFoundAlias.ALIAS_NAME;
-    else
-      varAlias += "," + varFoundAlias.ALIAS_NAME;
+    if(varFoundAlias.length>0)
+        varFoundAlias.forEach((alias)=>{
 
-    if (varAlias != "") {
-      varAlias += ")";
-    }
+        if (varAlias == "")
+        varAlias = " (" + alias.ALIAS_NAME;
+        else if (varAlias == "(")
+          varAlias = alias.ALIAS_NAME;
+        else
+          varAlias += "," + alias.ALIAS_NAME;
+
+          varAliases.push(alias.ALIAS_NAME);
+
+        });
+
+        if (varAlias != "") {
+          varAlias += ")";
+        }
 
     varTmpObject.push({
-      PERSONNEL_NAME: (all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME + varAlias).toUpperCase(),
+      PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim() + varAlias).toUpperCase(),
       GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
-      PERSONNEL_INFO_SRC: 'INDIV'
+      PERSONNEL_INFO_SRC: 'INDIV',
+      ALIASES: varAliases
     });
 
   });
@@ -296,29 +306,36 @@ export function getGLOBALINDIVandALIAS(){
   varTalentSuppIndiv.forEach((all) => {
 
     var varAlias = "";
+    var varAliases=[];
     if (all.ALIAS != "" && all.ALIAS != null) {
-      varAlias = "(" + all.ALIAS;
+      varAlias = " (" + all.ALIAS;
+      varAliases.push(all.ALIAS);
     }
 
-    var varFoundAlias = varGlobalAlias.find(item => item.GLOBAL_ID == all.SUPPLIER_INDIV_GLOBAL_ID);
+   var varFoundAlias=varGlobalAlias.filter(item=>item.GLOBAL_ID==all.SUPPLIER_INDIV_GLOBAL_ID);
 
-    if(varFoundAlias!==undefined)
-    if (varAlias == "")
-      varAlias = "(" + varFoundAlias.ALIAS_NAME;
-    else if (varAlias == "(")
-      varAlias = varFoundAlias.ALIAS_NAME;
-    else
-      varAlias += "," + varFoundAlias.ALIAS_NAME;
+    if(varFoundAlias.length>0)
+        varFoundAlias.forEach((alias)=>{
+        if (varAlias == "")
+        varAlias = " (" + alias.ALIAS_NAME;
+        else if (varAlias == "(")
+          varAlias = alias.ALIAS_NAME;
+        else
+          varAlias += "," + alias.ALIAS_NAME;
 
-    if (varAlias != "") {
-      varAlias += ")";
-    }
+         varAliases.push(alias.ALIAS_NAME);
+    });
+
+        if (varAlias != "") {
+          varAlias += ")";
+        }
 
 
     varTmpObject.push({
-      PERSONNEL_NAME: (all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME + varAlias).toUpperCase(),
+      PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim() + varAlias).toUpperCase(),
       GLOBAL_INDIV_ID: all.SUPPLIER_INDIV_GLOBAL_ID,
-      PERSONNEL_INFO_SRC: 'TSUPPLIER'
+      PERSONNEL_INFO_SRC: 'TSUPPLIER',
+      ALIASES: varAliases
     });
 
   });
@@ -328,7 +345,8 @@ export function getGLOBALINDIVandALIAS(){
     varTmpObject.push({
       PERSONNEL_NAME: all.COMPANY_NAME.toUpperCase(),
       GLOBAL_INDIV_ID: all.SUPPLIER_COMP_GLOBAL_ID,
-      PERSONNEL_INFO_SRC: 'TCOMP'
+      PERSONNEL_INFO_SRC: 'TCOMP',
+      ALIASES:[]
     });
 
   });
@@ -338,7 +356,8 @@ export function getGLOBALINDIVandALIAS(){
     varTmpObject.push({
       PERSONNEL_NAME: all.GROUP_NAME.toUpperCase(),
       GLOBAL_INDIV_ID: all.GLOBAL_GRP_ID,
-      PERSONNEL_INFO_SRC: 'GLGRP'
+      PERSONNEL_INFO_SRC: 'GLGRP',
+      ALIASES:[]
     });
 
   });
@@ -456,7 +475,7 @@ export function getTalentSupplierComp() {
     //   });
 
      return new Promise((resolve)=>{
-      EntityQuery().from('TALENT_SUPPLIER_COMP_MSTR').select('COMPANY_NAME', 'SUPPLIER_COMP_GLOBAL_ID, COMPANY_NAME')
+      EntityQuery().from('TALENT_SUPPLIER_COMP_MSTR').select('COMPANY_NAME, SUPPLIER_COMP_GLOBAL_ID, COMPANY_NAME')
      .using(EntityManager()).execute()
      .then((success)=>{
       talentSuppComp = success.results;
@@ -477,7 +496,7 @@ export function getTalentSupplierIndiv() {
 
 
     return new Promise((resolve)=>{
-      EntityQuery().from('TALENT_SUPPLIER_INDIV_MSTR').select('LAST_NAME', 'TALENT_SUPPLIER_INDIV_ID, LAST_NAME, GIVEN_NAME, MIDDLE_NAME')
+      EntityQuery().from('TALENT_SUPPLIER_INDIV_MSTR').select('LAST_NAME, TALENT_SUPPLIER_INDIV_ID, LAST_NAME, GIVEN_NAME, MIDDLE_NAME')
      .using(EntityManager()).execute()
      .then((success)=>{
       talentSuppIndiv = success.results;
@@ -561,7 +580,7 @@ export function getAliasTrx() {
 //'GLOBAL_GRP_MSTR','GROUP_NAME', 'GLOBAL_GRP_ID, GROUP_NAME'
 
 return new Promise((resolve)=>{
-   EntityQuery().from('GLOBAL_ALIAS_TRX').select('GLOBAL_ALIAS_ID','ALIAS_NAME', 'GLOBAL_ID')
+   EntityQuery().from('GLOBAL_ALIAS_TRX').select('GLOBAL_ALIAS_ID,ALIAS_NAME,GLOBAL_ID')
    .using(EntityManager()).execute()
    .then((success)=>{
     globalAlias = success.results;

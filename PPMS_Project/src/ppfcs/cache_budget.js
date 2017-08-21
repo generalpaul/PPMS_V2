@@ -27,7 +27,6 @@ export class cache_budget{
         reset_all:[],
         refreshPersonnelTab:[], //1
         reset_summary:[],//0
-        pass_program:[],
         budget_loaded: [],
         disable_search_personnel: [],
         pass_job: []

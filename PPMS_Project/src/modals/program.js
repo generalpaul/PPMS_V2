@@ -99,20 +99,23 @@ export class program {
 			return;
 		}
 
-
+	//console.log(this._cache_obj.PROGRAM_USER);
 		if(this._cache_obj.PROGRAM_USER.length==0)
 		{
 
-			var _query = EntityQuery().from('PROGRAM_USER_TRX');
+			var _query = EntityQuery().from('PROGRAM_USER_TRX').where("USER_ID", "==", this._cache_obj.USER.USER_ID);
 			EntityManager().executeQuery(_query).then((success) => {
+			//	console.log(success.results);
 				success.results.forEach((all)=>{
+					//console.log(all.PROGRAM_ID +"TEST"+all.USER_ID);
 					if(all.USER_ID==this._cache_obj.USER.USER_ID)
 						this._cache_obj.PROGRAM_USER.push(all);
 				});
-
+					//var findProgramUser=this._cache_obj.PROGRAM_USER.find((allP)=>allP.PROGRAM_ID=="9233");
+					//console.log(findProgramUser);
 			});
-
-		}
+		
+		}//
 
 		//delay to get minimize bloated multiple/simultaneous searching
 		setTimeout((a) => {

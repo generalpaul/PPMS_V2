@@ -1109,7 +1109,7 @@ setPersonnelValues(obj,varJobLength,varCategoryLength)
       var getMax = EntityQuery().from('BDGT_TMPL_DTL').orderByDesc('BDGT_TMPL_DTL_ID').take(1);
       EntityManager().executeQuery(getMax).then((successMax) => {
         var getMax = 1;
-
+        
         if (successMax.results.length > 0)
           getMax = successMax.results[0].BDGT_TMPL_DTL_ID + 1;
 
@@ -1127,7 +1127,7 @@ setPersonnelValues(obj,varJobLength,varCategoryLength)
           });
 
           this._Personnel.forEach((item) => {
-            if (item.TALENT_MANAGER !== undefined) {
+              if (item.TALENT_MANAGER !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
 
               if (item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP == undefined) {
                 item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP = getMax;
@@ -1223,14 +1223,16 @@ setPersonnelValues(obj,varJobLength,varCategoryLength)
             
             if (item.TALENT_MANAGER !== undefined) {
               var varTalentMngrToDelete = foundDtl.results.find((allTm) => allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP);
-              console.log(varTalentMngrToDelete);
+              
               varTalentMngrToDelete.entityAspect.setDeleted();
             }
-
+            
             var varTalentToDelete = foundDtl.results.find((allTm) => allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID);
-            //console.log(varTalentToDelete);
+
+            
             varTalentToDelete.entityAspect.setDeleted();
-            // item.entityAspect.setDeleted();      
+            // item.entityAspect.setDeleted();     
+            
 
           } else {
            
@@ -1268,14 +1270,14 @@ setPersonnelValues(obj,varJobLength,varCategoryLength)
 
              
 
-              if (item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined) {
+                if (item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
                 //check existing linked talent manager before saving check if not match
                 var varCheckTalent = this._PersonnelTM.find((allTalent) => allTalent.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP);
-                
+                save
                 if (varCheckTalent !== undefined) {
 
-                  if (varCheckTalent.BDGT_TMPL_DTL_ID !== item.BDGT_TMPL_DTL_ID_LINK) {
-
+                    if (varCheckTalent.BDGT_TMPL_DTL_ID !== item.BDGT_TMPL_DTL_ID_LINK && item.BDGT_TMPL_DTL_ID_LINK != 0) {
+                        
                     var varTalentMngrToEdit = foundDtl.results.find((allTm) => allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP);
                     
                     varTalentMngrToEdit.entityAspect.setDeleted();
@@ -1337,12 +1339,13 @@ setPersonnelValues(obj,varJobLength,varCategoryLength)
                 EntityManager().addEntity(varInsertTM);
               }
 
-            } else if (item.TALENT_MANAGER === undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined) {
+            } else if (item.TALENT_MANAGER === undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined  && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
 
               var varTalentMngrToDelete = foundDtl.results.find((allTm) => allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP);
 
               if (varTalentMngrToDelete !== undefined)
               {
+                  consoole.log(item.BDGT_TMPL_DTL_ID);
                 var varTalentToEdit = foundDtl.results.find((allTm) => allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID);
                 varTalentMngrToDelete.entityAspect.setDeleted();
 

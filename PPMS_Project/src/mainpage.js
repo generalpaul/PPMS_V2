@@ -207,6 +207,8 @@ export class mainpage {
 
     fnCheckAccess()
     {
+         // var varResult= getLookups().GLOBAL_INDIV_WITH_ALIAS.filter((all)=>all.ALIASES.length>0);
+         // console.log(varResult);
         if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
         
         var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];

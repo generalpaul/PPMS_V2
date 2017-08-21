@@ -80,7 +80,7 @@ export class MainHeaderCustomElement {
       this.CloseBudgetDialog(val);
     });
 
-    this._cache_budget.OBSERVERS.pass_program.push((val) => {
+    this._cache_obj.OBSERVERS.pass_program.push((val) => {
       this.PassedProgram(val);
     });
 
@@ -900,8 +900,11 @@ export class MainHeaderCustomElement {
                 }
 
                 var varMaxDate = null;
+	        var varDataFromCompare = new Date(this._cache_budget.HEADER.BDGT_FROM);
+                var varDataToCompare = new Date(this._cache_budget.HEADER.BDGT_FROM);
+	
                 foundVtr.results.forEach((allDate) => {
-
+		
                   //var varVtr = new Date(all.VTR_LIVE_DT.getFullYear(), all.VTR_LIVE_DT.getMonth(), all.VTR_LIVE_DT.getDate());
                   var varVtr = moment(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
 
@@ -914,7 +917,7 @@ export class MainHeaderCustomElement {
 
                       var varVtr = moment(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
                       var varDateCompare = new Date(varVtr);
-
+     
                       if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
                           if (varMaxDate == null)
                               varMaxDate = varVtr;
@@ -1373,9 +1376,9 @@ export class MainHeaderCustomElement {
       this.dialogService.open({
         viewModel: budget
       }).whenClosed(response => {
-          settings.isNavigating = true;
+         
         if (!response.wasCancelled) {
-        
+            settings.isNavigating = true;
         } else {
           
         }

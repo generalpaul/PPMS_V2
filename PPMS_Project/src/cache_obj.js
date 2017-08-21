@@ -25,6 +25,8 @@ export class cache_obj{
         logoutPage: [],
         loginPage: [],
         clear_budget_modal: [],
-        budget_dialog:[]
+        budget_dialog: [],
+        pass_program: []
+
     };
 }
