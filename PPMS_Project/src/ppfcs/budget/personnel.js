@@ -316,7 +316,7 @@ fnCheckBudget(BDGT_TMPL_ID)
 {
 
 
-    this._cache_obj.OBSERVERS.enable_modal_button.forEach((all)=>
+  this._cache_obj.OBSERVERS.enable_modal_button.forEach((all)=>
   {
     this.isIndivMstrDisabled=false;
     this.isIndivMstrTalentsDisabled=false;

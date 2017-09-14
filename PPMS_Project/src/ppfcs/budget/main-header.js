@@ -92,6 +92,7 @@ export class MainHeaderCustomElement {
        if(this._disableSaveBudget==true)
        {
           this._disableSaveBudget = false;
+          this._disableCopyBudget = false;
           settings.isNavigating = false;
           toastr.success("Budget has been successfully loaded.", "Budget Template");
        }
@@ -237,7 +238,8 @@ export class MainHeaderCustomElement {
     
   //@handle('login.passed')
   LoginPassed(user) {
-      
+
+    if(user.USER_ID==undefined) return;
     this._user = user.USER_ID;
     this._COMPANY_ID = user.COMPANY_ID;
 
@@ -268,7 +270,7 @@ export class MainHeaderCustomElement {
   //@handle('loggedout')
   LoggedOut()
   {
-      alert(44);
+    
     this._disableCreateBudget = true;
     this._disableCancelBudget = true;
     this._disableRefreshBudget = true;
@@ -392,7 +394,7 @@ export class MainHeaderCustomElement {
         this._disableSaveBudget=true;
         
         this._disablePrintBudget = false;
-        this._disableCopyBudget=false;
+        this._disableCopyBudget=true;
 
         this.budgetDisabled=true;        
         // this._cache_budget.OBSERVERS.enable_modal_button.forEach((all) => {
@@ -671,28 +673,51 @@ export class MainHeaderCustomElement {
    
       return new Promise((resolve,reject)=>{ 
 
+    var varSubMin = new Date(this._cache_budget.HEADER.BDGT_FROM);
       var varAddMin = new Date(this._cache_budget.HEADER.BDGT_TO);
-      var varSubMin = new Date(this._cache_budget.HEADER.BDGT_FROM);
+      
+      console.log(new Date(varSubMin.getFullYear(), varSubMin.getMonth(), varSubMin.getDate() - 1));
+      console.log(new Date(varAddMin.getFullYear(), varAddMin.getMonth(), varAddMin.getDate() + 1));
 
       var p1 = breeze.Predicate.create('BDGT_FROM', '>=', new Date(varSubMin.getFullYear(), varSubMin.getMonth(), varSubMin.getDate() - 1));
       var p2 = breeze.Predicate.create('BDGT_TO', '<=', new Date(varAddMin.getFullYear(), varAddMin.getMonth(), varAddMin.getDate() + 1));
       var p3 = breeze.Predicate.create('BDGT_TMPL_ID', '!=', this._cache_budget.HEADER.BDGT_TMPL_ID);
       var p4 = breeze.Predicate.create('EPISODE_TYPE_CD', '==', this._cache_budget.HEADER.EPISODE_TYPE_CD);
       var pred = breeze.Predicate.and([p1, p2, p3, p4]);
-
+      
+      var strException="";
+      var varFromMax = null;
+      var varToMax = null;
       var _query = EntityQuery().from('BDGT_TMPL_HDR').where(pred);
       EntityManager().executeQuery(_query).then((found) => {
         if (found.results !== undefined) {
           var countError=0;
           found.results.forEach((all) => {
-            //if (all.APPR_STAT_CD.includes('EXPIRE') || all.APPR_STAT_CD.includes('CLOSE')) {
-              toastr.error("Budget can only be acceptable if date will be out of range of the last CLOSED/EXPIRED TEMPLATE");
+            if(all.APPR_STAT_CD!=null)
+            if (all.APPR_STAT_CD.includes('EXPIRE') || all.APPR_STAT_CD.includes('CLOSE')) {
+              console.log(all);
+              
+              if(varFromMax==null || varFromMax>all.BDGT_FROM)
+              {
+                varFromMax=all.BDGT_FROM;
+              }
+
+              if(varToMax==null || varToMax<all.BDGT_TO)
+              {
+                varToMax=all.BDGT_TO;
+              }
+
+
               ++countError; 
-            //}
+            }
           });
 
           if(countError>0)
+          {
+            toastr.error("Budget can only be acceptable if date will be out of range of the last CLOSED/EXPIRED TEMPLATE");
+            toastr.error("Not in between "  +  varFromMax.getMonth() + "-" + varFromMax.getDate() +  "-" + varFromMax.getFullYear() + " and "  + varToMax.getMonth() + "-" + varToMax.getDate() +  "-" + varToMax.getFullYear() );
             reject(false); 
+          }
           else
             resolve(true);
 
@@ -1041,7 +1066,7 @@ export class MainHeaderCustomElement {
     //   this._cache_budget.HEADER.BDGT_TO = moment(new Date(this._cache_budget.HEADER.BDGT_TO)).add(8, 'hours');
      //this._cache_budget.HEADER.APPR_STAT_CD
     if (passed_status.includes('EXPIRE') || passed_status.includes('CLOSE')) {
-      Promise.all([this.fnBudgetValidation_1(), this.fnBudgetValidation_2()]).then((passed) => {
+      Promise.all([this.fnBudgetValidation_2()]).then((passed) => { //removed this.fnBudgetValidation_1(), 8/29/2017 -- PAULV and KARRENA
        if(passed_status!='')
          this._cache_budget.HEADER.APPR_STAT_CD=passed_status;
          this.fnExecuteSaveBudgetHeader();

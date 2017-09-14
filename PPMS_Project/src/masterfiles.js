@@ -297,7 +297,10 @@ export function getGLOBALINDIVandALIAS(){
       PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim() + varAlias).toUpperCase(),
       GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
       PERSONNEL_INFO_SRC: 'INDIV',
-      ALIASES: varAliases
+      ALIASES: varAliases,
+      LAST_NAME: all.LAST_NAME,
+      GIVEN_NAME: all.GIVEN_NAME,
+      MIDDLE_NAME: all.MIDDLE_NAME
     });
 
   });

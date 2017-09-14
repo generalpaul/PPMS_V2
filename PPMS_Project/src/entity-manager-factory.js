@@ -1,6 +1,7 @@
 import settings from './settings';
 import breeze from 'breeze-client';
 
+
 var entityManager;
 //var EntityQuery = breeze.EntityQuery;
 
@@ -8,7 +9,18 @@ var entityManager;
 export function initializeBreeze() {
   try {
 
-    breeze.config.initializeAdapterInstance('dataService', 'webApiOData', true);
+     
+    var dataService = breeze.config.initializeAdapterInstance('dataService', 'webApiOData', true);
+    //  dataService.defaultHttpClient = {
+    //  headers: { 
+    //     "Authorization": "foo2" 
+    //  },
+    // };
+    //console.log(dataService.defaultHttpClient);
+  
+
+
+
     entityManager = new breeze.EntityManager(settings.serviceName);
     
     //saveOptions: new breeze.SaveOptions({allowConcurrentSaves: true})

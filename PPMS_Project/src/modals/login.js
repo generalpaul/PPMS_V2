@@ -40,7 +40,7 @@ export class login {
     constructor(multiObserver, observerLocator, Element, ModalWizard, cache_obj, controller, DialogService) 
     {
         
-       
+     
         this.dialogService = DialogService;
         this.controller = controller;
         //controller.settings.lock = true;
@@ -64,6 +64,7 @@ export class login {
 
         EntityManager().executeQuery(varGetUserRole).then((found) => {
         	this._user_content.push({});
+
             found.results.forEach((all) => {
               
 			if(all.ROLE_CD==null || all.ROLE_CD==undefined)
@@ -186,8 +187,6 @@ export class login {
         
         this.disableLogButton = true;
 
-       
-
         if (this._PASSWORD === undefined || _.isEmpty(this._PASSWORD) || this._USER.USER_ID === undefined || _.isEmpty(this._USER.USER_ID)) 
         {
             toastr.error("USER ID/PASSWORD cannot be empty.", "Change Password");
@@ -218,6 +217,7 @@ export class login {
             }
                
         }
+
         settings.isNavigating = true;
         toastr.info("Please wait..", "Authentication", { timeOut: 30000});
        
@@ -259,6 +259,7 @@ export class login {
 
     fnCheckUser()
     {
+
         settings.isNavigating = false;
         toastr.clear();
         //$.ajax({
@@ -291,16 +292,16 @@ export class login {
             return;
 		} else {
             toastr.success("Welcome.. " + response.USER_ID, "User Found");
-            
+          
             var varUserAtt = response;//JSON.parse(response);
             varUserAtt.ROLE_CD = this._USER.ROLE_CD;
             
             this.controller.ok(varUserAtt);
 
             this._cache_obj.USER = varUserAtt;
-           // console.log(this._cache_obj.USER);
+            console.log(this._cache_obj.USER);
 			this._cache_obj.ALLOW_PASS_CONFIDENTIAL = false;
-
+          
 			var checkRole = EntityQuery().from('MODULE_ACCESS_TRX').where("ROLE_CD", "==", this._USER.ROLE_CD)
 				.select('ROLE_CD,MODULE_MSTR.MODULE_NAME,ACCESS_FL')
 				.expand('MODULE_MSTR');
@@ -317,13 +318,12 @@ export class login {
 				});
             });
 
-
+         
             $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
                 "USER_ID": this._USER.USER_ID,
                 "HASH": this._USER.HASH
             }).done((response) => {
                 this._cache_obj._ACCESS = response;
-                //console.log(this._cache_obj._ACCESS);
                 });
 
 

@@ -10,7 +10,7 @@ import { change_password } from 'modals/change_password';
 import { DialogService } from 'aurelia-dialog';
 import { loadMasterfiles, loadTables, loadLookups, getLookups } from './masterfiles';
 import settings from './settings';
-
+import breeze from 'breeze-client';
 
 @inject(cache_obj, Router, DialogService)
 export class NavBar {
@@ -54,6 +54,21 @@ export class NavBar {
 
         //    }, 2000);
         //});
+       
+  var oldClient = OData.defaultHttpClient;
+   
+
+    var myClient = {
+         request:  (request, success, error)=> {
+            
+             if(this._cache_obj!=undefined)
+             if(this._cache_obj.USER!=undefined)
+             request.headers.Authorization = "Basic "+btoa(this._cache_obj.USER.USER_ID+':'+this._cache_obj.USER.HASH);
+             return oldClient.request(request, success, error);
+         }
+    };
+
+    OData.defaultHttpClient = myClient;  
 
        initializeBreeze().then(() => {
             //have to set timeout because of IE, other templates are not loading
@@ -81,6 +96,20 @@ export class NavBar {
                     };
 
                     this._cache_obj.USER = _user;
+
+
+                    // var oldClient = OData.defaultHttpClient;
+                   
+
+                    // var newClient = {
+                    //      request: function (request, success, error) {
+                    //          request.headers.Authorization = "Basic "+btoa(varSplitCookie[0]+':'+varSplitCookie[5]);
+                    //          return oldClient.request(request, success, error);
+                    //      }
+                    // };
+
+                    // OData.defaultHttpClient = newClient;
+
                 }
 
                 this.fnInitMasterfiles(0, "");
@@ -119,6 +148,11 @@ export class NavBar {
             this.fnPassUserObject(initType, output);
         }
 
+    }
+
+    fnSerializeCode(value)
+    {
+        return btoa(value);
     }
 
     fnPassUserObject(initType, output) {

@@ -11,6 +11,7 @@
         <i class="fa fa-home" style="color:white;margin-top:0px;padding-top:0px;"></i>
         <span style="color:white">${router.title}</span>
       </a>
+
     </div>
 
     <div class="collapse navbar-collapse  .navbar-right" id="bs-example-navbar-collapse-1">
@@ -19,7 +20,17 @@
           <a if.bind="row.title!='PPMS'" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" href.bind="row.href">${row.title}</a>
         </li>
       </ul>-->
-      
+      <img if.bind="_cache_obj.USER.USER_ID!==undefined" src="/ViewFile/GetFile?fileName=hdpi.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}"/>
+<!-- 
+      <form method="post" enctype="multipart/form-data" action="/ViewFile/Upload">
+          <div>
+              <p>Upload one or more files using this form:</p>
+              <input type="file" name="files" />
+          </div>
+          <div>
+               <input type="submit" value="Upload" />
+          </div>
+      </form> -->
       <ul class="nav navbar-nav">
         <li if.bind="_cache_obj.USER.USER_ID!==undefined">
           <a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" style="color:white;font-size:13px;" click.trigger="home()" href="#">HOME</a>

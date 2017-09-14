@@ -119,7 +119,7 @@ export class program {
 
 		//delay to get minimize bloated multiple/simultaneous searching
 		setTimeout((a) => {
-
+			
 			if (a !== this.currPredicate)
 				return;
 
@@ -135,6 +135,7 @@ export class program {
 					var findProgramUser=this._cache_obj.PROGRAM_USER.find((allP)=>allP.PROGRAM_ID==all.PROGRAM_ID);
 					if(findProgramUser!== undefined)
 					{
+
 						tmpVar.push({
 						PROGRAM_TITLE: all.PROGRAM_TITLE,
 						PROGRAM_CD: all.PROGRAM_CD,

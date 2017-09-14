@@ -105,7 +105,18 @@ export class budget {
 		}
 
 		this.currPredicate=this.lstPredicates;
+		if(this._cache_obj.PROGRAM_USER.length==0)
+		{
+
+			var _query = EntityQuery().from('PROGRAM_USER_TRX').where("USER_ID", "==", this._cache_obj.USER.USER_ID);
+			EntityManager().executeQuery(_query).then((success) => {
+				success.results.forEach((all)=>{
+					if(all.USER_ID==this._cache_obj.USER.USER_ID)
+						this._cache_obj.PROGRAM_USER.push(all);
+				});
+			});
 		
+		}//
 		//delay to get minimize bloated multiple/simultaneous searching
 		setTimeout((a) => {
 
@@ -114,17 +125,25 @@ export class budget {
 
 			this.varFilterArray = [];
 
-			var _query = EntityQuery().from('BDGT_TMPL_HDR').where(breeze.Predicate.and(this.currPredicate)).expand('PROGRAM_MSTR').orderBy("BDGT_TMPL_ID desc").select('BDGT_TMPL_ID,PROGRAM_MSTR.PROGRAM_TITLE,PROGRAM_MSTR.PROGRAM_IO, APPR_STAT_CD');
+			var _query = EntityQuery().from('BDGT_TMPL_HDR').where(breeze.Predicate.and(this.currPredicate)).expand('PROGRAM_MSTR').orderBy("BDGT_TMPL_ID desc").select('BDGT_TMPL_ID,PROGRAM_MSTR.PROGRAM_TITLE,PROGRAM_MSTR.PROGRAM_IO,PROGRAM_MSTR.PROGRAM_ID, APPR_STAT_CD');
             EntityManager().executeQuery(_query).then((success) => {
                 
 				tmpVar = [];
 				_.each(success.results, (all) => {
-					tmpVar.push({
-						PROGRAM_TITLE: all.PROGRAM_MSTR.PROGRAM_TITLE,
-						BDGT_TMPL_ID: parseInt(all.BDGT_TMPL_ID),
-						PROGRAM_IO: all.PROGRAM_MSTR.PROGRAM_IO,
-						APPR_STAT_CD: all.APPR_STAT_CD.replace('APP-','')
-					});
+					if(all.APPR_STAT_CD!=null)
+					{
+						var findProgramUser=this._cache_obj.PROGRAM_USER.find((allP)=>allP.PROGRAM_ID==all.PROGRAM_MSTR.PROGRAM_ID);
+						if(findProgramUser!== undefined)
+						{
+							tmpVar.push({
+							PROGRAM_TITLE: all.PROGRAM_MSTR.PROGRAM_TITLE,
+							BDGT_TMPL_ID: parseInt(all.BDGT_TMPL_ID),
+							PROGRAM_IO: all.PROGRAM_MSTR.PROGRAM_IO,
+							APPR_STAT_CD: all.APPR_STAT_CD.replace('APP-','')
+							});
+						}
+					}
+					
 				});
 
 				this.varFilterArray = tmpVar;
