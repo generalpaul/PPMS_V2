@@ -150,10 +150,7 @@ export class NavBar {
 
     }
 
-    fnSerializeCode(value)
-    {
-        return btoa(value);
-    }
+
 
     fnPassUserObject(initType, output) {
         

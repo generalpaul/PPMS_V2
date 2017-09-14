@@ -1,3 +1,9 @@
+
+export function fnSerializeCode(value)
+{
+    return btoa(value);
+}
+
 export function substringMatcher (strs) {
 	
   return function findMatches(q, cb) {
