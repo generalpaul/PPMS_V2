@@ -55,7 +55,7 @@ export class NavBar {
         //    }, 2000);
         //});
        
-  var oldClient = OData.defaultHttpClient;
+  var oldClient = OData.defaultHttpClient; 
    
 
     var myClient = {
