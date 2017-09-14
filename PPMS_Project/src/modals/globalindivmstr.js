@@ -8,12 +8,12 @@ import $ from 'jquery';
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
 import {ModalWizard} from 'modals/modal-wizard';
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import {DialogController} from 'aurelia-dialog';
 import breeze from 'breeze-client';
 
 
-@inject(MultiObserver, ObserverLocator, Element, ModalWizard, objBudget, DialogController)
+@inject(MultiObserver, ObserverLocator, Element, ModalWizard, cache_obj, DialogController)
 export class globalindivmstr {
 	items = [];
 	observerLocator = null;
@@ -22,14 +22,14 @@ export class globalindivmstr {
 	varFilterArraySelected=[];
 	varFilterArrayLength=0;
 	_ModalWizard;
-	_objBudget;
+	_cache_obj;
 	controller=null;
 	varActiveFromCompanyMstr=[];
-	constructor(multiObserver, observerLocator, Element, ModalWizard, objBudget,controller) {
+	constructor(multiObserver, observerLocator, Element, ModalWizard, cache_obj,controller) {
 		this.controller=controller;
 
 		this._ModalWizard=ModalWizard;
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 
 		toastr.info("Personnel Data...", "Loading..");
 		this.varActiveFromCompanyMstr = _.filter(getLookups().GLOBAL_COMPANY_MSTR,(all)=>all.STATUS_CD!='ACTV').map((val)=>{return val.GLOBAL_ID});
@@ -43,7 +43,7 @@ export class globalindivmstr {
 				[this, '_bPERSONNEL_NAME']
 			], (newValue, oldValue) => this.onSpeculateProp(newValue, oldValue));
 
-		this._objBudget.OBSERVERS.clear_indiv_modal.push(() => {
+		this._cache_obj.OBSERVERS.clear_indiv_modal.push(() => {
 			this.ClearSearch();
 		});
 

@@ -1,10 +1,10 @@
 import {bindable, inject} from 'aurelia-framework';
 import {ModalWizard} from 'modals/modal-wizard';
 import { MultiObserver }from 'multi-observer';
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import {DialogController} from 'aurelia-dialog';
 
-@inject(MultiObserver,ModalWizard,objBudget,DialogController)
+@inject(MultiObserver,ModalWizard,cache_obj,DialogController)
 export class confirm_dialog{
 	@bindable _setContent;
 	@bindable _setTitle;
@@ -16,29 +16,29 @@ export class confirm_dialog{
 	_ModalWizard;
 	_width="500";
 	_message="";
-	_objBudget;
+	_cache_obj;
 	controller=null;
-	constructor(multiObserver,ModalWizard,objBudget,controller){
+	constructor(multiObserver,ModalWizard,cache_obj,controller){
 		
 		this.controller=controller;
 		
 		this._ModalWizard=ModalWizard;
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 
 
-		//this._objBudget.OBSERVERS.init_modal.push(() => {
+		//this._cache_obj.OBSERVERS.init_modal.push(() => {
 		//	this.InitializeModal();
 		//});
 
-		this._objBudget.OBSERVERS.close_modal.push((val) => {
+		this._cache_obj.OBSERVERS.close_modal.push((val) => {
 			this.CloseModal(val);
 		});
 
-		this._objBudget.OBSERVERS.open_modal_message.push((val1,val2,val3) => {
+		this._cache_obj.OBSERVERS.open_modal_message.push((val1,val2,val3) => {
 			this.OpenModal(val1,val2,val3);
 		});
 
-		this._objBudget.OBSERVERS.enable_modal_button.push((val1,val2) => {
+		this._cache_obj.OBSERVERS.enable_modal_button.push((val1,val2) => {
 			this.OpenModal(val1,val2);
 		});
 		
@@ -88,7 +88,7 @@ export class confirm_dialog{
 
     confirm(){
 
-  //   	this._objBudget.OBSERVERS.confirm_dialog.forEach((all)=>{
+  //   	this._cache_obj.OBSERVERS.confirm_dialog.forEach((all)=>{
 		// 	all(this._message);
 		// });
 		this.controller.ok();
@@ -106,7 +106,7 @@ export class confirm_dialog{
 			this._ModalWizard.ids.push(this._id);
 
 			if(this.to.cleardispatch!==undefined)
-			this._objBudget.OBSERVERS[this.to.cleardispatch].forEach((all) => {
+			this._cache_obj.OBSERVERS[this.to.cleardispatch].forEach((all) => {
 				all();
 			});
 

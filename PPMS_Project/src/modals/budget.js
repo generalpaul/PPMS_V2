@@ -7,11 +7,11 @@ import $ from 'jquery';
 //import {Dispatcher, handle} from 'aurelia-flux';  
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import { DialogController } from 'aurelia-dialog';
 import breeze from 'breeze-client';
 
-@inject(MultiObserver,ObserverLocator,Element,objBudget,DialogController)
+@inject(MultiObserver,ObserverLocator,Element,cache_obj,DialogController)
 export class budget {
 	items = [];
 	observerLocator = null;
@@ -19,13 +19,13 @@ export class budget {
 	varFilterArrayLength=0;
 	varFilterArray = [];
 	currPredicate=null;
-	_objBudget;
+	_cache_obj;
 	lstPredicates=[];
 	controller=null;
-	constructor(multiObserver,observerLocator,Element,objBudget,controller) {
+	constructor(multiObserver,observerLocator,Element,cache_obj,controller) {
 		this.controller=controller;
 		//this._dispatcher=Dispatcher;
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 		this.observerLocator=observerLocator;
 		
 		this.items=getLookups().BDGT_TMPL_HDR;
@@ -42,7 +42,7 @@ export class budget {
 			], (newValue, oldValue) => this.onSpeculateProp(newValue, oldValue));
 
 
-		this._objBudget.OBSERVERS.clear_budget_modal.push(()=>{
+		this._cache_obj.OBSERVERS.clear_budget_modal.push(()=>{
 			this.ClearSearch();
 		});
 
@@ -105,7 +105,18 @@ export class budget {
 		}
 
 		this.currPredicate=this.lstPredicates;
+		if(this._cache_obj.PROGRAM_USER.length==0)
+		{
+
+			var _query = EntityQuery().from('PROGRAM_USER_TRX').where("USER_ID", "==", this._cache_obj.USER.USER_ID);
+			EntityManager().executeQuery(_query).then((success) => {
+				success.results.forEach((all)=>{
+					if(all.USER_ID==this._cache_obj.USER.USER_ID)
+						this._cache_obj.PROGRAM_USER.push(all);
+				});
+			});
 		
+		}//
 		//delay to get minimize bloated multiple/simultaneous searching
 		setTimeout((a) => {
 
@@ -114,17 +125,25 @@ export class budget {
 
 			this.varFilterArray = [];
 
-			var _query = EntityQuery().from('BDGT_TMPL_HDR').where(breeze.Predicate.and(this.currPredicate)).expand('PROGRAM_MSTR').orderBy("BDGT_TMPL_ID desc").select('BDGT_TMPL_ID,PROGRAM_MSTR.PROGRAM_TITLE,PROGRAM_MSTR.PROGRAM_IO, APPR_STAT_CD');
+			var _query = EntityQuery().from('BDGT_TMPL_HDR').where(breeze.Predicate.and(this.currPredicate)).expand('PROGRAM_MSTR').orderBy("BDGT_TMPL_ID desc").select('BDGT_TMPL_ID,PROGRAM_MSTR.PROGRAM_TITLE,PROGRAM_MSTR.PROGRAM_IO,PROGRAM_MSTR.PROGRAM_ID, APPR_STAT_CD');
             EntityManager().executeQuery(_query).then((success) => {
                 
 				tmpVar = [];
 				_.each(success.results, (all) => {
-					tmpVar.push({
-						PROGRAM_TITLE: all.PROGRAM_MSTR.PROGRAM_TITLE,
-						BDGT_TMPL_ID: parseInt(all.BDGT_TMPL_ID),
-						PROGRAM_IO: all.PROGRAM_MSTR.PROGRAM_IO,
-						APPR_STAT_CD: all.APPR_STAT_CD.replace('APP-','')
-					});
+					if(all.APPR_STAT_CD!=null)
+					{
+						var findProgramUser=this._cache_obj.PROGRAM_USER.find((allP)=>allP.PROGRAM_ID==all.PROGRAM_MSTR.PROGRAM_ID);
+						if(findProgramUser!== undefined)
+						{
+							tmpVar.push({
+							PROGRAM_TITLE: all.PROGRAM_MSTR.PROGRAM_TITLE,
+							BDGT_TMPL_ID: parseInt(all.BDGT_TMPL_ID),
+							PROGRAM_IO: all.PROGRAM_MSTR.PROGRAM_IO,
+							APPR_STAT_CD: all.APPR_STAT_CD.replace('APP-','')
+							});
+						}
+					}
+					
 				});
 
 				this.varFilterArray = tmpVar;
@@ -140,7 +159,7 @@ export class budget {
 
 	selectedBudget(item){
 		
-		this._objBudget.OBSERVERS.budget_dialog.forEach((all)=>{
+		this._cache_obj.OBSERVERS.budget_dialog.forEach((all)=>{
 			all(item.BDGT_TMPL_ID);
 		});
 

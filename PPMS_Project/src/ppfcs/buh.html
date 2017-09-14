@@ -1,0 +1,69 @@
+<template>
+	<div style="margin-left:10%!important;margin-right:10%!important;margin-top:3%;width:800px;text-align:center;" class="divBackground">
+		<table>
+			<tr>
+				<td><label>GLOBAL ID:</label></td>
+				<td><input value.bind="_objBUH.OPTIONAL_GLOBAL_ID" disabled.bind="_disableCells" id="txtGlobalID"/></td>
+				<td class="text-right"><label>E-Mail:</label></td>
+				<td colspan="2" class="text-left"><input id="txtEmail" value.bind="_objBUH.EMAIL_ADDRESS"  disabled.bind="_disableCells" style="width:250px;" /></td>
+			</tr>
+
+			<tr>
+				<td><label>LAST NAME:</label></td>
+				<td><input value.bind="_objBUH.LAST_NAME" id="txtLastName" disabled.bind="_disableCells" /></td>
+				<td class="text-right"><label>FIRST NAME:</label></td>
+				<td class="text-left"><input value.bind="_objBUH.FIRST_NAME" id="txtFirstName" disabled.bind="_disableCells" /></td>
+				<td class="text-right"><label>MIDDLE:</label></td>
+				<td class="text-left"><input value.bind="_objBUH.MIDDLE_NAME"  id="txtMiddle" disabled.bind="_disableCells" /></td>
+			</tr>
+
+			<tr>
+				<td colspan="7" style="text-align:center;"><br/>
+					<input type="Button" id="btnGlobalID" value="Search" click.delegate="fnCRUD('search')" disabled.bind="_disableSearch" class="btn btn-xs customButton"/>
+					<input type="button" id="btnAdd"  disabled.bind="_disableAdd" value="Add" click.delegate="fnCRUD('add')" class="btn btn-xs customButton"/>
+					<input type="button" id="btnDelete" disabled.bind="_disableDelete"  value="Delete" click.delegate="fnCRUD('delete')" class="btn btn-xs customButton"/>
+					<input type="button" id="btnSave" disabled.bind="_disableSave" value="Save" click.delegate="fnCRUD('save')" class="btn btn-xs customButton"/>
+					<input type="button" id="btnCancel" value="Cancel/Clear" click.delegate="fnCRUD('cancel')" class="btn btn-xs customButton"/>
+					<br/><br/>
+				</td>
+			</tr>	
+		</table>
+
+		<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData" >
+			<thead>
+				<tr><td class="colorCell">PROGRAM ID</td>
+					<td class="colorCell">PROGRAM TITLE</td>
+					<td class="colorCell"><input type="button" value="+" disabled.bind="_disableGrid" click.delegate="searchPrograms()"/> </td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr repeat.for="item of _objBUH.PROGRAMS">
+					<td>${item.PROGRAM_CD}</td>
+					<td>${item.PROGRAM_TITLE}</td>
+					<td><input type="button" value="-" disabled.bind="_disableGrid" click.delegate="$parent.deleteSelected($index)"/>
+					</td> 
+				</tr>
+			</tbody>
+		</table>  
+
+
+		<!--<input type="button" class="btn btn-xs customButton" disabled.bind="loginDisabled" value="LOG-IN" style="padding-left:15px;padding-right:15px;" click.trigger="fnLogin()"/>
+		<input type="button" click.delegate="logout()" value="LOG-OUT"  disabled.bind="logoutDisabled"  css="visibility: ${showingLogout}" class="btn btn-xs customButton">--> 
+
+
+
+		<br/>
+		<br/>
+		<table class= "table-bordered">
+			<tr>
+				<td>
+					LOGGED AS:
+				</td>
+				<td>
+					<strong>${_user.USER_ID}</strong> 
+				</td>
+			</tr>
+		</table>
+
+
+	</template>

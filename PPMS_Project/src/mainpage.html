@@ -1,28 +1,37 @@
 ﻿<template>
   <div class="divBackgroundMainPage text-center" style="width:100%;height:780px;">
     <!--<div class="panel panel-info">...</div>-->
+    <center>
       <div class="row">
-        <div class="col-xs-0 col-md-4"></div>  
-          <div class="list-group col-xs-12 col-md-4" style="padding-top:10%;">
-            <a href="#" class="list-group-item active" if.bind="headerVisible" style="background-color: #d9edf7; color: #31708f;   border: 1px solid #a4d4e6;">
-              <h3  style="margin-left:10px;margin-top:10px;margin-right:10px;" class="list-group-item-heading">Please Select..</h3>
-            </a>
-            <a href="#" class="list-group-item" click.delegate="navigateTo('mainview')" if.bind="budgetAccess" style=" padding-top:15px;">
-              <!--  active -->
-              <h3 style="margin:0px;color: #31708f;">
-                BUDGET TEMPLATE
-              </h3>
-                <!-- .col-xs-2 .col-sm-2 .col-md-2 -->
-</a>
-            <a href="#" class="list-group-item" click.delegate="navigateTo('actual_cost')"  if.bind="actualAccess"><h3 style="margin:0px;color: #31708f;">ACTUAL COST</h3></a>
-            <a href="#" class="list-group-item" click.delegate="navigateTo('group_individual')" if.bind="talentgroupAccess"><h3 style="margin:0px;color: #31708f;">TALENT GROUP</h3></a>
-            <a href="#" class="list-group-item" click.delegate="navigateTo('buh')"  if.bind="buhAccess"><h3 style="margin:0px;color: #31708f;">BUH</h3></a>
-            <!--<a href="#" class="list-group-item">IPS</a>-->
-          </div>
-       
-        <div class="col-xs-0 col-md-4"></div>  
+        <div class="list-group" style="padding-top:2%;margin-left:4%;margin-right:4%;">
+          <a href="#" class="list-group-item active" if.bind="headerVisible" style="background-color: #d9edf7; color: #31708f;   border: 1px solid #a4d4e6;">
+            <h3 style="margin-left:10px;margin-top:10px;margin-right:10px;" class="list-group-item-heading">PLEASE SELECT..</h3>
+          </a>
+          <!--<a href="#" class="list-group-item" click.delegate="navigateTo('mainview')" if.bind="budgetAccess" style=" padding-top:15px;">
+
+                      <h3 style="margin:0px;color: #31708f;">
+                        BUDGET TEMPLATE
+                      </h3>
+
+        </a>
+                    <a href="#" class="list-group-item" click.delegate="navigateTo('actual_cost')"  if.bind="actualAccess"><h3 style="margin:0px;color: #31708f;">ACTUAL COST</h3></a>
+                    <a href="#" class="list-group-item" click.delegate="navigateTo('group_individual')" if.bind="talentgroupAccess"><h3 style="margin:0px;color: #31708f;">TALENT GROUP</h3></a>
+                    <a href="#" class="list-group-item" click.delegate="navigateTo('buh')"  if.bind="buhAccess"><h3 style="margin:0px;color: #31708f;">BUH</h3></a>-->
+
+          <a href="#" class="list-group-item" repeat.for="item of _application" click.trigger="applicationClick(item)" if.bind="!_remove.includes(item.APPLICATION_DESC) && _application_on"><h3 style="margin:0px;color: #31708f;">${item.APPLICATION_DESC}</h3></a>
+
+          <a href="#" class="list-group-item" repeat.for="item of _ppfcs_modules" click.trigger="rolesClick(item)" if.bind="!_application_on"><h3 style="margin:0px;color: #31708f;">${item.APPLICATION_DESC.toUpperCase()}</h3></a>
+          <!--<a href="#" class="list-group-item" repeat.for="item of _roles" click.trigger="rolesClick(item)" if.bind="!_application_on"><h3 style="margin:0px;color: #31708f;">${item.MODULE_NAME.toUpperCase()}</h3></a>-->
+          <a href="#" class="list-group-item" if.bind="!_application_on" click.trigger="applicationOn()"><h3 style="margin:0px;color: #31708f;background-color:#d9edf7;">BACK..</h3></a>
+
+          <!--<a href="#" class="list-group-item">IPS</a>-->
+
+
+        </div>
+
+        <div class="col-xs-0 col-md-4"></div>
       </div>
-      
+    </center>
     </div>
     
 

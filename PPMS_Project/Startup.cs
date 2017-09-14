@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace PPMS_Project
 {
@@ -29,7 +31,14 @@ namespace PPMS_Project
         {
             // Add framework services.
             services.AddMvc();
-        }
+            services.AddSingleton<IConfiguration>(Configuration);
+            //services.AddAuthorization(options =>
+            //{
+            //  options.AddPolicy("HashPolicy",
+            //                    policy => policy.Requirements.Add(new MinimumAgeRequirement(21)));
+            //});
+            //services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
+    }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -58,4 +67,41 @@ namespace PPMS_Project
             
         }
     }
+    //public class MinimumAgeRequirement : IAuthorizationRequirement
+    //{
+    //  public int MinimumAge { get; private set; }
+
+    //  public MinimumAgeRequirement(int minimumAge)
+    //  {
+    //    MinimumAge = minimumAge;
+    //  }
+    //}
+
+    //public class MinimumAgeHandler : AuthorizationHandler<MinimumAgeRequirement>
+    //{
+    //  protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, MinimumAgeRequirement requirement)
+    //  {
+    //    if (!context.User.HasClaim(c => c.Type == ClaimTypes.DateOfBirth &&
+    //                               c.Issuer == "http://contoso.com"))
+    //    {
+    //      // .NET 4.x -> return Task.FromResult(0);
+    //      return Task.CompletedTask;
+    //    }
+
+    //    var dateOfBirth = Convert.ToDateTime(context.User.FindFirst(
+    //        c => c.Type == ClaimTypes.DateOfBirth && c.Issuer == "http://contoso.com").Value);
+
+    //    int calculatedAge = DateTime.Today.Year - dateOfBirth.Year;
+    //    if (dateOfBirth > DateTime.Today.AddYears(-calculatedAge))
+    //    {
+    //      calculatedAge--;
+    //    }
+
+    //    if (calculatedAge >= requirement.MinimumAge)
+    //    {
+    //      context.Succeed(requirement);
+    //    }
+    //    return Task.CompletedTask;
+    //  }
+    //}
 }

@@ -1,8 +1,8 @@
 import {bindable, inject} from 'aurelia-framework';
 import {ObserverLocator} from 'aurelia-binding';
-import {  objBudget } from 'objBudget';
+import {  cache_obj } from 'cache_obj';
 
-@inject(ObserverLocator,objBudget)
+@inject(ObserverLocator,cache_obj)
 export class gridpaging{
 	
 	@bindable to;
@@ -14,15 +14,15 @@ export class gridpaging{
 	_Pages = [[]];
 	_PagesShow = [];
 	_currentIndex=0;
-	_objBudget;
-	constructor(observerLocator,objBudget){
-		this._objBudget=objBudget;
+	_cache_obj;
+	constructor(observerLocator,cache_obj){
+		this._cache_obj=cache_obj;
 
 		 var subscription = observerLocator
       .getObserver(this, 'to')
       .subscribe(()=>{ this.onChange(); });
 
-      	this._objBudget.OBSERVERS.enable_modal_button.push((id, val) => {
+      	this._cache_obj.OBSERVERS.enable_modal_button.push((id, val) => {
 			this.enableButton(id,val);
 		});
 
