@@ -16,8 +16,8 @@ export default {
     // serviceName: "http://localhost:30313/odata", //odata url
     // serviceNameBase: "http://localhost:30313", //base api url
 
-    serviceName: "http://absppms2:8094/odata", //odata url
-    serviceNameBase: "http://absppms2:8094", //base api url
+    serviceName: "http://absppms2:8072/odata", //odata url
+    serviceNameBase: "http://absppms2:8072", //base api url
 
   pageSize: 100,
   STATIONS: ["", "CEBU", "DAVAO"],
