@@ -7,12 +7,12 @@ import $ from 'jquery';
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
 import {ModalWizard} from 'modals/modal-wizard';
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import {DialogController} from 'aurelia-dialog';
 import breeze from 'breeze-client';
 
 
-@inject(MultiObserver, ObserverLocator, Element, ModalWizard, objBudget, DialogController)
+@inject(MultiObserver, ObserverLocator, Element, ModalWizard, cache_obj, DialogController)
 export class buhProgramDialog {
 	items = [];
 	observerLocator = null;
@@ -22,14 +22,14 @@ export class buhProgramDialog {
 	varFilterArrayLength=0;
 	
 	_ModalWizard;
-	_objBudget;
+	_cache_obj;
 	controller=null;
 	_programs=[];
-	constructor(multiObserver, observerLocator, Element, ModalWizard, objBudget,controller) {
+	constructor(multiObserver, observerLocator, Element, ModalWizard, cache_obj,controller) {
 		this.controller=controller;
 
 		this._ModalWizard=ModalWizard;
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 		
 		toastr.info("Program Data...", "Loading..");
 		

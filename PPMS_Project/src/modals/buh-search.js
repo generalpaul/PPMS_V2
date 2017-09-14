@@ -7,12 +7,12 @@ import $ from 'jquery';
 //import {Dispatcher, handle} from 'aurelia-flux';  
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import {DialogController} from 'aurelia-dialog';
 import breeze from 'breeze-client';
 
 
-@inject(MultiObserver,ObserverLocator,Element, objBudget,DialogController)
+@inject(MultiObserver,ObserverLocator,Element, cache_obj,DialogController)
 export class buhSearch {
 	items = [];
 	observerLocator = null;
@@ -21,12 +21,12 @@ export class buhSearch {
 	varFilterArray = [];
 	currPredicate=null;
 	controller=null;
-	constructor(multiObserver,observerLocator,Element, objBudget, controller) {
+	constructor(multiObserver,observerLocator,Element, cache_obj, controller) {
 		this.controller=controller;
 
 		this.observerLocator=observerLocator;
 		
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 		
 		var _query = EntityQuery().from('BUH_PERSONNEL').orderByDesc("BUH_PERSONNEL_ID");
 		EntityManager().executeQuery(_query).then((success) => {
@@ -47,7 +47,7 @@ export class buhSearch {
 
 		
 
-		this._objBudget.OBSERVERS.clear_program_modal.push(() => {
+		this._cache_obj.OBSERVERS.clear_program_modal.push(() => {
 			this.ClearSearch();
 		});
 
@@ -55,7 +55,7 @@ export class buhSearch {
 
 	selectedTalent(item){
 	
-		this._objBudget.OBSERVERS.pass_value.forEach((all) => {
+		this._cache_obj.OBSERVERS.pass_value.forEach((all) => {
 			all(item);
 		});
 	}

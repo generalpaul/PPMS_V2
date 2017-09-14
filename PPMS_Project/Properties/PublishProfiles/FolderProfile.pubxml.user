@@ -7,6 +7,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_NewBackgroundProfile>False</_NewBackgroundProfile>
-    <_PublishTargetUrl>C:\Users\pmveluya\Documents\PPMS_Project_MVC\PPMS_Project\bin\Release\PublishOutput</_PublishTargetUrl>
+    <_PublishTargetUrl>bin\Release\PublishOutput</_PublishTargetUrl>
   </PropertyGroup>
 </Project>

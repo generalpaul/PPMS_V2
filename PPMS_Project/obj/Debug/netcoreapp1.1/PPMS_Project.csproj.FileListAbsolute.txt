@@ -12,7 +12,6 @@ C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\bin\Debug\netcoreapp1.1\
 C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\bin\Debug\netcoreapp1.1\PPMS_Project.runtimeconfig.dev.json
 C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\bin\Debug\netcoreapp1.1\PPMS_Project.dll
 C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\bin\Debug\netcoreapp1.1\PPMS_Project.pdb
-C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\obj\Debug\netcoreapp1.1\PPMS_Project.csprojResolveAssemblyReference.cache
 C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\obj\Debug\netcoreapp1.1\PPMS_Project.AssemblyInfo.cs
 C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\obj\Debug\netcoreapp1.1\PPMS_Project.dll
 C:\Users\pmveluya\Documents\GitHub\PPMS_V2\PPMS_Project\obj\Debug\netcoreapp1.1\PPMS_Project.pdb

@@ -4,17 +4,18 @@ import {inject, ObserverLocator,bindable} from 'aurelia-framework';
 import _ from 'underscore';
 import $ from 'jquery';
 //import {Dispatcher, handle} from 'aurelia-flux';  
-import {EntityManager, EntityQuery} from '../entity-manager-factory';
+import { EntityManager, EntityQuery } from '../entity-manager-factory';
 import toastr from "toastr";
 //import {HttpClient} from 'aurelia-http-client';
 import {ModalWizard} from 'modals/modal-wizard';
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import { DialogController, DialogService} from 'aurelia-dialog';
 import settings from '../settings';
 import moment from 'moment';
 import { confirm_dialog } from 'modals/confirm_dialog';
+import { setCookie } from '../helpers';
 
-@inject(MultiObserver, ObserverLocator, Element, ModalWizard, objBudget, DialogController, DialogService)
+@inject(MultiObserver, ObserverLocator, Element, ModalWizard, cache_obj, DialogController, DialogService)
 export class login {
 	items = [];
 	observerLocator = null;
@@ -29,26 +30,26 @@ export class login {
 	_COMPANY;
 	_PASSWORD;
 	_ModalWizard;
-    _objBudget;
+    _cache_obj;
     _companies=[];
     _users = [];
     _USER_PROFILE_MSTR = [];
     user_expired = false;
     disableLogButton = false;
     dialogService;
-    constructor(multiObserver, observerLocator, Element, ModalWizard, objBudget, controller, DialogService) 
+    constructor(multiObserver, observerLocator, Element, ModalWizard, cache_obj, controller, DialogService) 
     {
         
-       
+     
         this.dialogService = DialogService;
         this.controller = controller;
         //controller.settings.lock = true;
 		this._ModalWizard=ModalWizard;
 
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 		//httpClient.configure(config => {
 		//	config
-  //              .withBaseUrl(settings.ActualCostService+'/search/')
+  //              .withBaseUrl(settings.actualCostWebUrl+'/search/')
 		//		//.withHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
 		//});
 
@@ -63,6 +64,7 @@ export class login {
 
         EntityManager().executeQuery(varGetUserRole).then((found) => {
         	this._user_content.push({});
+
             found.results.forEach((all) => {
               
 			if(all.ROLE_CD==null || all.ROLE_CD==undefined)
@@ -87,11 +89,11 @@ export class login {
         });
 
 
-		this._objBudget.OBSERVERS.clear_log.push(() => {
+		this._cache_obj.OBSERVERS.clear_log.push(() => {
 			this.ClearLogin();
 		});
 
-		this._objBudget.OBSERVERS.clear_login_modal.push(() => {
+		this._cache_obj.OBSERVERS.clear_login_modal.push(() => {
 			this.ClearSearch();
 		});
 
@@ -185,8 +187,6 @@ export class login {
         
         this.disableLogButton = true;
 
-       
-
         if (this._PASSWORD === undefined || _.isEmpty(this._PASSWORD) || this._USER.USER_ID === undefined || _.isEmpty(this._USER.USER_ID)) 
         {
             toastr.error("USER ID/PASSWORD cannot be empty.", "Change Password");
@@ -217,11 +217,12 @@ export class login {
             }
                
         }
+
         settings.isNavigating = true;
         toastr.info("Please wait..", "Authentication", { timeOut: 30000});
        
         if (this.user_expired) {
-            $.post(settings.ActualCostService + "/home/Set_Password", {
+            $.post(settings.serviceNameBase + "/useraccess/Set_Password", {
                 "USER_ID": this._USER.USER_ID,
                 "COMPANY_ID": this._COMPANY.COMPANY_ID,
                 "PASSWORD": this._PASSWORD,
@@ -258,6 +259,7 @@ export class login {
 
     fnCheckUser()
     {
+
         settings.isNavigating = false;
         toastr.clear();
         //$.ajax({
@@ -290,16 +292,16 @@ export class login {
             return;
 		} else {
             toastr.success("Welcome.. " + response.USER_ID, "User Found");
-            
+          
             var varUserAtt = response;//JSON.parse(response);
             varUserAtt.ROLE_CD = this._USER.ROLE_CD;
             
             this.controller.ok(varUserAtt);
 
-            this._objBudget.USER = varUserAtt;
-           // console.log(this._objBudget.USER);
-			this._objBudget.ALLOW_PASS_CONFIDENTIAL = false;
-
+            this._cache_obj.USER = varUserAtt;
+            console.log(this._cache_obj.USER);
+			this._cache_obj.ALLOW_PASS_CONFIDENTIAL = false;
+          
 			var checkRole = EntityQuery().from('MODULE_ACCESS_TRX').where("ROLE_CD", "==", this._USER.ROLE_CD)
 				.select('ROLE_CD,MODULE_MSTR.MODULE_NAME,ACCESS_FL')
 				.expand('MODULE_MSTR');
@@ -310,18 +312,18 @@ export class login {
 					if (all.ROLE_CD == this._USER.ROLE_CD) {
 
 						if (all.MODULE_MSTR.MODULE_NAME.includes("CONCEAL") && all.ACCESS_FL == "1") {
-							this._objBudget.ALLOW_PASS_CONFIDENTIAL = true;
+							this._cache_obj.ALLOW_PASS_CONFIDENTIAL = true;
 						}
 					}
 				});
             });
 
-
+         
             $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
                 "USER_ID": this._USER.USER_ID,
                 "HASH": this._USER.HASH
             }).done((response) => {
-                console.log(response);
+                this._cache_obj._ACCESS = response;
                 });
 
 
@@ -334,7 +336,8 @@ export class login {
 		this._COMPANY="";
 		this._PASSWORD="";
 
-		this._objBudget.USER={};
+        this._cache_obj.USER = {};
+        this._cache_obj._ACCESS = {};
 	}		
 
 	//@handle('clear.login.modal')
@@ -358,7 +361,7 @@ export class login {
 
                 toastr.info("Please wait..", "Resetting Password");
                 settings.isNavigating = true;
-                $.post(settings.ActualCostService + "/home/Reset_Password", {
+                $.post(settings.serviceNameBase + "/UserAccess/Reset_Password", {
                     "USER_ID": this._USER.USER_ID,
                     "COMPANY_ID": this._COMPANY.COMPANY_ID
                 }).done((response) => {

@@ -7,11 +7,11 @@ import $ from 'jquery';
 //import {Dispatcher, handle} from 'aurelia-flux';  
 import {EntityManager, EntityQuery} from '../entity-manager-factory';
 import toastr from "toastr";
-import {objBudget} from 'objBudget';
+import {cache_obj} from 'cache_obj';
 import {DialogController} from 'aurelia-dialog';
 import breeze from 'breeze-client';
 
-@inject(MultiObserver,ObserverLocator,Element, objBudget, DialogController)
+@inject(MultiObserver,ObserverLocator,Element, cache_obj, DialogController)
 export class job {
 	observerLocator = null;
 	pageindex=0;
@@ -21,13 +21,13 @@ export class job {
 	intTest=0;
 	hasFocus=true;
 	controller=null;
-	constructor(multiObserver,observerLocator,Element, objBudget, controller) {
+	constructor(multiObserver,observerLocator,Element, cache_obj, controller) {
 
 		this.controller=controller;
 
 		this.observerLocator=observerLocator;
 		
-		this._objBudget=objBudget;
+		this._cache_obj=cache_obj;
 
 		multiObserver.observe(
 			[
@@ -36,7 +36,7 @@ export class job {
 			], (newValue, oldValue) => this.onSpeculateProp(newValue, oldValue));
 
 
-		this._objBudget.OBSERVERS.clear_job_modal.push(() => {
+		this._cache_obj.OBSERVERS.clear_job_modal.push(() => {
 			this.ClearSearch();
 		});
 		
@@ -46,7 +46,7 @@ export class job {
 	selectedTalent(item)
 	{
 
-		this._objBudget.OBSERVERS.pass_job.forEach((all)=>{
+		this._cache_obj.OBSERVERS.pass_job.forEach((all)=>{
 			all(item);
 		});
 
@@ -109,7 +109,7 @@ export class job {
 				return;
 
 			var varJobs = getLookups().JOB_GRP_CATEGORY.filter
-			((all)=>all.COMPANY_ID==this._objBudget.USER.COMPANY_ID);
+			((all)=>all.COMPANY_ID==this._cache_obj.USER.COMPANY_ID);
 
 			this.varFilterArray = [];
 
@@ -158,7 +158,7 @@ export class job {
 			if(this.varFilterArray.length==1)
 			{
 
-				this._objBudget.OBSERVERS.pass_job.forEach((all)=>{
+				this._cache_obj.OBSERVERS.pass_job.forEach((all)=>{
 					all(this.varFilterArray[0]);
 				});
 				
