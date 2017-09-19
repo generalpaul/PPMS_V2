@@ -175,6 +175,7 @@ export class mainpage {
 
     applicationClick(item)
     {
+        // alert(item);
         if (item.APPLICATION_DESC == 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM')
         {
             this._roles= this._cache_obj._ACCESS.ROLES.filter((all) => all.APPLICATION_ID == item.APPLICATION_ID);
@@ -182,8 +183,8 @@ export class mainpage {
         }
         else
         {
-            //console.log(item.APPLICATION_URL.replace('.ASPX', ''));
-            this.router.navigateToRoute(item.APPLICATION_URL.replace('.ASPX',''));
+            // console.log(item.APPLICATION_URL.replace('.ASPX', ''));
+            this.router.navigateToRoute(item.APPLICATION_URL.replace('.ASPX','').toLowerCase());
         }
         
        
