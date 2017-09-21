@@ -13,7 +13,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Start Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="start_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.start_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="1" id="_start_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.start_dt" />
 							</td>
 						</tr>
 						<tr>
@@ -44,7 +44,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">End Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.end_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.end_dt" />
 							</td>
 						</tr>
 						<tr>
@@ -359,7 +359,7 @@
 			</tr>
 			<tr>
 				<td colspan="3">
-					<button class="btn btn-xs customButton" style="width:150px;" tabindex="18">Save</button>
+					<button class="btn btn-xs customButton" style="width:150px;" tabindex="18" click.trigger="validate()">Save</button>
 				</td>
 			</tr>
 		</table>

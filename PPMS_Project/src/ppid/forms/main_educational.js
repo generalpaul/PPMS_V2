@@ -22,6 +22,14 @@ export class main_educational{
 			this.loadMain_Educational(val);
 			this.clearData();
 		});
+		
+		this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
+			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT={
+				status:"",
+				model:{},
+				list:[]
+			};
+		});
 	}
 
 	loadMain_Educational(global_id){

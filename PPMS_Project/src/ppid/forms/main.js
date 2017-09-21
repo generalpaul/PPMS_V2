@@ -8,10 +8,12 @@ import breeze from 'breeze-client';
 import {ppid_search} from "../modals/ppid_search";
 import moment from 'moment';
 import {formatDate} from "../../helpers";
+import {fnSerializeCode} from "../../helpers";
+import { cache_obj } from '../../cache_obj';
 // import {input_mask} from "../../helpers";
 // import {isDigit} from "../../helpers";
 
-@inject(DialogService, obj_personnel, toastr)
+@inject(DialogService, obj_personnel, toastr, cache_obj)
 export class main
 {
 	
@@ -29,12 +31,14 @@ export class main
 	selected_citizenship="";
 	selected_group="";	
 	obj_personnel=null;
-	primary_img_src = "/Images/abslogo_BIG.png";
-	constructor(dialogService, obj_personnel, toastr)
+	cache_obj=null;
+	primary_img="/styles/images/abslogo_BIG.png";
+	constructor(dialogService, obj_personnel, toastr, cache_obj)
 	{
 		this.obj_personnel = obj_personnel;
 		this.dialogService = dialogService;
-
+		this.cache_obj = cache_obj;
+		this.obj_personnel.USER = this.cache_obj.USER;
 		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num, global_id)=>{
 			// this.loadData(global_id);
 		});
@@ -42,6 +46,10 @@ export class main
 		this.obj_personnel.OBSERVERS.ppid_dialog.push((val)=>{			
 			this.loadData(val);
 		});
+
+		// this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
+		// 	this.clearData();
+		// });
 
 		// this.LoginPassed(this.obj_personnel.USER);
         //this.obj_personnel.OBSERVERS.ppid_dialog.length;
@@ -79,8 +87,12 @@ export class main
 				this.obj_personnel.HEADER.middle_name = result.MIDDLE_NAME;
 				this.obj_personnel.HEADER.religion_cd = result.RELIGION_CD;
 				var birthdt = formatDate(result.BIRTH_DT)
+				if(birthdt.length==0){
+					// $("#birthDate").datepicker("setValue", new Date());
+				}else{
+					$("#birthDate").datepicker("setValue", new Date(birthdt));
+				}
 				this.obj_personnel.HEADER.birth_dt = birthdt;
-				$("#birthDate").datepicker("setValue", new Date(birthdt));
 				this.obj_personnel.HEADER.age = this.getAge(result.BIRTH_DT);
 				this.obj_personnel.HEADER.civil_status = result.CIVIL_STATUS;
 				this.obj_personnel.HEADER.mother_maiden_name = result.MOTHER_MAIDEN_NAME;
@@ -115,6 +127,37 @@ export class main
 				this.obj_personnel.HEADER.status_cd = result.STATUS_CD;
 				this.obj_personnel.HEADER.created_by = result.CREATED_BY;
 				this.obj_personnel.HEADER.last_updated_by = result.LAST_UPDATED_BY;
+
+				if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
+					var _pred1 = breeze.Predicate.create("GLOBAL_ID","==", global_id);
+					var _pred2 = breeze.Predicate.create("SUSPEND_LEVEL", "==", 1);
+					var _finalPred = breeze.Predicate.and([_pred1, _pred2]);
+					_query = EntityQuery().from('SUSPEND_TRX')
+							.where(_finalPred)
+							.orderByDesc("SUSPEND_ID")
+							.take(1);
+					EntityManager().executeQuery(_query).then((success)=>{
+						if(success.results.length>0){
+							this.obj_personnel.HEADER.suspend_id = success.results[0].SUSPEND_ID;
+							// this.obj_personnel.HEADER.suspension_start = success.results[0].START_DT;							
+							var start_dt = formatDate(success.results[0].START_DT)
+							this.obj_personnel.HEADER.suspension_start = start_dt;
+							$("#suspensionFrom").datepicker("setValue", new Date(start_dt));
+
+							var end_dt = formatDate(success.results[0].END_DT);
+							this.obj_personnel.HEADER.suspension_end = end_dt;
+							$("#suspensionTo").datepicker("setValue", new Date(end_dt));
+							// this.obj_personnel.HEADER.suspension_end = success.results[0].END_DT;
+						}
+					}, (error)=>{
+						toastr.error("", error);
+					});
+				}else{
+					this.obj_personnel.HEADER.suspension_start = "";
+					this.obj_personnel.HEADER.suspension_end="";
+					$("#suspensionFrom").datepicker("setValue", new Date());
+					$("#suspensionTo").datepicker("setValue", new Date());
+				}
 			});
 
 			},(failed)=>{
@@ -148,7 +191,6 @@ export class main
 			toastr.error(failed, 'Error in Retrieving Citizenship list.');
 		});
 
-
 		var pred1 = breeze.Predicate.create('GLOBAL_INDIV_ID', '==', global_id);
 		var pred2 = breeze.Predicate.create('STATUS_CD', '==', 'ACTV');
 		var finalPred = breeze.Predicate.and([pred1, pred2]);
@@ -174,6 +216,9 @@ export class main
 		},(failed)=>{
 			toastr.error(failed, 'Error in Retrieving Group list.');
 		});
+
+
+
 	}
 
 	checkDate(id)
@@ -272,9 +317,11 @@ export class main
 
 	fnPersonnel(call)
 	{
+
+		console.log(moment("01/01/0001").isValid());
 		$("#birthDate").datepicker();
 		$("#suspensionFrom").datepicker();
-		$("#suspensionTo").datepicker();
+		$("#suspensionTo").datepicker();		
 		switch(call)
 		{
 			case "EDIT": 	
@@ -302,7 +349,7 @@ export class main
 				this._disableForm = false;							
 				this.obj_personnel.editing_status = 'CREATE';
 				this.selected_citizenship = "FIL";
-				//this.btnAdd_Citizenship();
+				this.btnAdd_Citizenship();
 				break;
 			case "CLEAR": 
 				this.clearData();
@@ -361,8 +408,42 @@ export class main
 
 		if(this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.trim().length > 0)
 			if(!moment(this.obj_personnel.HEADER.birth_dt).isValid()){
-				strValidation+="Invalid date of birth.";
+				strValidation+="Invalid date of birth.<br/>";
 			}
+
+		if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
+
+			var sus_start = null;
+			var sus_end = null;
+			this.obj_personnel.HEADER.suspension_start = $("#suspensionFrom").val();
+			this.obj_personnel.HEADER.suspension_end = $("#suspensionTo").val();
+			if(this.obj_personnel.HEADER.suspension_start != undefined && this.obj_personnel.HEADER.suspension_start != null && this.obj_personnel.HEADER.suspension_start.length>0){
+				if(!moment(this.obj_personnel.HEADER.suspension_start).isValid()){
+					strValidation+="Invalid suspension start date.<br/>";
+				}else{
+					sus_start = new Date(this.obj_personnel.HEADER.suspension_start);
+				}
+			}else{
+				strValidation+= "No start date of suspension specified.<br/>";
+			}
+
+			if(this.obj_personnel.HEADER.suspension_end != undefined && this.obj_personnel.HEADER.suspension_end != null && this.obj_personnel.HEADER.suspension_end.length>0){			
+				if(!moment(this.obj_personnel.HEADER.suspension_end).isValid()){
+					strValidation+="Invalid suspension end date.<br/>";
+				}else{
+					sus_end = new Date(this.obj_personnel.HEADER.suspension_end);
+				}
+			}else{
+				strValidation+= "No end date of suspension specified.<br/>";	
+			}
+
+			if(sus_start != null && sus_end != null){
+				if(sus_end < sus_start){
+					strValidation+= "end date of suspension cannot be greater than the start date.<br/>";
+				}
+			}
+		}
+		
 
 		if(strValidation.length>0)
 		{
@@ -522,6 +603,39 @@ export class main
 					toastr.error(failedMax, "Error in saving citizenship.");
 				});
 
+				if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
+					var getMax = EntityQuery().from("SUSPEND_TRX").orderByDesc("SUSPEND_ID").take(1);
+					EntityManager().executeQuery(getMax).then((success_suspend)=>{
+					
+						var maxId = 1;
+						if(success_suspend.results.length>0){
+							maxId = success_suspend.results[0].SUSPEND_ID + 1;
+						}
+
+						var suspend_trx = EntityManager().createEntity("SUSPEND_TRX", {
+							SUSPEND_ID: maxId,
+							GLOBAL_ID: this.obj_personnel.HEADER.tin+this.obj_personnel.HEADER.country_cd,
+							SUSPEND_LEVEL: 1,
+							START_DT: this.obj_personnel.HEADER.suspension_start,
+							END_DT: this.obj_personnel.HEADER.suspension_end,
+							COMPANY_ID: 0, 
+							CREATED_BY: this.obj_personnel.USER.USER_ID,
+							CREATED_DT: dateToday
+						});
+						EntityManager().addEntity(suspend_trx);
+						EntityManager().saveChanges().then((suspend_saved)=>{
+							toastr.success("", "Suspension details saved.");
+						}, (suspend_error)=>{
+							toastr.error(suspend_error, "error in saving suspension details.");
+						});
+					});				
+				}else{
+					this.obj_personnel.HEADER.suspension_start = "";
+					this.obj_personnel.HEADER.suspension_end="";
+					$("#suspensionFrom").datepicker("setValue", new Date());
+					$("#suspensionTo").datepicker("setValue", new Date());
+				}
+
 
 			}, (failed_2)=>{
 				if(varInsert != null){
@@ -617,7 +731,8 @@ export class main
 
 					EntityManager().saveChanges().then((success_2)=>{
 						toastr.success('','Record updated.');
-						//update citizenship list
+
+						//update citizenship list						
 
 						var getCitizenshipList = EntityQuery().from('CITIZENSHIP_TRX').where('GLOBAL_INDIV_ID', '==', this.obj_personnel.HEADER.global_indiv_id);
 						EntityManager().executeQuery(getCitizenshipList).then((query)=>{
@@ -740,6 +855,62 @@ export class main
 						});
 						//update group list end.
 
+						//Update/Insert suspend_trx
+						if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
+							if(this.obj_personnel.HEADER.suspend_id != undefined && this.obj_personnel.HEADER.suspend_id != null && this.obj_personnel.HEADER.suspend_id.toString().length>0){
+								var getSuspend = EntityQuery().from("SUSPEND_TRX")
+												.where("SUSPEND_ID", "==", this.obj_personnel.HEADER.suspend_id);
+								EntityManager().executeQuery(getSuspend).then((success_getSuspend)=>{
+									success_getSuspend.results[0].START_DT = this.obj_personnel.HEADER.suspension_start;
+									success_getSuspend.results[0].END_DT = this.obj_personnel.HEADER.suspension_end;
+									success_getSuspend.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+									success_getSuspend.results[0].LAST_UPDATED_DT = dateToday;
+									EntityManager().saveChanges().then((save_success)=>{
+										toastr.success("","Suspension date updated.");
+									},(save_error)=>{
+										toastr.error(save_error, "error in updating suspension date.");
+									});
+								}, (error_getSuspend)=>{
+									toastr.error(error_getSuspend, "error in updating suspension date.");
+								});
+							}else{
+								var getMax = EntityQuery().from("SUSPEND_TRX").orderByDesc("SUSPEND_ID").take(1);
+								EntityManager().executeQuery(getMax).then((success_suspend)=>{
+									var maxId = 1;
+									if(success_suspend.results.length>0){
+										maxId = success_suspend.results[0].SUSPEND_ID + 1;						
+									}
+									var suspend_trx = EntityManager().createEntity("SUSPEND_TRX", {
+										SUSPEND_ID: maxId+"",
+										GLOBAL_ID: this.obj_personnel.HEADER.tin+this.obj_personnel.HEADER.country_cd,
+										SUSPEND_LEVEL: 1,
+										START_DT: this.obj_personnel.HEADER.suspension_start,
+										END_DT: this.obj_personnel.HEADER.suspension_end,
+										COMPANY_ID: 0, 
+										CREATED_BY: this.obj_personnel.USER.USER_ID,
+										CREATED_DT: dateToday
+									});
+									EntityManager().addEntity(suspend_trx);
+									EntityManager().saveChanges().then((suspend_saved)=>{
+										toastr.success("", "Suspension details saved.");
+									}, (suspend_error)=>{
+										// console.log(suspend_error);
+										toastr.error(suspend_error, "error in saving suspension details.");
+									});
+								});
+							}
+						}else{
+							this.obj_personnel.HEADER.suspension_start = "";
+							this.obj_personnel.HEADER.suspension_end="";
+							$("#suspensionFrom").datepicker("setValue", new Date());
+							$("#suspensionTo").datepicker("setValue", new Date());
+						}
+
+
+						//Update/Insert suspend_trx
+
+
+
 					}, (error)=>{
 						EntityManager().getEntities().forEach(function(entity) {
 							var errors = entity.entityAspect.getValidationErrors();
@@ -826,6 +997,9 @@ export class main
 		this._disableForm = true;
 		this.obj_personnel.editing_status="";
 		toastr.clear();
+		this.obj_personnel.OBSERVERS.clear_ppid.forEach((delegate)=>{
+			delegate();
+		});
 	}  
 
 	// LoginPassed(user){

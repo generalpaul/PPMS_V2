@@ -26,8 +26,8 @@ export class company_info_main{
 			if(tab_num == 4){
 				if(!this.alreadyLoaded){
 					this.alreadyLoaded=true;
-					$("#start_dt").datepicker();
-					$("#end_dt").datepicker();
+					$("#_start_dt").datepicker();
+					$("#_end_dt").datepicker();
 					$("#kapamilya_dt").datepicker();
 					$("#membership_dt").datepicker();
 					$("#suspended_start_dt").datepicker();
@@ -45,6 +45,14 @@ export class company_info_main{
 			toastr.info("", "Loading company info...");
 			this.loadGlobalCompany(global_id);
 		});
+
+		this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
+			this.obj_personnel.COMPANY_SPECIFIC = {
+				model:{},
+				list:[]
+			}
+			this.alreadyLoaded = false;
+		});
 	}
 
 	loadGlobalCompany(global_id){
@@ -54,9 +62,9 @@ export class company_info_main{
 		EntityManager().executeQuery(query).then((success)=>{
 			var tmp=[];
 			_.each(success.results, (r)=>{
-				var suspend = {};
+				var suspend = [];
 				if(r.STATUS_CD == "SUSPEND"){
-					// suspend = this.loadSuspend(global_id, r.COMPANY_ID);
+					suspend = this.loadSuspend(global_id, r.COMPANY_ID);
 				}
 				var accreditation = this.loadAccreditation(r.GLOBAL_COMPANY_ID);
 				tmp.push({
@@ -78,10 +86,11 @@ export class company_info_main{
 					job_id: r.JOB_ID,
 					payroll_grp_id: r.PAYROLL_GRP_ID,
 					professional_type_cd: r.PROFESSIONAL_TYPE_CD,
-					accreditation: accreditation
+					accreditation: accreditation,
+					suspend_id: suspend.suspend_id,
+					suspended_start_dt: suspend.length==0?"":suspend[0].start_dt,
+					suspended_end_dt: suspend.length==0?"":suspend[0].end_dt
 				});
-
-
 			});
 			this.obj_personnel.COMPANY_SPECIFIC.list = tmp;
 			toastr.clear();
@@ -129,7 +138,7 @@ export class company_info_main{
 		var pred2 = breeze.Predicate.create('SUSPEND_LEVEL', '==', 2);
 		var finalPred = breeze.Predicate.and([pred1, pred2]);
 		var query = EntityQuery().from("SUSPEND_TRX")
-					.where(finalPred).orderBy("SUSPEND_ID DESC").take(1);
+					.where(finalPred).orderByDesc("SUSPEND_ID").take(1);
 		var suspend = [];
 		EntityManager().executeQuery(query).then((success)=>{
 			
@@ -138,7 +147,8 @@ export class company_info_main{
 					suspend.push({
 						suspend_id: result.SUSPEND_ID,
 						start_dt: result.START_DT,
-						end_dt: result.END_DT
+						end_dt: result.END_DT,
+						company_id: result.COMPANY_ID
 					});
 				});
 			}
@@ -231,12 +241,41 @@ export class company_info_main{
 			if(global_company != null && global_company != undefined){
 				this._disableStatus = false;
 				this._disableTabsInput = false;
+				this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = global_company.global_company_id;
 				this.obj_personnel.COMPANY_SPECIFIC.model.id_no = global_company.id_no;
-				// var startDt = formatDate(global_company.start_dt);
-				this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = formatDate(global_company.start_dt);
-				this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = formatDate(global_company.end_dt);				
-				this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = formatDate(global_company.kapamilya_dt);
-				this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = formatDate(global_company.membership_dt);
+				var startDt = formatDate(global_company.start_dt);
+				if(startDt.length>0 && startDt != "01/01/0001"){
+					this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = startDt;
+					$("#_start_dt").datepicker("setValue", new Date(startDt));
+				}else{
+					this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
+					// $("#_start_dt").datepicker("setValue", new Date());
+				}
+				var endDt = formatDate(global_company.end_dt);
+
+				if(endDt.length>0 && endDt != "01/01/0001"){
+					this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = endDt;
+					$("#_end_dt").datepicker("setValue", new Date(endDt));
+				}else{
+					this.obj_personnel.COMPANY_SPECIFIC.model.end_dt="";
+				}
+
+				var kapamilya_dt = formatDate(global_company.kapamilya_dt);
+				if(kapamilya_dt.length >0 && kapamilya_dt != "01/01/0001"){
+					this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = kapamilya_dt;
+					$("#kapamilya_dt").datepicker("setValue", new Date(kapamilya_dt));
+				}else{
+					this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
+				}
+
+				var membership_dt = formatDate(global_company.membership_dt);
+				if(membership_dt.length >0 && membership_dt != "01/01/0001"){
+					this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = membership_dt;
+					$("#membership_dt").datepicker("setValue", new Date(membership_dt));
+				}else{
+					this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
+				}
+				
 				this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = global_company.exclusive_fl;
 				this.obj_personnel.COMPANY_SPECIFIC.model.status_cd = global_company.status_cd;
 				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = global_company.cessation_reason_cd;
@@ -250,6 +289,8 @@ export class company_info_main{
 				this.obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd = global_company.professional_type_cd;
 				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = formatDate(global_company.suspended_start_dt);
 				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = formatDate(global_company.suspended_end_dt);
+				$("#suspended_start_dt").datepicker("setValue", formatDate(global_company.suspended_start_dt));
+				$("#suspended_end_dt").datepicker("setValue", formatDate(global_company.suspended_end_dt));
 				this.obj_personnel.COMPANY_SPECIFIC.model.accreditation = global_company.accreditation;
 				this.loadJobDropdown();
 				this.obj_personnel.COMPANY_SPECIFIC.model.job_id = global_company.job_id+"";
@@ -257,15 +298,12 @@ export class company_info_main{
 				this._disableStatus = true;
 				this._disableTabsInput = true;
 				// this.obj_personnel.COMPANY_SPECIFIC.model = {};
+				this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.status_cd="ACTV";
-				this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = null;
-				$("#start_dt").val("");				
-				this.obj_personnel.COMPANY_SPECIFIC.model.end_dt= null;
-				$("#end_dt").val("");
-				this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = null;
-				$("#kapamilya_dt").val("");
-				this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = null;
-				$("#membership_dt").val("");
+				this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";								
+				this.obj_personnel.COMPANY_SPECIFIC.model.end_dt= "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.division_id = this.obj_personnel.DIVISION[0].value;
 				this.obj_personnel.COMPANY_SPECIFIC.model.category_id = this.obj_personnel.CATEGORY[0].value;
 
@@ -291,6 +329,75 @@ export class company_info_main{
 		}
 	}
 
+	validate(){
+		var strValidation = "";
+
+		if(this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "SUSPEND"){
+
+			var sus_start = null;
+			var sus_end = null;
+			this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = $("#suspended_start_dt").val();
+			this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = $("#suspended_end_dt").val();
+			if(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt != null && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt.length>0){
+				if(!moment(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt).isValid()){
+					strValidation+="Invalid suspension start date.<br/>";
+				}else{
+					sus_start = new Date(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt);
+				}
+			}else{
+				strValidation+= "No start date of suspension specified.<br/>";
+			}
+
+			if(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt != null && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt.length>0){			
+				if(!moment(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt).isValid()){
+					strValidation+="Invalid suspension end date.<br/>";
+				}else{
+					sus_end = new Date(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt);
+				}
+			}else{
+				strValidation+= "No end date of suspension specified.<br/>";	
+			}
+
+			if(sus_start != null && sus_end != null){
+				if(sus_end < sus_start){
+					strValidation+= "end date of suspension cannot be greater than the start date.<br/>";
+				}
+			}
+		}
+
+		if(strValidation.length>0){
+			toastr.clear();
+			toastr.error("", strValidation);
+		}else{
+			// console.log(this.obj_personnel.COMPANY_SPECIFIC.model.company_id);
+			// console.log(this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
+			var cid = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
+			var gcid = this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id;
+			if(gcid.length==0){
+				this.saveCompanySpecific(cid);
+			}else{
+				this.updateCompanySpecific(gcid);
+			}
+		}
+	}
+
+	saveCompanySpecific(company_id){
+		var generated_id = this.GenerateIDNo(company_id);
+		console.log(generated_id);
+	}
+
+	updateCompanySpecific(global_company_id){
+		this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = $("#_start_dt").val();
+		this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = $("#_end_dt").val();
+		var query = EntityQuery().from("GLOBAL_COMPANY_MSTR")
+					.where("GLOBAL_COMPANY_ID", "==", global_company_id);
+		EntityManager().executeQuery(query).then((s)=>{
+			// s.results[0].START_DT = 
+		},(e)=>{
+			toastr.error("", e);
+		});
+	}
+
 	dd_bankChanged(){
 		var bank_id = this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id;
 		if(bank_id != undefined && bank_id != null && bank_id.length>0){
@@ -303,8 +410,23 @@ export class company_info_main{
 			this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm = "";
 			this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = "";
 		}
+	}
 
-
+	GenerateIDNo(company_id){
+		var LastID = "000000";
+		var currentYear = (new Date()).getFullYear().toString().substring(2,4);
+		var query = EntityQuery().from("COMPANY_SPECIFIC_INDEX")
+					.where("COMPANY_SPECIFIC_ID", "==", company_id).take(1);
+		EntityManager().executeQuery(query).then((s)=>{
+			LastID = s.results[0].COMPANY_INDEX;
+			var lastYear = LastID.toString().substring(0,2);
+			if(lastYear != currentYear){
+				LastID = currentYear + "0001";		
+			}
+			return LastID;
+		},(e)=>{
+			toastr.error(e, "Error in generating ID.");
+		});
 	}
 
 	clearAccreditationField(){

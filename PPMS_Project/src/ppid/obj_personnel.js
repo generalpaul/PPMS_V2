@@ -49,12 +49,14 @@ export class obj_personnel
 	OBSERVERS={
 		ppid_dialog:[],
 		tab_changed:[],
+		clear_ppid:[],
 		clear_log:[],
 		clear_login_modal:[],
 		maintab_contact_clicked:[],
 		maintab_education_clicked:[],
 		govinfo_main_clicked:[],
 		company_main_clicked:[]
+
 	};
 
 	//Dropdown
