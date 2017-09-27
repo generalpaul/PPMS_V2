@@ -22,10 +22,10 @@ export class NavBar {
     {
         this.router = Router;
         this._cache_obj = cache_obj;
-        
+
         this.dialogService = DialogService;
         this.settings = settings;
-      
+
         //initializeBreeze().then(() => {
         //    //have to set timeout because of IE, other templates are not loading
         //    // quickly and loading at same time with functions
@@ -54,13 +54,13 @@ export class NavBar {
 
         //    }, 2000);
         //});
-       
-  var oldClient = OData.defaultHttpClient; 
-   
+
+  var oldClient = OData.defaultHttpClient;
+
 
     var myClient = {
          request:  (request, success, error)=> {
-            
+
              if(this._cache_obj!=undefined)
              if(this._cache_obj.USER!=undefined)
              request.headers.Authorization = "Basic "+btoa(this._cache_obj.USER.USER_ID+':'+this._cache_obj.USER.HASH);
@@ -68,7 +68,7 @@ export class NavBar {
          }
     };
 
-    OData.defaultHttpClient = myClient;  
+    OData.defaultHttpClient = myClient;
 
        initializeBreeze().then(() => {
             //have to set timeout because of IE, other templates are not loading
@@ -77,7 +77,7 @@ export class NavBar {
                 this.router.navigateToRoute('blankpage');
                 var varCheckUser = checkCookie("PPMS_USER");
                 //console.log(varCheckUser);
-                //this.router.currentInstruction.config.name != "blankpage" && 
+                //this.router.currentInstruction.config.name != "blankpage" &&
                 if ((varCheckUser == "" || varCheckUser == undefined || varCheckUser.indexOf('undefined') >= 0 || varCheckUser.split('^')[0] == "")) {
                     this.fnLogin();
                     return;
@@ -99,7 +99,7 @@ export class NavBar {
 
 
                     // var oldClient = OData.defaultHttpClient;
-                   
+
 
                     // var newClient = {
                     //      request: function (request, success, error) {
@@ -127,7 +127,7 @@ export class NavBar {
             this._toastr = toastr;
             toastr.clear();
             toastr.info("Masterfiles...", "Loading please wait..", { timeOut: 15000 });
-          
+
             loadMasterfiles().then(() => {
                 loadLookups().then(() => {
 
@@ -153,14 +153,14 @@ export class NavBar {
 
 
     fnPassUserObject(initType, output) {
-        
+
         if (initType == 1) {
 
 
         } else {
             var varCookie = checkCookie("PPMS_USER");
 
-            
+
 
             var varSplitCookie = varCookie.split('^');
             this._user = {
@@ -171,11 +171,12 @@ export class NavBar {
                 EMPLOYEE_ID: varSplitCookie[4],
                 HASH: varSplitCookie[5],
                 EMAIL_ADDRESS: varSplitCookie[6],
-                ROLE_CD: varSplitCookie[7]
+                ROLE_CD: varSplitCookie[7],
+                LEVEL_NO: varSplitCookie[8]
             };
 
             this._cache_obj.USER = this._user;
-            
+
             toastr.clear();
             toastr.success("Let's Start...", "Success");
             settings.isNavigating = false;
@@ -184,13 +185,13 @@ export class NavBar {
                 this.router.navigateToRoute('mainpage');
             }
 
-      
+
 
             return;
         }
 
         this.LoginPassed(output);
-     
+
     }
 
 
@@ -200,11 +201,11 @@ export class NavBar {
         this._user = user;
         //console.log(user);
         setCookie("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^"
-            + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD, 30);
+            + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD + "^" + user.LEVEL_NO, 30);
         settings.isNavigating = false;
 
-       
-        
+
+
       //  console.log(checkCookie("PPMS_USER"));
         toastr.clear();
         toastr.success("Let's Start...", "Success");
@@ -215,7 +216,7 @@ export class NavBar {
     }
 
     logout() {
-      
+
         if (this.router.currentInstruction.config.name != "blankpage")
             this.router.navigateToRoute('blankpage');
         else
@@ -230,12 +231,12 @@ export class NavBar {
         this._cache_obj.USER = {};
         this._cache_obj._ACCESS = {};
 
-   
+
         removeCookie();
 
         this.fnLogin();
-       
-        
+
+
     }
 
 
@@ -243,7 +244,7 @@ export class NavBar {
     {
         this.router.navigateToRoute('mainpage');
     }
-    
+
 
 
     fnLogin() {
@@ -254,11 +255,11 @@ export class NavBar {
             }
         }
 
-     
+
         this.dialogService.open({
             viewModel: login, keyboard: false, overlayDismiss: false, lock:true
         }).whenClosed(response => {
-           
+
             if (!response.wasCancelled) {
                 this.fnInitMasterfiles(1, response.output);
             } else {
@@ -276,11 +277,11 @@ export class NavBar {
         }).whenClosed(response => {
 
             if (!response.wasCancelled) {
-                
+
             } else {
-               
+
             }
         });
     }
-    
+
 }
