@@ -1,0 +1,230 @@
+<template>
+	<div style="height: 500px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">
+			<tr>
+				<td>
+					<table style="width: 100%">
+						<tr class="backroundTab">
+							<td colspan="2">
+								<div>
+									<h5 style="margin: 10px; text-align: left; color: white;">Tax Information</h5>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td style="vertical-align: top;">							
+								<table>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Tax ID Number(TIN)</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled value.bind="obj_personnel.GOVERNMENT_INFO.tin" />
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Tax Exemption</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.tax_exempt_cd" tabindex="1"  >
+												<option repeat.for="item of obj_personnel.TAX_EXEMPT" value.bind="item.value">${item.text}</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Tax Type</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.input_tax_cd" tabindex="2" >
+												<option repeat.for="item of obj_personnel.INPUT_TAX" value.bind="item.value">${item.text}</option>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td style="vertical-align: top;">
+								<table>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Tax Affidavit</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="3" value.bind="obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no" />
+										</td>
+									<!--</tr>
+									<tr>-->
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Date</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="4" id="affidavit_dt" value.bind="obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt" />
+										</td>
+									<!--</tr>
+									<tr>-->
+										<td>
+											<input type="button" value="+" class="btn btn-xs customButton" click.trigger="btnAdd_TaxAffidavit()" tabindex="5"  />
+										</td>
+									</tr>
+									<tr>
+										<td colspan="5">
+											<div style="height: 120px; overflow: scroll;">
+												<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+													<thead style="display: table-header-group;">
+														<tr>
+															<td class="colorCell">Tax Affidavit</td>
+															<td class="colorCell">Date</td>
+															<td class="colorCell">Remove</td>
+														</tr>
+													</thead>
+													<tbody>
+														<tr repeat.for="item of obj_personnel.GOVERNMENT_INFO.tax_affidavit">
+															<td>${item.affidavit_no}</td>
+															<td>${item.affidavit_dt}</td>
+															<td>
+																<input type="button" value="x" class="btn btn-xs customButton" click.trigger="btnRemove_TaxAffidavit(item)" />
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<br/>
+							</td>
+						</tr>
+						<tr class="backroundTab">
+							<td colspan="2">
+								<div>
+									<h5 style="margin: 10px; text-align: left; color: white;">Government permits</h5>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+							 	<table>
+							 		<tr>
+							 			<td style="width: 120px; vertical-align: middle;" class="text-left">Gov't Permit</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd" disabled.bind="_disableForm" tabindex="6">
+												<option></option>
+												<option repeat.for="item of obj_personnel.PERMIT" value.bind="item.value">${item.text}</option>
+											</select>
+											<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="6" /> -->
+										</td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Permit Number</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="7" value.bind="obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no" />
+										</td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Expiry Date</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="8" id="expiry_dt" value.bind="obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt" />
+										</td>									
+							 		</tr>
+							 		<tr>							 			
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Place Issued</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue" disabled.bind="_disableForm" tabindex="9">
+												<option></option>
+												<option repeat.for="item of obj_personnel.LOCATIONS" value.bind="item.LOCATION_CD">${item.LOCATION_DESC}</option>
+											</select>
+											<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="9" /> -->
+										</td>
+										<td>
+											<!-- <input type="button" value="-" class="btn btn-xs customButton" click.trigger="" tabindex="10" />&nbsp;&nbsp; -->
+											<input type="button" value="+" class="btn btn-xs customButton" click.trigger="btnAdd_Permit()" tabindex="10" />
+										</td>
+							 		</tr>
+							 		<tr>
+							 			<td colspan="6">
+							 				<div style="height:120px; overflow-y: scroll;">
+							 					<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+													<thead style="display: table-header-group;">
+														<tr>
+															<td class="colorCell">Gov't Permit</td>
+															<td class="colorCell">Permit Number</td>
+															<td class="colorCell">Expiry Date</td>
+															<td class="colorCell">Place Issued</td>
+															<!-- <td class="colorCell">Edit</td> -->
+															<td class="colorCell">Remove</td>
+														</tr>
+													</thead>
+													<tbody>
+														<tr repeat.for="item of obj_personnel.GOVERNMENT_INFO.permits">
+															<td>${item.permit_name}</td>
+															<td>${item.permit_no}</td>
+															<td>${item.expiry_dt}</td>
+															<td>${item.poi}</td>
+															<!-- <td>-</td> -->
+															<td>
+																<input type="button" value="X" class="btn btn-xs customButton" click.trigger="btnRemove_Permit(item)" tabindex="10" />
+															</td>														
+														</tr>
+													</tbody>							 						
+							 					</table>
+							 				</div>
+							 			</td>
+							 		</tr>
+							 	</table>
+							</td>
+						</tr>
+						<tr>
+							<td><br/></td>
+						</tr>
+
+						<tr class="backroundTab">
+							<td colspan="2">
+								<div>
+									<h5 style="margin: 10px; text-align: left; color: white;">Other Government Info</h5>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<table>
+									<tr>															 			
+										<td style="width: 120px; vertical-align: middle;" class="text-left">VAT Classification</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.vat_stat_cd" tabindex="11"  >
+												<option repeat.for="item of obj_personnel.VAT_STAT" value.bind="item.value">${item.text}</option>
+											</select>
+										</td>															 			
+										<td style="width: 120px; vertical-align: middle;" class="text-left">VAT Registration Date</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="12" value.bind="obj_personnel.GOVERNMENT_INFO.vat_reg_dt" id="vat_reg_dt" />
+										</td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">SSS Number</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="13" value.bind="obj_personnel.GOVERNMENT_INFO.sss_no" id="_sss" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_sss', '__-_______-_')" placeholder="00-0000000-00" />
+										</td>
+									</tr>
+									<tr>															 			
+										<td style="width: 120px; vertical-align: middle;" class="text-left">PAG-IBIG Number</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="14" value.bind="obj_personnel.GOVERNMENT_INFO.pagibig_no" id="_pagibig" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_pagibig', '____-____-____')" />
+										</td>															 			
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Philhealth</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="15" value.bind="obj_personnel.GOVERNMENT_INFO.philhealth_no" id="_philhealth" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_philhealth', '__-_________-_')" />
+										</td>															 			
+										<td style="width: 120px; vertical-align: middle;" class="text-left">National ID</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="16" value.bind="obj_personnel.GOVERNMENT_INFO.national_id" />
+										</td>
+									</tr>
+									<tr>															 			
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Voter's ID</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="17" value.bind="obj_personnel.GOVERNMENT_INFO.voters_id" />
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="validate()" tabindex="18">Save</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</template>

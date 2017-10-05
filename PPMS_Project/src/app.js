@@ -12,11 +12,13 @@ export class App {
       { route: 'mainview', name: 'mainview', moduleId: 'ppfcs/budget/mainview', nav: true, title: 'Budget Template' },
       { route: 'group_individual', name: 'group_individual', moduleId: 'group_individual', nav: true, title:'Talent Groups' },
       { route: 'actual_cost', name: 'actual_cost', moduleId: 'ppfcs/actual_cost/actual_cost', nav: true, title:'Actual Cost' },
-      { route: 'buh', name: 'buh', moduleId: 'buh', nav: true, title:'BUH' }
+      { route: 'buh', name: 'buh', moduleId: 'buh', nav: true, title:'BUH' },
+      { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information Database' },
+      { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title:'Utilization' }
     ]);
 
     this.router = router;
-    
+
     toastr.options = {
       "closeButton": true,
       "debug": false,

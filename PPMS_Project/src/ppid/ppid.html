@@ -1,0 +1,48 @@
+<template>
+	<h3>Program Personal Information Database</h3>
+	<!-- <div style="background:#A2A2D0; width:100%; height:38px; padding:5px;">
+		<input type="button" class="btn btn-xs customButton" click.trigger="FindUsers()" value="SEARCH" style="padding-left:15px;padding-right:15px;"/>
+		<input type="button" class="btn btn-xs customButton" click.trigger="" value="ADD NEW PROGRAM PERSONNEL" style="padding-left:15px;padding-right:15px;"/>
+		<label hidden.bind="obj_personnel.global_indiv_id.length==0">Global Id: ${obj_personnel.global_indiv_id}</label>
+	</div> -->
+	<require from="./forms/main"></require>
+	<require from="./forms/relative_character_ref"></require>
+	<require from="./forms/e_a_s_t"></require>
+	<require from="./forms/gov_info"></require>
+	<require from="./forms/company_info"></require>	
+	<!--<require from="converters/filtercustom"></require>
+	<require from="converters/sorttext"></require>-->
+	<div style="margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center" class="text-center divBackground" >
+		<ul class="nav nav-tabs backroundTab" role="tablist" style="width:100%;height:38px;">
+			<li role="presentation" class="active" ><a href="#main" aria-controls="main" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="changeTab(0)">Personnel Info</a></li>
+			<!-- <li role="presentation" style=""><a href="#relative_character_ref" aria-controls="other_info" role="tab" data-toggle="tab" style="margin-top:6px;" disabled.bind="obj_personnel.global_indiv_id.length==0" click.trigger="changeTab(1)">Relative & Character Ref.</a></li> -->
+			<!-- <li role="presentation" style=""><a href="#e_a_s_t" aria-controls="semi_regular" role="tab" data-toggle="tab" style="margin-top:6px;" disabled.bind="obj_personnel.global_indiv_id.length==0" click.trigger="changeTab(2)">Experience, Awards, Seminars, & Training</a></li> -->
+			<li role="presentation" style=""><a href="#gov_info" aria-controls="semi_regular" role="tab" data-toggle="tab" style="margin-top:6px;" disabled.bind="obj_personnel.global_indiv_id.length==0" click.trigger="changeTab(3)">Gov. Related Info.</a></li>
+			<li role="presentation" style=""><a href="#company_info" aria-controls="staff" role="tab" data-toggle="tab" style="margin-top:6px;" disabled.bind="obj_personnel.global_indiv_id.length==0" click.trigger="changeTab(4)">Company</a></li>
+        </ul>
+
+        <div class="tab-content">
+			<div role="tabpanel" class="tab-pane active color1" id="main"  style="width:1200px;height:620px; margin-left:auto; margin-right:auto;"><br/>
+				<main></main>
+			</div>
+			
+			<!-- <div role="tabpanel" class="tab-pane color1" id="relative_character_ref"  style="width:1024px;height:620px; margin-left:auto; margin-right:auto;"><br/>
+				<relative_character_ref></relative_character_ref>
+			</div>
+			
+			<div role="tabpanel" class="tab-pane color1" id="e_a_s_t"  style="width:1024px;height:620px; margin-left:auto; margin-right:auto;"><br/>
+				<e_a_s_t></e_a_s_t>
+			</div> -->
+			
+			<div role="tabpanel" class="tab-pane color1" id="gov_info"  style="width:1024px;height:620px; margin-left:auto; margin-right:auto;"><br/>
+				<gov_info></gov_info>
+			</div>
+			
+			<div role="tabpanel" class="tab-pane color1" id="company_info"  style="width:1024px;height:620px; margin-left:auto; margin-right:auto;"><br/>
+				<company_info></company_info>
+			</div>
+			
+		</div>
+		
+	</div>
+</template>
