@@ -22,6 +22,7 @@ export class indivmstr {
 	_ModalWizard;
 	_cache_obj;
 	controller=null;
+	varActiveFromCompanyMstr=[];
 	constructor(multiObserver, observerLocator, Element, ModalWizard,cache_obj,controller) 
 	{
 
@@ -47,6 +48,12 @@ export class indivmstr {
 
 	}
 
+	activate(model){
+	    if(model.allPersonnel)
+	    	this.varActiveFromCompanyMstr = _.filter(getLookups().GLOBAL_COMPANY_MSTR,(all)=>all.STATUS_CD=='ACTV').map((val)=>{return val.GLOBAL_ID});
+	    else
+	    	this.varActiveFromCompanyMstr = _.filter(getLookups().GLOBAL_COMPANY_MSTR,(all)=>all.STATUS_CD=='ACTV' && all.COMPANY_ID == this._cache_obj.USER.COMPANY_ID).map((val)=>{return val.GLOBAL_ID});
+	}
 
 	selectedIndiv(item) 
 	{
@@ -103,6 +110,22 @@ export class indivmstr {
 		else
 		{
 			tmpVar=this.fnManualFilter(getLookups().GLOBAL_INDIV_WITH_ALIAS); 
+
+			//check if is inactive then return none;
+			var varFound=_.filter(tmpVar,(all)=>{
+
+				var result_p=_.find(this.varActiveFromCompanyMstr,(all_p)=>{
+ 					return all_p==all.GLOBAL_INDIV_ID;
+ 				});
+             
+             //if undefined means not found as inactive
+			 return result_p!=undefined;
+
+			});
+
+
+
+			tmpVar=varFound;
 		}
 		
 		this.varFilterArray = tmpVar;

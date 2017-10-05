@@ -67,14 +67,16 @@ export class login {
 
             found.results.forEach((all) => {
               
-			if(all.ROLE_CD==null || all.ROLE_CD==undefined)
-			{
+			//if(all.ROLE_CD==null || all.ROLE_CD==undefined)
+			//{
+               var found = this._user_content.find((all2=>all2.USER_ID==all.USER_ID));
+               if(found==undefined)
 				this._user_content.push(all);
-			}
-            else if (all.ROLE_CD.includes('ACCESSALL') || all.ROLE_CD.includes('PPFCS'))
-			{
-				this._user_content.push(all);
-			}
+			//}
+   //          else if (all.ROLE_CD.includes('ACCESSALL') || all.ROLE_CD.includes('PPFCS'))
+			// {
+			// 	this._user_content.push(all);
+			// }
 
 		});
         });

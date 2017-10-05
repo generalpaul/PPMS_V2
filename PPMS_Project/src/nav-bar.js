@@ -93,6 +93,7 @@ export class NavBar {
                         EMPLOYEE_ID: varSplitCookie[4],
                         HASH: varSplitCookie[5],
                         EMAIL_ADDRESS: varSplitCookie[6],
+                        LEVEL_NO: varSplitCookie[7]
                     };
 
                     this._cache_obj.USER = _user;
@@ -200,7 +201,7 @@ export class NavBar {
         this._user = user;
         //console.log(user);
         setCookie("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^"
-            + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD, 30);
+            + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD+ "^" + user.LEVEL_NO, 30);
         settings.isNavigating = false;
 
        

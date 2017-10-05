@@ -32,6 +32,7 @@ export class mainpage {
         { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
         { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' }
+
     ];
     _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
     _ppfcs_modules = [];
@@ -51,6 +52,7 @@ export class mainpage {
         this.router = Router;
 
         setTimeout(() => {
+             //console.log(this._cache_obj._ACCESS);
 
             if (this._cache_obj.USER !== undefined)
             if (this._cache_obj.USER.ROLE_CD !== undefined)
@@ -63,7 +65,7 @@ export class mainpage {
                     this.actualAccess = true;
                     this.headerVisible = true;
                 }
-                
+               
                 if (_.isEmpty(this._cache_obj._ACCESS))
                 {
                   $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
@@ -73,7 +75,7 @@ export class mainpage {
 
                       this._cache_obj._ACCESS = response;
 
-                      //console.log(this._cache_obj._ACCESS);
+                      
 
                       this._application = this._cache_obj._ACCESS.APPLICATION;
 
@@ -208,16 +210,17 @@ export class mainpage {
 
     fnCheckAccess()
     {
-         // var varResult= getLookups().GLOBAL_INDIV_WITH_ALIAS.filter((all)=>all.ALIASES.length>0);
-         // console.log(varResult);
+         
         if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
         
-        var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+        var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', 'PROGRAM PERSONNEL INFORMATION DATABASE'];
         var varFound = this._cache_obj._ACCESS.APPLICATION.filter(all => filterMenu.includes(all.APPLICATION_DESC));
         if (varFound.length == 1)
         {
             if (varFound == 'PROGRAM BUDGET TEMPLATE')
                 this.router.navigateToRoute('mainview');
+            else if (varFound == 'PROGRAM PERSONNEL INFORMATION DATABASE')
+                this.router.navigateToRoute('ppid');
             else
                 this.router.navigateToRoute('actual_cost');
         }
