@@ -237,9 +237,9 @@ export class GuestCustomElement {
                 found.results[0].INPUT_AMT = parseFloat(this._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g,''));
                 found.results[0].PAY_RATE_FACTOR = parseFloat(this._cache_budget.GUEST[0].PAY_RATE_FACTOR_TMP.replace(/,/g,''));
                 found.results[0].REMARKS = this._cache_budget.GUEST[0].REMARKS;
-                
-                found.results[0].LAST_UPDATED_BY = this._cache_obj.USER.USER_ID;
-                found.results[0].LAST_UPDATED_DT =  new Date();
+
+                found.results[0].LAST_UPDATED_BY = this._cache_budget.USER.USER_ID;
+              found.results[0].LAST_UPDATED_DT =  new Date();
 
               
             } else {
@@ -252,10 +252,8 @@ export class GuestCustomElement {
                 PAY_RATE_FACTOR: parseFloat(this._cache_budget.GUEST[0].PAY_RATE_FACTOR_TMP.replace(/,/g,'')),
                 REMARKS: this._cache_budget.GUEST[0].REMARKS,
                 BDGT_TMPL_ID: this._cache_budget.HEADER.BDGT_TMPL_ID,
-                CREATED_BY: this._cache_obj.USER.USER_ID,
-                CREATED_DT: new Date(),
-                LAST_UPDATED_BY: this._cache_obj.USER.USER_ID,
-                LAST_UPDATED_DT: new Date()
+                CREATED_BY: this._cache_budget.USER.USER_ID,
+                CREATED_DT: new Date()
               });
               
               EntityManager().addEntity(varInsert);
