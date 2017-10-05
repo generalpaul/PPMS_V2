@@ -248,13 +248,13 @@
 									<tr hidden.bind="obj_personnel.HEADER.status_cd!='SUSPEND'">
 										<td style="width: 120px; vertical-align: middle;" class="text-left">From</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionFrom" blur.trigger="checkDate('suspensionFrom')"/>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionFrom" value.bind="obj_personnel.HEADER.suspension_start"/>
 										</td>
 									</tr>									
 									<tr hidden.bind="obj_personnel.HEADER.status_cd!='SUSPEND'">
 										<td style="width: 120px; vertical-align: middle;" class="text-left">To</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionTo" blur.trigger="checkDate('suspensionTo')"/>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionTo" value.bind="obj_personnel.HEADER.suspension_end"/>
 										</td>
 									</tr>	
 								</table>
@@ -263,8 +263,9 @@
 								<table>
 									<tr>
 										<td>
+										<!-- -   <img if.bind="cache_obj.USER.USER_ID!==undefined" src="/ViewFile/GetFile?fileName=abslogo_BIG.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}"/>  -->
 											<div style="width: 150px; height: 150px; border: dashed 2px black;">
-												<img src.bind="primary_img_src">
+												<img src.bind="primary_img" style="height: 100%; width: 100%;">												
 											</div>
 										</td>
 									</tr>

@@ -32,12 +32,24 @@ export class gov_info_main{
 				}
 			}
 		});
+
 		this.obj_personnel.OBSERVERS.govinfo_main_clicked.push((global_id)=>{
 			this.load_TaxInformation(global_id);
 			this.load_TaxAffidavit(global_id);
 			this.load_Permit(global_id);
 			this.clearTaxAffidavitField();
 		});
+
+		this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
+			this.obj_personnel.GOVERNMENT_INFO = {				
+				modelTaxAffidavit:{},
+				modelPermit:{},
+				tax_affidavit:[],
+				permits:[]
+			};
+			this.alreadyLoaded=false;
+		});
+
 	}
 
 	formatDate(strDate){

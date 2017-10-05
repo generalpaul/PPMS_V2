@@ -27,6 +27,23 @@ export class main_contact
 			this.clearAddressData();
 			this.clearContactData();
 		});
+
+		this.obj_personnel.OBSERVERS.clear_ppid.push((val)=>{
+			this.obj_personnel.CONTACT= {
+				status:"",
+				modelAddress:{},
+				statusContact:"Add",
+				modelContact:{},
+				modelInternet:{},
+				address:[],
+				contact:[],
+				email:[],
+				website:[]
+			};
+			this.clearAddressData();
+			this.clearContactData();
+			this.clearEmailWebData();
+		});
 	}
 
 	loadMain_Address(global_id)

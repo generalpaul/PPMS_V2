@@ -7,7 +7,7 @@ import toastr from "toastr";
 import { DialogService } from 'aurelia-dialog';
 // import  jquery from "jquery";
 import { generateID } from './entity-manager-factory';
-//import {handle, Dispatcher} from 'aurelia-flux';  
+//import {handle, Dispatcher} from 'aurelia-flux';
 import { checkCookie, setCookie, removeCookie, getCookie } from './helpers';
 //import { MultiObserver } from 'multi-observer';
 import settings from './settings';
@@ -19,7 +19,7 @@ export class mainpage {
 
     _toastr = null;
     _cache_obj;
-    
+
     router;
     budgetAccess=false;
     actualAccess = false;
@@ -31,8 +31,13 @@ export class mainpage {
         { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
         { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
+<<<<<<< HEAD
         { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' }
 
+=======
+        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
+        { ref: 'UTILIZATION', desc: 'UTILIZATION'}
+>>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
     ];
     _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
     _ppfcs_modules = [];
@@ -47,7 +52,7 @@ export class mainpage {
     _roles = [];
     _application_on = true;
     constructor(toastr, cache_obj, dialogService, Router) { //multiObserver
-        
+
         this._cache_obj = cache_obj;
         this.router = Router;
 
@@ -65,7 +70,11 @@ export class mainpage {
                     this.actualAccess = true;
                     this.headerVisible = true;
                 }
+<<<<<<< HEAD
                
+=======
+
+>>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
                 if (_.isEmpty(this._cache_obj._ACCESS))
                 {
                   $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
@@ -98,7 +107,7 @@ export class mainpage {
                 else
                 {
                     this._application = this._cache_obj._ACCESS.APPLICATION;
-                    
+
                     for (var i = 0; i < this._application.length; i++) {
                         for (var j = 0; j < this._application_desc.length; j++) {
                             if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {
@@ -125,11 +134,11 @@ export class mainpage {
                 //    //this.actualAccess = true;
                 //    this.headerVisible = true;
                 //}
-                
+
             }
-            
+
         }, 1000);
-        
+
 
         //if (this._cache_obj.OBSERVERS.loggedout.length==0)
         //this._cache_obj.OBSERVERS.loggedout.push(() => {
@@ -142,7 +151,7 @@ export class mainpage {
         //    this.fnLogin();
         //});
 
-       
+
 
         //initializeBreeze().then(() => {
         //    //have to set timeout because of IE, other templates are not loading
@@ -165,14 +174,14 @@ export class mainpage {
         //    }, 2000);
         //});
 
-     
+
 
 
         //this._cache_obj.OBSERVERS.logoutPage.push(() => {
         //    this.logout();
         //});
 
-       
+
     }
 
     applicationClick(item)
@@ -188,8 +197,8 @@ export class mainpage {
             // console.log(item.APPLICATION_URL.replace('.ASPX', ''));
             this.router.navigateToRoute(item.APPLICATION_URL.replace('.ASPX','').toLowerCase());
         }
-        
-       
+
+
     }
 
     rolesClick(item) {
@@ -202,7 +211,7 @@ export class mainpage {
             this.router.navigateToRoute('actual_cost');
         }
     }
-    
+
     applicationOn()
     {
         this._application_on = true;
@@ -212,8 +221,13 @@ export class mainpage {
     {
          
         if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
+<<<<<<< HEAD
         
         var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', 'PROGRAM PERSONNEL INFORMATION DATABASE'];
+=======
+
+        var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+>>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
         var varFound = this._cache_obj._ACCESS.APPLICATION.filter(all => filterMenu.includes(all.APPLICATION_DESC));
         if (varFound.length == 1)
         {
@@ -321,7 +335,7 @@ export class mainpage {
     //    setCookie("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^"
     //        + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS, 30);
 
-        
+
     //    toastr.clear();
     //    toastr.success("Let's Start...", "Success");
 
@@ -343,11 +357,11 @@ export class mainpage {
 
     //logout() {
     //    this.showMenus = false;
-      
+
     //    // this._cache_obj.OBSERVERS.open_modal.forEach((all) => {
     //    //   all(this.modalLogin.id, true);
     //    // });
-    
+
     //    this.fnLogin();
     //    // this._cache_obj.OBSERVERS.enable_modal_button.forEach((all) => {
     //    //   all(this.modalLogin.id, true);

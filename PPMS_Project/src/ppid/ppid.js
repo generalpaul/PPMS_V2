@@ -24,6 +24,7 @@ export class ppid
 		this.obj_personnel.OBSERVERS.maintab_education_clicked.length=0;
 		this.obj_personnel.OBSERVERS.govinfo_main_clicked.length=0;
 		this.obj_personnel.OBSERVERS.company_main_clicked.length=0;
+		this.obj_personnel.OBSERVERS.clear_ppid.length=0;
 		this.obj_personnel.HEADER = {
     		citizenship:[],
     		group:[]
@@ -397,7 +398,7 @@ export class ppid
 	}
 
 	LoginPassed(user){
-		console.log(user);
-		this.obj_personnel.USER = user;
+		// console.log(user);
+		// this.obj_personnel.USER = user;
 	}
 }

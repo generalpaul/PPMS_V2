@@ -1,3 +1,4 @@
+
 //source: https://stackoverflow.com/questions/12578507/how-to-implement-an-input-with-a-mask
   export function isDigit(event){
     if ((event.charCode >= 48 && event.charCode <= 57) || event.keyCode == 9 || event.keyCode == 10 || event.keyCode == 13 || event.keyCode == 8 || event.keyCode == 116 || event.keyCode == 46 || (event.keyCode <= 40 && event.keyCode >= 37)) {

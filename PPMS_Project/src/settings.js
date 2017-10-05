@@ -21,10 +21,14 @@ export default {
 
     // serviceName: "http://absppms2:8094/odata",
     // serviceNameBase: "http://absppms2:8094",
+<<<<<<< HEAD
 
     serviceName: "http://absppms01:8085/odata",
     serviceNameBase: "http://absppms01:8085",
 
+=======
+  
+>>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
   pageSize: 100,
   STATIONS: ["", "CEBU", "DAVAO"],
   //actualCostWebUrl: "http://localhost:15253",
