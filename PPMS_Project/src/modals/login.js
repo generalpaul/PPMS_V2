@@ -299,7 +299,7 @@ export class login {
             this.controller.ok(varUserAtt);
 
             this._cache_obj.USER = varUserAtt;
-            
+
 			this._cache_obj.ALLOW_PASS_CONFIDENTIAL = false;
           
 			var checkRole = EntityQuery().from('MODULE_ACCESS_TRX').where("ROLE_CD", "==", this._USER.ROLE_CD)
