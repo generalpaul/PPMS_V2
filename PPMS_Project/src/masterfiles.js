@@ -263,7 +263,6 @@ export function getGLOBALINDIVandALIAS(){
   var varTalentSuppIndiv = talentSuppIndiv;
   var varGlobalGrp = globalGrp;
 
-
   varGlobalIndiv.forEach((all) => {
 
     var varAliases=[];
@@ -271,7 +270,7 @@ export function getGLOBALINDIVandALIAS(){
 
     if (all.ALIAS != "" && all.ALIAS != null) {
       varAlias = " (" + all.ALIAS;
-      varAliases.push(all.ALIAS.toUpperCase());
+      varAliases.push(all.ALIAS);
     }
 
     var varFoundAlias=varGlobalAlias.filter(item=>item.GLOBAL_ID==all.GLOBAL_INDIV_ID);
@@ -286,7 +285,7 @@ export function getGLOBALINDIVandALIAS(){
         else
           varAlias += "," + alias.ALIAS_NAME;
 
-          varAliases.push(alias.ALIAS_NAME.toUpperCase());
+          varAliases.push(alias.ALIAS_NAME);
 
         });
 
@@ -295,7 +294,7 @@ export function getGLOBALINDIVandALIAS(){
         }
 
     varTmpObject.push({
-      PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim().toUpperCase()), // + varAlias).toUpperCase(),
+      PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim() + varAlias).toUpperCase(),
       GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
       PERSONNEL_INFO_SRC: 'INDIV',
       ALIASES: varAliases,
@@ -313,7 +312,7 @@ export function getGLOBALINDIVandALIAS(){
     var varAliases=[];
     if (all.ALIAS != "" && all.ALIAS != null) {
       varAlias = " (" + all.ALIAS;
-      varAliases.push(all.ALIAS.toUpperCase());
+      varAliases.push(all.ALIAS);
     }
 
    var varFoundAlias=varGlobalAlias.filter(item=>item.GLOBAL_ID==all.SUPPLIER_INDIV_GLOBAL_ID);
@@ -327,7 +326,7 @@ export function getGLOBALINDIVandALIAS(){
         else
           varAlias += "," + alias.ALIAS_NAME;
 
-         varAliases.push(alias.ALIAS_NAME.toUpperCase());
+         varAliases.push(alias.ALIAS_NAME);
     });
 
         if (varAlias != "") {
@@ -336,13 +335,10 @@ export function getGLOBALINDIVandALIAS(){
 
 
     varTmpObject.push({
-      PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim().toUpperCase()), // + varAlias).toUpperCase(),
+      PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim() + varAlias).toUpperCase(),
       GLOBAL_INDIV_ID: all.SUPPLIER_INDIV_GLOBAL_ID,
       PERSONNEL_INFO_SRC: 'TSUPPLIER',
-      ALIASES: varAliases,
-      LAST_NAME: all.LAST_NAME,
-      GIVEN_NAME: all.GIVEN_NAME,
-      MIDDLE_NAME: all.GIVEN_NAME
+      ALIASES: varAliases
     });
 
   });
@@ -353,10 +349,7 @@ export function getGLOBALINDIVandALIAS(){
       PERSONNEL_NAME: all.COMPANY_NAME.toUpperCase(),
       GLOBAL_INDIV_ID: all.SUPPLIER_COMP_GLOBAL_ID,
       PERSONNEL_INFO_SRC: 'TCOMP',
-      ALIASES:[],
-      LAST_NAME: '',
-      GIVEN_NAME: '',
-      MIDDLE_NAME: ''
+      ALIASES:[]
     });
 
   });
@@ -367,10 +360,7 @@ export function getGLOBALINDIVandALIAS(){
       PERSONNEL_NAME: all.GROUP_NAME.toUpperCase(),
       GLOBAL_INDIV_ID: all.GLOBAL_GRP_ID,
       PERSONNEL_INFO_SRC: 'GLGRP',
-      ALIASES:[],
-      LAST_NAME: '',
-      GIVEN_NAME: '',
-      MIDDLE_NAME: ''
+      ALIASES:[]
     });
 
   });

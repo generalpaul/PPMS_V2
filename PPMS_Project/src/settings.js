@@ -19,13 +19,10 @@ export default {
     serviceName: "http://absppms2:8072/odata", //odata url
     serviceNameBase: "http://absppms2:8072", //base api url
 
-    // serviceName: "http://absppms2:8094/odata",
-    // serviceNameBase: "http://absppms2:8094",
-  
   pageSize: 100,
   STATIONS: ["", "CEBU", "DAVAO"],
-  actualCostWebUrl: "http://localhost:15253",
-  //actualCostWebUrl: "http://absppms2:8084", //actual cost url
+  //actualCostWebUrl: "http://localhost:15253",
+  actualCostWebUrl: "http://absppms2:8084", //actual cost url
   actualCostServiceBase: "http://absppms2:8083", //actual cost service
   isNavigating: false,
  };
