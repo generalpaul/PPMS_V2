@@ -31,13 +31,8 @@ export class mainpage {
         { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
         { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
-<<<<<<< HEAD
-        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' }
-
-=======
         { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
         { ref: 'UTILIZATION', desc: 'UTILIZATION'}
->>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
     ];
     _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
     _ppfcs_modules = [];
@@ -70,11 +65,7 @@ export class mainpage {
                     this.actualAccess = true;
                     this.headerVisible = true;
                 }
-<<<<<<< HEAD
-               
-=======
 
->>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
                 if (_.isEmpty(this._cache_obj._ACCESS))
                 {
                   $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
@@ -221,13 +212,9 @@ export class mainpage {
     {
          
         if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
-<<<<<<< HEAD
         
         var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', 'PROGRAM PERSONNEL INFORMATION DATABASE'];
-=======
 
-        var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
->>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
         var varFound = this._cache_obj._ACCESS.APPLICATION.filter(all => filterMenu.includes(all.APPLICATION_DESC));
         if (varFound.length == 1)
         {

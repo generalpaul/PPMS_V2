@@ -202,11 +202,8 @@ export class NavBar {
         this._user = user;
         //console.log(user);
         setCookie("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^"
-<<<<<<< HEAD
             + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD+ "^" + user.LEVEL_NO, 30);
-=======
-            + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD + "^" + user.LEVEL_NO, 30);
->>>>>>> 4970318f691e56ce1ec3b5829b97f83d3537e182
+
         settings.isNavigating = false;
 
 

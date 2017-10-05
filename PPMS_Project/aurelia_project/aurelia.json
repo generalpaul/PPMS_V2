@@ -76,7 +76,8 @@
     },
     "options": {
       "minify": "stage & prod",
-      "sourcemaps": "dev & stage"
+      "sourcemaps": "dev & stage",
+      "rev": true
     },
     "bundles": [
       {
@@ -99,7 +100,12 @@
           "moment",
           "numeral",
           "typeahead",
-          "underscore",
+          "underscore"]
+      },
+
+      {
+        "name": "vendor-bundle2.js",
+        "dependencies": [
           "aurelia-binding",
           "aurelia-bootstrapper",
           "aurelia-dependency-injection",
@@ -128,7 +134,12 @@
             "name": "aurelia-dialog",
             "path": "../node_modules/aurelia-dialog/dist/amd",
             "main": "aurelia-dialog"
-          },
+          }
+        ]
+      },
+      {
+        "name": "vendor-bundle3.js",
+        "dependencies": [
           "aurelia-breeze",
           {
             "name": "bootstrap",
@@ -138,6 +149,7 @@
             "exports": "$",
             "resources": [ "css/bootstrap.css" ]
           },
+
           "bootstrap-datepicker",
           {
             "name": "Q",
@@ -148,7 +160,13 @@
             "name": "datajs",
             "path": "../node_modules/datajs/lib",
             "main": "datajs"
-          },
+          }
+
+        ]
+      },
+      {
+        "name": "vendor-bundle4.js",
+        "dependencies": [
           {
             "name": "breeze-client",
             "path": "../node_modules/breeze-client",
@@ -171,10 +189,9 @@
             "main": "aurelia-testing",
             "env": "dev"
           }
-
-
         ]
       }
+
     ]
   }
 }
