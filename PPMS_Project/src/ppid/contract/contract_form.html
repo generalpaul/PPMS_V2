@@ -1,0 +1,196 @@
+<template>
+  <require from="converters/datepattern"></require>
+  <br/>
+  <div class="divBackground" style="margin-left:10%;width:900px;height: 300px;">
+      <ul class="nav nav-tabs backroundTab" role="tablist" style="width:880px;height:38px;">
+        <strong class="colorHeader" style="vertical-align:middle;position:relative;top:8px;">UTILIZATION</strong>
+      </ul>
+      <table style="margin-left: 25px; " class="classIEnable">
+        <tbody >
+          <tr>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <td class="text-left" style="width:140px;">Global ID</td>
+                    <td>
+                      <input value.bind="GLOBAL_ID1" style="width: 160px;text-align:center" readonly.bind="!_disableEditContract || _cache_contract. CONTRACT_STATUS!='ACTIVE'"/>
+                      <input type="button" class="btn btn-xs customButton" value="SEARCH" style="padding-left:15px;padding-right:15px;" disabled.bind='!_disableCancelContract' click.trigger="searchContract()"/>
+                    </td>
+                  </td>
+                  <td style="width:55px;">
+                  </td>
+                  <td>
+                    <td class="text-left" style="width:140px;">Contract Status</td>
+                    <td>
+                      <select value.bind="CONTRACT_STATUS1" style="width:260px;" disabled.bind="_disableEditContract || _cache_contract.ISNEWCONTRACT" show.bind="_cache_contract.CONTRACT_STATUS!='EXPIRED'">
+                        <option repeat.for="item of CONTRACT_STATUS" value.bind="item.ref">
+                          ${item.desc}
+                        </option>
+                      </select>
+                      <input value="EXPIRED" style="width:260px; padding-left: 3px;" readonly.bind="true" show.bind="_cache_contract.CONTRACT_STATUS=='EXPIRED'" />
+                    </td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </tr>
+          <tr>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <td class="text-left" style="width:140px;">Personnel Name</td>
+                    <td>
+                      <div>
+                        <input value.bind="EMPLOYEE_NAME" style="width:300px;padding-left: 3px;"  readonly.bind="_disableEditContract || !_cache_contract.ISNEWCONTRACT" focus.trigger="onfocusName()" blur.trigger="lostfocusName()" change.delegate="onchangeName()"/>
+                        <div style="position: absolute;z-index: 999;" show.bind="menuNameShow">
+                          <a repeat.for="item of NAME_ARRAY" style="width:300px;" value.bind="item.ref" class="list-group-item" click.trigger="name_change(item.ref, item.desc)" >${item.desc}</a>
+                        </div>
+                      </div>
+                      <!--<auto-complete items.bind="languages"></auto-complete>-->
+                      <!--<select value.bind="MSTR_LIST1" style="width:300px;" change.delegate="name_change()" disabled.bind="_disableEditContract || !_cache_contract.ISNEWCONTRACT">
+                        <option repeat.for="item of MSTR_LIST" value.bind="item.ref">
+                          ${item.desc}
+                        </option>
+                      </select>-->
+                    </td>
+                  </td>
+                  <td>
+                    <td class="text-left" style="width:140px;">Alias</td>
+                    <td>
+                      <div>
+                        <input value.bind="EMPLOYEE_ALIAS" style="width:260px;padding-left: 3px; text-transform:uppercase; "  readonly.bind="_disableEditContract" focus.trigger="onfocusAlias()" blur.trigger="lostfocusAlias()" change.delegate="onchangeAlias()"/>
+                        <div style="position: absolute;z-index: 999;" show.bind="menuAliasShow">
+                          <a repeat.for="item of ALIAS_ARRAY" style="width:260px;" value.bind="item" class="list-group-item" click.trigger="alias_change(item)" >${item}</a>
+                        </div>
+                      </div>
+
+                      <!--<select value.bind="ALIAS_NAME1" style="width:260px;" disabled.bind="_disableEditContract">
+                        <option repeat.for="item of ALIAS" value.bind="item">
+                          ${item}
+                        </option>
+                      </select>-->
+                    </td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </tr>
+          <tr>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <td class="text-left" style="width:140px;">Company Name</td>
+                    <td>
+                      <input value.bind="COMPANY_NAME1" style="width: 260px;padding-left: 3px;" readonly.bind="true"/>
+                    </td>
+                  </td>
+                  <td style="width:40px">
+                  </td>
+                  <td>
+                    <td class="text-left" style="width:140px;">Division</td>
+                    <td>
+                      <select value.bind="DIVISION1" style="width:260px;" change.delegate="division_change()" disabled.bind="_disableEditContract" show.bind="_cache_contract.CONTRACT_STATUS!='EXPIRED'">
+                        <option repeat.for="item of DIVISION" value.bind="item.ref">
+                          ${item.desc}
+                        </option>
+                      </select>
+                      <input value.bind="DIVISION_NAME1" style="width:260px; padding-left:3px;" readonly.bind="true" show.bind="_cache_contract.CONTRACT_STATUS=='EXPIRED'" />
+                    </td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </tr>
+          <tr>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <td class="text-left" style="width:140px;">Job</td>
+                    <td>
+                      <select value.bind="JOB1" style="width:260px;"  change.delegate="job_change()"  disabled.bind="_disableEditContract" show.bind="_cache_contract.CONTRACT_STATUS!='EXPIRED'">
+                        <option repeat.for="item of JOB" value.bind="item.ref">
+                          ${item.desc}
+                        </option>
+                      </select>
+                      <input value.bind="JOB_NAME1" style="width:260px; padding-left: 3px;" readonly.bind="true" show.bind="_cache_contract.CONTRACT_STATUS=='EXPIRED'" />
+                    </td>
+                  </td>
+                  <td style="width:40px;">
+                  </td>
+                  <td>
+                    <td class="text-left" style="width:140px;">Job Group</td>
+                    <td>
+                      <input value.bind="JOB_GRP_NAME1" style="width: 260px; padding-left: 3px;" readonly.bind="true"/>
+                    </td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </tr>
+          <tr>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <td class="text-left" style="width:140px;">Contract Start Date</td>
+                    <td>
+                      <input id="dtPicker1" value.bind="CONTRACT_START_DT1"  style="width: 80px; text-align:center;" readonly.bind="_disableEditContract"  change.delegate="checkDate()" show.bind="_cache_contract.CONTRACT_STATUS!='EXPIRED'"/>
+                      <input value.bind="CONTRACT_START_DT1"  style="width: 80px; text-align:center;" readonly.bind="true" show.bind="_cache_contract.CONTRACT_STATUS=='EXPIRED'"/>
+                    </td>
+                  </td>
+                  <td style="width:95px;">
+                  </td>
+                  <td>
+                    <td class="text-left" style="width:140px;">Contract End Date</td>
+                    <td>
+                      <input id="dtPicker2" value.bind="CONTRACT_END_DT1" style="width: 80px; text-align:center;"  readonly.bind="_disableEditContract" change.delegate="checkDate()" show.bind="_cache_contract.CONTRACT_STATUS!='EXPIRED'"/>
+                      <input value.bind="CONTRACT_END_DT1" style="width: 80px; text-align:center;"   readonly.bind="true" show.bind="_cache_contract.CONTRACT_STATUS=='EXPIRED'"/>
+                    </td>
+                  </td>
+                  <td style="width:100px;">
+                  </td>
+                  <td>
+                    <td class="text-left" style="width:140px;">Duration Months</td>
+                    <td>
+                      <input readonly.bind="true" value.bind="DURATION_MONTHS1" style="width: 50px; text-align: center;" />
+                    </td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </tr>
+        </tbody>
+      </table>
+      <br/>
+      <br/>
+      <div style="margin-left:100px;">
+        <button class="btn btn-xs customButton" style="width:150px;" click.delegate="fnContract('create')" disabled.bind="_disableCreateContract || !_disableCancelContract">NEW RECORD</button>&nbsp;&nbsp;
+        <button class="btn btn-xs customButton" style="width:150px;" click.delegate="fnContract('save')" disabled.bind="_disableCancelContract || _cache_contract.CONTRACT_STATUS!='ACTIVE'">SAVE</button>&nbsp;&nbsp;
+        <button class="btn btn-xs customButton" style="width:150px;" click.delegate="fnContract('cancel')" disabled.bind="_disableRefreshContract">CANCEL</button>&nbsp;&nbsp;
+      </div>
+      <div style="margin-left:25%;">
+      <br/>
+      <table class= "table-bordered">
+        <tr>
+            <td>
+                CREATED BY:
+            </td>
+            <td>
+                ${CREATED_BY1}
+            </td>
+            <td>
+                LAST UPDATED BY:
+            </td>
+            <td>
+                ${LAST_UPDATED_BY1}
+            </td>
+        </tr>
+      </table>
+      </div>
+</div>
+
+</template>

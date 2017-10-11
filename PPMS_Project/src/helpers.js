@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+  export function DateToday(){    
+      var dateToday = null;      
+      dateToday = new Date();
+      return dateToday;
+  }
+=======
+>>>>>>> 17e50fa8139b5b021cfbcd0b6c4f5056877fc495
+
 //source: https://stackoverflow.com/questions/12578507/how-to-implement-an-input-with-a-mask
   export function isDigit(event){
     if ((event.charCode >= 48 && event.charCode <= 57) || event.keyCode == 9 || event.keyCode == 10 || event.keyCode == 13 || event.keyCode == 8 || event.keyCode == 116 || event.keyCode == 46 || (event.keyCode <= 40 && event.keyCode >= 37)) {
@@ -219,7 +228,7 @@ export function getCookie(cname) {
   };
   
   Datepicker.prototype = {
-    constructor: Datepicker,
+    constructor: Datepicker,  
     
     show: function(e) {
       this.picker.show();

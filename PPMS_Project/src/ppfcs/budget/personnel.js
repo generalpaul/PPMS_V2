@@ -1530,7 +1530,7 @@ fnBlankPersonnelRegular()
 
   fnIndivMstrTalents(){
     this.dialogService.open({
-      viewModel: globalindivmstr
+      viewModel: globalindivmstr, model: {allPersonnel:false}
     }).whenClosed(response => {
       
       if (!response.wasCancelled) {
@@ -1544,7 +1544,7 @@ fnBlankPersonnelRegular()
   fnIndivMstr()
   {
     this.dialogService.open({
-      viewModel: indivmstr
+      viewModel: indivmstr, model: {allPersonnel:false}
     }).whenClosed(response => {
       
       if (!response.wasCancelled) {
@@ -1598,7 +1598,7 @@ fnBlankPersonnelRegular()
   fnIndivMstrManager()
   {
    this.dialogService.open({
-    viewModel: globalindivmstr
+    viewModel: globalindivmstr, model: {allPersonnel:false}
    }).whenClosed(response => {
     
     if (!response.wasCancelled) {

@@ -1,5 +1,5 @@
 <template>
-	<div style="background: white; height: 500px; width: 913px; margin: 5px auto;">
+	<div style=" height: 500px; width: 913px; margin: 5px auto;">
 		<table>
 			<tbody>
 				<tr style="border: 1px solid #4d9cd5; width: 100%;" class="backroundTab">
@@ -141,9 +141,34 @@
 											<input type="button" value="x" class="btn btn-xs customButton" click.trigger="btnRemove(item)" disabled.bind="_disableTable" />
 										</td>
 									</tr>
+									<tr if.bind="obj_personnel.EDUCATIONAL_ACHIEVEMENT.list == null || obj_personnel.EDUCATIONAL_ACHIEVEMENT.list.length==0">
+										<td colspan="9">
+											<b>No current entry.</b>
+										</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+							<tr>
+								<td>
+									CREATED BY:
+								</td>
+								<td>
+									<b>${lblCreatedBy}</b>
+								</td>
+								<td>
+									LAST UPDATED BY:
+								</td>
+								<td>
+									<b>${lblUpdatedBy}</b>
+								</td>							
+							</tr>
+						</table>
 					</td>
 				</tr>
 			</tbody>

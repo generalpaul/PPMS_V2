@@ -67,14 +67,25 @@ export class login {
 
             found.results.forEach((all) => {
               
-			if(all.ROLE_CD==null || all.ROLE_CD==undefined)
-			{
+<<<<<<< HEAD
+            this._user_content.push(all);
+              
+			// if(all.ROLE_CD==null || all.ROLE_CD==undefined)
+			// {
+			// 	this._user_content.push(all);
+			// }
+=======
+			//if(all.ROLE_CD==null || all.ROLE_CD==undefined)
+			//{
+               var found = this._user_content.find((all2=>all2.USER_ID==all.USER_ID));
+               if(found==undefined)
 				this._user_content.push(all);
-			}
-            else if (all.ROLE_CD.includes('ACCESSALL') || all.ROLE_CD.includes('PPFCS'))
-			{
-				this._user_content.push(all);
-			}
+			//}
+>>>>>>> 17e50fa8139b5b021cfbcd0b6c4f5056877fc495
+   //          else if (all.ROLE_CD.includes('ACCESSALL') || all.ROLE_CD.includes('PPFCS'))
+			// {
+			// 	this._user_content.push(all);
+			// }
 
 		});
         });
@@ -299,7 +310,7 @@ export class login {
             this.controller.ok(varUserAtt);
 
             this._cache_obj.USER = varUserAtt;
-            
+
 			this._cache_obj.ALLOW_PASS_CONFIDENTIAL = false;
           
 			var checkRole = EntityQuery().from('MODULE_ACCESS_TRX').where("ROLE_CD", "==", this._USER.ROLE_CD)

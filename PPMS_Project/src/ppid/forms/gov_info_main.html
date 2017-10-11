@@ -76,6 +76,11 @@
 																<input type="button" value="x" class="btn btn-xs customButton" click.trigger="btnRemove_TaxAffidavit(item)" />
 															</td>
 														</tr>
+														<tr if.bind="obj_personnel.GOVERNMENT_INFO.tax_affidavit == null || obj_personnel.GOVERNMENT_INFO.tax_affidavit.length==0">
+															<td colspan="3">
+																<b>No current entry.</b>
+															</td>
+														</tr>														
 													</tbody>
 												</table>
 											</div>
@@ -155,7 +160,12 @@
 															<td>
 																<input type="button" value="X" class="btn btn-xs customButton" click.trigger="btnRemove_Permit(item)" tabindex="10" />
 															</td>														
-														</tr>
+														</tr>														
+														<tr if.bind="obj_personnel.GOVERNMENT_INFO.permits == null || obj_personnel.GOVERNMENT_INFO.permits.length==0">
+															<td colspan="5">
+																<b>No current entry.</b>
+															</td>
+														</tr>	
 													</tbody>							 						
 							 					</table>
 							 				</div>
@@ -181,37 +191,44 @@
 									<tr>															 			
 										<td style="width: 120px; vertical-align: middle;" class="text-left">VAT Classification</td>
 										<td>
-											<select style="border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.vat_stat_cd" tabindex="11"  >
+											<select style="border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.vat_stat_cd" tabindex="11" disabled.bind="_disableOtherGovernmentInfo" >
 												<option repeat.for="item of obj_personnel.VAT_STAT" value.bind="item.value">${item.text}</option>
 											</select>
 										</td>															 			
 										<td style="width: 120px; vertical-align: middle;" class="text-left">VAT Registration Date</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="12" value.bind="obj_personnel.GOVERNMENT_INFO.vat_reg_dt" id="vat_reg_dt" />
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="12" value.bind="obj_personnel.GOVERNMENT_INFO.vat_reg_dt" id="vat_reg_dt" disabled.bind="_disableOtherGovernmentInfo" />
 										</td>
 										<td style="width: 120px; vertical-align: middle;" class="text-left">SSS Number</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="13" value.bind="obj_personnel.GOVERNMENT_INFO.sss_no" id="_sss" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_sss', '__-_______-_')" placeholder="00-0000000-00" />
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="13" value.bind="obj_personnel.GOVERNMENT_INFO.sss_no" id="_sss" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_sss', '__-_______-_')" placeholder="00-0000000-00" disabled.bind="_disableOtherGovernmentInfo" />
 										</td>
 									</tr>
 									<tr>															 			
 										<td style="width: 120px; vertical-align: middle;" class="text-left">PAG-IBIG Number</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="14" value.bind="obj_personnel.GOVERNMENT_INFO.pagibig_no" id="_pagibig" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_pagibig', '____-____-____')" />
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="14" value.bind="obj_personnel.GOVERNMENT_INFO.pagibig_no" id="_pagibig" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_pagibig', '____-____-____')" placeholder="0000-0000-0000" disabled.bind="_disableOtherGovernmentInfo" />
 										</td>															 			
 										<td style="width: 120px; vertical-align: middle;" class="text-left">Philhealth</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="15" value.bind="obj_personnel.GOVERNMENT_INFO.philhealth_no" id="_philhealth" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_philhealth', '__-_________-_')" />
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="15" value.bind="obj_personnel.GOVERNMENT_INFO.philhealth_no" id="_philhealth" keypress.trigger="isDigit($event)" keyup.trigger="input_mask('_philhealth', '__-_________-_')" placeholder="00-000000000-0" disabled.bind="_disableOtherGovernmentInfo" />
 										</td>															 			
 										<td style="width: 120px; vertical-align: middle;" class="text-left">National ID</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="16" value.bind="obj_personnel.GOVERNMENT_INFO.national_id" />
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="16" value.bind="obj_personnel.GOVERNMENT_INFO.national_id" disabled.bind="_disableOtherGovernmentInfo" />
 										</td>
 									</tr>
 									<tr>															 			
 										<td style="width: 120px; vertical-align: middle;" class="text-left">Voter's ID</td>
 										<td>
-											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="17" value.bind="obj_personnel.GOVERNMENT_INFO.voters_id" />
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="17" value.bind="obj_personnel.GOVERNMENT_INFO.voters_id" disabled.bind="_disableOtherGovernmentInfo" />
+										</td>
+									</tr>
+									<tr hidden.bind="!_disableOtherGovernmentInfo">
+										<td colspan="6">
+											<b>
+												NOTE:FORM WAS DISABLED, CALL HR ADMIN [ROMEL PALCES LOC. 4594 OR TRISH CRUZ LOC. 4356] IF YOU WISH TO CHANGE YOUR INFO.
+											</b>
 										</td>
 									</tr>
 								</table>

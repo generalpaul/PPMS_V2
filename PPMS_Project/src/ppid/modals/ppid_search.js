@@ -6,8 +6,9 @@ import breeze from 'breeze-client';
 import {EntityManager, EntityQuery} from '../../entity-manager-factory';
 import {getFilter} from '../../helpers';
 import {obj_personnel} from '../obj_personnel';
+import toastr from "toastr";
 
-@inject(MultiObserver,DialogController,ObserverLocator, obj_personnel)
+@inject(MultiObserver,DialogController,ObserverLocator, obj_personnel, toastr)
 export class ppid_search
 {
 	obj_personnel=null;
@@ -16,7 +17,7 @@ export class ppid_search
 	lstPredicates=[];
 	currPredicate=null;
 	observerLocator=null;
-	constructor(multiObserver,controller, observerLocator, obj_personnel){
+	constructor(multiObserver,controller, observerLocator, obj_personnel, toastr){
 		this.controller = controller;
 		this.observerLocator = observerLocator;
 		this.obj_personnel = obj_personnel;

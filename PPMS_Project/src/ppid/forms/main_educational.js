@@ -6,6 +6,7 @@ import breeze from 'breeze-client';
 import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
+import settings from 'settings';
 
 @inject(obj_personnel, toastr, DialogService)
 export class main_educational{
@@ -15,11 +16,14 @@ export class main_educational{
 	_disableTable=false;
 	_disableBtnAdd=false;
 	_disableBtnSave=true;
+	lblCreatedBy="";
+	lblUpdatedBy="";
 	constructor(obj_personnel, toastr, DialogService){
 		this.obj_personnel = obj_personnel;
 		this.DialogService = DialogService;
 		this.obj_personnel.OBSERVERS.maintab_education_clicked.push((val)=>{
 			this.loadMain_Educational(val);
+			this.loadLog(val);
 			this.clearData();
 		});
 		
@@ -33,6 +37,8 @@ export class main_educational{
 	}
 
 	loadMain_Educational(global_id){
+
+		settings.isNavigating = true;
 		var query = EntityQuery().from("EDUCATION_TRX")
 					.where("GLOBAL_INDIV_ID", "==", global_id);
 		EntityManager().executeQuery(query).then((querySuccess)=>{
@@ -61,8 +67,60 @@ export class main_educational{
 			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.list = tmpList;
 			toastr.clear();
 			toastr.success("", "Success");
+			settings.isNavigating = false;
+
+		}, (error)=>{
+			settings.isNavigating = false;
+			toastr.error(error, "Error in loading educational details.");
+		});
+	}
+
+	loadLog(global_id){
+
+		var tmpList=[];
+		var query = EntityQuery().from("EDUCATION_TRX")
+					.where("GLOBAL_INDIV_ID", "==", global_id);
+		EntityManager().executeQuery(query).then((s1)=>{
+			_.each(s1.results, (r)=>{
+				if(r.CREATED_BY != null){
+					var _user = r.CREATED_BY;
+					var _date = new Date(r.CREATED_DT);
+					tmpList.push({
+						user: _user,
+						date: _date
+					});
+				}
+
+				if(r.LAST_UPDATED_DT != null){
+					var _user = r.LAST_UPDATED_BY;
+					var _date = r.LAST_UPDATED_DT;
+					tmpList.push({
+						user: _user,
+						date: _date
+					});
+				}
+			});
+
+			tmpList.sort(this.OrderByDate);
+			var LastIndex = tmpList.length-1;
+			if(tmpList.length>0){
+				this.lblCreatedBy = tmpList[0].user + ' ' + moment.utc(tmpList[0].date).format("MM/DD/YYYY hh:mm A");
+				this.lblUpdatedBy = tmpList[LastIndex].user + ' ' + moment.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+			}else{
+				this.lblCreatedBy = "";
+				this.lblUpdatedBy = "";
+			}
 
 		});
+
+	}
+
+	OrderByDate(a, b){
+		if(a.date > b.date)
+			return 1;
+		if(a.date < b.date)
+			return -1;
+		return 0;
 	}
 
 	btnAdd(){
@@ -92,6 +150,7 @@ export class main_educational{
 	}
 
 	clearData(){
+		settings.isNavigating = false;
 		this._disableForm = true;
 		this._disableTable = false;
 		this._disableBtnAdd = false;
@@ -145,7 +204,9 @@ export class main_educational{
 		}
 	}
 
-	insert(){		
+	insert(){
+
+		settings.isNavigating = true;
 		var dateToday = null;
 		dateToday = new moment(new Date()).add(8, 'hours');
 		dateToday = new Date(dateToday);
@@ -181,6 +242,11 @@ export class main_educational{
 				this.loadMain_Educational(this.obj_personnel.global_indiv_id);
 				this.clearData();
 			},(saveError)=>{
+
+				settings.isNavigating = false;
+				if(entity!= null){
+					entity.entityAspect.setDeleted();
+				}
 				toastr.clear();
 				toastr.error("", saveError);
 			});
@@ -188,6 +254,8 @@ export class main_educational{
 	}
 
 	update(){
+
+		settings.isNavigating = true;
 		var dateToday = null;
 		dateToday = new moment(new Date()).add(8, 'hours');
 		dateToday = new Date(dateToday);
@@ -214,6 +282,8 @@ export class main_educational{
 				this.loadMain_Educational(this.obj_personnel.global_indiv_id);
 				this.clearData();
 			}, (updateError)=>{
+
+				settings.isNavigating = false;
 				toastr.clear();
 				toastr.error("", updateError);
 			});
@@ -225,6 +295,7 @@ export class main_educational{
 		this.DialogService.open({ viewModel: DialogBox, model: { title:"Confirm remove.", message:"Are you sure you want to remove the educational achievement" } })
   			.whenClosed(response=>{
   				if(!response.wasCancelled){
+  					settings.isNavigating = true;
   					var query = EntityQuery().from("EDUCATION_TRX")
   								.where("EDUCATION_ID", "==", educ.education_id);
   					EntityManager().executeQuery(query).then((querySuccess)=>{
@@ -240,6 +311,7 @@ export class main_educational{
   							this.loadMain_Educational(this.obj_personnel.global_indiv_id);
 							this.clearData();
   						},(removeError)=>{
+  							settings.isNavigating = false;
   							toastr.clear();
   							toastr.error(removeError, "Error in removing educational achievement.");
   						});

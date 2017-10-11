@@ -12,6 +12,7 @@ import moment from 'moment';
 export class company_info
 {
 	obj_personnel=null;	
+	_404_img = "/images/404.png";
 	constructor(obj_personnel, toastr, DialogService)
 	{
 		this.obj_personnel=obj_personnel;
@@ -23,6 +24,11 @@ export class company_info
 			return;
 		switch(tab_num){
 			case 0: this.obj_personnel.OBSERVERS.company_main_clicked.forEach((delegate)=>{
+						delegate(this.obj_personnel.global_indiv_id);
+					});
+					break;
+			case 1: 
+					this.obj_personnel.OBSERVERS.company_work_exp_clicked.forEach((delegate)=>{
 						delegate(this.obj_personnel.global_indiv_id);
 					});
 					break;

@@ -1,4 +1,39 @@
 <template>
+	<style type="text/css">
+		.custom-file-input {
+		  visibility: hidden;
+		  width: 0;
+		  position: relative;
+		}
+
+		.custom-file-input::before {
+		  content: 'Select Memo';
+		  display: inline-block;
+		  /*background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);*/
+		  border: 1px solid #999;
+		  border-radius: 3px;
+		  padding: 3px 5px;
+		  background: #0078ae url(images/ui-bg_glass_45_0078ae_1x400.png) 50% 50% repeat-x !important;
+		  outline: none;
+		  white-space: nowrap;
+		  -webkit-user-select: none;
+		  cursor: pointer;
+		  text-shadow: 1px 1px #fff;
+		  font-weight: 700;
+
+		  /*font-size: 7pt;*/
+		  visibility: visible;
+		  position: absolute;
+		}
+
+		.custom-file-input:hover::before {
+		  border-color: black;
+		}
+
+		.custom-file-input:active::before {
+		  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+	</style>
 	<div style="height: 600px; width: 913px; margin: 5px auto;">
 		<table style="width: 100%;">
 			<tr style="vertical-align: top;">
@@ -25,7 +60,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">is Exclusive?</td>
 							<td>
-								<input type="checkbox" tabindex="1" />
+								<input type="checkbox" tabindex="1" checked.bind="obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl">
 							</td>
 						</tr>
 					</table>
@@ -60,35 +95,41 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Status</td>
 							<td>								
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd" disabled.bind="_disableStatus" >
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd" disabled.bind="_disableStatus" change.delegate="dd_statusChanged()">
 									<!-- <option value=""></option> -->
 									<option repeat.for="item of obj_personnel.STATUS" value.bind="item.value">${item.text}</option>
 								</select>
 							</td>
 						</tr>
-						<tr hidden.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'INACTV'">
+						<tr hidden.bind="_hideInactiveField">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Reason for Cessation</td>
 							<td>
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd" >
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd" change.delegate="dd_cessationStatusChanged()" >
 									<option value=""></option>
 									<option repeat.for="item of obj_personnel.CESSATION" value.bind="item.value">${item.text}</option>
 								</select>
 							</td>
 						</tr>
-						<tr hidden.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'INACTV'">
+						<tr hidden.bind="_hideInactiveField || _hideCessationDate">
+							<td style="width: 120px; vertical-align: middle;" class="text-left" >Cessation date</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="cessation_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt" />
+							</td>
+						</tr>
+						<tr hidden.bind="_hideInactiveField">
 							<td style="width: 120px; vertical-align: top;" class="text-left">Remarks</td>
 							<td>
 								<textarea style="overflow-y: scroll; resize: none;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.remarks" > </textarea>
 								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
 							</td>
 						</tr>
-						<tr hidden.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'SUSPEND'">
+						<tr hidden.bind="_hideSuspendField">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Suspension Start Date</td>
 							<td>
 								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="suspended_start_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt" />
 							</td>
 						</tr>
-						<tr hidden.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'SUSPEND'">
+						<tr hidden.bind="_hideSuspendField">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Suspension End Date</td>
 							<td>
 								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="suspended_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt" />
@@ -174,8 +215,8 @@
         				<div class='tab-content'>
         					<div role="tabpanel" class="tab-pane active color1" id="contracts"  style="width:850px;height:100px; margin-left:auto; margin-right:auto;">								
 								<br/>
-								<table style="width: 100%;">
-									<thead>
+								<table style="width: 100%;" class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+									<thead style="display: table-header-group;">
 										<tr>
 											<td class="colorCell">Project Name</td>
 											<td class="colorCell">Start Date</td>
@@ -201,74 +242,87 @@
 								</table>
 							</div>
 
-							<div role="tabpanel" class="tab-pane color1" id="accreditation"  style="width:850px;height:200px; margin-left:auto; margin-right:auto;">
+							<div role="tabpanel" class="tab-pane color1" id="accreditation"  style="width:850px;height:250px; margin-left:auto; margin-right:auto;">
 								<!-- <br/> -->
 								<div>
 									<table>
 										<tr>
-											<td>
+											<td style="vertical-align: top;">
 												<table>
 													<tr>
 														<td style="width: 120px; vertical-align: middle;" class="text-left">Job Group</td>
 														<td>
-															<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" /> -->
-															<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;" disabled.bind="_disableTabsInput">
-																<option repeat.for="item of obj_personnel.CATEGORY" value.bind="item.id">${item.text}</option>
+															<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" /> --> 
+															<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;" disabled.bind="_disableTabsInput || accreditation_status.length==0" value.bind="obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id" change.delegate="dd_jobGroupChange()" >
+																<option repeat.for="item of obj_personnel.JOB_GROUP" value.bind="item.id">${item.text}</option>
 															</select>
 														</td>														
 													</tr>
 													<tr>
 														<td style="width: 120px; vertical-align: middle;" class="text-left">Start date</td>
 														<td>
-															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" value.bind="obj_personnel.COMPANY_SPECIFIC.model.accreditation_start_dt" />
+															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="a_start_dt" disabled.bind="_disableTabsInput || accreditation_status.length==0" value.bind="obj_personnel.COMPANY_SPECIFIC.model.a_start_dt" />
 														</td>
-													</tr>
+													</tr>													
+													<!-- <tr>
+														<td style="width: 120px; vertical-align: middle;" class="text-left">Memo</td>
+														<td>
+															<input type="file" name="memo" class="custom-file-input" >
+
+														</td>
+													</tr> -->
 												</table>
 											</td>
-											<td>
+											<td style="vertical-align: top;">
 												<table>
 													<tr>
 														<td style="width: 120px; vertical-align: middle;" class="text-left">Job</td>
 														<td>
-															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" />
+															<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" /> -->
+															<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;" disabled.bind="_disableTabsInput || accreditation_status.length==0" value.bind="obj_personnel.COMPANY_SPECIFIC.model.a_job_id" >
+																<option repeat.for="item of accreditation_joblist" value.bind="item.value">${item.text}</option>
+															</select>
 														</td>														
 													</tr>
 													<tr>
 														<td style="width: 120px; vertical-align: middle;" class="text-left">End date</td>
 														<td>
-															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" value.bind="obj_personnel.COMPANY_SPECIFIC.model.accreditation_end_dt" />
+															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="a_end_dt" disabled.bind="_disableTabsInput || accreditation_status.length==0" value.bind="obj_personnel.COMPANY_SPECIFIC.model.a_end_dt" />
 														</td>
 													</tr>
+													<!-- <tr>
+														<td>
+															<button class="btn btn-xs customButton" style="width: 100%;" tabindex="18" disabled.bind="_disableTabsInput" >Attach</button>
+														</td>
+														<td>
+															<button class="btn btn-xs customButton" style="width: 100%;" tabindex="18" disabled.bind="_disableTabsInput" >Attach Memo</button>
+														</td>
+													</tr> -->
 												</table>
 											</td>
-											<td>
+											<td style="vertical-align: top;">
 												<table>
-													<tr>
-														<td style="width: 120px; vertical-align: middle;" class="text-left">Competency Level</td>
+													<tr >
+														<td style="width: 120px;" class="text-left">Competency Level</td>
 														<td>
-															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" />
+															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput || accreditation_status.length==0" keypress.trigger="Digit($event)" value.bind="obj_personnel.COMPANY_SPECIFIC.model.a_competency" />
 														</td>														
 													</tr>
-													<tr>
-														<td style="width: 120px; vertical-align: middle;" class="text-left">Memo</td>
-														<td>
-															<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" />
-														</td>
-													</tr>
 												</table>
 											</td>
 										</tr>
 										<tr>
 											<td colspan="3">
-												<button class="btn btn-xs customButton" style="width:150px;" tabindex="18" disabled.bind="_disableTabsInput" >Save</button>&nbsp;
-												<button class="btn btn-xs customButton" style="width:150px;" tabindex="18" disabled.bind="_disableTabsInput" >Clear</button>
+												<button class="btn btn-xs customButton" style="width:150px;" tabindex="18" disabled.bind="_disableTabsInput || accreditation_status.length>0" click.delegate="btnAdd_accreditation()">Add</button>&nbsp;
+												<button class="btn btn-xs customButton" style="width:150px;" tabindex="18" disabled.bind="_disableTabsInput || accreditation_status.length==0" click.delegate="validateAccreditation()">Save</button>&nbsp;
+												<button class="btn btn-xs customButton" style="width:150px;" tabindex="18" disabled.bind="_disableTabsInput" click.delegate="clearAccreditationField()" >Clear</button>
 											</td>
 										</tr>
 										<tr>
 											<td colspan="3">
-												<div>
-													<table style="width: 100%;">
-														<thead>
+												<div style="height: 120px; overflow-y: scroll;">
+													<table style="width: 100%;" class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+														<thead style="display: table-header-group;">
 															<tr>															
 																<td class="colorCell">Job group</td>
 																<td class="colorCell">Job</td>
@@ -284,20 +338,28 @@
 															</tr>
 														</thead>
 														<tbody>
-															<tr repeat.for="item of obj_personnel.COMPANY_SPECIFIC.model.accreditation">
-																<td>${item.job_grp_id}</td>
-																<td>${item.job_id}</td>
+															<tr repeat.for="item of obj_personnel.COMPANY_SPECIFIC.model.accreditation_list">
+																<td>${item.job_grp_text}</td>
+																<td>${item.job_text}</td>
 																<td>${item.competency}</td>
-																<td>${item.start_dt}</td>
-																<td>${item.end_dt}</td>
-																<td>${item.division_id}</td>
-																<td>${item.home_fl}</td>
-																<td>${item.entry_fl}</td>
+																<td>${item.eff_start_dt}</td>
+																<td>${item.eff_end_dt}</td>
+																<td>${item.division_text}</td>
+																<td>
+																	<input type="checkbox" tabindex="1" checked.bind="item.home_fl=='1'" disabled>
+																</td>
+																<td>
+																	<input type="checkbox" tabindex="1" checked.bind="item.entry_fl=='1'" disabled>
+																</td>
 																<td>${item.accreditation_memo}</td>
-																<td>-</td>
-																<td>X</td>
+																<td>
+																	<button class="btn btn-xs customButton" tabindex="18" disabled.bind="_disableTabsInput || accreditation_status.length>0" click.delegate="btnEdit_accreditation(item)">-</button>
+																</td>
+																<td>
+																	<button class="btn btn-xs customButton" tabindex="18" disabled.bind="_disableTabsInput || accreditation_status.length>0" click.delegate="btnRemove_accreditation(item)">X</button>
+																</td>
 															</tr>
-															<tr if.bind="obj_personnel.COMPANY_SPECIFIC.model.accreditation == null || obj_personnel.COMPANY_SPECIFIC.model.accreditation.length==0">
+															<tr if.bind="obj_personnel.COMPANY_SPECIFIC.model.accreditation_list == null || obj_personnel.COMPANY_SPECIFIC.model.accreditation_list.length==0">
 																<td colspan="11">
 																	<b>No current entry.</b>
 																</td>
@@ -345,7 +407,7 @@
 												<tr>
 													<td style="width: 120px; vertical-align: middle;" class="text-left">Account Number</td>
 													<td>
-														<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" />
+														<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableTabsInput" keypress.trigger="Digit($event)" value.bind="obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no" />
 													</td>
 												</tr>
 											</table>

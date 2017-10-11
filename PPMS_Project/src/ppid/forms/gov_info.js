@@ -9,6 +9,7 @@ export class gov_info
 {
 	obj_personnel = null;
 	_activeTab=0;
+	_404_img = "/images/404.png";
 	constructor(dialogService, obj_personnel, toastr){
 		this.dialogService = dialogService;
 		this.obj_personnel = obj_personnel;

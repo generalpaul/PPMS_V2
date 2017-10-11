@@ -26,8 +26,26 @@ export class obj_personnel
 	SKILLS=[];
 	LANGUAGE_DIALECT=[];
 	MEDICAL_RECORD=[];
-	RELATIVE=[];
-	WORK_EXPERIENCE=[];
+	RELATIVE={
+		parents:{
+			mother:{},
+			father:{}
+		}
+		// siblings:{
+		// 	model:{},
+		// 	list:[]
+		// },
+		// spouse:{},
+		// children:{
+		// 	model:{},
+		// 	list:[]
+		// }
+
+	};
+	WORK_EXPERIENCE={
+		model:{},
+		list:[]
+	};
 	AWARDS=[];
 	SEMINARS=[];
 	GOVERNMENT_INFO={
@@ -39,7 +57,9 @@ export class obj_personnel
 	GOVERNMENT_EXAM=[];
 	CRIMINAL_RECORD=[];
 	COMPANY_SPECIFIC={
-		model:{},
+		model:{
+			personnel_bank:{}
+		},
 		list:[]
 	};
 	ENDORSEMENT=[];
@@ -53,9 +73,11 @@ export class obj_personnel
 		clear_log:[],
 		clear_login_modal:[],
 		maintab_contact_clicked:[],
-		maintab_education_clicked:[],
+		maintab_education_clicked:[],		
+		company_main_clicked:[],
+		company_work_exp_clicked:[],
 		govinfo_main_clicked:[],
-		company_main_clicked:[]
+		relative_parents_clicked:[]
 
 	};
 
@@ -90,10 +112,11 @@ export class obj_personnel
 	DIVISION=[];
 	LOCATIONS_RNG=[];
 	CATEGORY=[];
-	JOB_CATEGORY=[];
+	JOB_GROUP=[];
 	JOB=[];
 	PAYROLL_GROUP=[];
 	BANK=[];
+	PROVINCE=[];
 
 
 	

@@ -853,6 +853,7 @@ define('helpers',["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.DateToday = DateToday;
   exports.isDigit = isDigit;
   exports.input_mask = input_mask;
   exports.formatDate = formatDate;
@@ -869,6 +870,12 @@ define('helpers',["exports"], function (exports) {
   } : function (obj) {
     return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   };
+
+  function DateToday() {
+    var dateToday = null;
+    dateToday = new Date();
+    return dateToday;
+  }
 
   function isDigit(event) {
     if (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 9 || event.keyCode == 10 || event.keyCode == 13 || event.keyCode == 8 || event.keyCode == 116 || event.keyCode == 46 || event.keyCode <= 40 && event.keyCode >= 37) {
@@ -2543,15 +2550,14 @@ define('settings',["exports"], function (exports) {
         value: true
     });
     exports.default = {
-
-        serviceName: "http://absppms2:8072/odata",
-        serviceNameBase: "http://absppms2:8072",
+        serviceName: "http://absppms01.corp.abscbn.com:8085/odata",
+        serviceNameBase: "http://absppms01.corp.abscbn.com:8085/",
 
         pageSize: 100,
         STATIONS: ["", "CEBU", "DAVAO"],
         actualCostWebUrl: "http://localhost:15253",
 
-        actualCostServiceBase: "http://absppms2:8083",
+        actualCostServiceBase: "http://absppms2.corp.abscbn.com:8083",
         isNavigating: false
     };
 });
@@ -4270,11 +4276,7 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
 
                 found.results.forEach(function (all) {
 
-                    if (all.ROLE_CD == null || all.ROLE_CD == undefined) {
-                        _this._user_content.push(all);
-                    } else if (all.ROLE_CD.includes('ACCESSALL') || all.ROLE_CD.includes('PPFCS')) {
-                        _this._user_content.push(all);
-                    }
+                    _this._user_content.push(all);
                 });
             });
 
@@ -5014,500 +5016,6 @@ define('modals/talentmanagergroups',['exports', '../masterfiles', 'multi-observe
 		return talentmanagergroups;
 	}()) || _class);
 });
-define('ppid/obj_personnel',["exports"], function (exports) {
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var obj_personnel = exports.obj_personnel = function obj_personnel() {
-		_classCallCheck(this, obj_personnel);
-
-		this.global_indiv_id = "";
-		this.editing_status = "";
-		this.HEADER = {
-			citizenship: [],
-			group: []
-		};
-		this.CONTACT = {
-			status: "",
-			modelAddress: {},
-			statusContact: "Add",
-			modelContact: {},
-			modelInternet: {},
-			address: [],
-			contact: [],
-			email: [],
-			website: []
-		};
-		this.EDUCATIONAL_ACHIEVEMENT = {
-			status: "",
-			model: {},
-			list: []
-		};
-		this.CHARACTERISTIC = [];
-		this.SKILLS = [];
-		this.LANGUAGE_DIALECT = [];
-		this.MEDICAL_RECORD = [];
-		this.RELATIVE = [];
-		this.WORK_EXPERIENCE = [];
-		this.AWARDS = [];
-		this.SEMINARS = [];
-		this.GOVERNMENT_INFO = {
-			modelTaxAffidavit: {},
-			modelPermit: {},
-			tax_affidavit: [],
-			permits: []
-		};
-		this.GOVERNMENT_EXAM = [];
-		this.CRIMINAL_RECORD = [];
-		this.COMPANY_SPECIFIC = {
-			model: {},
-			list: []
-		};
-		this.ENDORSEMENT = [];
-		this.IMAGE_BRANDING = [];
-		this.QUESTION_ANSWER = [];
-		this.USER = {};
-		this.OBSERVERS = {
-			ppid_dialog: [],
-			tab_changed: [],
-			clear_ppid: [],
-			clear_log: [],
-			clear_login_modal: [],
-			maintab_contact_clicked: [],
-			maintab_education_clicked: [],
-			govinfo_main_clicked: [],
-			company_main_clicked: []
-
-		};
-		this.STATUS = [];
-		this.CIVIL_STATUS = [];
-		this.CITIZENSHIP = [];
-		this.RELIGION = [];
-		this.COUNTRY = [];
-		this.REGION = [];
-		this.GROUP = [];
-		this.LOCATIONS = [];
-		this.CONTACT_TYPE = [];
-		this.LEVEL = [];
-		this.YEAR = [];
-		this.SCHOOLS = [];
-		this.LANGUAGE = [];
-		this.POSITION = [];
-		this.AWARD = [];
-		this.TRAINING = [];
-		this.TAX_EXEMPT = [];
-		this.INPUT_TAX = [];
-		this.PERMIT = [];
-		this.VAT_STAT = [];
-		this.EXAM = [];
-		this.CASE_STAT = [];
-		this.VIOLATION = [];
-		this.PROFESSIONAL_TYPE = [];
-		this.CESSATION = [];
-		this.TARGET_MARKET = [];
-		this.COMPANY = [];
-		this.DIVISION = [];
-		this.LOCATIONS_RNG = [];
-		this.CATEGORY = [];
-		this.JOB_CATEGORY = [];
-		this.JOB = [];
-		this.PAYROLL_GROUP = [];
-		this.BANK = [];
-	};
-});
-define('ppid/ppid',['exports', '.././helpers', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', '../entity-manager-factory', '../masterfiles'], function (exports, _helpers, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _entityManagerFactory, _masterfiles) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.ppid = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var ppid = exports.ppid = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel), _dec(_class = function () {
-		function ppid(dialogService, obj_personnel) {
-			_classCallCheck(this, ppid);
-
-			this.obj_personnel = null;
-			this.global_indiv_id = "";
-
-			this.dialogService = dialogService;
-			this.obj_personnel = obj_personnel;
-
-			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
-			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.govinfo_main_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.company_main_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
-			this.obj_personnel.HEADER = {
-				citizenship: [],
-				group: []
-			};
-			this.LoadDropdown();
-
-			this.LoginPassed(this.obj_personnel.USER);
-		}
-
-		ppid.prototype.LoadDropdown = function LoadDropdown() {
-			var _this = this;
-
-			var maxYear = new Date().getFullYear();
-			var leastYear = 1960;
-			var tmpYear = [];
-			do {
-				tmpYear.push({
-					value: leastYear,
-					text: leastYear
-				});
-				leastYear++;
-			} while (leastYear <= maxYear);
-			this.obj_personnel.YEAR = tmpYear;
-
-			if ((0, _masterfiles.getLookups)() != null) {
-				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
-				this.obj_personnel.LOCATIONS.shift();
-
-				this.obj_personnel.CIVIL_STATUS.length = 0;
-				this.obj_personnel.RELIGION.length = 0;
-				this.obj_personnel.CITIZENSHIP.length = 0;
-				this.obj_personnel.CONTACT_TYPE.length = 0;
-				this.obj_personnel.LEVEL.length = 0;
-				this.obj_personnel.LANGUAGE.length = 0;
-				this.obj_personnel.STATUS.length = 0;
-				this.obj_personnel.POSITION.length = 0;
-				this.obj_personnel.AWARD.length = 0;
-				this.obj_personnel.TRAINING.length = 0;
-				this.obj_personnel.TAX_EXEMPT.length = 0;
-				this.obj_personnel.INPUT_TAX.length = 0;
-				this.obj_personnel.PERMIT.length = 0;
-				this.obj_personnel.VAT_STAT.length = 0;
-				this.obj_personnel.EXAM.length = 0;
-				this.obj_personnel.CASE_STAT.length = 0;
-				this.obj_personnel.VIOLATION.length = 0;
-				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
-				this.obj_personnel.CESSATION.length = 0;
-				this.obj_personnel.TARGET_MARKET.length = 0;
-
-				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
-					switch (item.REF_GRP_CD) {
-						case "CIVIL_STATUS":
-							_this.obj_personnel.CIVIL_STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "RELIGION_CD":
-							_this.obj_personnel.RELIGION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CITIZENSHIP_CD":
-							_this.obj_personnel.CITIZENSHIP.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CONTACT_TYPE_CD":
-							_this.obj_personnel.CONTACT_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LEVEL_CD":
-							_this.obj_personnel.LEVEL.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LANG_DIALECT_CD":
-							_this.obj_personnel.LANGUAGE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "STATUS_CD":
-							_this.obj_personnel.STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "POSITION_CD":
-							_this.obj_personnel.POSITION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "AWARD_CD":
-							_this.obj_personnel.AWARD.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TRNG_CD":
-							_this.obj_personnel.TRAINING.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TAX_EXEMPT_CD":
-							_this.obj_personnel.TAX_EXEMPT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "INPUT_TAX_CD":
-							_this.obj_personnel.INPUT_TAX.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PERMIT_CD":
-							_this.obj_personnel.PERMIT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VAT_STAT_CD":
-							_this.obj_personnel.VAT_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "EXAM_CD":
-							_this.obj_personnel.EXAM.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CASE_STAT_CD":
-							_this.obj_personnel.CASE_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VIOLATION_CD":
-							_this.obj_personnel.VIOLATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PROFESSIONAL_TYPE_CD":
-							_this.obj_personnel.PROFESSIONAL_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CESSATION_CODE":
-							_this.obj_personnel.CESSATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TARGET_MARKET_CD":
-							_this.obj_personnel.TARGET_MARKET.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-
-					}
-				});
-
-				this.obj_personnel.GROUP.length = 0;
-				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
-					_this.obj_personnel.GROUP.push({
-						value: item.GLOBAL_GRP_ID,
-						text: item.GROUP_NAME
-					});
-				});
-
-				this.obj_personnel.COMPANY.length = 0;
-				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
-					_this.obj_personnel.COMPANY.push({
-						id: item.COMPANY_ID,
-						value: item.COMPANY_CD,
-						text: item.COMPANY_NAME
-					});
-				});
-				this.obj_personnel.COMPANY.shift();
-
-				this.obj_personnel.GROUP.sort(this.OrderByText);
-				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
-				this.obj_personnel.RELIGION.sort(this.OrderByText);
-				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
-				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
-				this.obj_personnel.LEVEL.sort(this.OrderByText);
-				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
-				this.obj_personnel.STATUS.sort(this.OrderByText);
-				this.obj_personnel.POSITION.sort(this.OrderByText);
-				this.obj_personnel.AWARD.sort(this.OrderByText);
-				this.obj_personnel.TRAINING.sort(this.OrderByText);
-				this.obj_personnel.PERMIT.sort(this.OrderByText);
-				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
-				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
-				this.obj_personnel.EXAM.sort(this.OrderByText);
-				this.obj_personnel.VIOLATION.sort(this.OrderByText);
-				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
-				this.obj_personnel.CESSATION.sort(this.OrderByText);
-				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
-				this.obj_personnel.COMPANY.sort(this.OrderByText);
-			}
-
-			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.COUNTRY_CD,
-						text: result.COUNTRY_NAME
-					});
-				});
-				_this.obj_personnel.COUNTRY = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading country dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.REGION_CD,
-						text: result.REGION_DESC,
-						group: result.COUNTRY_CD
-					});
-				});
-				_this.obj_personnel.REGION = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading region dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						school_cd: result.SCHOOL_CD,
-						school_name: result.SCHOOL_NAME,
-						school_addr: result.SCHOOL_ADDR
-					});
-				});
-				_this.obj_personnel.SCHOOLS = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading schools dropdown.");
-				console.log(failed);
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.LOCATION_CD,
-						text: result.LOCATION_NAME
-					});
-				});
-				_this.obj_personnel.LOCATIONS_RNG = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.PAYROLL_GRP_ID,
-						value: result.PAYROLL_GRP_CD,
-						text: result.PAYROLL_GRP_DESC
-					});
-				});
-				_this.obj_personnel.PAYROLL_GROUP = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.BANK_ID,
-						short_nm: result.BANK_SHORT_NAME,
-						bank_cd: result.BANK_CD,
-						long_nm: result.BANK_LONG_NAME
-					});
-				});
-				_this.obj_personnel.BANK = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Bank dropdown");
-			});
-		};
-
-		ppid.prototype.OrderByText = function OrderByText(a, b) {
-			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
-			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
-			return 0;
-		};
-
-		ppid.prototype.changeTab = function changeTab(tabNumber) {
-			var _this2 = this;
-
-			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
-
-			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
-				all(tabNumber, _this2.obj_personnel.global_indiv_id);
-			});
-		};
-
-		ppid.prototype.FindUsers = function FindUsers() {
-			this.dialogService.open({
-				viewModel: _ppid_search.ppid_search
-			}).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					console.log(response.output);
-				} else {
-					console.log('reponse was cancelled.');
-				}
-			});
-		};
-
-		ppid.prototype.AddUsers = function AddUsers() {
-			alert('AddUsers function under maintenance.');
-		};
-
-		ppid.prototype.LoginPassed = function LoginPassed(user) {};
-
-		return ppid;
-	}()) || _class);
-});
 define('ppfcs/buh',['exports', '../entity-manager-factory', '../helpers', '../masterfiles', 'toastr', 'aurelia-framework', 'typeahead', 'underscore', '../modals/buh-program-dialog', 'aurelia-dialog', '../modals/login', '../modals/buh-search'], function (exports, _entityManagerFactory, _helpers, _masterfiles, _toastr, _aureliaFramework, _typeahead, _underscore, _buhProgramDialog, _aureliaDialog, _login, _buhSearch) {
 	'use strict';
 
@@ -6000,6 +5508,533 @@ define('ppfcs/cache_budget',["exports"], function (exports) {
         };
     };
 });
+define('ppid/obj_personnel',["exports"], function (exports) {
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var obj_personnel = exports.obj_personnel = function obj_personnel() {
+		_classCallCheck(this, obj_personnel);
+
+		this.global_indiv_id = "";
+		this.editing_status = "";
+		this.HEADER = {
+			citizenship: [],
+			group: []
+		};
+		this.CONTACT = {
+			status: "",
+			modelAddress: {},
+			statusContact: "Add",
+			modelContact: {},
+			modelInternet: {},
+			address: [],
+			contact: [],
+			email: [],
+			website: []
+		};
+		this.EDUCATIONAL_ACHIEVEMENT = {
+			status: "",
+			model: {},
+			list: []
+		};
+		this.CHARACTERISTIC = [];
+		this.SKILLS = [];
+		this.LANGUAGE_DIALECT = [];
+		this.MEDICAL_RECORD = [];
+		this.RELATIVE = {
+			parents: {
+				mother: {},
+				father: {}
+			}
+		};
+		this.WORK_EXPERIENCE = {
+			model: {},
+			list: []
+		};
+		this.AWARDS = [];
+		this.SEMINARS = [];
+		this.GOVERNMENT_INFO = {
+			modelTaxAffidavit: {},
+			modelPermit: {},
+			tax_affidavit: [],
+			permits: []
+		};
+		this.GOVERNMENT_EXAM = [];
+		this.CRIMINAL_RECORD = [];
+		this.COMPANY_SPECIFIC = {
+			model: {
+				personnel_bank: {}
+			},
+			list: []
+		};
+		this.ENDORSEMENT = [];
+		this.IMAGE_BRANDING = [];
+		this.QUESTION_ANSWER = [];
+		this.USER = {};
+		this.OBSERVERS = {
+			ppid_dialog: [],
+			tab_changed: [],
+			clear_ppid: [],
+			clear_log: [],
+			clear_login_modal: [],
+			maintab_contact_clicked: [],
+			maintab_education_clicked: [],
+			company_main_clicked: [],
+			company_work_exp_clicked: [],
+			govinfo_main_clicked: [],
+			relative_parents_clicked: []
+
+		};
+		this.STATUS = [];
+		this.CIVIL_STATUS = [];
+		this.CITIZENSHIP = [];
+		this.RELIGION = [];
+		this.COUNTRY = [];
+		this.REGION = [];
+		this.GROUP = [];
+		this.LOCATIONS = [];
+		this.CONTACT_TYPE = [];
+		this.LEVEL = [];
+		this.YEAR = [];
+		this.SCHOOLS = [];
+		this.LANGUAGE = [];
+		this.POSITION = [];
+		this.AWARD = [];
+		this.TRAINING = [];
+		this.TAX_EXEMPT = [];
+		this.INPUT_TAX = [];
+		this.PERMIT = [];
+		this.VAT_STAT = [];
+		this.EXAM = [];
+		this.CASE_STAT = [];
+		this.VIOLATION = [];
+		this.PROFESSIONAL_TYPE = [];
+		this.CESSATION = [];
+		this.TARGET_MARKET = [];
+		this.COMPANY = [];
+		this.DIVISION = [];
+		this.LOCATIONS_RNG = [];
+		this.CATEGORY = [];
+		this.JOB_GROUP = [];
+		this.JOB = [];
+		this.PAYROLL_GROUP = [];
+		this.BANK = [];
+		this.PROVINCE = [];
+	};
+});
+define('ppid/ppid',['exports', '.././helpers', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', '../entity-manager-factory', '../masterfiles', 'settings'], function (exports, _helpers, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _entityManagerFactory, _masterfiles, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ppid = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var ppid = exports.ppid = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel), _dec(_class = function () {
+		function ppid(dialogService, obj_personnel) {
+			_classCallCheck(this, ppid);
+
+			this.obj_personnel = null;
+			this.global_indiv_id = "";
+
+			this.dialogService = dialogService;
+			this.obj_personnel = obj_personnel;
+
+			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
+			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.relative_parents_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.govinfo_main_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.company_main_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.company_work_exp_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
+			this.obj_personnel.global_indiv_id = "";
+			this.obj_personnel.HEADER = {
+				citizenship: [],
+				group: []
+			};
+			this.LoadDropdown();
+
+			this.LoginPassed(this.obj_personnel.USER);
+		}
+
+		ppid.prototype.LoadDropdown = function LoadDropdown() {
+			var _this = this;
+
+			_settings2.default.isNavigating = true;
+
+			var maxYear = new Date().getFullYear();
+			var leastYear = 1960;
+			var tmpYear = [];
+			do {
+				tmpYear.push({
+					value: leastYear,
+					text: leastYear
+				});
+				leastYear++;
+			} while (leastYear <= maxYear);
+			this.obj_personnel.YEAR = tmpYear;
+
+			if ((0, _masterfiles.getLookups)() != null) {
+				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
+				this.obj_personnel.LOCATIONS.shift();
+
+				this.obj_personnel.CIVIL_STATUS.length = 0;
+				this.obj_personnel.RELIGION.length = 0;
+				this.obj_personnel.CITIZENSHIP.length = 0;
+				this.obj_personnel.CONTACT_TYPE.length = 0;
+				this.obj_personnel.LEVEL.length = 0;
+				this.obj_personnel.LANGUAGE.length = 0;
+				this.obj_personnel.STATUS.length = 0;
+				this.obj_personnel.POSITION.length = 0;
+				this.obj_personnel.AWARD.length = 0;
+				this.obj_personnel.TRAINING.length = 0;
+				this.obj_personnel.TAX_EXEMPT.length = 0;
+				this.obj_personnel.INPUT_TAX.length = 0;
+				this.obj_personnel.PERMIT.length = 0;
+				this.obj_personnel.VAT_STAT.length = 0;
+				this.obj_personnel.EXAM.length = 0;
+				this.obj_personnel.CASE_STAT.length = 0;
+				this.obj_personnel.VIOLATION.length = 0;
+				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
+				this.obj_personnel.CESSATION.length = 0;
+				this.obj_personnel.TARGET_MARKET.length = 0;
+
+				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
+					switch (item.REF_GRP_CD) {
+						case "CIVIL_STATUS":
+							_this.obj_personnel.CIVIL_STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "RELIGION_CD":
+							_this.obj_personnel.RELIGION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CITIZENSHIP_CD":
+							_this.obj_personnel.CITIZENSHIP.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CONTACT_TYPE_CD":
+							_this.obj_personnel.CONTACT_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LEVEL_CD":
+							_this.obj_personnel.LEVEL.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LANG_DIALECT_CD":
+							_this.obj_personnel.LANGUAGE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "STATUS_CD":
+							_this.obj_personnel.STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "POSITION_CD":
+							_this.obj_personnel.POSITION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "AWARD_CD":
+							_this.obj_personnel.AWARD.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TRNG_CD":
+							_this.obj_personnel.TRAINING.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TAX_EXEMPT_CD":
+							_this.obj_personnel.TAX_EXEMPT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "INPUT_TAX_CD":
+							_this.obj_personnel.INPUT_TAX.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PERMIT_CD":
+							_this.obj_personnel.PERMIT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VAT_STAT_CD":
+							_this.obj_personnel.VAT_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "EXAM_CD":
+							_this.obj_personnel.EXAM.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CASE_STAT_CD":
+							_this.obj_personnel.CASE_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VIOLATION_CD":
+							_this.obj_personnel.VIOLATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PROFESSIONAL_TYPE_CD":
+							_this.obj_personnel.PROFESSIONAL_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CESSATION_CODE":
+							_this.obj_personnel.CESSATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TARGET_MARKET_CD":
+							_this.obj_personnel.TARGET_MARKET.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+
+					}
+				});
+
+				this.obj_personnel.GROUP.length = 0;
+				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
+					_this.obj_personnel.GROUP.push({
+						value: item.GLOBAL_GRP_ID,
+						text: item.GROUP_NAME
+					});
+				});
+
+				this.obj_personnel.COMPANY.length = 0;
+				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
+					_this.obj_personnel.COMPANY.push({
+						id: item.COMPANY_ID,
+						value: item.COMPANY_CD,
+						text: item.COMPANY_NAME
+					});
+				});
+				this.obj_personnel.COMPANY.shift();
+
+				this.obj_personnel.GROUP.sort(this.OrderByText);
+				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
+				this.obj_personnel.RELIGION.sort(this.OrderByText);
+				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
+				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
+				this.obj_personnel.LEVEL.sort(this.OrderByText);
+				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
+				this.obj_personnel.STATUS.sort(this.OrderByText);
+				this.obj_personnel.POSITION.sort(this.OrderByText);
+				this.obj_personnel.AWARD.sort(this.OrderByText);
+				this.obj_personnel.TRAINING.sort(this.OrderByText);
+				this.obj_personnel.PERMIT.sort(this.OrderByText);
+				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
+				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
+				this.obj_personnel.EXAM.sort(this.OrderByText);
+				this.obj_personnel.VIOLATION.sort(this.OrderByText);
+				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
+				this.obj_personnel.CESSATION.sort(this.OrderByText);
+				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
+				this.obj_personnel.COMPANY.sort(this.OrderByText);
+			}
+
+			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.COUNTRY_CD,
+						text: result.COUNTRY_NAME
+					});
+				});
+				_this.obj_personnel.COUNTRY = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading country dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.REGION_CD,
+						text: result.REGION_DESC,
+						group: result.COUNTRY_CD
+					});
+				});
+				_this.obj_personnel.REGION = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading region dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						school_cd: result.SCHOOL_CD,
+						school_name: result.SCHOOL_NAME,
+						school_addr: result.SCHOOL_ADDR
+					});
+				});
+				_this.obj_personnel.SCHOOLS = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading schools dropdown.");
+				console.log(failed);
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.LOCATION_CD,
+						text: result.LOCATION_NAME
+					});
+				});
+				_this.obj_personnel.LOCATIONS_RNG = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.PAYROLL_GRP_ID,
+						value: result.PAYROLL_GRP_CD,
+						text: result.PAYROLL_GRP_DESC
+					});
+				});
+				_this.obj_personnel.PAYROLL_GROUP = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.BANK_ID,
+						short_nm: result.BANK_SHORT_NAME,
+						bank_cd: result.BANK_CD,
+						long_nm: result.BANK_LONG_NAME
+					});
+				});
+				_this.obj_personnel.BANK = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Bank dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PROVINCE_MSTR").orderBy("PROVINCE_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (r) {
+					tmp.push({
+						text: r.PROVINCE_DESC,
+						value: r.PROVINCE_CD,
+						group: r.REGION_CD
+					});
+				});
+				_this.obj_personnel.PROVINCE = tmp;
+			}, function (error) {
+				_toastr2.default.error(error, "Error in loading Province dropdown.");
+			});
+
+			_settings2.default.isNavigating = false;
+		};
+
+		ppid.prototype.OrderByText = function OrderByText(a, b) {
+			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
+			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
+			return 0;
+		};
+
+		ppid.prototype.changeTab = function changeTab(tabNumber) {
+			var _this2 = this;
+
+			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
+
+			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
+				all(tabNumber, _this2.obj_personnel.global_indiv_id);
+			});
+		};
+
+		ppid.prototype.FindUsers = function FindUsers() {
+			this.dialogService.open({
+				viewModel: _ppid_search.ppid_search
+			}).whenClosed(function (response) {
+				if (!response.wasCancelled) {} else {}
+			});
+		};
+
+		ppid.prototype.AddUsers = function AddUsers() {
+			alert('AddUsers function under maintenance.');
+		};
+
+		ppid.prototype.LoginPassed = function LoginPassed(user) {};
+
+		return ppid;
+	}()) || _class);
+});
 define('tools/gridpaging',['exports', 'aurelia-framework', 'aurelia-binding', 'cache_obj'], function (exports, _aureliaFramework, _aureliaBinding, _cache_obj) {
 	'use strict';
 
@@ -6156,3273 +6191,6 @@ define('tools/gridpaging',['exports', 'aurelia-framework', 'aurelia-binding', 'c
 		enumerable: true,
 		initializer: null
 	})), _class2)) || _class);
-});
-define('ppid/forms/company_info',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.company_info = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-	var _moment2 = _interopRequireDefault(_moment);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var company_info = exports.company_info = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
-		function company_info(obj_personnel, toastr, DialogService) {
-			_classCallCheck(this, company_info);
-
-			this.obj_personnel = null;
-
-			this.obj_personnel = obj_personnel;
-			this.DialogService = DialogService;
-		}
-
-		company_info.prototype.clickTab_Company = function clickTab_Company(tab_num) {
-			var _this = this;
-
-			if (this.obj_personnel.global_indiv_id.length == 0) return;
-			switch (tab_num) {
-				case 0:
-					this.obj_personnel.OBSERVERS.company_main_clicked.forEach(function (delegate) {
-						delegate(_this.obj_personnel.global_indiv_id);
-					});
-					break;
-			}
-		};
-
-		return company_info;
-	}()) || _class);
-});
-define('ppid/forms/company_info_main',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment', '../../masterfiles', '../../helpers'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment, _masterfiles, _helpers) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.company_info_main = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-	var _moment2 = _interopRequireDefault(_moment);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var company_info_main = exports.company_info_main = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
-		function company_info_main(obj_personnel, toastr, DialogService) {
-			var _this = this;
-
-			_classCallCheck(this, company_info_main);
-
-			this.obj_personnel = null;
-			this._disableLocations = true;
-			this._disableIDNo = false;
-			this._disableStatus = true;
-			this._disableTabsInput = true;
-			this.alreadyLoaded = false;
-
-			this.obj_personnel = obj_personnel;
-			this.DialogService = DialogService;
-			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_id) {
-				if (tab_num == 4) {
-					if (!_this.alreadyLoaded) {
-						_this.alreadyLoaded = true;
-						$("#_start_dt").datepicker();
-						$("#_end_dt").datepicker();
-						$("#kapamilya_dt").datepicker();
-						$("#membership_dt").datepicker();
-						$("#suspended_start_dt").datepicker();
-						$("#suspended_end_dt").datepicker();
-						toastr.clear();
-						toastr.info("", "Loading company info...");
-
-						_this.loadGlobalCompany(global_id);
-					}
-				}
-			});
-
-			this.obj_personnel.OBSERVERS.company_main_clicked.push(function (global_id) {
-				toastr.clear();
-				toastr.info("", "Loading company info...");
-				_this.loadGlobalCompany(global_id);
-			});
-
-			this.obj_personnel.OBSERVERS.clear_ppid.push(function () {
-				_this.obj_personnel.COMPANY_SPECIFIC = {
-					model: {},
-					list: []
-				};
-				_this.alreadyLoaded = false;
-			});
-		}
-
-		company_info_main.prototype.loadGlobalCompany = function loadGlobalCompany(global_id) {
-			var _this2 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_COMPANY_MSTR").where("GLOBAL_ID", "==", global_id).orderBy("COMPANY_ID");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (r) {
-					var suspend = [];
-					if (r.STATUS_CD == "SUSPEND") {
-						suspend = _this2.loadSuspend(global_id, r.COMPANY_ID);
-					}
-					var accreditation = _this2.loadAccreditation(r.GLOBAL_COMPANY_ID);
-					tmp.push({
-						global_company_id: r.GLOBAL_COMPANY_ID,
-						global_id: r.GLOBAL_ID,
-						id_no: r.ID_NO,
-						company_id: r.COMPANY_ID,
-						start_dt: r.START_DT,
-						end_dt: r.END_DT,
-						kapamilya_dt: r.KAPAMILYA_DT,
-						membership_dt: r.MEMBERSHIP_DT,
-						exclusive_fl: r.EXCLUSIVE_FL,
-						status_cd: r.STATUS_CD,
-						cessation_reason_cd: r.CESSATION_REASON_CD,
-						remarks: r.REMARKS,
-						division_id: r.DIVISION_ID,
-						location_cd: r.LOCATION_CD,
-						category_id: r.CATEGORY_ID,
-						job_id: r.JOB_ID,
-						payroll_grp_id: r.PAYROLL_GRP_ID,
-						professional_type_cd: r.PROFESSIONAL_TYPE_CD,
-						accreditation: accreditation,
-						suspend_id: suspend.suspend_id,
-						suspended_start_dt: suspend.length == 0 ? "" : suspend[0].start_dt,
-						suspended_end_dt: suspend.length == 0 ? "" : suspend[0].end_dt
-					});
-				});
-				_this2.obj_personnel.COMPANY_SPECIFIC.list = tmp;
-				_toastr2.default.clear();
-				_toastr2.default.success("", "Company info has been loaded...");
-			}, function (failed) {
-				_toastr2.default.error(failed, "error in fetching company specific data.");
-			});
-
-			if (this.obj_personnel.COMPANY.length > 0) {
-				this.obj_personnel.COMPANY_SPECIFIC.model.company_id = this.obj_personnel.COMPANY[0].id;
-				this.dd_companyChanged();
-			}
-		};
-
-		company_info_main.prototype.loadAccreditation = function loadAccreditation(global_company_id) {
-			var query = (0, _entityManagerFactory.EntityQuery)().from("ACCREDITATION_TRX").where("GLOBAL_COMPANY_ID", "==", global_company_id);
-			var accreditation = [];
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-				_.each(success.results, function (r) {
-					accreditation.push({
-						accreditation_id: r.ACCREDITATION_ID,
-						global_company_id: r.GLOBAL_COMPANY_ID,
-						eff_start_dt: r.EFF_START_DT,
-						eff_end_dt: r.EFF_END_DT,
-						division_id: r.DIVISION_ID,
-						category_id: r.CATEGORY_ID,
-						job_grp_id: r.JOB_GRP_ID,
-						job_id: r.JOB_ID,
-						competency: r.COMPETENCY,
-						home_fl: r.HOME_FL,
-						entry_fl: r.ENTRY_FL,
-						accreditation_memo: r.ACCREDITATION_MEMO
-					});
-				});
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in fetching company specific data.");
-			});
-			return accreditation;
-		};
-
-		company_info_main.prototype.loadSuspend = function loadSuspend(global_id, company_id) {
-			var pred1 = _breezeClient2.default.Predicate.create('GLOBAL_ID', '==', global_id);
-			var pred2 = _breezeClient2.default.Predicate.create('SUSPEND_LEVEL', '==', 2);
-			var finalPred = _breezeClient2.default.Predicate.and([pred1, pred2]);
-			var query = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").where(finalPred).orderByDesc("SUSPEND_ID").take(1);
-			var suspend = [];
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-
-				if (success.results.length > 0) {
-					_.each(success.results, function (result) {
-						suspend.push({
-							suspend_id: result.SUSPEND_ID,
-							start_dt: result.START_DT,
-							end_dt: result.END_DT,
-							company_id: result.COMPANY_ID
-						});
-					});
-				}
-			}, function (error) {
-				_toastr2.default.error(error, "Error in fetching company specific data.");
-			});
-			return suspend;
-		};
-
-		company_info_main.prototype.loadJobDropdown = function loadJobDropdown() {
-			var _this3 = this;
-
-			this.obj_personnel.JOB = [];
-			_.each(this.obj_personnel.JOB_CATEGORY, function (jc) {
-				(0, _masterfiles.getLookups)().JOB_MSTR.forEach(function (j) {
-					if (j.JOB_GRP_ID == jc.id) {
-						_this3.obj_personnel.JOB.push({
-							value: j.JOB_ID,
-							text: j.JOB_DESC
-						});
-					}
-				});
-			});
-			this.obj_personnel.JOB.sort(this.OrderByText);
-		};
-
-		company_info_main.prototype.dd_companyChanged = function dd_companyChanged() {
-			var _this4 = this;
-
-			var company_id = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
-
-			if (company_id == 2 || company_id == 3 || company_id == 4 || company_id == 7 || company_id == 8) {
-				this._disableIDNo = false;
-			} else {
-				this._disableIDNo = true;
-				this.obj_personnel.COMPANY_SPECIFIC.model.id_no = "000000";
-			}
-
-			var global_company = this.obj_personnel.COMPANY_SPECIFIC.list.find(function (gc) {
-				return gc.company_id == company_id;
-			});
-
-			if ((0, _masterfiles.getLookups)() != null) {
-
-				this.obj_personnel.DIVISION = [];
-				this.obj_personnel.CATEGORY = [];
-				this.obj_personnel.JOB_CATEGORY = [];
-
-
-				(0, _masterfiles.getLookups)().DIVISION_MSTR.forEach(function (d) {
-					if (d.COMPANY_ID == company_id) {
-						_this4.obj_personnel.DIVISION.push({
-							id: d.DIVISION_ID,
-							level: d.DIVISION_LEVEL,
-							value: d.DIVISION_CD,
-							text: d.DIVISION_NAME
-						});
-					}
-				});
-
-				(0, _masterfiles.getLookups)().CATEGORY_MSTR.forEach(function (c) {
-					if (c.COMPANY_ID == company_id) {
-						_this4.obj_personnel.CATEGORY.push({
-							id: c.CATEGORY_ID,
-							value: c.CATEGORY_CD,
-							text: c.CATEGORY_DESC
-						});
-					}
-				});
-
-				(0, _masterfiles.getLookups)().JOB_GRP_MSTR.forEach(function (j) {
-					if (j.COMPANY_ID == company_id) {
-						_this4.obj_personnel.JOB_CATEGORY.push({
-							id: j.JOB_GRP_ID,
-							value: j.JOB_GRP_CD,
-							text: j.JOB_GRP_DESC
-						});
-					}
-				});
-
-				this.obj_personnel.JOB_CATEGORY.sort(this.OrderByText);
-				this.obj_personnel.CATEGORY.sort(this.OrderByText);
-
-				if (global_company != null && global_company != undefined) {
-					this._disableStatus = false;
-					this._disableTabsInput = false;
-					this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = global_company.global_company_id;
-					this.obj_personnel.COMPANY_SPECIFIC.model.id_no = global_company.id_no;
-					var startDt = (0, _helpers.formatDate)(global_company.start_dt);
-					if (startDt.length > 0 && startDt != "01/01/0001") {
-						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = startDt;
-						$("#_start_dt").datepicker("setValue", new Date(startDt));
-					} else {
-						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
-					}
-					var endDt = (0, _helpers.formatDate)(global_company.end_dt);
-
-					if (endDt.length > 0 && endDt != "01/01/0001") {
-						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = endDt;
-						$("#_end_dt").datepicker("setValue", new Date(endDt));
-					} else {
-						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = "";
-					}
-
-					var kapamilya_dt = (0, _helpers.formatDate)(global_company.kapamilya_dt);
-					if (kapamilya_dt.length > 0 && kapamilya_dt != "01/01/0001") {
-						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = kapamilya_dt;
-						$("#kapamilya_dt").datepicker("setValue", new Date(kapamilya_dt));
-					} else {
-						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
-					}
-
-					var membership_dt = (0, _helpers.formatDate)(global_company.membership_dt);
-					if (membership_dt.length > 0 && membership_dt != "01/01/0001") {
-						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = membership_dt;
-						$("#membership_dt").datepicker("setValue", new Date(membership_dt));
-					} else {
-						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
-					}
-
-					this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = global_company.exclusive_fl;
-					this.obj_personnel.COMPANY_SPECIFIC.model.status_cd = global_company.status_cd;
-					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = global_company.cessation_reason_cd;
-					this.obj_personnel.COMPANY_SPECIFIC.model.remarks = global_company.remarks;
-					this.obj_personnel.COMPANY_SPECIFIC.model.division_id = global_company.division_id + "";
-
-					this.obj_personnel.COMPANY_SPECIFIC.model.location_cd = global_company.location_cd;
-					this.obj_personnel.COMPANY_SPECIFIC.model.category_id = global_company.category_id + "";
-
-					this.obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id = global_company.payroll_grp_id + "";
-					this.obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd = global_company.professional_type_cd;
-					this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = (0, _helpers.formatDate)(global_company.suspended_start_dt);
-					this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = (0, _helpers.formatDate)(global_company.suspended_end_dt);
-					$("#suspended_start_dt").datepicker("setValue", (0, _helpers.formatDate)(global_company.suspended_start_dt));
-					$("#suspended_end_dt").datepicker("setValue", (0, _helpers.formatDate)(global_company.suspended_end_dt));
-					this.obj_personnel.COMPANY_SPECIFIC.model.accreditation = global_company.accreditation;
-					this.loadJobDropdown();
-					this.obj_personnel.COMPANY_SPECIFIC.model.job_id = global_company.job_id + "";
-				} else {
-					this._disableStatus = true;
-					this._disableTabsInput = true;
-
-					this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = "";
-					this.obj_personnel.COMPANY_SPECIFIC.model.status_cd = "ACTV";
-					this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
-					this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = "";
-					this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
-					this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
-					this.obj_personnel.COMPANY_SPECIFIC.model.division_id = this.obj_personnel.DIVISION[0].value;
-					this.obj_personnel.COMPANY_SPECIFIC.model.category_id = this.obj_personnel.CATEGORY[0].value;
-
-					this.loadJobDropdown();
-				}
-				this.dd_divisionChanged();
-			}
-		};
-
-		company_info_main.prototype.dd_divisionChanged = function dd_divisionChanged() {
-			var division_id = this.obj_personnel.COMPANY_SPECIFIC.model.division_id;
-			var division = this.obj_personnel.DIVISION.find(function (d) {
-				return d.id == division_id;
-			});
-
-			if (division != undefined && division != null && division.text.indexOf("REGIONAL DIVISION") != -1) {
-				this._disableLocations = false;
-			} else {
-				this._disableLocations = true;
-				this.obj_personnel.COMPANY_SPECIFIC.model.location_cd = "--NONE--";
-			}
-		};
-
-		company_info_main.prototype.validate = function validate() {
-			var strValidation = "";
-
-			if (this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "SUSPEND") {
-
-				var sus_start = null;
-				var sus_end = null;
-				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = $("#suspended_start_dt").val();
-				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = $("#suspended_end_dt").val();
-				if (this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt != null && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt.length > 0) {
-					if (!(0, _moment2.default)(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt).isValid()) {
-						strValidation += "Invalid suspension start date.<br/>";
-					} else {
-						sus_start = new Date(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt);
-					}
-				} else {
-					strValidation += "No start date of suspension specified.<br/>";
-				}
-
-				if (this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt != null && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt.length > 0) {
-					if (!(0, _moment2.default)(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt).isValid()) {
-						strValidation += "Invalid suspension end date.<br/>";
-					} else {
-						sus_end = new Date(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt);
-					}
-				} else {
-					strValidation += "No end date of suspension specified.<br/>";
-				}
-
-				if (sus_start != null && sus_end != null) {
-					if (sus_end < sus_start) {
-						strValidation += "end date of suspension cannot be greater than the start date.<br/>";
-					}
-				}
-			}
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error("", strValidation);
-			} else {
-				var cid = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
-				var gcid = this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id;
-				if (gcid.length == 0) {
-					this.saveCompanySpecific(cid);
-				} else {
-					this.updateCompanySpecific(gcid);
-				}
-			}
-		};
-
-		company_info_main.prototype.saveCompanySpecific = function saveCompanySpecific(company_id) {
-			var generated_id = this.GenerateIDNo(company_id);
-			console.log(generated_id);
-		};
-
-		company_info_main.prototype.updateCompanySpecific = function updateCompanySpecific(global_company_id) {
-			this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = $("#_start_dt").val();
-			this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = $("#_end_dt").val();
-			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_COMPANY_MSTR").where("GLOBAL_COMPANY_ID", "==", global_company_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s) {}, function (e) {
-				_toastr2.default.error("", e);
-			});
-		};
-
-		company_info_main.prototype.dd_bankChanged = function dd_bankChanged() {
-			var bank_id = this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id;
-			if (bank_id != undefined && bank_id != null && bank_id.length > 0) {
-				var bank = this.obj_personnel.BANK.find(function (b) {
-					return b.id == bank_id;
-				});
-				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm = bank.long_nm;
-				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = this.obj_personnel.HEADER.last_name + ", " + this.obj_personnel.HEADER.given_name + " " + this.obj_personnel.HEADER.middle_name;
-			} else {
-				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm = "";
-				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = "";
-			}
-		};
-
-		company_info_main.prototype.GenerateIDNo = function GenerateIDNo(company_id) {
-			var LastID = "000000";
-			var currentYear = new Date().getFullYear().toString().substring(2, 4);
-			var query = (0, _entityManagerFactory.EntityQuery)().from("COMPANY_SPECIFIC_INDEX").where("COMPANY_SPECIFIC_ID", "==", company_id).take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s) {
-				LastID = s.results[0].COMPANY_INDEX;
-				var lastYear = LastID.toString().substring(0, 2);
-				if (lastYear != currentYear) {
-					LastID = currentYear + "0001";
-				}
-				return LastID;
-			}, function (e) {
-				_toastr2.default.error(e, "Error in generating ID.");
-			});
-		};
-
-		company_info_main.prototype.clearAccreditationField = function clearAccreditationField() {};
-
-		company_info_main.prototype.OrderByText = function OrderByText(a, b) {
-			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
-			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
-			return 0;
-		};
-
-		return company_info_main;
-	}()) || _class);
-});
-define('ppid/forms/e_a_s_t',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.e_a_s_t = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var e_a_s_t = exports.e_a_s_t = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
-		function e_a_s_t(dialogService, obj_personnel, toastr) {
-			var _this = this;
-
-			_classCallCheck(this, e_a_s_t);
-
-			this.obj_personnel = null;
-
-			this.dialogService = dialogService;
-			this.obj_personnel = obj_personnel;
-			this.obj_personnel.OBSERVERS.ppid_dialog.push(function (all) {
-				_this.CloseSearch(all);
-			});
-		}
-
-		e_a_s_t.prototype.CloseSearch = function CloseSearch(global_id) {};
-
-		return e_a_s_t;
-	}()) || _class);
-});
-define('ppid/forms/gov_info',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.gov_info = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var gov_info = exports.gov_info = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
-		function gov_info(dialogService, obj_personnel, toastr) {
-			_classCallCheck(this, gov_info);
-
-			this.obj_personnel = null;
-			this._activeTab = 0;
-
-			this.dialogService = dialogService;
-			this.obj_personnel = obj_personnel;
-		}
-
-		gov_info.prototype.clickTab_GovInfo = function clickTab_GovInfo(tab_num) {
-			var _this = this;
-
-			if (this.obj_personnel.global_indiv_id.length === 0) return;
-			switch (tab_num) {
-				case 0:
-					this.obj_personnel.OBSERVERS.govinfo_main_clicked.forEach(function (delegate) {
-						_toastr2.default.clear();
-						_toastr2.default.info("", "Loading government info...");
-						delegate(_this.obj_personnel.global_indiv_id);
-					});
-					break;
-			}
-		};
-
-		return gov_info;
-	}()) || _class);
-});
-define('ppid/forms/gov_info_main',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.gov_info_main = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-	var _moment2 = _interopRequireDefault(_moment);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var gov_info_main = exports.gov_info_main = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
-		function gov_info_main(obj_personnel, toastr, DialogService) {
-			var _this = this;
-
-			_classCallCheck(this, gov_info_main);
-
-			this.obj_personnel = null;
-			this.alreadyLoaded = false;
-
-
-			$("#affidavit_dt").datepicker();
-			this.obj_personnel = obj_personnel;
-			this.DialogService = DialogService;
-			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_id) {
-				if (tab_num == 3) {
-					if (!_this.alreadyLoaded) {
-						_this.alreadyLoaded = true;
-						$("#affidavit_dt").datepicker();
-						$("#expiry_dt").datepicker();
-						$("#vat_reg_dt").datepicker();
-						toastr.clear();
-						toastr.info("", "Loading data...");
-						_this.load_TaxInformation(global_id);
-						_this.load_TaxAffidavit(global_id);
-						_this.load_Permit(global_id);
-						_this.clearTaxAffidavitField();
-					}
-				}
-			});
-
-			this.obj_personnel.OBSERVERS.govinfo_main_clicked.push(function (global_id) {
-				_this.load_TaxInformation(global_id);
-				_this.load_TaxAffidavit(global_id);
-				_this.load_Permit(global_id);
-				_this.clearTaxAffidavitField();
-			});
-
-			this.obj_personnel.OBSERVERS.clear_ppid.push(function () {
-				_this.obj_personnel.GOVERNMENT_INFO = {
-					modelTaxAffidavit: {},
-					modelPermit: {},
-					tax_affidavit: [],
-					permits: []
-				};
-				_this.alreadyLoaded = false;
-			});
-		}
-
-		gov_info_main.prototype.formatDate = function formatDate(strDate) {
-			if (strDate == null || strDate.length == 0) return "";
-			var dt = new Date(strDate);
-			var month = dt.getMonth() + 1;
-			var day = dt.getDate();
-			var year = dt.getFullYear();
-			return ('0' + month).slice(-2) + '/' + ('0' + day).slice(-2) + '/' + ("000" + year).slice(-4);
-		};
-
-		gov_info_main.prototype.validate_input = function validate_input(input, type) {
-			switch (type) {
-				case "PAGIBIG":
-					var pagibig = /^(?:\d{4}-\d{4}-\d{4})$/;
-					return pagibig.test(input);
-				case "SSS":
-					var sss = /^(?:\d{2}-\d{7}-\d{1})$/;
-					return sss.test(input);
-				case "PHILHEALTH":
-					var philhealth = /^(?:\d{2}-\d{9}-\d{1})$/;
-					return philhealth.test(input);
-				default:
-					return false;
-			}
-		};
-
-		gov_info_main.prototype.load_TaxInformation = function load_TaxInformation(global_id) {
-			var _this2 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_INDIV_MSTR").where("GLOBAL_INDIV_ID", "==", global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				_this2.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd = querySuccess.results[0].TAX_EXEMPT_CD;
-				_this2.obj_personnel.GOVERNMENT_INFO.sss_no = querySuccess.results[0].SSS_NO;
-				_this2.obj_personnel.GOVERNMENT_INFO.pagibig_no = querySuccess.results[0].PAGIBIG_NO;
-				_this2.obj_personnel.GOVERNMENT_INFO.philhealth_no = querySuccess.results[0].PHILHEALTH_NO;
-				_this2.obj_personnel.GOVERNMENT_INFO.national_id = querySuccess.results[0].NATIONAL_ID;
-				_this2.obj_personnel.GOVERNMENT_INFO.voters_id = querySuccess.results[0].VOTERS_ID;
-				_toastr2.default.clear();
-			}, function (errorQuery) {
-				_toastr2.default.error(errorQuery, "Error in loading Government information.");
-			});
-
-			query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_MSTR").where("GLOBAL_ID", "==", global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				_this2.obj_personnel.GOVERNMENT_INFO.input_tax_cd = querySuccess.results[0].INPUT_TAX_CD;
-				_this2.obj_personnel.GOVERNMENT_INFO.tin = querySuccess.results[0].TIN;
-				_this2.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = _this2.formatDate(querySuccess.results[0].VAT_REG_DT);
-				_this2.obj_personnel.GOVERNMENT_INFO.vat_stat_cd = querySuccess.results[0].VAT_STAT_CD;
-				_toastr2.default.success("", "Tax Information has been loaded.");
-			}, function (errorQuery) {
-				_toastr2.default.error(errorQuery, "Error in loading Government information.");
-			});
-		};
-
-		gov_info_main.prototype.load_TaxAffidavit = function load_TaxAffidavit(global_id) {
-			var _this3 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from("TAX_AFFIDAVIT_TRX").where("GLOBAL_ID", "==", global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				_this3.obj_personnel.GOVERNMENT_INFO.tax_affidavit = [];
-				var tmpList = [];
-				_.each(querySuccess.results, function (result) {
-					tmpList.push({
-						tax_affidavit_id: result.TAX_AFFIDAVIT_ID,
-						affidavit_no: result.AFFIDAVIT_NO,
-						affidavit_dt: _this3.formatDate(result.AFFIDAVIT_DT)
-					});
-				});
-				_this3.obj_personnel.GOVERNMENT_INFO.tax_affidavit = tmpList;
-			}, function (errorQuery) {
-				_toastr2.default.error(errorQuery, "Error in loading tax affidavit");
-			});
-		};
-
-		gov_info_main.prototype.load_Permit = function load_Permit(global_id) {
-			var _this4 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from("PERMIT_TRX").where("GLOBAL_ID", "==", global_id);
-
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (successQuery) {
-				var tmpList = [];
-				_.each(successQuery.results, function (result) {
-					var place = _this4.obj_personnel.LOCATIONS.find(function (x) {
-						return x.LOCATION_CD == result.PLACE_OF_ISSUE;
-					});
-
-					var permit = _this4.obj_personnel.PERMIT.find(function (x) {
-						return x.value == result.PERMIT_CD;
-					});
-
-					tmpList.push({
-						global_id: result.GLOBAL_ID,
-						permit_no: result.PERMIT_NO,
-						expiry_dt: _this4.formatDate(result.EXPIRY_DT),
-						permit_cd: result.PERMIT_CD,
-						agency_cd: result.AGENCY_CD,
-						permit_id: result.PERMIT_ID,
-						grant_dt: result.GRANT_DT,
-						place_of_issue: result.PLACE_OF_ISSUE,
-						poi: place.LOCATION_DESC,
-						permit_name: permit.text
-					});
-				});
-				_this4.obj_personnel.GOVERNMENT_INFO.permits = tmpList;
-			}, function (errorQuery) {});
-		};
-
-		gov_info_main.prototype.clearTaxAffidavitField = function clearTaxAffidavitField() {
-			this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no = "";
-			this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt = "";
-		};
-
-		gov_info_main.prototype.btnAdd_TaxAffidavit = function btnAdd_TaxAffidavit() {
-			var strValidation = "";
-
-			if (this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no == undefined || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no == null || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no.length == 0) {
-				strValidation += "Affidavit no is required.<br/>";
-			}
-
-			this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt = $("#affidavit_dt").val();
-			if (this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt == undefined || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt == null || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt.length == 0) {
-				strValidation += "Affidavit date is required.<br/>";
-			} else {
-				if (!(0, _moment2.default)(this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt).isValid()) {
-					strValidation += "Invalid affidavit dt.<br/>";
-				}
-			}
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error("", strValidation);
-			} else {
-				this.insertTaxAffidavit();
-			}
-		};
-
-		gov_info_main.prototype.btnRemove_TaxAffidavit = function btnRemove_TaxAffidavit(item) {
-			var _this5 = this;
-
-			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the tax affidavit?" } }).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					var query = (0, _entityManagerFactory.EntityQuery)().from('TAX_AFFIDAVIT_TRX').where('TAX_AFFIDAVIT_ID', '==', item.tax_affidavit_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-
-						success.results[0].entityAspect.setDeleted();
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-							_toastr2.default.success("", "The tax affidavit was successfully removed.");
-							_this5.load_TaxAffidavit(_this5.obj_personnel.global_indiv_id);
-						}, function (error) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", "Error in removing tax affidavit.");
-						});
-					});
-				}
-			});
-		};
-
-		gov_info_main.prototype.insertTaxAffidavit = function insertTaxAffidavit() {
-			var _this6 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from("TAX_AFFIDAVIT_TRX").orderByDesc("TAX_AFFIDAVIT_ID").take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				var Max = 1;
-				if (querySuccess.results.length > 0) {
-					Max = querySuccess.results[0].TAX_AFFIDAVIT_ID + 1;
-				}
-
-				var tax_affidavit = {
-					GLOBAL_ID: _this6.obj_personnel.global_indiv_id,
-					AFFIDAVIT_NO: _this6.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no,
-					TAX_AFFIDAVIT_ID: Max,
-					AFFIDAVIT_DT: _this6.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt,
-					RELEASE_DT: dateToday,
-					RETURN_DT: dateToday,
-					CREATED_BY: _this6.obj_personnel.USER.USER_ID,
-					CREATED_DT: dateToday
-				};
-				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("TAX_AFFIDAVIT_TRX", tax_affidavit);
-				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-					_toastr2.default.clear();
-					_toastr2.default.success(saveSuccess, "Record saved.");
-					_this6.load_TaxAffidavit(_this6.obj_personnel.global_indiv_id);
-					_this6.clearTaxAffidavitField();
-				}, function (errorSave) {
-					_toastr2.default.error(errorQuery, "Error in loading Tax affidavit.");
-				});
-			}, function (errorQuery) {
-				_toastr2.default.error(errorQuery, "Error in loading Tax affidavit.");
-			});
-		};
-
-		gov_info_main.prototype.clearPermitField = function clearPermitField() {
-			this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd = "";
-			this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no = "";
-			this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt = "";
-			this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue = "";
-		};
-
-		gov_info_main.prototype.btnAdd_Permit = function btnAdd_Permit() {
-			var strValidation = "";
-
-			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd.length == 0) {
-				strValidation += "No Permit type specified.<br/>";
-			}
-
-			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no.length == 0) {
-				strValidation += "No Permit number specified.<br/>";
-			}
-
-			this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt = $("#expiry_dt").val();
-			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt.length == 0) {
-				strValidation += "No expiry date specified.<br/>";
-			} else {
-				if (!(0, _moment2.default)(this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt).isValid()) {
-					strValidation += "Invalid expiry date.<br/>";
-				}
-			}
-
-			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue.length == 0) {
-				strValidation += "No place of issuance specified.<br/>";
-			}
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error("", strValidation);
-			} else {
-				this.insertPermit();
-			}
-		};
-
-		gov_info_main.prototype.btnUpdate_Permit = function btnUpdate_Permit(item) {};
-
-		gov_info_main.prototype.btnRemove_Permit = function btnRemove_Permit(item) {
-			var _this7 = this;
-
-			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the permit?" } }).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					var query = (0, _entityManagerFactory.EntityQuery)().from('PERMIT_TRX').where('PERMIT_ID', '==', item.permit_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-
-						success.results[0].entityAspect.setDeleted();
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-							_toastr2.default.success("", "The permit was successfully removed.");
-							_this7.load_Permit(_this7.obj_personnel.global_indiv_id);
-						}, function (error) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", "Error in removing permit.");
-						});
-					});
-				}
-			});
-		};
-
-		gov_info_main.prototype.insertPermit = function insertPermit() {
-			var _this8 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from("PERMIT_TRX").orderByDesc("PERMIT_ID").take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				var Max = 1;
-				if (querySuccess.results.length > 0) {
-					Max = querySuccess.results[0].PERMIT_ID + 1;
-				}
-
-				var permit = {
-					GLOBAL_ID: _this8.obj_personnel.global_indiv_id,
-					PERMIT_NO: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no,
-					EXPIRY_DT: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt,
-					PERMIT_CD: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd,
-					AGENCY_CD: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd,
-					PERMIT_ID: Max,
-					PLACE_OF_ISSUE: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue,
-					CREATED_BY: _this8.obj_personnel.USER.USER_ID,
-					CREATED_DT: dateToday
-				};
-
-				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("PERMIT_TRX", permit);
-				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "Record saved.");
-					_this8.load_Permit(_this8.obj_personnel.global_indiv_id);
-					_this8.clearPermitField();
-				}, function (errorSave) {
-					_toastr2.default.clear();
-					_toastr2.default.error("", errorSave);
-				});
-			});
-		};
-
-		gov_info_main.prototype.validate = function validate() {
-
-			var strValidation = "";
-
-			if (this.obj_personnel.GOVERNMENT_INFO.pagibig_no.length > 0) {
-				if (!this.validate_input(this.obj_personnel.GOVERNMENT_INFO.pagibig_no, "PAGIBIG") && this.obj_personnel.GOVERNMENT_INFO.pagibig_no.length >= 0) {
-					strValidation += "Invalid Pag-ibig No.<br/>";
-				}
-			} else {
-				this.obj_personnel.GOVERNMENT_INFO.pagibig_no = "0000-0000-0000";
-			}
-
-			if (this.obj_personnel.GOVERNMENT_INFO.sss_no.length > 0) {
-				if (!this.validate_input(this.obj_personnel.GOVERNMENT_INFO.sss_no, "SSS")) {
-					strValidation += "Invalid SSS No.<br/>";
-				}
-			} else {
-				this.obj_personnel.GOVERNMENT_INFO.sss_no = "00-0000000-0";
-			}
-
-			if (this.obj_personnel.GOVERNMENT_INFO.philhealth_no.length > 0) {
-				if (!this.validate_input(this.obj_personnel.GOVERNMENT_INFO.philhealth_no, "PHILHEALTH")) {
-					strValidation += "Invalid Philhealth No.<br/>";
-				}
-			} else {
-				this.obj_personnel.GOVERNMENT_INFO.philhealth_no = "00-000000000-0";
-			}
-
-			this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = $("#vat_reg_dt").val();
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error("", strValidation);
-			} else {
-				this.update();
-			}
-		};
-
-		gov_info_main.prototype.update = function update() {
-			var _this9 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_INDIV_MSTR").where("GLOBAL_INDIV_ID", "==", this.obj_personnel.global_indiv_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess1) {
-				querySuccess1.results[0].TAX_EXEMPT_CD = _this9.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd;
-				querySuccess1.results[0].SSS_NO = _this9.obj_personnel.GOVERNMENT_INFO.sss_no;
-				querySuccess1.results[0].PAGIBIG_NO = _this9.obj_personnel.GOVERNMENT_INFO.pagibig_no;
-				querySuccess1.results[0].PHILHEALTH_NO = _this9.obj_personnel.GOVERNMENT_INFO.philhealth_no;
-				querySuccess1.results[0].NATIONAL_ID = _this9.obj_personnel.GOVERNMENT_INFO.national_id;
-				querySuccess1.results[0].VOTERS_ID = _this9.obj_personnel.GOVERNMENT_INFO.voters_id;
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (save1) {
-
-					query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_MSTR").where("GLOBAL_ID", "==", _this9.obj_personnel.global_indiv_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess2) {
-						querySuccess2.results[0].INPUT_TAX_CD = _this9.obj_personnel.GOVERNMENT_INFO.input_tax_cd;
-						querySuccess2.results[0].VAT_REG_DT = _this9.obj_personnel.GOVERNMENT_INFO.vat_reg_dt;
-						querySuccess2.results[0].VAT_STAT_CD = _this9.obj_personnel.GOVERNMENT_INFO.vat_stat_cd;
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (save2) {
-							_toastr2.default.clear();
-							_toastr2.default.success("", "Record saved.");
-						}, function (error2) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", error2);
-						});
-					});
-				}, function (error1) {
-					_toastr2.default.clear();
-					_toastr2.default.error("", error1);
-				});
-			}, function (queryError1) {});
-		};
-
-		gov_info_main.prototype.isDigit = function isDigit(event) {
-			if (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 9 || event.keyCode == 10 || event.keyCode == 13 || event.keyCode == 8 || event.keyCode == 116 || event.keyCode == 46 || event.keyCode <= 40 && event.keyCode >= 37) {
-				return true;
-			} else {
-				return false;
-			}
-		};
-
-		gov_info_main.prototype.input_mask = function input_mask(id, mask) {
-			var myMask = mask;
-			var myCaja = document.getElementById(id);
-			var myText = "";
-			var myNumbers = [];
-			var myOutPut = "";
-			var theLastPos = 1;
-			myText = myCaja.value;
-
-			for (var i = 0; i < myText.length; i++) {
-				if (!isNaN(myText.charAt(i)) && myText.charAt(i) != " ") {
-					myNumbers.push(myText.charAt(i));
-				}
-			}
-
-			for (var j = 0; j < myMask.length; j++) {
-				if (myMask.charAt(j) == "_") {
-					if (myNumbers.length == 0) myOutPut = myOutPut + myMask.charAt(j);else {
-						myOutPut = myOutPut + myNumbers.shift();
-						theLastPos = j + 1;
-					}
-				} else {
-					myOutPut = myOutPut + myMask.charAt(j);
-				}
-			}
-
-			document.getElementById(id).value = myOutPut;
-			document.getElementById(id).setSelectionRange(theLastPos, theLastPos);
-		};
-
-		return gov_info_main;
-	}()) || _class);
-});
-define('ppid/forms/main',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory', 'breeze-client', '../modals/ppid_search', 'moment', '../../helpers', '../../cache_obj'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory, _breezeClient, _ppid_search, _moment, _helpers, _cache_obj) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.main = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-	var _moment2 = _interopRequireDefault(_moment);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var main = exports.main = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default, _cache_obj.cache_obj), _dec(_class = function () {
-		function main(dialogService, obj_personnel, toastr, cache_obj) {
-			var _this = this;
-
-			_classCallCheck(this, main);
-
-			this._disableSearchPersonnel = false;
-			this._disableCreatePersonnel = false;
-			this._disableSavePersonnel = true;
-			this._disableClearData = true;
-			this._disableResetData = true;
-			this._disableForm = true;
-			this._isActiveTab = true;
-			this.gender = ["Male", "Female"];
-			this.selectedGender = "";
-			this.selected_citizenship = "";
-			this.selected_group = "";
-			this.obj_personnel = null;
-			this.cache_obj = null;
-			this.primary_img = "/styles/images/abslogo_BIG.png";
-
-			this.obj_personnel = obj_personnel;
-			this.dialogService = dialogService;
-			this.cache_obj = cache_obj;
-			this.obj_personnel.USER = this.cache_obj.USER;
-			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_id) {});
-
-			this.obj_personnel.OBSERVERS.ppid_dialog.push(function (val) {
-				_this.loadData(val);
-			});
-		}
-
-		main.prototype.getAge = function getAge(dateString) {
-			if (dateString == null || dateString.length == 0) return;
-			var today = new Date();
-			var birthDate = new Date(dateString);
-			var age = today.getFullYear() - birthDate.getFullYear();
-			var m = today.getMonth() - birthDate.getMonth();
-			if (m < 0 || m === 0 && today.getDate() < birthDate.getDate()) {
-				age--;
-			}
-			return age;
-		};
-
-		main.prototype.loadData = function loadData(global_id) {
-			var _this2 = this;
-
-			this.obj_personnel.global_indiv_id = global_id;
-			var _query = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_INDIV_MSTR').where('GLOBAL_INDIV_ID', '==', global_id);
-
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-
-				_.each(success.results, function (result) {
-					_this2.obj_personnel.HEADER.global_indiv_id = result.GLOBAL_INDIV_ID;
-					_this2.obj_personnel.HEADER.given_name = result.GIVEN_NAME;
-					_this2.obj_personnel.HEADER.last_name = result.LAST_NAME;
-					_this2.obj_personnel.HEADER.middle_name = result.MIDDLE_NAME;
-					_this2.obj_personnel.HEADER.religion_cd = result.RELIGION_CD;
-					var birthdt = (0, _helpers.formatDate)(result.BIRTH_DT);
-					if (birthdt.length == 0) {} else {
-						$("#birthDate").datepicker("setValue", new Date(birthdt));
-					}
-					_this2.obj_personnel.HEADER.birth_dt = birthdt;
-					_this2.obj_personnel.HEADER.age = _this2.getAge(result.BIRTH_DT);
-					_this2.obj_personnel.HEADER.civil_status = result.CIVIL_STATUS;
-					_this2.obj_personnel.HEADER.mother_maiden_name = result.MOTHER_MAIDEN_NAME;
-					_this2.obj_personnel.HEADER.alias = result.ALIAS;
-					_this2.obj_personnel.HEADER.birth_place = result.BIRTH_PLACE;
-					_this2.obj_personnel.HEADER.gender = result.GENDER;
-					switch (result.GENDER) {
-						case "M":
-							_this2.selectedGender = "Male";
-							break;
-						case "F":
-							_this2.selectedGender = "Female";
-							break;
-					}
-					_this2.obj_personnel.HEADER.acr_no = result.ACR_NO;
-				});
-				_toastr2.default.clear();
-				_toastr2.default.success("", "Success");
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in retrieving data[1].");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_MSTR').where('GLOBAL_ID', '==', global_id);
-
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-
-				_.each(success.results, function (result) {
-					_this2.obj_personnel.HEADER.tin = result.TIN;
-					_this2.obj_personnel.HEADER.country_cd = result.COUNTRY_CD;
-					_this2.obj_personnel.HEADER.country_base_cd = result.COUNTRY_BASE_CD;
-					_this2.obj_personnel.HEADER.location_base_cd = result.LOCATION_BASE_CD;
-					_this2.obj_personnel.HEADER.status_cd = result.STATUS_CD;
-					_this2.obj_personnel.HEADER.created_by = result.CREATED_BY;
-					_this2.obj_personnel.HEADER.last_updated_by = result.LAST_UPDATED_BY;
-
-					if (_this2.obj_personnel.HEADER.status_cd == "SUSPEND") {
-						var _pred1 = _breezeClient2.default.Predicate.create("GLOBAL_ID", "==", global_id);
-						var _pred2 = _breezeClient2.default.Predicate.create("SUSPEND_LEVEL", "==", 1);
-						var _finalPred = _breezeClient2.default.Predicate.and([_pred1, _pred2]);
-						_query = (0, _entityManagerFactory.EntityQuery)().from('SUSPEND_TRX').where(_finalPred).orderByDesc("SUSPEND_ID").take(1);
-						(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-							if (success.results.length > 0) {
-								_this2.obj_personnel.HEADER.suspend_id = success.results[0].SUSPEND_ID;
-
-								var start_dt = (0, _helpers.formatDate)(success.results[0].START_DT);
-								_this2.obj_personnel.HEADER.suspension_start = start_dt;
-								$("#suspensionFrom").datepicker("setValue", new Date(start_dt));
-
-								var end_dt = (0, _helpers.formatDate)(success.results[0].END_DT);
-								_this2.obj_personnel.HEADER.suspension_end = end_dt;
-								$("#suspensionTo").datepicker("setValue", new Date(end_dt));
-							}
-						}, function (error) {
-							_toastr2.default.error("", error);
-						});
-					} else {
-						_this2.obj_personnel.HEADER.suspension_start = "";
-						_this2.obj_personnel.HEADER.suspension_end = "";
-						$("#suspensionFrom").datepicker("setValue", new Date());
-						$("#suspensionTo").datepicker("setValue", new Date());
-					}
-				});
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in retrieving data[2].");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').where('GLOBAL_INDIV_ID', '==', global_id).orderBy('CITIZENSHIP_CD');
-
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmpArr = [];
-
-				_.each(success.results, function (result) {
-					var tmp = _this2.obj_personnel.CITIZENSHIP.find(function (x) {
-						if (x.value === result.CITIZENSHIP_CD) {
-							return x;
-						}
-					});
-
-					if (tmp != null) {
-						tmpArr.push(tmp);
-					}
-				});
-
-				_this2.obj_personnel.HEADER.citizenship = tmpArr;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in Retrieving Citizenship list.');
-			});
-
-			var pred1 = _breezeClient2.default.Predicate.create('GLOBAL_INDIV_ID', '==', global_id);
-			var pred2 = _breezeClient2.default.Predicate.create('STATUS_CD', '==', 'ACTV');
-			var finalPred = _breezeClient2.default.Predicate.and([pred1, pred2]);
-			_query = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').where(finalPred);
-
-			this.obj_personnel.HEADER.group.length = 0;
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmpArr = [];
-
-				_.each(success.results, function (result) {
-					var tmp = _this2.obj_personnel.GROUP.find(function (x) {
-						if (x.value === result.GLOBAL_GRP_ID) {
-							return x;
-						}
-					});
-					if (tmp != null) {
-						tmpArr.push(tmp);
-					}
-				});
-
-				_this2.obj_personnel.HEADER.group = tmpArr;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in Retrieving Group list.');
-			});
-		};
-
-		main.prototype.checkDate = function checkDate(id) {
-			$("#" + id).datepicker();
-		};
-
-		main.prototype.btnAdd_Citizenship = function btnAdd_Citizenship() {
-			var _this3 = this;
-
-			if (this.selected_citizenship.length > 0) {
-
-				var checkIfExist = this.obj_personnel.HEADER.citizenship.find(function (c) {
-					if (c.value === _this3.selected_citizenship) {
-						return true;
-					}
-				});
-
-				if (checkIfExist) {
-					_toastr2.default.error('The selected citizenship is already in the list.', 'Citizenship function');
-					$('.ddCitizenship').val('');
-					return;
-				}
-
-				var tmp = this.obj_personnel.CITIZENSHIP.find(function (c) {
-					if (c.value === _this3.selected_citizenship) {
-						return c;
-					}
-				});
-
-				if (tmp != null) {
-					this.obj_personnel.HEADER.citizenship.push(tmp);
-
-					this.selected_citizenship = '';
-				}
-			}
-		};
-
-		main.prototype.removeCitizenship = function removeCitizenship(item) {
-			var index = this.obj_personnel.HEADER.citizenship.indexOf(item);
-			this.obj_personnel.HEADER.citizenship.splice(index, 1);
-		};
-
-		main.prototype.removeAllCitizenship = function removeAllCitizenship() {
-			this.obj_personnel.HEADER.citizenship = [];
-		};
-
-		main.prototype.btnAdd_Group = function btnAdd_Group() {
-			var _this4 = this;
-
-			if (this.selected_group.length > 0) {
-				var checkIfExist = this.obj_personnel.HEADER.group.find(function (c) {
-					if (c.value === _this4.selected_group) {
-						return true;
-					}
-				});
-
-				if (checkIfExist) {
-					_toastr2.default.error('The selected group is already added in the list.', 'Group function');
-					$('.ddGroup').val('');
-					return;
-				}
-
-				var tmp = this.obj_personnel.GROUP.find(function (c) {
-					if (c.value === _this4.selected_group) {
-						return c;
-					}
-				});
-
-				if (tmp != null) {
-					this.obj_personnel.HEADER.group.push(tmp);
-
-					this.selected_group = '';
-				}
-			}
-		};
-
-		main.prototype.removeGroup = function removeGroup(item) {
-			var index = this.obj_personnel.HEADER.group.indexOf(item);
-			this.obj_personnel.HEADER.group.splice(index, 1);
-		};
-
-		main.prototype.removeAllGroup = function removeAllGroup() {
-			this.obj_personnel.HEADER.group = [];
-		};
-
-		main.prototype.fnPersonnel = function fnPersonnel(call) {
-			var _this5 = this;
-
-			console.log((0, _moment2.default)("01/01/0001").isValid());
-			$("#birthDate").datepicker();
-			$("#suspensionFrom").datepicker();
-			$("#suspensionTo").datepicker();
-			switch (call) {
-				case "EDIT":
-					this.dialogService.open({ viewModel: _ppid_search.ppid_search }).whenClosed(function (response) {
-						if (!response.wasCancelled) {
-							_this5._disableSearchPersonnel = true;
-							_this5._disableCreatePersonnel = true;
-							_this5._disableResetData = false;
-							_this5._disableClearData = false;
-							_this5._disableSavePersonnel = false;
-							_this5._disableForm = false;
-							_this5.obj_personnel.editing_status = 'EDIT';
-						} else {
-							console.log('search was cancelled.');
-						}
-					});
-					break;
-				case "CREATE":
-					this._disableSearchPersonnel = true;
-					this._disableCreatePersonnel = true;
-					this._disableResetData = false;
-					this._disableClearData = false;
-					this._disableSavePersonnel = false;
-					this._disableForm = false;
-					this.obj_personnel.editing_status = 'CREATE';
-					this.selected_citizenship = "FIL";
-					this.btnAdd_Citizenship();
-					break;
-				case "CLEAR":
-					this.clearData();
-					break;
-				case "SAVE":
-					if (this.obj_personnel.editing_status == 'CREATE') {
-						this.validateHeader('INSERT');
-					} else if (this.obj_personnel.editing_status == 'EDIT') {
-						this.validateHeader('UPDATE');
-					}
-					break;
-			}
-		};
-
-		main.prototype.validateHeader = function validateHeader(passed_status) {
-
-			var strValidation = "";
-			if (this.obj_personnel.HEADER.country_cd == undefined || this.obj_personnel.HEADER.country_cd == null || this.obj_personnel.HEADER.country_cd.length == 0) {
-				strValidation += "No Country specified.<br/>";
-			}
-
-			if (this.obj_personnel.HEADER.tin == undefined || this.obj_personnel.HEADER.tin == null || this.obj_personnel.HEADER.tin.length === 0) {
-				strValidation += "No TIN specified.<br/>";
-			} else {
-				var TinRegex = /^(?:\d{3}-\d{3}-\d{3}-\d{3})$/;
-				var TinRegex2 = /^(?:\d{12})$/;
-				if (!TinRegex.test(this.obj_personnel.HEADER.tin) && !TinRegex2.test(this.obj_personnel.HEADER.tin)) {
-					strValidation += "TIN is invalid.<br/>";
-				} else if (TinRegex2.test(this.obj_personnel.HEADER.tin)) {
-					var set_1 = this.obj_personnel.HEADER.tin.substring(0, 3);
-					var set_2 = this.obj_personnel.HEADER.tin.substring(3, 6);
-					var set_3 = this.obj_personnel.HEADER.tin.substring(6, 9);
-					var set_4 = this.obj_personnel.HEADER.tin.substring(9, 12);
-					this.obj_personnel.HEADER.tin = set_1 + '-' + set_2 + '-' + set_3 + '-' + set_4;
-				}
-			}
-
-			if (this.obj_personnel.HEADER.last_name == undefined || this.obj_personnel.HEADER.last_name == null || this.obj_personnel.HEADER.last_name.length == 0) {
-				strValidation += "No Last Name specified.<br/>";
-			}
-
-			if (this.obj_personnel.HEADER.given_name == undefined || this.obj_personnel.HEADER.given_name == null || this.obj_personnel.HEADER.given_name.length == 0) {
-				strValidation += "No First Name specified.<br/>";
-			}
-
-			if (this.obj_personnel.HEADER.middle_name == undefined || this.obj_personnel.HEADER.middle_name == null || this.obj_personnel.HEADER.middle_name.length == 0) {
-				strValidation += "No Middle Name specified.<br/>";
-			}
-
-			if (this.selectedGender.length == 0) {
-				strValidation += "No Gender specified.<br/>";
-			}
-
-			if (this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.trim().length > 0) if (!(0, _moment2.default)(this.obj_personnel.HEADER.birth_dt).isValid()) {
-				strValidation += "Invalid date of birth.<br/>";
-			}
-
-			if (this.obj_personnel.HEADER.status_cd == "SUSPEND") {
-
-				var sus_start = null;
-				var sus_end = null;
-				this.obj_personnel.HEADER.suspension_start = $("#suspensionFrom").val();
-				this.obj_personnel.HEADER.suspension_end = $("#suspensionTo").val();
-				if (this.obj_personnel.HEADER.suspension_start != undefined && this.obj_personnel.HEADER.suspension_start != null && this.obj_personnel.HEADER.suspension_start.length > 0) {
-					if (!(0, _moment2.default)(this.obj_personnel.HEADER.suspension_start).isValid()) {
-						strValidation += "Invalid suspension start date.<br/>";
-					} else {
-						sus_start = new Date(this.obj_personnel.HEADER.suspension_start);
-					}
-				} else {
-					strValidation += "No start date of suspension specified.<br/>";
-				}
-
-				if (this.obj_personnel.HEADER.suspension_end != undefined && this.obj_personnel.HEADER.suspension_end != null && this.obj_personnel.HEADER.suspension_end.length > 0) {
-					if (!(0, _moment2.default)(this.obj_personnel.HEADER.suspension_end).isValid()) {
-						strValidation += "Invalid suspension end date.<br/>";
-					} else {
-						sus_end = new Date(this.obj_personnel.HEADER.suspension_end);
-					}
-				} else {
-					strValidation += "No end date of suspension specified.<br/>";
-				}
-
-				if (sus_start != null && sus_end != null) {
-					if (sus_end < sus_start) {
-						strValidation += "end date of suspension cannot be greater than the start date.<br/>";
-					}
-				}
-			}
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error(strValidation, 'Personnel Template');
-				return;
-			} else {
-				var mother_maiden_nm = this.obj_personnel.HEADER.mother_maiden_name;
-				var alias_nick = this.obj_personnel.HEADER.alias;
-				var first_nm = this.obj_personnel.HEADER.given_name;
-				var middle_nm = this.obj_personnel.HEADER.middle_name;
-				var last_nm = this.obj_personnel.HEADER.last_name;
-				if (mother_maiden_nm != null) this.obj_personnel.HEADER.mother_maiden_name = mother_maiden_nm.toUpperCase();
-				if (alias_nick != null) this.obj_personnel.HEADER.alias = alias_nick.toUpperCase();
-				if (first_nm != null) this.obj_personnel.HEADER.given_name = first_nm.toUpperCase();
-				if (middle_nm != null) this.obj_personnel.HEADER.middle_name = middle_nm.toUpperCase();
-				if (last_nm != null) this.obj_personnel.HEADER.last_name = last_nm.toUpperCase();
-			}
-
-			if (passed_status.includes("INSERT")) {
-				this.saveHeader();
-			} else if (passed_status.includes('UPDATE')) {
-				this.updateHeader();
-			}
-		};
-
-		main.prototype.saveHeader = function saveHeader() {
-			var _this6 = this;
-
-			_toastr2.default.clear();
-			var varInsert = null;
-			var bdate = null;
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-
-			this.obj_personnel.HEADER.birth_dt = $("#birthDate").val();
-
-			if (this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.length > 0) {
-				bdate = new _moment2.default(new Date(this.obj_personnel.HEADER.birth_dt)).add(8, 'hours');
-				bdate = new Date(bdate);
-			}
-
-			var varInsert_2 = (0, _entityManagerFactory.EntityManager)().createEntity('GLOBAL_MSTR', {
-				GLOBAL_ID: this.obj_personnel.HEADER.tin + this.obj_personnel.HEADER.country_cd,
-				COUNTRY_CD: this.obj_personnel.HEADER.country_cd,
-				TIN: this.obj_personnel.HEADER.tin,
-				COUNTRY_BASE_CD: this.obj_personnel.HEADER.country_base_cd,
-				LOCATION_BASE_CD: this.obj_personnel.HEADER.location_base_cd,
-				STATUS_CD: this.obj_personnel.HEADER.status_cd,
-				CREATED_BY: this.obj_personnel.USER.USER_ID,
-				CREATED_DT: dateToday,
-				ACTIVE_FL: '1',
-				PARK_FL: '0',
-				INDIV_FL: 1
-			});
-
-			(0, _entityManagerFactory.EntityManager)().addEntity(varInsert_2);
-			(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-				varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('GLOBAL_INDIV_MSTR', {
-					GLOBAL_INDIV_ID: _this6.obj_personnel.HEADER.tin + _this6.obj_personnel.HEADER.country_cd,
-
-					EMERGENCY_RELATION_CD: null,
-					INDIV_ID: 0,
-					GIVEN_NAME: _this6.obj_personnel.HEADER.given_name,
-					MIDDLE_NAME: _this6.obj_personnel.HEADER.middle_name,
-					LAST_NAME: _this6.obj_personnel.HEADER.last_name,
-					BIRTH_DT: bdate,
-					BIRTH_PLACE: _this6.obj_personnel.HEADER.birth_place,
-					GENDER: _this6.selectedGender == 'Male' ? 'M' : 'F',
-					CIVIL_STATUS: _this6.obj_personnel.HEADER.civil_status,
-					MOTHER_MAIDEN_NAME: _this6.obj_personnel.HEADER.mother_maiden_name,
-					ACR_NO: _this6.obj_personnel.HEADER.acr_no,
-					RELIGION_CD: _this6.obj_personnel.HEADER.religion_cd,
-					ALIAS: _this6.obj_personnel.HEADER.alias,
-					CREATED_BY: _this6.obj_personnel.USER.USER_ID,
-					CREATED_DT: dateToday
-				});
-
-				(0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_2) {
-
-					_this6.obj_personnel.HEADER.global_indiv_id = _this6.obj_personnel.HEADER.tin + _this6.obj_personnel.HEADER.country_cd;
-					_this6.obj_personnel.editing_status = 'EDIT';
-					_toastr2.default.success(success_2, "Record saved.");
-
-					var getMax = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').orderByDesc('CITIZENSHIP_ID').take(1);
-
-					(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
-						var Max = 1;
-						if (successMax.results.length > 0) {
-							Max = successMax.results[0].CITIZENSHIP_ID;
-
-							_.each(_this6.obj_personnel.HEADER.citizenship, function (c) {
-								Max += 1;
-
-								var tempCiti = (0, _entityManagerFactory.EntityManager)().createEntity('CITIZENSHIP_TRX', {
-									CITIZENSHIP_CD: c.value,
-									GLOBAL_INDIV_ID: _this6.obj_personnel.HEADER.global_indiv_id,
-									CITIZENSHIP_ID: Max,
-									CREATED_BY: _this6.obj_personnel.USER.USER_ID,
-									CREATED_DT: dateToday
-								});
-
-								(0, _entityManagerFactory.EntityManager)().addEntity(tempCiti);
-							});
-
-							if (_this6.obj_personnel.HEADER.citizenship.length > 0) {
-								(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_3) {
-									console.log(success_3);
-								}, function (failed_3) {
-									_toastr2.default.error(failed_3, 'Error');
-								});
-							}
-						}
-					}, function (failedMax) {
-						_toastr2.default.error(failedMax, "Error in saving citizenship.");
-					});
-
-					getMax = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').orderByDesc('GRP_INDIV_ID').take(1);
-
-					(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
-						var Max = 1;
-						if (successMax.results.length > 0) {
-							Max = successMax.results[0].GRP_INDIV_ID;
-
-							_.each(_this6.obj_personnel.HEADER.group, function (g) {
-								Max += 1;
-								var tempGroup = (0, _entityManagerFactory.EntityManager)().createEntity('GRP_INDIV_MSTR', {
-									GLOBAL_INDIV_ID: _this6.obj_personnel.HEADER.global_indiv_id,
-									GLOBAL_GRP_ID: g.value,
-									GRP_INDIV_ID: Max,
-									STATUS_CD: 'ACTV',
-									CREATED_BY: _this6.obj_personnel.USER.USER_ID,
-									CREATED_DT: dateToday
-								});
-								(0, _entityManagerFactory.EntityManager)().addEntity(tempGroup);
-							});
-
-							if (_this6.obj_personnel.HEADER.group.length > 0) {
-								(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_3) {
-									console.log(success_3);
-								}, function (failed_3) {
-									_toastr2.default.error(failed_3, 'Error');
-								});
-							}
-						}
-					}, function (failedMax) {
-						_toastr2.default.error(failedMax, "Error in saving citizenship.");
-					});
-
-					if (_this6.obj_personnel.HEADER.status_cd == "SUSPEND") {
-						var getMax = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").orderByDesc("SUSPEND_ID").take(1);
-						(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (success_suspend) {
-
-							var maxId = 1;
-							if (success_suspend.results.length > 0) {
-								maxId = success_suspend.results[0].SUSPEND_ID + 1;
-							}
-
-							var suspend_trx = (0, _entityManagerFactory.EntityManager)().createEntity("SUSPEND_TRX", {
-								SUSPEND_ID: maxId,
-								GLOBAL_ID: _this6.obj_personnel.HEADER.tin + _this6.obj_personnel.HEADER.country_cd,
-								SUSPEND_LEVEL: 1,
-								START_DT: _this6.obj_personnel.HEADER.suspension_start,
-								END_DT: _this6.obj_personnel.HEADER.suspension_end,
-								COMPANY_ID: 0,
-								CREATED_BY: _this6.obj_personnel.USER.USER_ID,
-								CREATED_DT: dateToday
-							});
-							(0, _entityManagerFactory.EntityManager)().addEntity(suspend_trx);
-							(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (suspend_saved) {
-								_toastr2.default.success("", "Suspension details saved.");
-							}, function (suspend_error) {
-								_toastr2.default.error(suspend_error, "error in saving suspension details.");
-							});
-						});
-					} else {
-						_this6.obj_personnel.HEADER.suspension_start = "";
-						_this6.obj_personnel.HEADER.suspension_end = "";
-						$("#suspensionFrom").datepicker("setValue", new Date());
-						$("#suspensionTo").datepicker("setValue", new Date());
-					}
-				}, function (failed_2) {
-					if (varInsert != null) {
-						varInsert.entityAspect().setDeleted();
-					}
-
-					if (varInsert_2 != null) {
-						varInsert_2.entityAspect.setDeleted();
-					}
-
-					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-						var errors = entity.entityAspect.getValidationErrors();
-						if (errors.length > 0) console.log(errors);
-					});
-
-					console.log(failed_2);
-					_toastr2.default.error(failed_2, "Error occured.");
-				});
-			}, function (failed) {
-				if (varInsert_2 != null) {
-					varInsert_2.entityAspect.setDeleted();
-				}
-
-				(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-					var errors = entity.entityAspect.getValidationErrors();
-					if (errors.length > 0) console.log(errors);
-				});
-				console.log(failed);
-				_toastr2.default.error(failed, "Error occured.");
-			});
-		};
-
-		main.prototype.updateHeader = function updateHeader() {
-			var _this7 = this;
-
-			_toastr2.default.clear();
-			var dateToday = null;
-			var bdate = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-
-			this.obj_personnel.HEADER.birth_dt = $("#birthDate").val();
-
-			if (this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.length > 0) {
-				bdate = new _moment2.default(new Date(this.obj_personnel.HEADER.birth_dt)).add(8, 'hours');
-				bdate = new Date(bdate);
-			}
-
-			var getEntity = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_MSTR').where('GLOBAL_ID', '==', this.obj_personnel.HEADER.global_indiv_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(getEntity).then(function (item) {
-
-				if (item.results.length == 0) {
-					_toastr2.default.clear();
-					_toastr2.default.error('No data for editing retrieved.', 'Error in updating record.');
-					return;
-				}
-
-				item.results[0].COUNTRY_BASE_CD = _this7.obj_personnel.HEADER.country_base_cd;
-				item.results[0].LOCATION_BASE_CD = _this7.obj_personnel.HEADER.location_base_cd;
-				item.results[0].LAST_UPDATED_BY = _this7.obj_personnel.USER.USER_ID;
-				item.results[0].LAST_UPDATED_DT = dateToday;
-				item.results[0].STATUS_CD = _this7.obj_personnel.HEADER.status_cd;
-
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-					var getEntity = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_INDIV_MSTR').where('GLOBAL_INDIV_ID', '==', _this7.obj_personnel.HEADER.global_indiv_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(getEntity).then(function (item_2) {
-						if (item_2.results.length == 0) {
-							_toastr2.default.clear();
-							_toastr2.default.error('No data for editing retrieved.', 'Error in updating record.');
-							return;
-						}
-
-						item_2.results[0].GIVEN_NAME = _this7.obj_personnel.HEADER.given_name.toUpperCase();
-						item_2.results[0].MIDDLE_NAME = _this7.obj_personnel.HEADER.middle_name.toUpperCase();
-						item_2.results[0].LAST_NAME = _this7.obj_personnel.HEADER.last_name.toUpperCase();
-						item_2.results[0].BIRTH_DT = bdate;
-						item_2.results[0].BIRTH_PLACE = _this7.obj_personnel.HEADER.birth_place;
-						item_2.results[0].GENDER = _this7.selectedGender == 'Male' ? 'M' : 'F';
-						item_2.results[0].CIVIL_STATUS = _this7.obj_personnel.HEADER.civil_status;
-						item_2.results[0].MOTHER_MAIDEN_NAME = _this7.obj_personnel.HEADER.mother_maiden_name;
-						item_2.results[0].ACR_NO = _this7.obj_personnel.HEADER.acr_no;
-						item_2.results[0].RELIGION_CD = _this7.obj_personnel.HEADER.religion_cd;
-						item_2.results[0].ALIAS = _this7.obj_personnel.HEADER.alias;
-						item_2.results[0].LAST_UPDATED_BY = _this7.obj_personnel.USER.USER_ID;
-						item_2.results[0].LAST_UPDATED_DT = dateToday;
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_2) {
-							_toastr2.default.success('', 'Record updated.');
-
-							var getCitizenshipList = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').where('GLOBAL_INDIV_ID', '==', _this7.obj_personnel.HEADER.global_indiv_id);
-							(0, _entityManagerFactory.EntityManager)().executeQuery(getCitizenshipList).then(function (query) {
-
-								_.each(query.results, function (result) {
-									var doesExist = _this7.obj_personnel.HEADER.citizenship.some(function (x) {
-										return x.value == result.CITIZENSHIP_CD;
-									});
-
-									if (!doesExist) {
-										result.entityAspect.setDeleted();
-									}
-								});
-
-								var getMax = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').orderByDesc('CITIZENSHIP_ID').take(1);
-								(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (getMaxSuccess) {
-									var Max = 1;
-									var newCount = 0;
-									if (getMaxSuccess.results.length > 0) {
-
-										Max = getMaxSuccess.results[0].CITIZENSHIP_ID;
-
-										_.each(_this7.obj_personnel.HEADER.citizenship, function (citi) {
-											var doesExist = query.results.some(function (x) {
-												return x.CITIZENSHIP_CD == citi.value;
-											});
-											if (!doesExist) {
-												Max += 1;
-												newCount++;
-												var tempEnt = (0, _entityManagerFactory.EntityManager)().createEntity('CITIZENSHIP_TRX', {
-													CITIZENSHIP_CD: citi.value,
-													GLOBAL_INDIV_ID: _this7.obj_personnel.HEADER.global_indiv_id,
-													CITIZENSHIP_ID: Max,
-													CREATED_BY: _this7.obj_personnel.USER.USER_ID,
-													CREATED_DT: dateToday
-												});
-												(0, _entityManagerFactory.EntityManager)().addEntity(tempEnt);
-											}
-										});
-
-										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_3) {
-											_toastr2.default.success(success_3, 'Citizenship list was updated.');
-										}, function (error) {
-											(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-												var errors = entity.entityAspect.getValidationErrors();
-												if (errors.length > 0) console.log(errors);
-											});
-											console.log(error);
-											_toastr2.default.error("Error Occured_3", error);
-										});
-									}
-								});
-							});
-
-							var getGroup = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').where('GLOBAL_INDIV_ID', '==', _this7.obj_personnel.HEADER.global_indiv_id);
-							(0, _entityManagerFactory.EntityManager)().executeQuery(getGroup).then(function (queryGroup) {
-
-								_.each(queryGroup.results, function (result) {
-									var doesExist = _this7.obj_personnel.HEADER.group.some(function (x) {
-										return x.value == result.GLOBAL_GRP_ID;
-									});
-									if (!doesExist) {
-										result.entityAspect.setDeleted();
-									}
-								});
-
-								var getMax = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').orderByDesc('GRP_INDIV_ID').take(1);
-								(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (queryMax) {
-									var Max = 1;
-
-									if (queryMax.results.length > 0) {
-										Max = queryMax.results[0].GRP_INDIV_ID;
-										_.each(_this7.obj_personnel.HEADER.group, function (g) {
-											var doesExist = queryGroup.results.some(function (x) {
-												return x.GLOBAL_GRP_ID == g.value;
-											});
-
-											if (!doesExist) {
-												Max += 1;
-												var tempEnt = (0, _entityManagerFactory.EntityManager)().createEntity('GRP_INDIV_MSTR', {
-													GLOBAL_INDIV_ID: _this7.obj_personnel.HEADER.global_indiv_id,
-													GLOBAL_GRP_ID: g.value,
-													GRP_INDIV_ID: Max,
-													STATUS_CD: 'ACTV',
-													CREATED_BY: _this7.obj_personnel.USER.USER_ID,
-													CREATED_DT: dateToday
-												});
-												(0, _entityManagerFactory.EntityManager)().addEntity(tempEnt);
-											} else {
-
-												var index = _.findIndex(queryGroup.results, function (o) {
-													return o.GLOBAL_GRP_ID == g.value;
-												});
-												if (index != -1 && queryGroup.results[index].STATUS_CD == 'INACTV') {
-													queryGroup.results[index].STATUS_CD = 'ACTV';
-													queryGroup.results[index].LAST_UPDATED_BY = _this7.obj_personnel.USER.USER_ID;
-													queryGroup.results[index].LAST_UPDATED_DT = dateToday;
-												}
-											}
-										});
-
-										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_710) {
-											_toastr2.default.success(success_710, 'Group list was updated.');
-										}, function (error_712) {
-											(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-												var errors = entity.entityAspect.getValidationErrors();
-												if (errors.length > 0) console.log(errors);
-											});
-											console.log(error_712);
-											_toastr2.default.error("Error Occured_4", error_712);
-										});
-									}
-								});
-							});
-
-							if (_this7.obj_personnel.HEADER.status_cd == "SUSPEND") {
-								if (_this7.obj_personnel.HEADER.suspend_id != undefined && _this7.obj_personnel.HEADER.suspend_id != null && _this7.obj_personnel.HEADER.suspend_id.toString().length > 0) {
-									var getSuspend = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").where("SUSPEND_ID", "==", _this7.obj_personnel.HEADER.suspend_id);
-									(0, _entityManagerFactory.EntityManager)().executeQuery(getSuspend).then(function (success_getSuspend) {
-										success_getSuspend.results[0].START_DT = _this7.obj_personnel.HEADER.suspension_start;
-										success_getSuspend.results[0].END_DT = _this7.obj_personnel.HEADER.suspension_end;
-										success_getSuspend.results[0].LAST_UPDATED_BY = _this7.obj_personnel.USER.USER_ID;
-										success_getSuspend.results[0].LAST_UPDATED_DT = dateToday;
-										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (save_success) {
-											_toastr2.default.success("", "Suspension date updated.");
-										}, function (save_error) {
-											_toastr2.default.error(save_error, "error in updating suspension date.");
-										});
-									}, function (error_getSuspend) {
-										_toastr2.default.error(error_getSuspend, "error in updating suspension date.");
-									});
-								} else {
-									var getMax = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").orderByDesc("SUSPEND_ID").take(1);
-									(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (success_suspend) {
-										var maxId = 1;
-										if (success_suspend.results.length > 0) {
-											maxId = success_suspend.results[0].SUSPEND_ID + 1;
-										}
-										var suspend_trx = (0, _entityManagerFactory.EntityManager)().createEntity("SUSPEND_TRX", {
-											SUSPEND_ID: maxId + "",
-											GLOBAL_ID: _this7.obj_personnel.HEADER.tin + _this7.obj_personnel.HEADER.country_cd,
-											SUSPEND_LEVEL: 1,
-											START_DT: _this7.obj_personnel.HEADER.suspension_start,
-											END_DT: _this7.obj_personnel.HEADER.suspension_end,
-											COMPANY_ID: 0,
-											CREATED_BY: _this7.obj_personnel.USER.USER_ID,
-											CREATED_DT: dateToday
-										});
-										(0, _entityManagerFactory.EntityManager)().addEntity(suspend_trx);
-										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (suspend_saved) {
-											_toastr2.default.success("", "Suspension details saved.");
-										}, function (suspend_error) {
-											_toastr2.default.error(suspend_error, "error in saving suspension details.");
-										});
-									});
-								}
-							} else {
-								_this7.obj_personnel.HEADER.suspension_start = "";
-								_this7.obj_personnel.HEADER.suspension_end = "";
-								$("#suspensionFrom").datepicker("setValue", new Date());
-								$("#suspensionTo").datepicker("setValue", new Date());
-							}
-						}, function (error) {
-							(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-								var errors = entity.entityAspect.getValidationErrors();
-								if (errors.length > 0) console.log(errors);
-							});
-							console.log(error);
-							_toastr2.default.error("Error Occured_2", error);
-						});
-					});
-				}, function (error) {
-					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-						var errors = entity.entityAspect.getValidationErrors();
-						if (errors.length > 0) console.log(errors);
-					});
-					console.log(error);
-					_toastr2.default.error("Error Occured_1", error);
-				});
-			});
-		};
-
-		main.prototype.btnUpload = function btnUpload() {
-			_toastr2.default.clear();
-			_toastr2.default.info("Image Upload under maintenance.", "");
-		};
-
-		main.prototype.clickTab_main = function clickTab_main(index) {
-			var _this8 = this;
-
-			if (this.obj_personnel.global_indiv_id.length === 0) return;
-			switch (index) {
-				case 0:
-					_toastr2.default.clear();
-					_toastr2.default.info("Loading employee info...", "");
-					this.loadData(this.obj_personnel.global_indiv_id);
-					break;
-				case 1:
-					_toastr2.default.clear();
-					_toastr2.default.info("Loading contact list...", "");
-					this.obj_personnel.OBSERVERS.maintab_contact_clicked.forEach(function (delegate) {
-						delegate(_this8.obj_personnel.global_indiv_id);
-					});
-					break;
-				case 2:
-					_toastr2.default.clear();
-					_toastr2.default.info("Loading Educational Achievement...", "");
-					this.obj_personnel.OBSERVERS.maintab_education_clicked.forEach(function (delegate) {
-						delegate(_this8.obj_personnel.global_indiv_id);
-					});
-					break;
-				case 3:
-					_toastr2.default.clear();
-					_toastr2.default.info("Loading Characteristic/Interest...", "Success");
-					break;
-				case 4:
-					_toastr2.default.clear();
-					_toastr2.default.info("Loading Skills/Talent...", "Success");
-					break;
-				case 5:
-					_toastr2.default.clear();
-					_toastr2.default.info("Loading Language/Dialect...", "Success");
-					break;
-				case 6:
-					_toastr2.default.clear();
-					_toastr2.default.info("Loading Medical Record...", "Success");
-					break;
-			}
-		};
-
-		main.prototype.clearData = function clearData() {
-			this._disableSavePersonnel = true;
-			this._disableClearData = true;
-			this._disableCreatePersonnel = false;
-			this._disableSearchPersonnel = false;
-			this.obj_personnel.global_indiv_id = "";
-			this.obj_personnel.HEADER = {
-				citizenship: [],
-				group: []
-			};
-			this.selectedGender = "";
-			this.selected_citizenship = "";
-			this.selected_group = "";
-			this._disableForm = true;
-			this.obj_personnel.editing_status = "";
-			_toastr2.default.clear();
-			this.obj_personnel.OBSERVERS.clear_ppid.forEach(function (delegate) {
-				delegate();
-			});
-		};
-
-		return main;
-	}()) || _class);
-});
-define('ppid/forms/main_contact',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.main_contact = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-	var _moment2 = _interopRequireDefault(_moment);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var main_contact = exports.main_contact = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
-		function main_contact(obj_personnel, toastr, DialogService) {
-			var _this = this;
-
-			_classCallCheck(this, main_contact);
-
-			this._disableForm = true;
-			this._disableBtnAdd = false;
-			this._disableBtnSave = true;
-			this._disableAddressTable = false;
-			this._disableContactTable = false;
-			this.obj_personnel = null;
-
-			this.DialogService = DialogService;
-			this.obj_personnel = obj_personnel;
-			this.obj_personnel.OBSERVERS.maintab_contact_clicked.push(function (val) {
-				_this.loadMain_Address(val);
-				_this.loadMain_Contact(val);
-				_this.loadMain_EmailWeb(val);
-				_this.clearAddressData();
-				_this.clearContactData();
-			});
-
-			this.obj_personnel.OBSERVERS.clear_ppid.push(function (val) {
-				_this.obj_personnel.CONTACT = {
-					status: "",
-					modelAddress: {},
-					statusContact: "Add",
-					modelContact: {},
-					modelInternet: {},
-					address: [],
-					contact: [],
-					email: [],
-					website: []
-				};
-				_this.clearAddressData();
-				_this.clearContactData();
-				_this.clearEmailWebData();
-			});
-		}
-
-		main_contact.prototype.loadMain_Address = function loadMain_Address(global_id) {
-			var _this2 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').where('GLOBAL_ID', '==', global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-				var tmp = [];
-				var tmpFullAddress = [];
-				_.each(success.results, function (result) {
-					var strFullAddress = "";
-					if (result.UNIT_NO != null && result.UNIT_NO.length > 0) tmpFullAddress.push(result.UNIT_NO);
-					if (result.HOUSE_NO != null && result.HOUSE_NO.length > 0) tmpFullAddress.push(result.HOUSE_NO);
-					if (result.BLOCK_LOT != null && result.BLOCK_LOT.length > 0) tmpFullAddress.push(result.BLOCK_LOT);
-					if (result.BLDG_NAME != null && result.BLDG_NAME.length > 0) tmpFullAddress.push(result.BLDG_NAME);
-					if (result.STREET_NAME != null && result.STREET_NAME.length > 0) tmpFullAddress.push(result.STREET_NAME);
-					if (result.SUB_VILLAGE != null && result.SUB_VILLAGE.length > 0) tmpFullAddress.push(result.SUB_VILLAGE);
-					if (result.BARANGAY != null && result.BARANGAY.length > 0) tmpFullAddress.push(result.BARANGAY);
-					if (result.DISTRICT != null && result.DISTRICT.length > 0) tmpFullAddress.push(result.DISTRICT);
-					if (result.CITY_TOWN != null && result.CITY_TOWN.length > 0) tmpFullAddress.push(result.CITY_TOWN);
-					if (result.STATE_PROVINCE != null && result.STATE_PROVINCE.length > 0) {
-						var text = _this2.obj_personnel.LOCATIONS.find(function (l) {
-							if (l.value == result.STATE_PROVINCE) return l.text;
-						});
-						tmpFullAddress.push(text);
-					}
-					if (result.REGION != null && result.REGION.length > 0) tmpFullAddress.push(result.REGION);
-					if (result.ZIPCODE != null && result.ZIPCODE.length > 0) tmpFullAddress.push(result.ZIPCODE);
-					if (result.COUNTRY_CD != null && result.COUNTRY_CD.length > 0) tmpFullAddress.push(result.COUNTRY_CD);
-
-					if (tmpFullAddress.length > 0) {
-						strFullAddress = tmpFullAddress.join(' ');
-						tmpFullAddress = [];
-					}
-
-					tmp.push({
-						global_id: result.GLOBAL_ID,
-						addr_id: result.ADDR_ID,
-						country_cd: result.COUNTRY_CD,
-						region: result.REGION,
-						state_province: result.STATE_PROVINCE,
-						city_town: result.CITY_TOWN,
-						district: result.DISTRICT,
-						barangay: result.BARANGAY,
-						sub_village: result.SUB_VILLAGE,
-						phase: result.PHASE,
-						permanent_fl: result.PERMANENT_FL,
-						present_fl: result.PRESENT_FL,
-						block_lot: result.BLOCK_LOT,
-						street_name: result.STREET_NAME,
-						house_no: result.HOUSE_NO,
-						bldg_name: result.BLDG_NAME,
-						unit_no: result.UNIT_NO,
-						zipcode: result.ZIPCODE,
-						residential_type: result.RESIDENTIAL_TYPE,
-						house_ownership: result.HOUSE_OWNERSHIP,
-						mailing_fl: result.MAILING_FL,
-						postal_box: result.POSTAL_BOX,
-						remarks: result.REMARKS,
-						sketch_path: result.SKETCH_PATH,
-						full_address: strFullAddress
-					});
-				});
-
-				_this2.obj_personnel.CONTACT.address = tmp;
-				_toastr2.default.clear();
-				_toastr2.default.success("", "Success");
-			});
-		};
-
-		main_contact.prototype.loadMain_Contact = function loadMain_Contact(global_id) {
-			var _this3 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from('CONTACT_INFO_TRX').where('GLOBAL_ID', '==', global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-
-				var tmp = [];
-				_.each(success.results, function (result) {
-					var type = _this3.obj_personnel.CONTACT_TYPE.find(function (x) {
-						return x.value == result.PHONE_TYPE;
-					});
-					var contact = {
-						contact_no_id: result.CONTACT_NO_ID,
-						global_id: result.GLOBAL_ID,
-						phone_type_text: type.text,
-						phone_type: result.PHONE_TYPE,
-						area_cd: result.AREA_CD,
-						phone_no: result.PHONE_NO,
-						local_no: result.LOCAL_NO
-					};
-					tmp.push(contact);
-				});
-				_this3.obj_personnel.CONTACT.contact = tmp;
-			});
-		};
-
-		main_contact.prototype.loadMain_EmailWeb = function loadMain_EmailWeb(global_id) {
-			var _this4 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where("GLOBAL_ID", "==", global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-
-				var tmpEmail = [];
-				var tmpWeb = [];
-				_.each(querySuccess.results, function (result) {
-
-					if (result.EMAIL_FL == 1) {
-						var email = {
-							internet_id: result.INTERNET_ID,
-							web_addr: result.WEB_ADDR
-						};
-						tmpEmail.push(email);
-					} else if (result.REC_STAT_FL == 1) {
-						var web = {
-							internet_id: result.INTERNET_ID,
-							web_addr: result.WEB_ADDR
-						};
-						tmpWeb.push(web);
-					}
-				});
-
-				_this4.obj_personnel.CONTACT.email = tmpEmail;
-				_this4.obj_personnel.CONTACT.website = tmpWeb;
-			}, function (queryError) {
-				console.log(queryError);
-			});
-		};
-
-		main_contact.prototype.clearAddressData = function clearAddressData() {
-			this.obj_personnel.CONTACT.modelAddress = {};
-			this.obj_personnel.CONTACT.status = "";
-			this._disableBtnAdd = false;
-			this._disableBtnSave = true;
-			this._disableForm = true;
-			this._disableAddressTable = false;
-		};
-
-		main_contact.prototype.clearContactData = function clearContactData() {
-			this._disableContactTable = false;
-			this.obj_personnel.CONTACT.statusContact = "Add";
-			this.obj_personnel.CONTACT.modelContact = {};
-		};
-
-		main_contact.prototype.clearEmailWebData = function clearEmailWebData() {
-			this.obj_personnel.CONTACT.modelInternet = {};
-		};
-
-		main_contact.prototype.isNumberKey = function isNumberKey(evt) {
-			var charCode = evt.which ? evt.which : event.keyCode;
-			if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
-			return true;
-		};
-
-		main_contact.prototype.dd_regionChanged = function dd_regionChanged() {
-			var reg = this.obj_personnel.CONTACT.modelAddress.region;
-			if (reg != undefined && reg != null && reg.length != 0) {
-				var selectedRegion = this.obj_personnel.REGION.find(function (r) {
-					if (r.value == reg) return r;
-				});
-
-				if (selectedRegion != null) {
-					this.obj_personnel.CONTACT.modelAddress.country_cd = selectedRegion.group;
-				}
-			}
-		};
-
-		main_contact.prototype.btnAdd_Address = function btnAdd_Address() {
-			this.obj_personnel.CONTACT.status = "ADD";
-			this._disableBtnAdd = true;
-			this._disableBtnSave = false;
-			this._disableForm = false;
-			this._disableAddressTable = true;
-		};
-
-		main_contact.prototype.btnEdit_Address = function btnEdit_Address(address) {
-			this._disableBtnAdd = true;
-			this._disableBtnSave = false;
-			this._disableForm = false;
-			this._disableAddressTable = true;
-			this.obj_personnel.CONTACT.status = "EDIT";
-			this.obj_personnel.CONTACT.modelAddress = address;
-			this.obj_personnel.CONTACT.modelAddress.present_fl = this.obj_personnel.CONTACT.modelAddress.present_fl == '1' ? true : false;
-			this.obj_personnel.CONTACT.modelAddress.permanent_fl = this.obj_personnel.CONTACT.modelAddress.permanent_fl == '1' ? true : false;
-		};
-
-		main_contact.prototype.btnRemoveAddress = function btnRemoveAddress(item) {
-			var _this5 = this;
-
-			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the address?" } }).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').where('ADDR_ID', '==', item.addr_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-
-						success.results[0].entityAspect.setDeleted();
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-							_toastr2.default.success("", "The address was successfully removed.");
-							_this5.loadMain_Address(_this5.obj_personnel.global_indiv_id);
-						}, function (error) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", "Error in removing address.");
-						});
-					});
-				}
-			});
-		};
-
-		main_contact.prototype.validateAddress = function validateAddress() {
-			var strValidation = "";
-			if (this.obj_personnel.CONTACT.modelAddress.country_cd == undefined || this.obj_personnel.CONTACT.modelAddress.country_cd == null || this.obj_personnel.CONTACT.modelAddress.country_cd.length == 0) {
-				strValidation += "No country specified.<br/>";
-			}
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error(strValidation, "");
-				return;
-			} else {
-				if (this.obj_personnel.CONTACT.status == 'ADD') {
-					this.insertAddress();
-				} else if (this.obj_personnel.CONTACT.status == 'EDIT') {
-					this.updateAddress();
-				}
-			}
-		};
-
-		main_contact.prototype.insertAddress = function insertAddress() {
-			var _this6 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').orderByDesc('ADDR_ID').take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-
-				var Max = 1;
-				if (success.results.length > 0) {
-					Max = success.results[0].ADDR_ID + 1;
-				}
-				console.log(Max);
-
-
-				var _address = {
-					ADDR_ID: Max,
-					BARANGAY: _this6.obj_personnel.CONTACT.modelAddress.barangay,
-					BLDG_NAME: _this6.obj_personnel.CONTACT.modelAddress.bldg_name,
-					BLOCK_LOT: _this6.obj_personnel.CONTACT.modelAddress.block_lot,
-					CITY_TOWN: _this6.obj_personnel.CONTACT.modelAddress.city_town,
-					COUNTRY_CD: _this6.obj_personnel.CONTACT.modelAddress.country_cd,
-					DISTRICT: _this6.obj_personnel.CONTACT.modelAddress.district,
-					GLOBAL_ID: _this6.obj_personnel.HEADER.global_indiv_id,
-					HOUSE_NO: _this6.obj_personnel.CONTACT.modelAddress.house_no,
-
-					MAILING_FL: 0,
-					PERMANENT_FL: _this6.obj_personnel.CONTACT.modelAddress.permanent_fl ? 1 : 0,
-
-					PRESENT_FL: _this6.obj_personnel.CONTACT.modelAddress.present_fl ? 1 : 0,
-
-					REMARKS: _this6.obj_personnel.CONTACT.modelAddress.remarks,
-
-					STATE_PROVINCE: _this6.obj_personnel.CONTACT.modelAddress.state_province,
-					STREET_NAME: _this6.obj_personnel.CONTACT.modelAddress.street_name,
-					SUB_VILLAGE: _this6.obj_personnel.CONTACT.modelAddress.sub_village,
-					UNIT_NO: _this6.obj_personnel.CONTACT.modelAddress.unit_no,
-					ZIPCODE: _this6.obj_personnel.CONTACT.modelAddress.zipcode,
-					CREATED_BY: _this6.obj_personnel.USER.USER_ID,
-					CREATED_DT: dateToday
-				};
-
-				var address = (0, _entityManagerFactory.EntityManager)().createEntity('ADDR_TRX', _address);
-
-				(0, _entityManagerFactory.EntityManager)().addEntity(address);
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "Record saved.");
-					_this6.loadMain_Address(_this6.obj_personnel.global_indiv_id);
-					_this6.clearAddressData();
-				}, function (error) {
-					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-						var errors = entity.entityAspect.getValidationErrors();
-						if (errors.length > 0) console.log(errors);
-					});
-					_toastr2.default.clear();
-					_toastr2.default.error(error, "Error in saving address.");
-					console.log(error);
-				});
-			});
-		};
-
-		main_contact.prototype.updateAddress = function updateAddress() {
-			var _this7 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').where('ADDR_ID', '==', this.obj_personnel.CONTACT.modelAddress.addr_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
-				success.results[0].BARANGAY = _this7.obj_personnel.CONTACT.modelAddress.barangay;
-				success.results[0].BLDG_NAME = _this7.obj_personnel.CONTACT.modelAddress.bldg_name;
-				success.results[0].BLOCK_LOT = _this7.obj_personnel.CONTACT.modelAddress.block_lot;
-				success.results[0].CITY_TOWN = _this7.obj_personnel.CONTACT.modelAddress.city_town;
-				success.results[0].COUNTRY_CD = _this7.obj_personnel.CONTACT.modelAddress.country_cd;
-				success.results[0].DISTRICT = _this7.obj_personnel.CONTACT.modelAddress.district;
-				success.results[0].HOUSE_NO = _this7.obj_personnel.CONTACT.modelAddress.house_no;
-				success.results[0].PERMANENT_FL = _this7.obj_personnel.CONTACT.modelAddress.permanent_fl ? '1' : '0';
-				success.results[0].PRESENT_FL = _this7.obj_personnel.CONTACT.modelAddress.present_fl ? '1' : '0';
-				success.results[0].REGION = _this7.obj_personnel.CONTACT.modelAddress.region;
-				success.results[0].REMARKS = _this7.obj_personnel.CONTACT.modelAddress.remarks;
-				success.results[0].STATE_PROVINCE = _this7.obj_personnel.CONTACT.modelAddress.state_province;
-				success.results[0].STREET_NAME = _this7.obj_personnel.CONTACT.modelAddress.street_name;
-				success.results[0].SUB_VILLAGE = _this7.obj_personnel.CONTACT.modelAddress.sub_village;
-				success.results[0].UNIT_NO = _this7.obj_personnel.CONTACT.modelAddress.unit_no;
-				success.results[0].ZIPCODE = _this7.obj_personnel.CONTACT.modelAddress.zipcode;
-				success.results[0].LAST_UPDATED_BY = _this7.obj_personnel.USER.USER_ID;
-				success.results[0].LAST_UPDATED_DT = dateToday;
-
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "Record updated sucessfully.");
-					_this7.loadMain_Address(_this7.obj_personnel.global_indiv_id);
-					_this7.clearAddressData();
-				}, function (error) {
-					_toastr2.default.clear();
-					console.log(error);
-					_toastr2.default.error(error, 'Error in updating address.');
-				});
-			});
-		};
-
-		main_contact.prototype.btnEdit_Contact = function btnEdit_Contact(contact) {
-			this._disableContactTable = true;
-			this.obj_personnel.CONTACT.statusContact = "Edit";
-			this.obj_personnel.CONTACT.modelContact.contact_no_id = contact.contact_no_id;
-			this.obj_personnel.CONTACT.modelContact.phone_type = contact.phone_type;
-			this.obj_personnel.CONTACT.modelContact.area_cd = contact.area_cd;
-			this.obj_personnel.CONTACT.modelContact.phone_no = contact.phone_no;
-			this.obj_personnel.CONTACT.modelContact.local_no = contact.local_no;
-		};
-
-		main_contact.prototype.btnRemove_Contact = function btnRemove_Contact(contact) {
-			var _this8 = this;
-
-			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the contact?" } }).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					var query = (0, _entityManagerFactory.EntityQuery)().from("CONTACT_INFO_TRX").where("CONTACT_NO_ID", "==", contact.contact_no_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-						if (querySuccess.results.length == 0) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", "No to-be-remove record found.");
-						}
-						querySuccess.results[0].entityAspect.setDeleted();
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
-							_toastr2.default.clear();
-							_toastr2.default.success("", "The contact was successfully removed.");
-							_this8.loadMain_Contact(_this8.obj_personnel.global_indiv_id);
-							_this8.clearContactData();
-						}, function (removeError) {
-							_toastr2.default.clear();
-							_toastr2.default.error(removeError, "Error in removing contact.");
-						});
-					});
-				}
-			});
-		};
-
-		main_contact.prototype.validateContact = function validateContact() {
-			var strValidation = "";
-
-			if (this.obj_personnel.CONTACT.modelContact.phone_type == undefined || this.obj_personnel.CONTACT.modelContact.phone_type == null || this.obj_personnel.CONTACT.modelContact.phone_type.length == 0) {
-				strValidation += "Phone type is required.<br/>";
-			}
-
-			if (this.obj_personnel.CONTACT.modelContact.area_cd == undefined || this.obj_personnel.CONTACT.modelContact.area_cd == null || this.obj_personnel.CONTACT.modelContact.area_cd.length == 0) {
-				strValidation += "Area Code is required.<br/>";
-			}
-
-			if (this.obj_personnel.CONTACT.modelContact.phone_no == undefined || this.obj_personnel.CONTACT.modelContact.phone_no == null || this.obj_personnel.CONTACT.modelContact.phone_no.length == 0) {
-				strValidation += "Phone number is required.<br/>";
-			}
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error("", strValidation);
-			} else {
-				if (this.obj_personnel.CONTACT.statusContact == "Add") {
-					this.insertContact();
-				} else if (this.obj_personnel.CONTACT.statusContact == "Edit") {
-					this.updateContact();
-				}
-			}
-		};
-
-		main_contact.prototype.insertContact = function insertContact() {
-			var _this9 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from("CONTACT_INFO_TRX").orderByDesc("CONTACT_NO_ID").take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (Success) {
-				var Max = 1;
-				if (Success.results.length > 0) {
-					Max = Success.results[0].CONTACT_NO_ID + 1;
-				}
-				var Contact = (0, _entityManagerFactory.EntityManager)().createEntity("CONTACT_INFO_TRX", {
-					AREA_CD: _this9.obj_personnel.CONTACT.modelContact.area_cd,
-					CONTACT_NO_ID: Max,
-					COUNTRY_CD: "PH",
-					GLOBAL_ID: _this9.obj_personnel.global_indiv_id,
-					LOCAL_NO: _this9.obj_personnel.CONTACT.modelContact.local_no,
-					PHONE_NO: _this9.obj_personnel.CONTACT.modelContact.phone_no,
-					PHONE_TYPE: _this9.obj_personnel.CONTACT.modelContact.phone_type,
-					CREATED_BY: _this9.obj_personnel.USER.USER_ID,
-					CREATED_DT: dateToday
-
-				});
-				(0, _entityManagerFactory.EntityManager)().addEntity(Contact);
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "Contact successfully added.");
-					_this9.loadMain_Contact(_this9.obj_personnel.global_indiv_id);
-					_this9.clearContactData();
-				}, function (error) {
-					_toastr2.default.clear();
-					_toastr2.default.error(error, "Error in adding contact.");
-				});
-			});
-		};
-
-		main_contact.prototype.updateContact = function updateContact() {
-			var _this10 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from('CONTACT_INFO_TRX').where("CONTACT_NO_ID", "==", this.obj_personnel.CONTACT.modelContact.contact_no_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (Success) {
-
-				if (Success.results.length == 0) {
-					_toastr2.default.clear();
-					_toastr2.default.error("", "No record to be updated found.");
-					return;
-				}
-				Success.results[0].AREA_CD = _this10.obj_personnel.CONTACT.modelContact.area_cd;
-				Success.results[0].LOCAL_NO = _this10.obj_personnel.CONTACT.modelContact.local_no;
-				Success.results[0].PHONE_NO = _this10.obj_personnel.CONTACT.modelContact.phone_no;
-				Success.results[0].PHONE_TYPE = _this10.obj_personnel.CONTACT.modelContact.phone_type;
-				Success.results[0].LAST_UPDATED_BY = _this10.obj_personnel.USER.USER_ID;
-				Success.results[0].LAST_UPDATED_DT = dateToday;
-
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "The contact was successfully updated.");
-					_this10.loadMain_Contact(_this10.obj_personnel.global_indiv_id);
-					_this10.clearContactData();
-				}, function (errorSave) {
-					_toastr2.default.clear();
-					_toastr2.default.error(errorSave, "Error in updating contact.");
-					console.log(errorSave);
-				});
-			});
-		};
-
-		main_contact.prototype.validateEmail = function validateEmail(email) {
-			var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-			return re.test(email);
-		};
-
-		main_contact.prototype.validateWeb = function validateWeb(URL) {
-			var regEx = /^\s*[a-z](?:[-a-z0-9\+\.])*:(?:\/\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:])*@)?(?:\[(?:(?:(?:[0-9a-f]{1,4}:){6}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|::(?:[0-9a-f]{1,4}:){5}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4}:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|v[0-9a-f]+[-a-z0-9\._~!\$&\'\(\)\*\+,;=:]+)\]|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}|(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=@])*)(?::[0-9]*)?(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))*)*|\/(?:(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))*)*)?|(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))*)*|(?!(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@])))(?:\?(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@])|[\uE000-\uF8FF\uF0000-\uFFFFD|\u100000-\u10FFFD\/\?])*)?(?:\#(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@])|[\/\?])*)?\s*$/i;
-			return regEx.test(URL);
-		};
-
-		main_contact.prototype.btnAdd_EmailWeb = function btnAdd_EmailWeb(isEmail) {
-
-			if (isEmail) {
-				if (this.validateEmail(this.obj_personnel.CONTACT.modelInternet.email_addr)) {
-					this.insertEmailWeb(isEmail);
-				} else {}
-			} else {
-				this.insertEmailWeb(isEmail);
-			}
-		};
-
-		main_contact.prototype.btnRemove_EmailWeb = function btnRemove_EmailWeb(internet_id, isEmail) {
-			var _this11 = this;
-
-			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the " + (isEmail ? "Email address" : "website url") + "?" } }).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					var query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where("INTERNET_ID", "==", internet_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-						if (querySuccess.results.length == 0) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", "No to-be-remove record found.");
-						}
-						querySuccess.results[0].entityAspect.setDeleted();
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
-							_toastr2.default.clear();
-							_toastr2.default.success("", "The " + (isEmail ? "Email address" : "website url") + " was successfully removed.");
-							_this11.loadMain_EmailWeb(_this11.obj_personnel.global_indiv_id);
-							_this11.clearEmailWebData();
-						}, function (removeError) {
-							_toastr2.default.clear();
-							_toastr2.default.error(removeError, "Error in removing " + (isEmail ? "Email address" : "website url") + " .");
-						});
-					});
-				}
-			});
-		};
-
-		main_contact.prototype.btnRemove_AllEmailWeb = function btnRemove_AllEmailWeb(isEmail) {
-			var _this12 = this;
-
-			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove all.", message: "Are you sure you want to remove all the " + (isEmail ? "Email address" : "website url") + "?" } }).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					var pred1 = _breezeClient2.default.Predicate.create("GLOBAL_ID", "==", _this12.obj_personnel.global_indiv_id);
-					var pred2 = _breezeClient2.default.Predicate.create("EMAIL_FL", "==", isEmail ? 1 : 0);
-					var finalPred = _breezeClient2.default.Predicate.and([pred1, pred2]);
-					var query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where(finalPred);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-						if (querySuccess.results.length == 0) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", "No to-be-remove record found.");
-						}
-
-						_.each(querySuccess.results, function (result) {
-							result.entityAspect.setDeleted();
-						});
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
-							_toastr2.default.clear();
-							_toastr2.default.success("", "The " + (isEmail ? "Email address" : "website url") + " was successfully removed.");
-							_this12.loadMain_EmailWeb(_this12.obj_personnel.global_indiv_id);
-							_this12.clearEmailWebData();
-						}, function (removeError) {
-							_toastr2.default.clear();
-							_toastr2.default.error(removeError, "Error in removing " + (isEmail ? "Email address" : "website url") + " .");
-						});
-					});
-				}
-			});
-		};
-
-		main_contact.prototype.insertEmailWeb = function insertEmailWeb(isEmail) {
-			var _this13 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from('INTERNET_TRX').orderByDesc('INTERNET_ID').take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				var Max = 1;
-				if (querySuccess.results.length > 0) {
-					Max = querySuccess.results[0].INTERNET_ID + 1;
-				}
-
-				var internet_trx = {
-					GLOBAL_ID: _this13.obj_personnel.global_indiv_id,
-					WEB_ADDR: isEmail ? _this13.obj_personnel.CONTACT.modelInternet.email_addr : _this13.obj_personnel.CONTACT.modelInternet.url,
-					INTERNET_ID: Max,
-					EMAIL_FL: isEmail ? 1 : 0,
-					REC_STAT_FL: 1,
-					CREATED_BY: _this13.obj_personnel.USER.USER_ID,
-					CREATED_DT: dateToday
-				};
-				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("INTERNET_TRX", internet_trx);
-				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "The " + (isEmail ? "Email" : "Website") + " successfully added.");
-					_this13.loadMain_EmailWeb(_this13.obj_personnel.global_indiv_id);
-					_this13.clearEmailWebData();
-				}, function (errorSave) {
-					_toastr2.default.clear();
-					_toastr2.default.success(errorSave, "Error in saving " + (isEmail ? "Email." : "Website."));
-				});
-			});
-		};
-
-		return main_contact;
-	}()) || _class);
-});
-define('ppid/forms/main_educational',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.main_educational = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-	var _moment2 = _interopRequireDefault(_moment);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var main_educational = exports.main_educational = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
-		function main_educational(obj_personnel, toastr, DialogService) {
-			var _this = this;
-
-			_classCallCheck(this, main_educational);
-
-			this.obj_personnel = null;
-			this._disableForm = true;
-			this._disableTable = false;
-			this._disableBtnAdd = false;
-			this._disableBtnSave = true;
-
-			this.obj_personnel = obj_personnel;
-			this.DialogService = DialogService;
-			this.obj_personnel.OBSERVERS.maintab_education_clicked.push(function (val) {
-				_this.loadMain_Educational(val);
-				_this.clearData();
-			});
-
-			this.obj_personnel.OBSERVERS.clear_ppid.push(function () {
-				_this.obj_personnel.EDUCATIONAL_ACHIEVEMENT = {
-					status: "",
-					model: {},
-					list: []
-				};
-			});
-		}
-
-		main_educational.prototype.loadMain_Educational = function loadMain_Educational(global_id) {
-			var _this2 = this;
-
-			var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").where("GLOBAL_INDIV_ID", "==", global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				var tmpList = [];
-				_.each(querySuccess.results, function (result) {
-					var school = _this2.obj_personnel.SCHOOLS.find(function (x) {
-						return x.school_cd == result.SCHOOL_CD;
-					});
-					var level = _this2.obj_personnel.LEVEL.find(function (x) {
-						return x.value == result.EDUCATION_LEVEL;
-					});
-					var education = {
-						start_yr: result.START_YR,
-						course: result.COURSE,
-						education_id: result.EDUCATION_ID,
-						education_level: result.EDUCATION_LEVEL,
-						end_yr: result.END_YR,
-						school_cd: result.SCHOOL_CD,
-						honor_awards: result.HONOR_AWARDS,
-						completed_fl: result.COMPLETED_FL,
-						school_name: school.school_name,
-						level_name: level.text
-					};
-					tmpList.push(education);
-				});
-				_this2.obj_personnel.EDUCATIONAL_ACHIEVEMENT.list = tmpList;
-				_toastr2.default.clear();
-				_toastr2.default.success("", "Success");
-			});
-		};
-
-		main_educational.prototype.btnAdd = function btnAdd() {
-			this._disableForm = false;
-			this._disableTable = true;
-			this._disableBtnAdd = true;
-			this._disableBtnSave = false;
-			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status = "ADD";
-		};
-
-		main_educational.prototype.btnEdit = function btnEdit(education) {
-			this._disableForm = false;
-			this._disableTable = true;
-			this._disableBtnAdd = true;
-			this._disableBtnSave = false;
-			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model = {
-				education_id: education.education_id,
-				education_level: education.education_level,
-				start_yr: education.start_yr + "",
-				end_yr: education.end_yr + "",
-				school_cd: education.school_cd,
-				course: education.course,
-				honor_awards: education.honor_awards,
-				completed_fl: education.completed_fl == "1"
-			};
-			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status = "EDIT";
-		};
-
-		main_educational.prototype.clearData = function clearData() {
-			this._disableForm = true;
-			this._disableTable = false;
-			this._disableBtnAdd = false;
-			this._disableBtnSave = true;
-			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model = {};
-			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status = "";
-		};
-
-		main_educational.prototype.validate = function validate() {
-			var strValidation = "";
-			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level.length == 0) {
-				strValidation += "No level specified.<br/>";
-			}
-
-			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr.length == 0) {
-				strValidation += "No start year specified.<br/>";
-			}
-
-			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr.length == 0) {
-				strValidation += "No end year specified.<br/>";
-			}
-
-			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd.length == 0) {
-				strValidation += "No school specified.<br/>";
-			}
-
-			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course.length == 0) {
-				strValidation += "No degree/major specified.<br/>";
-			}
-
-			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr != undefined && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr != null && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr.length > 0) {
-				if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr != undefined && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr != null && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr.length > 0) {
-					if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr > this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr) {
-						strValidation += "Start year cannot be greater than end year.<br/>";
-					}
-				}
-			}
-
-			if (strValidation.length > 0) {
-				_toastr2.default.clear();
-				_toastr2.default.error("", strValidation);
-			} else {
-				if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status == "ADD") {
-					this.insert();
-				} else if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status == "EDIT") {
-					this.update();
-				}
-			}
-		};
-
-		main_educational.prototype.insert = function insert() {
-			var _this3 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").orderByDesc("EDUCATION_ID").take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				var Max = 1;
-				if (querySuccess.results.length > 0) {
-					Max = querySuccess.results[0].EDUCATION_ID + 1;
-				}
-
-				var education_trx = {
-					GLOBAL_INDIV_ID: _this3.obj_personnel.global_indiv_id,
-					START_YR: _this3.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr,
-					COURSE: _this3.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course,
-					EDUCATION_ID: Max,
-					EDUCATION_LEVEL: _this3.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level,
-					END_YR: _this3.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr,
-					SCHOOL_CD: _this3.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd,
-					YR_GRADUATED: 0,
-					HONOR_AWARDS: _this3.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards,
-					COMPLETED_FL: _this3.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl ? 1 : 0,
-					CREATED_BY: _this3.obj_personnel.USER.USER_ID,
-					CREATED_DT: dateToday
-				};
-
-				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("EDUCATION_TRX", education_trx);
-				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "Record saved.");
-					_this3.loadMain_Educational(_this3.obj_personnel.global_indiv_id);
-					_this3.clearData();
-				}, function (saveError) {
-					_toastr2.default.clear();
-					_toastr2.default.error("", saveError);
-				});
-			});
-		};
-
-		main_educational.prototype.update = function update() {
-			var _this4 = this;
-
-			var dateToday = null;
-			dateToday = new _moment2.default(new Date()).add(8, 'hours');
-			dateToday = new Date(dateToday);
-			var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").where("EDUCATION_ID", "==", this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-				if (querySuccess.results.length == 0) {
-					_toastr2.default.clear();
-					_toastr2.default.error("", "Error in query data to be updated");
-				}
-				querySuccess.results[0].START_YR = _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr;
-				querySuccess.results[0].COURSE = _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course;
-				querySuccess.results[0].EDUCATION_LEVEL = _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level;
-				querySuccess.results[0].END_YR = _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr;
-				querySuccess.results[0].SCHOOL_CD = _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd;
-				querySuccess.results[0].HONOR_AWARDS = _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards;
-				querySuccess.results[0].COMPLETED_FL = _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl ? 1 : 0;
-				querySuccess.results[0].LAST_UPDATED_BY = _this4.obj_personnel.USER.USER_ID;
-				querySuccess.results[0].LAST_UPDATED_DT = dateToday;
-
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (updateSuccess) {
-					_toastr2.default.clear();
-					_toastr2.default.success("", "Record updated.");
-					_this4.loadMain_Educational(_this4.obj_personnel.global_indiv_id);
-					_this4.clearData();
-				}, function (updateError) {
-					_toastr2.default.clear();
-					_toastr2.default.error("", updateError);
-				});
-			});
-		};
-
-		main_educational.prototype.btnRemove = function btnRemove(educ) {
-			var _this5 = this;
-
-			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the educational achievement" } }).whenClosed(function (response) {
-				if (!response.wasCancelled) {
-					var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").where("EDUCATION_ID", "==", educ.education_id);
-					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
-						if (querySuccess.results.length == 0) {
-							_toastr2.default.clear();
-							_toastr2.default.error("", "No to-be-remove record found.");
-						}
-						querySuccess.results[0].entityAspect.setDeleted();
-
-						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
-							_toastr2.default.clear();
-							_toastr2.default.success("", "The educational achievement was successfully removed.");
-							_this5.loadMain_Educational(_this5.obj_personnel.global_indiv_id);
-							_this5.clearData();
-						}, function (removeError) {
-							_toastr2.default.clear();
-							_toastr2.default.error(removeError, "Error in removing educational achievement.");
-						});
-					});
-				}
-			});
-		};
-
-		return main_educational;
-	}()) || _class);
-});
-define('ppid/forms/miscellaneous',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.miscellaneous = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var miscellaneous = exports.miscellaneous = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
-		function miscellaneous(dialogService, obj_personnel, toastr) {
-			var _this = this;
-
-			_classCallCheck(this, miscellaneous);
-
-			this.obj_personnel = null;
-
-			this.dialogService = dialogService;
-			this.obj_personnel = obj_personnel;
-			this.obj_personnel.OBSERVERS.ppid_dialog.push(function (all) {
-				_this.CloseSearch(all);
-			});
-		}
-
-		miscellaneous.prototype.CloseSearch = function CloseSearch(global_id) {};
-
-		return miscellaneous;
-	}()) || _class);
-});
-define('ppid/forms/relative_character_ref',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.relative_character_ref = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var relative_character_ref = exports.relative_character_ref = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
-		function relative_character_ref(dialogService, obj_personnel, toastr) {
-			var _this = this;
-
-			_classCallCheck(this, relative_character_ref);
-
-			this.obj_personnel = null;
-			this._tab0_loaded = false;
-
-			this.dialogService = dialogService;
-			this.obj_personnel = obj_personnel;
-
-			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_id) {
-				_this.LoadData(tab_num, global_id);
-			});
-		}
-
-		relative_character_ref.prototype.LoadData = function LoadData(tab_num, global_id) {
-			var _this2 = this;
-
-			if (tab_num != 1 || global_id == null || global_id.length == 0 || this._tab0_loaded) return;
-
-			_toastr2.default.success(Success, 'Loading relative data...');
-			var _query = (0, _entityManagerFactory.EntityQuery)().from('RELATIVE_TRX').where('GLOBAL_INDIV_ID', '==', global_id);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (Success) {
-				_toastr2.default.clear();
-				_toastr2.default.success(Success, 'Loading relative data...');
-				_this2._tab0_loaded = true;
-			}, function (failed) {
-				_this2._tab0_loaded = false;
-				_toastr2.default.error(failed, 'Error in data retrieval for relative.');
-			});
-		};
-
-		return relative_character_ref;
-	}()) || _class);
-});
-define('ppid/forms/relative_parent',["exports"], function (exports) {
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var relative_parent = exports.relative_parent = function relative_parent() {
-		_classCallCheck(this, relative_parent);
-	};
-});
-define('ppid/forms/relative_siblings',["exports"], function (exports) {
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var relative_siblings = exports.relative_siblings = function relative_siblings() {
-		_classCallCheck(this, relative_siblings);
-	};
-});
-define('ppid/modals/DialogBox',['exports', 'aurelia-framework', 'aurelia-dialog'], function (exports, _aureliaFramework, _aureliaDialog) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.DialogBox = undefined;
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var DialogBox = exports.DialogBox = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogController), _dec(_class = function () {
-		function DialogBox(controller) {
-			_classCallCheck(this, DialogBox);
-
-			this.message = "Sample Message";
-			this.title = "Sample Title";
-
-			this.controller = controller;
-		}
-
-		DialogBox.prototype.activate = function activate(info) {
-			this.message = info.message;
-			this.title = info.title;
-		};
-
-		return DialogBox;
-	}()) || _class);
-});
-define('ppid/modals/photo_list',["exports"], function (exports) {
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var photo_list = exports.photo_list = function photo_list() {
-		_classCallCheck(this, photo_list);
-	};
-});
-define('ppid/modals/ppid_search',['exports', 'aurelia-framework', 'aurelia-dialog', 'multi-observer', '../.././masterfiles', 'breeze-client', '../../entity-manager-factory', '../../helpers', '../obj_personnel'], function (exports, _aureliaFramework, _aureliaDialog, _multiObserver, _masterfiles, _breezeClient, _entityManagerFactory, _helpers, _obj_personnel) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.ppid_search = undefined;
-
-	var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var ppid_search = exports.ppid_search = (_dec = (0, _aureliaFramework.inject)(_multiObserver.MultiObserver, _aureliaDialog.DialogController, _aureliaFramework.ObserverLocator, _obj_personnel.obj_personnel), _dec(_class = function () {
-		function ppid_search(multiObserver, controller, observerLocator, obj_personnel) {
-			var _this = this;
-
-			_classCallCheck(this, ppid_search);
-
-			this.obj_personnel = null;
-			this.varFilterArrayLength = 0;
-			this.varFilterArray = [];
-			this.lstPredicates = [];
-			this.currPredicate = null;
-			this.observerLocator = null;
-
-			this.controller = controller;
-			this.observerLocator = observerLocator;
-			this.obj_personnel = obj_personnel;
-
-			multiObserver.observe([[this, "_bglobal_indiv_id"], [this, "_blast_name"], [this, "_bfirst_name"], [this, "_bnickname"]], function (newValue, oldValue) {
-				return _this.onSpeculateProp(newValue, oldValue);
-			});
-		}
-
-		ppid_search.prototype.fnManualFilter = function fnManualFilter(tmpVar) {
-			var _this2 = this;
-
-			this.lstPredicates = [];
-
-			_.each(this._rppid_queries.querySelectorAll('input'), function (all) {
-				var varOb = _this2.observerLocator.getObserver(_this2, all.getAttribute('searchable').replace('_s', '_b'));
-				if (varOb.getValue() != undefined && varOb.getValue() != null && varOb.getValue() != "" && varOb.getValue() != "undefined") {
-					if (varOb.propertyName.indexOf('global_indiv_id') > -1) {
-							if (varOb.getValue().length >= 17) _this2.lstPredicates.push(_breezeClient2.default.Predicate.create(varOb.propertyName.replace('_b', '').toUpperCase(), "==", varOb.getValue().toUpperCase()));
-						} else if (!(varOb.propertyName.indexOf('global_indiv_id') > -1)) {
-						_this2.lstPredicates.push(_breezeClient2.default.Predicate.create(varOb.propertyName.replace('_b', '').toUpperCase().replace('FIRST_NAME', 'GIVEN_NAME').replace('NICKNAME', 'ALIAS'), _breezeClient2.default.FilterQueryOp.Contains, varOb.getValue().toUpperCase()));
-					}
-
-					if (tmpVar.length > 0) {
-						tmpVar = (0, _helpers.getFilter)(tmpVar, varOb.getValue(), all.getAttribute('searchable').replace('_s', ''));
-					}
-				}
-			});
-			return tmpVar;
-		};
-
-		ppid_search.prototype.onSpeculateProp = function onSpeculateProp(newValue, oldValue) {
-			var _this3 = this;
-
-			var varValuesHasChanged = false;
-
-			_.each(this._rppid_queries.querySelectorAll('input'), function (all) {
-				var varOb = _this3.observerLocator.getObserver(_this3, all.getAttribute('searchable').replace('_s', '_b'));
-
-				if (varOb.getValue() != '' && varOb.getValue() !== undefined) {
-					varValuesHasChanged = true;
-				}
-			});
-
-			if (!varValuesHasChanged) return;
-
-			var tmpVar = this.fnManualFilter(this.varFilterArray);
-
-			if (tmpVar.length > 0) {
-				var tmpVarNew = _.sortBy(tmpVar, 'GLOBAL_INDIV_ID').reverse();
-				this.varFilterArray = tmpVarNew;
-				this.varFilterArrayLength = this.varFilterArray.length;
-				return;
-			}
-
-			if (this.lstPredicates.length == 0) return;
-
-			this.currPredicate = this.lstPredicates;
-			setTimeout(function (a) {
-				if (a !== _this3.currPredicate) return;
-
-				var _query = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_INDIV_MSTR').where(_breezeClient2.default.Predicate.and(_this3.currPredicate)).orderBy('GLOBAL_INDIV_ID desc').select('GLOBAL_INDIV_ID,GIVEN_NAME,LAST_NAME,ALIAS');
-				(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-					tmpVar = [];
-					_.each(success.results, function (all) {
-						tmpVar.push({
-							GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
-
-							GROUP: "Test group",
-							LAST_NAME: all.LAST_NAME,
-							FIRST_NAME: all.GIVEN_NAME,
-							NICK_NAME: all.ALIAS
-						});
-					});
-
-					_this3.varFilterArray = tmpVar;
-					_this3.varFilterArrayLength = _this3.varFilterArray.length;
-				}, function (failed) {
-					toastr.error(failed, "Failed loading Personnel Info");
-				});
-			}, 500, this.currPredicate);
-		};
-
-		ppid_search.prototype.selectedPersonnel = function selectedPersonnel(item) {
-			this.obj_personnel.OBSERVERS.ppid_dialog.forEach(function (all) {
-				all(item.GLOBAL_INDIV_ID);
-			});
-			this.controller.ok();
-		};
-
-		ppid_search.prototype.fnKeyup = function fnKeyup(evt, item) {
-			if (evt.keyCode == 13) {
-				if (this.varFilterArray.length == 1) {
-					this.selectedPersonnel(this.varFilterArray[0]);
-				}
-			}
-		};
-
-		return ppid_search;
-	}()) || _class);
 });
 define('ppfcs/actual_cost/actual_cost',['exports', 'aurelia-framework', 'cache_obj', 'settings'], function (exports, _aureliaFramework, _cache_obj, _settings) {
     'use strict';
@@ -12364,6 +9132,5467 @@ define('ppfcs/budget/summary',['exports', 'aurelia-framework', 'cache_obj', 'ppf
     initializer: null
   })), _class2)) || _class);
 });
+define('ppid/forms/awards_training',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.awards_training = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var awards_training = exports.awards_training = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
+		function awards_training(dialogService, obj_personnel, toastr) {
+			var _this = this;
+
+			_classCallCheck(this, awards_training);
+
+			this.obj_personnel = null;
+			this._404_img = "/images/404.png";
+
+			this.dialogService = dialogService;
+			this.obj_personnel = obj_personnel;
+			this.obj_personnel.OBSERVERS.ppid_dialog.push(function (all) {
+				_this.CloseSearch(all);
+			});
+		}
+
+		awards_training.prototype.CloseSearch = function CloseSearch(global_id) {};
+
+		return awards_training;
+	}()) || _class);
+});
+define('ppid/forms/company_info',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.company_info = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var company_info = exports.company_info = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
+		function company_info(obj_personnel, toastr, DialogService) {
+			_classCallCheck(this, company_info);
+
+			this.obj_personnel = null;
+			this._404_img = "/images/404.png";
+
+			this.obj_personnel = obj_personnel;
+			this.DialogService = DialogService;
+		}
+
+		company_info.prototype.clickTab_Company = function clickTab_Company(tab_num) {
+			var _this = this;
+
+			if (this.obj_personnel.global_indiv_id.length == 0) return;
+			switch (tab_num) {
+				case 0:
+					this.obj_personnel.OBSERVERS.company_main_clicked.forEach(function (delegate) {
+						delegate(_this.obj_personnel.global_indiv_id);
+					});
+					break;
+				case 1:
+					this.obj_personnel.OBSERVERS.company_work_exp_clicked.forEach(function (delegate) {
+						delegate(_this.obj_personnel.global_indiv_id);
+					});
+					break;
+			}
+		};
+
+		return company_info;
+	}()) || _class);
+});
+define('ppid/forms/company_info_main',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment', '../../masterfiles', '../../helpers', 'settings'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment, _masterfiles, _helpers, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.company_info_main = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var company_info_main = exports.company_info_main = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
+		function company_info_main(obj_personnel, toastr, DialogService) {
+			var _this = this;
+
+			_classCallCheck(this, company_info_main);
+
+			this.obj_personnel = null;
+			this._disableLocations = true;
+			this._disableIDNo = false;
+			this._disableStatus = true;
+			this._disableTabsInput = true;
+			this._hideSuspendField = true;
+			this._hideInactiveField = true;
+			this._hideCessationDate = true;
+			this.alreadyLoaded = false;
+			this.accreditation_status = "";
+			this.accreditation_joblist = [];
+
+			this.obj_personnel = obj_personnel;
+			this.DialogService = DialogService;
+			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_id) {
+				if (tab_num == 4) {
+					if (!_this.alreadyLoaded) {
+						_this.alreadyLoaded = true;
+						$("#_start_dt").datepicker();
+						$("#_end_dt").datepicker();
+						$("#kapamilya_dt").datepicker();
+						$("#membership_dt").datepicker();
+						$("#suspended_start_dt").datepicker();
+						$("#suspended_end_dt").datepicker();
+						$("#cessation_end_dt").datepicker();
+						$("#a_start_dt").datepicker();
+						$("#a_end_dt").datepicker();
+						toastr.clear();
+						toastr.info("", "Loading company info...");
+
+						if (_this.obj_personnel.COMPANY.length > 0) {
+							_this.obj_personnel.COMPANY_SPECIFIC.model.company_id = _this.obj_personnel.COMPANY[0].id;
+						}
+						_this.loadGlobalCompany(global_id);
+					}
+				}
+			});
+
+			this.obj_personnel.OBSERVERS.company_main_clicked.push(function (global_id) {
+				toastr.clear();
+				toastr.info("", "Loading company info...");
+				_this.loadGlobalCompany(global_id);
+			});
+
+			this.obj_personnel.OBSERVERS.clear_ppid.push(function () {
+				_this.obj_personnel.COMPANY_SPECIFIC = {
+					model: {},
+					list: []
+				};
+				_this.alreadyLoaded = false;
+			});
+		}
+
+		company_info_main.prototype.loadGlobalCompany = function loadGlobalCompany(global_id) {
+			var _this2 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_COMPANY_MSTR").where("GLOBAL_ID", "==", global_id).orderBy("COMPANY_ID");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (r) {
+					tmp.push({
+						global_company_id: r.GLOBAL_COMPANY_ID,
+						global_id: r.GLOBAL_ID,
+						id_no: r.ID_NO,
+						company_id: r.COMPANY_ID,
+						start_dt: r.START_DT,
+						end_dt: r.END_DT,
+						kapamilya_dt: r.KAPAMILYA_DT,
+						membership_dt: r.MEMBERSHIP_DT,
+						exclusive_fl: r.EXCLUSIVE_FL,
+						status_cd: r.STATUS_CD,
+						cessation_reason_cd: r.CESSATION_REASON_CD,
+						remarks: r.REMARKS,
+						division_id: r.DIVISION_ID,
+						location_cd: r.LOCATION_CD,
+						category_id: r.CATEGORY_ID,
+						job_id: r.JOB_ID,
+						payroll_grp_id: r.PAYROLL_GRP_ID,
+						professional_type_cd: r.PROFESSIONAL_TYPE_CD,
+						cessation_end_dt: r.CESSATION_END_DATE
+					});
+				});
+				_this2.obj_personnel.COMPANY_SPECIFIC.list = tmp;
+				_toastr2.default.clear();
+				_toastr2.default.success("", "Company info has been loaded...");
+				if (_this2.obj_personnel.COMPANY.length > 0) {
+					_this2.dd_companyChanged();
+				}
+				_settings2.default.isNavigating = false;
+			}, function (failed) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(failed, "error in fetching company specific data.");
+			});
+		};
+
+		company_info_main.prototype.loadAccreditation = function loadAccreditation(global_company_id) {
+			var _this3 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("ACCREDITATION_TRX").where("GLOBAL_COMPANY_ID", "==", global_company_id);
+			var accreditation = [];
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+				_.each(success.results, function (r) {
+
+					var job_group = _this3.obj_personnel.JOB_GROUP.find(function (x) {
+						return x.id == r.JOB_GRP_ID;
+					});
+					var job = _this3.obj_personnel.JOB.find(function (x) {
+						return x.value == r.JOB_ID;
+					});
+					var division = _this3.obj_personnel.DIVISION.find(function (x) {
+						return x.id == r.DIVISION_ID;
+					});
+					var _eff_start_dt = (0, _helpers.formatDate)(r.EFF_START_DT);
+					var _eff_end_dt = (0, _helpers.formatDate)(r.EFF_END_DT);
+
+					accreditation.push({
+						accreditation_id: r.ACCREDITATION_ID,
+						global_company_id: r.GLOBAL_COMPANY_ID,
+
+						eff_start_dt: _eff_start_dt,
+						eff_end_dt: _eff_end_dt,
+						division_id: r.DIVISION_ID,
+						division_text: division.text,
+						category_id: r.CATEGORY_ID,
+						job_grp_id: r.JOB_GRP_ID,
+						job_grp_text: job_group.text,
+						job_id: r.JOB_ID,
+						job_text: job.text,
+						competency: r.COMPETENCY,
+						home_fl: r.HOME_FL,
+						entry_fl: r.ENTRY_FL,
+						accreditation_memo: r.ACCREDITATION_MEMO
+					});
+				});
+				_this3.obj_personnel.COMPANY_SPECIFIC.model.accreditation_list = accreditation;
+				_settings2.default.isNavigating = false;
+			}, function (failed) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(failed, "Error in fetching company specific data.");
+			});
+		};
+
+		company_info_main.prototype.loadSuspend = function loadSuspend(global_id, company_id) {
+			var _this4 = this;
+
+			_settings2.default.isNavigating = true;
+			var pred1 = _breezeClient2.default.Predicate.create('GLOBAL_ID', '==', global_id);
+			var pred2 = _breezeClient2.default.Predicate.create('SUSPEND_LEVEL', '==', 2);
+			var pred3 = _breezeClient2.default.Predicate.create("COMPANY_ID", "==", company_id);
+			var finalPred = _breezeClient2.default.Predicate.and([pred1, pred2]);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").where(finalPred).orderByDesc("SUSPEND_ID").take(1);
+			var suspend = [];
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+				if (success.results.length > 0) {
+					_.each(success.results, function (result) {
+						suspend.push({
+							suspend_id: result.SUSPEND_ID,
+							start_dt: result.START_DT,
+							end_dt: result.END_DT,
+							company_id: result.COMPANY_ID
+						});
+					});
+
+					_this4.obj_personnel.COMPANY_SPECIFIC.model.suspend_id = suspend[0].suspend_id;
+
+					var suspended_start_dt = (0, _helpers.formatDate)(suspend[0].start_dt);
+					_this4.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = suspended_start_dt;
+					if (suspended_start_dt.length > 0) {
+						$("#suspended_start_dt").datepicker("setValue", suspended_start_dt);
+					}
+
+					var suspended_end_dt = (0, _helpers.formatDate)(suspend[0].end_dt);
+					_this4.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = suspended_end_dt;
+					if (suspended_start_dt.length > 0) {
+						$("#suspended_end_dt").datepicker("setValue", suspended_end_dt);
+					}
+				}
+				_settings2.default.isNavigating = false;
+			}, function (error) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(error, "Error in fetching company specific data.");
+			});
+		};
+
+		company_info_main.prototype.loadPersonnelBank = function loadPersonnelBank(global_company_id) {
+			var _this5 = this;
+
+			_settings2.default.isNavigating = true;
+			var pred1 = _breezeClient2.default.Predicate.create("GLOBAL_COMPANY_ID", "==", global_company_id);
+			var pred2 = _breezeClient2.default.Predicate.create("ACCOUNT_NO", "!=", "CHECK");
+			var finalPred = _breezeClient2.default.Predicate.and([pred1, pred2]);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("PERSONNEL_BANK_TRX").where(finalPred).take(1);
+
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				if (s1.results.length > 0) {
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.personnel_bank_id = s1.results[0].PERSONNEL_BANK_ID;
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.global_company_id = s1.results[0].GLOBAL_COMPANY_ID;
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id = s1.results[0].BANK_ID + "";
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = s1.results[0].ACCT_NAME;
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no = s1.results[0].ACCOUNT_NO;
+				} else {
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.personnel_bank_id = "";
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.global_company_id = "";
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id = "";
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = "";
+					_this5.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no = "";
+				}
+				_this5.dd_bankChanged();
+				_settings2.default.isNavigating = false;
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in querying personnel bank info.");
+			});
+		};
+
+		company_info_main.prototype.loadJobDropdown = function loadJobDropdown() {
+			var _this6 = this;
+
+			this.obj_personnel.JOB = [];
+			_.each(this.obj_personnel.JOB_GROUP, function (jc) {
+				(0, _masterfiles.getLookups)().JOB_MSTR.forEach(function (j) {
+					if (j.JOB_GRP_ID == jc.id) {
+						_this6.obj_personnel.JOB.push({
+							value: j.JOB_ID,
+							text: j.JOB_DESC,
+							group: j.JOB_GRP_ID
+						});
+					}
+				});
+			});
+			this.obj_personnel.JOB.sort(this.OrderByText);
+		};
+
+		company_info_main.prototype.dd_companyChanged = function dd_companyChanged() {
+			var _this7 = this;
+
+			var company_id = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
+
+			if (company_id == 2 || company_id == 3 || company_id == 4 || company_id == 7 || company_id == 8) {
+				this._disableIDNo = false;
+				this.obj_personnel.COMPANY_SPECIFIC.model.id_no = "";
+			} else {
+				this._disableIDNo = true;
+				this.obj_personnel.COMPANY_SPECIFIC.model.id_no = "000000";
+			}
+
+			var global_company = this.obj_personnel.COMPANY_SPECIFIC.list.find(function (gc) {
+				return gc.company_id == company_id;
+			});
+
+			if ((0, _masterfiles.getLookups)() != null) {
+
+				this.obj_personnel.DIVISION = [];
+				this.obj_personnel.CATEGORY = [];
+				this.obj_personnel.JOB_GROUP = [];
+
+
+				(0, _masterfiles.getLookups)().DIVISION_MSTR.forEach(function (d) {
+					if (d.COMPANY_ID == company_id) {
+						_this7.obj_personnel.DIVISION.push({
+							id: d.DIVISION_ID,
+							level: d.DIVISION_LEVEL,
+							value: d.DIVISION_CD,
+							text: d.DIVISION_NAME
+						});
+					}
+				});
+
+				(0, _masterfiles.getLookups)().CATEGORY_MSTR.forEach(function (c) {
+					if (c.COMPANY_ID == company_id) {
+						_this7.obj_personnel.CATEGORY.push({
+							id: c.CATEGORY_ID,
+							value: c.CATEGORY_CD,
+							text: c.CATEGORY_DESC
+						});
+					}
+				});
+
+				(0, _masterfiles.getLookups)().JOB_GRP_MSTR.forEach(function (j) {
+					if (j.COMPANY_ID == company_id) {
+						_this7.obj_personnel.JOB_GROUP.push({
+							id: j.JOB_GRP_ID,
+							value: j.JOB_GRP_CD,
+							text: j.JOB_GRP_DESC
+						});
+					}
+				});
+
+				this.obj_personnel.JOB_GROUP.sort(this.OrderByText);
+				this.obj_personnel.CATEGORY.sort(this.OrderByText);
+
+				if (global_company != null && global_company != undefined) {
+					this._disableStatus = false;
+					this._disableTabsInput = false;
+					this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = global_company.global_company_id;
+					this.obj_personnel.COMPANY_SPECIFIC.model.id_no = global_company.id_no;
+					var startDt = (0, _helpers.formatDate)(global_company.start_dt);
+					if (startDt.length > 0 && startDt != "01/01/0001") {
+						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = startDt;
+						$("#_start_dt").datepicker("setValue", new Date(startDt));
+					} else {
+						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
+					}
+					var endDt = (0, _helpers.formatDate)(global_company.end_dt);
+
+					if (endDt.length > 0 && endDt != "01/01/0001") {
+						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = endDt;
+						$("#_end_dt").datepicker("setValue", new Date(endDt));
+					} else {
+						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = "";
+					}
+
+					var kapamilya_dt = (0, _helpers.formatDate)(global_company.kapamilya_dt);
+					if (kapamilya_dt.length > 0 && kapamilya_dt != "01/01/0001") {
+						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = kapamilya_dt;
+						$("#kapamilya_dt").datepicker("setValue", new Date(kapamilya_dt));
+					} else {
+						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
+					}
+
+					var membership_dt = (0, _helpers.formatDate)(global_company.membership_dt);
+					if (membership_dt.length > 0 && membership_dt != "01/01/0001") {
+						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = membership_dt;
+						$("#membership_dt").datepicker("setValue", new Date(membership_dt));
+					} else {
+						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
+					}
+
+					var cessation_dt = (0, _helpers.formatDate)(global_company.cessation_end_dt);
+					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = cessation_dt;
+					if (cessation_dt.length > 0) {
+						$("#cessation_end_dt").datepicker("setValue", new Date(cessation_dt));
+					}
+
+					this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = global_company.exclusive_fl == "1" ? true : false;
+					this.obj_personnel.COMPANY_SPECIFIC.model.status_cd = global_company.status_cd;
+					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = global_company.cessation_reason_cd;
+					this.obj_personnel.COMPANY_SPECIFIC.model.remarks = global_company.remarks;
+					this.obj_personnel.COMPANY_SPECIFIC.model.division_id = global_company.division_id + "";
+
+					this.obj_personnel.COMPANY_SPECIFIC.model.location_cd = global_company.location_cd;
+					this.obj_personnel.COMPANY_SPECIFIC.model.category_id = global_company.category_id + "";
+
+					this.obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id = global_company.payroll_grp_id + "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd = global_company.professional_type_cd;
+					if (global_company.status_cd == "SUSPEND") {
+						this.loadSuspend(global_company.global_id, global_company.company_id);
+					}
+
+					this.obj_personnel.COMPANY_SPECIFIC.model.accreditation = global_company.accreditation;
+					this.loadJobDropdown();
+					this.obj_personnel.COMPANY_SPECIFIC.model.job_id = global_company.job_id + "";
+					this.loadAccreditation(global_company.global_company_id);
+					this.loadPersonnelBank(global_company.global_company_id);
+				} else {
+					this._disableStatus = true;
+					this._disableTabsInput = true;
+
+					this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.status_cd = "ACTV";
+					this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.remarks = "";
+					this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = false;
+					if (this.obj_personnel.DIVISION.length > 0) this.obj_personnel.COMPANY_SPECIFIC.model.division_id = this.obj_personnel.DIVISION[0].id;
+					if (this.obj_personnel.CATEGORY.length > 0) this.obj_personnel.COMPANY_SPECIFIC.model.category_id = this.obj_personnel.CATEGORY[0].id;
+
+					this.loadJobDropdown();
+
+					if (this.obj_personnel.JOB.length > 0) this.obj_personnel.COMPANY_SPECIFIC.model.job_id = this.obj_personnel.JOB[0].value;
+
+					if (this.obj_personnel.PAYROLL_GROUP.length > 0) this.obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id = this.obj_personnel.PAYROLL_GROUP[0].id;
+					if (this.obj_personnel.PROFESSIONAL_TYPE.length > 0) this.obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd = this.obj_personnel.PROFESSIONAL_TYPE[0].value;
+
+					this.obj_personnel.COMPANY_SPECIFIC.model.suspend_id = 0;
+					this.obj_personnel.COMPANY_SPECIFIC.model.accreditation_list = [];
+
+					if (this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank != null) {
+						this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.personnel_bank_id = "";
+						this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.global_company_id = "";
+						this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id = "";
+						this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = "";
+						this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no = "";
+					}
+				}
+
+				if (this.obj_personnel.JOB_GROUP.length > 0) {
+					this.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id = this.obj_personnel.JOB_GROUP[0].id;
+				}
+
+				this.dd_jobGroupChange();
+				this.dd_divisionChanged();
+				this.dd_statusChanged();
+			}
+		};
+
+		company_info_main.prototype.dd_divisionChanged = function dd_divisionChanged() {
+			var division_id = this.obj_personnel.COMPANY_SPECIFIC.model.division_id;
+			var division = this.obj_personnel.DIVISION.find(function (d) {
+				return d.id == division_id;
+			});
+
+			if (division != undefined && division != null && division.text.indexOf("REGIONAL DIVISION") != -1) {
+				this._disableLocations = false;
+			} else {
+				this._disableLocations = true;
+				this.obj_personnel.COMPANY_SPECIFIC.model.location_cd = "--NONE--";
+			}
+		};
+
+		company_info_main.prototype.dd_statusChanged = function dd_statusChanged() {
+			var stat = this.obj_personnel.COMPANY_SPECIFIC.model.status_cd;
+			if (stat == "ACTV") {
+				this._hideInactiveField = true;
+				this._hideSuspendField = true;
+				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.remarks = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = "";
+				$("#suspended_start_dt").val("");
+				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = "";
+				$("#suspended_end_dt").val("");
+			} else if (stat == "INACTV") {
+				this._hideInactiveField = false;
+				this._hideSuspendField = true;
+				this.dd_cessationStatusChanged();
+				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = "";
+				$("#suspended_start_dt").val("");
+				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = "";
+				$("#suspended_end_dt").val("");
+			} else if (stat == "SUSPEND") {
+				this._hideInactiveField = true;
+				this._hideSuspendField = false;
+				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.remarks = "";
+			}
+		};
+
+		company_info_main.prototype.dd_cessationStatusChanged = function dd_cessationStatusChanged() {
+			var cess_cd = this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd;
+			switch (cess_cd) {
+				case "DECEASED":
+				case "RETIRED":
+				case "RESIGNED":
+				case "END_CONTRACT":
+				case "TERMINATION":
+					this._hideCessationDate = false;
+					break;
+				default:
+					this._hideCessationDate = true;
+					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = "";
+					break;
+			}
+		};
+
+		company_info_main.prototype.validate = function validate() {
+
+			this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = $("#_start_dt").val();
+			this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = $("#cessation_end_dt").val();
+			var strValidation = "";
+
+			if (this.obj_personnel.COMPANY_SPECIFIC.model.id_no == undefined || this.obj_personnel.COMPANY_SPECIFIC.model.id_no == null || this.obj_personnel.COMPANY_SPECIFIC.model.id_no.length == 0) {
+				strValidation += "No id number specified. <br/>";
+			}
+
+			if (this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "SUSPEND") {
+
+				var sus_start = null;
+				var sus_end = null;
+				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = $("#suspended_start_dt").val();
+				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = $("#suspended_end_dt").val();
+				if (this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt != null && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt.length > 0) {
+					if (!(0, _moment2.default)(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt).isValid()) {
+						strValidation += "Invalid suspension start date.<br/>";
+					} else {
+						sus_start = new Date(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt);
+					}
+				} else {
+					strValidation += "No start date of suspension specified.<br/>";
+				}
+
+				if (this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt != null && this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt.length > 0) {
+					if (!(0, _moment2.default)(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt).isValid()) {
+						strValidation += "Invalid suspension end date.<br/>";
+					} else {
+						sus_end = new Date(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt);
+					}
+				} else {
+					strValidation += "No end date of suspension specified.<br/>";
+				}
+
+				if (sus_start != null && sus_end != null) {
+					if (sus_end < sus_start) {
+						strValidation += "end date of suspension cannot be greater than the start date.<br/>";
+					}
+				}
+			} else if (this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "INACTV") {
+				if (this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd == undefined || this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd == null || this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd.length == 0) {
+					strValidation += "No Reason of cessation specified.<br/>";
+				}
+
+				if (!this._hideCessationDate) {
+					if (this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt != null && this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt.length > 0) {
+						if (!(0, _moment2.default)(this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt).isValid()) {
+							strValidation += "Invalid cessation date.<br/>";
+						} else {
+							var cess_cd = this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd;
+							if (cess_cd == "DECEASED") {
+								var cessation_dt = new Date(this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt);
+								var today = new Date();
+								if (cessation_dt > today) {
+									strValidation += "Are you planning to kill the user?<br/>";
+								}
+							}
+						}
+					} else {
+						strValidation += "No cessation date specified.<br/>";
+					}
+				}
+			}
+
+			var selectedBank = this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id;
+			if (selectedBank != undefined && selectedBank.length > 0) {
+				var account_no = this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no;
+				if (account_no == undefined || account_no.length == 0) {
+					strValidation += "No account number specified.<br/>";
+				} else if (account_no.length != 10) {
+					strValidation += "Account number must be 10 digit.<br/>";
+				}
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = $("#_end_dt").val();
+				this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = $("#kapamilya_dt").val();
+				this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = $("#membership_dt").val();
+				if (this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl == undefined) this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = false;
+
+				var cid = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
+				var gcid = this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id;
+				if (gcid.length == 0) {
+					this.saveCompany(cid);
+				} else {
+					this.updateCompany(gcid);
+				}
+			}
+		};
+
+		company_info_main.prototype.convertToGMT8 = function convertToGMT8(date) {
+			if (date == undefined || date == null || date.length == 0) return null;
+			var tempDt = (0, _moment2.default)(date).add(8, 'hours');
+			return new Date(tempDt);
+		};
+
+		company_info_main.prototype.saveCompany = function saveCompany(company_id) {
+			var _this8 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+
+			var lstart_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.start_dt);
+			var lend_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.end_dt);
+			var lkapmilya_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt);
+			var lmembership_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt);
+			var lcessation_end_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt);
+
+			var LastID = "000000";
+			var currentYear = new Date().getFullYear().toString().substring(2, 4);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("COMPANY_SPECIFIC_INDEX").where("COMPANY_SPECIFIC_ID", "==", company_id).take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s) {
+				LastID = s.results[0].COMPANY_INDEX;
+				var lastYear = LastID.toString().substring(0, 2);
+				if (lastYear != currentYear) {
+					LastID = currentYear + "0001";
+				}
+
+				query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_COMPANY_MSTR").orderByDesc("GLOBAL_COMPANY_ID").take(1);
+				(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s2) {
+					var maxID = 1;
+					if (s2.results.length > 0) {
+						maxID = s2.results[0].GLOBAL_COMPANY_ID + 1;
+					}
+
+					var global_company_mstr = {
+						GLOBAL_ID: _this8.obj_personnel.global_indiv_id,
+						START_DT: lstart_dt.length == 0 ? null : lstart_dt,
+						END_DT: lend_dt.length == 0 ? null : lend_dt,
+						COMPANY_ID: company_id,
+						GLOBAL_COMPANY_ID: maxID,
+						ID_NO: LastID,
+						CESSATION_REASON_CD: _this8.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd,
+						CATEGORY_ID: _this8.obj_personnel.COMPANY_SPECIFIC.model.category_id,
+						DIVISION_ID: _this8.obj_personnel.COMPANY_SPECIFIC.model.division_id,
+						PAYROLL_GRP_ID: _this8.obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id,
+						JOB_ID: _this8.obj_personnel.COMPANY_SPECIFIC.model.job_id,
+						PROFESSIONAL_TYPE_CD: _this8.obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd,
+						STATUS_CD: _this8.obj_personnel.COMPANY_SPECIFIC.model.status_cd,
+						EXCLUSIVE_FL: _this8.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl ? "1" : "0",
+						REMARKS: _this8.obj_personnel.COMPANY_SPECIFIC.model.remarks,
+						KAPAMILYA_DT: lkapmilya_dt.length == 0 ? null : lkapmilya_dt,
+						MEMBERSHIP_DT: lmembership_dt.length == 0 ? null : lmembership_dt,
+						LOCATION_CD: _this8.obj_personnel.COMPANY_SPECIFIC.model.location_cd,
+						CESSATION_END_DATE: lcessation_end_dt.length == 0 ? null : lcessation_end_dt,
+						CREATED_BY: _this8.obj_personnel.USER.USER_ID,
+						CREATED_DT: dateToday
+					};
+
+					var entity = (0, _entityManagerFactory.EntityManager)().createEntity("GLOBAL_COMPANY_MSTR", global_company_mstr);
+					(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+					(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s3) {
+						_settings2.default.isNavigating = false;
+						_toastr2.default.success("", "Record saved.");
+						_this8.updateCompanyIndex(company_id, LastID);
+						_this8.loadGlobalCompany(_this8.obj_personnel.global_indiv_id);
+					}, function (e3) {
+						_settings2.default.isNavigating = false;
+						if (entity != null) {
+							entity.entityAspect.setDeleted();
+						}
+						(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+							var errors = entity.entityAspect.getValidationErrors();
+							if (errors.length > 0) console.log(errors);
+						});
+
+						_toastr2.default.error(e3, "Error in saving global company mstr.");
+					});
+				}, function (e2) {
+					_settings2.default.isNavigating = false;
+
+					_toastr2.default.clear(e2, "Error in getting global company id.");
+				});
+			}, function (e) {
+				_settings2.default.isNavigating = false;
+
+				_toastr2.default.error(e, "Error in generating ID.");
+			});
+		};
+
+		company_info_main.prototype.updateCompany = function updateCompany(global_company_id) {
+			var _this9 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+
+			var lstart_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.start_dt);
+			var lend_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.end_dt);
+			var lkapamilya_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt);
+			var lmembership_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt);
+			var lcessation_end_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt);
+			var lsuspend_start_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt);
+			var lsuspend_end_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt);
+
+			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_COMPANY_MSTR").where("GLOBAL_COMPANY_ID", "==", global_company_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s) {
+
+				s.results[0].START_DT = lstart_dt;
+				s.results[0].END_DT = lend_dt;
+				s.results[0].KAPAMILYA_DT = lkapamilya_dt;
+				s.results[0].MEMBERSHIP_DT = lmembership_dt;
+				s.results[0].EXCLUSIVE_FL = _this9.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl ? "1" : "0";
+				s.results[0].DIVISION_ID = _this9.obj_personnel.COMPANY_SPECIFIC.model.division_id;
+				s.results[0].LOCATION_CD = _this9.obj_personnel.COMPANY_SPECIFIC.model.location_cd;
+				s.results[0].CATEGORY_ID = _this9.obj_personnel.COMPANY_SPECIFIC.model.category_id;
+				s.results[0].JOB_ID = _this9.obj_personnel.COMPANY_SPECIFIC.model.job_id;
+				s.results[0].PAYROLL_GRP_ID = _this9.obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id;
+				s.results[0].PROFESSIONAL_TYPE_CD = _this9.obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd;
+				s.results[0].STATUS_CD = _this9.obj_personnel.COMPANY_SPECIFIC.model.status_cd;
+				switch (_this9.obj_personnel.COMPANY_SPECIFIC.model.status_cd) {
+					case "INACTV":
+						s.results[0].CESSATION_REASON_CD = _this9.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd;
+						s.results[0].CESSATION_END_DATE = lcessation_end_dt.length == 0 ? null : lcessation_end_dt;
+						s.results[0].REMARKS = _this9.obj_personnel.COMPANY_SPECIFIC.model.remarks;
+						break;
+					case "SUSPEND":
+					case "ACTV":
+						s.results[0].CESSATION_REASON_CD = null;
+						s.results[0].CESSATION_END_DATE = null;
+						s.results[0].REMARKS = null;
+						break;
+				}
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s1) {
+
+					if (_this9.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "SUSPEND") {
+						_this9.obj_personnel.COMPANY_SPECIFIC.model.suspend_id;
+
+						var suspend_id = _this9.obj_personnel.COMPANY_SPECIFIC.model.suspend_id;
+						if (suspend_id == undefined || suspend_id == null || suspend_id == 0) {
+							_this9.saveSuspend(suspend_id, lsuspend_start_dt, lsuspend_end_dt);
+						} else {
+							_this9.updateSuspend(suspend_id, lsuspend_start_dt, lsuspend_end_dt);
+						}
+					}
+
+					var pbi = _this9.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.personnel_bank_id;
+					var bank_id = _this9.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id;
+					var account_name = _this9.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name;
+					var account_no = _this9.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no;
+					if (pbi == undefined || pbi.toString().length == 0) {
+						if (bank_id != undefined && bank_id.toString().length > 0) {
+							_this9.savePersonnelBank(global_company_id, bank_id, account_name, account_no);
+						}
+					} else if (pbi != undefined && pbi.toString().length > 0) {
+						if (bank_id == undefined || bank_id.toString().length == 0) {
+							_this9.updatePersonnelBank(pbi, bank_id, account_name, "CHECK");
+						} else {
+							_this9.updatePersonnelBank(pbi, bank_id, account_name, account_no);
+						}
+					}
+
+					_this9.loadGlobalCompany(_this9.obj_personnel.global_indiv_id);
+					_settings2.default.isNavigating = false;
+					_toastr2.default.success("", "Record saved.");
+				}, function (e1) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e1, "Error in updating global company info.");
+				});
+			}, function (e) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e, "Error in updating global company.");
+			});
+		};
+
+		company_info_main.prototype.saveSuspend = function saveSuspend(company_id, start_dt, end_dt) {
+			var _this10 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = (0, _helpers.DateToday)();
+
+			var query = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").orderByDesc("SUSPEND_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s2) {
+				var maxID = 1;
+				if (s2.results.length > 0) {
+					maxID = s2.results[0].SUSPEND_ID + 1;
+				}
+				var suspend_trx = {
+					SUSPEND_ID: maxID,
+					GLOBAL_ID: _this10.obj_personnel.global_indiv_id,
+					COMPANY_ID: company_id,
+					SUSPEND_LEVEL: 2,
+					START_DT: start_dt,
+					END_DT: end_dt,
+					CREATED_BY: _this10.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("SUSPEND_TRX", suspend_trx);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s3) {
+					_settings2.default.isNavigating = false;
+				}, function (e3) {
+					_settings2.default.isNavigating = false;
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+					_toastr2.default.error(e3, "Error in saving suspend info.");
+				});
+			}, function (e2) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e2, "Error in quering suspend id.");
+			});
+		};
+
+		company_info_main.prototype.updateSuspend = function updateSuspend(suspend_id, start_dt, end_dt) {
+			var _this11 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = (0, _helpers.DateToday)();
+			var query = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").where("SUSPEND_ID", "==", suspend_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s4) {
+				s4.results[0].START_DT = start_dt;
+				s4.results[0].END_DT = end_dt;
+				s4.results[0].LAST_UPDATED_BY = _this11.obj_personnel.USER.USER_ID;
+				s4.results[0].LAST_UPDATED_DT = dateToday;
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s5) {
+					console.log("Suspend record has been updated.");
+					_settings2.default.isNavigating = false;
+				}, function (e5) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e5, "Error in updating suspend info.");
+				});
+			}, function (e4) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e4, "Error in querying suspend info.");
+			});
+		};
+
+		company_info_main.prototype.savePersonnelBank = function savePersonnelBank(global_company_id, bank_id, acct_name, account_no) {
+			var _this12 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = (0, _helpers.DateToday)();
+			var query = (0, _entityManagerFactory.EntityQuery)().from("PERSONNEL_BANK_TRX").orderByDesc("PERSONNEL_BANK_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (q1) {
+				var maxID = 1;
+				if (q1.results.length > 0) {
+					maxID = q1.results[0].PERSONNEL_BANK_ID + 1;
+				}
+
+				var personnel_bank_trx = {
+					PERSONNEL_BANK_ID: maxID,
+					GLOBAL_COMPANY_ID: global_company_id,
+					BANK_ID: bank_id,
+					ACCT_NAME: acct_name,
+					ACCOUNT_NO: account_no,
+					CREATED_BY: _this12.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("PERSONNEL_BANK_TRX", personnel_bank_trx);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s2) {
+					_this12.loadPersonnelBank(global_company_id);
+				}, function (e2) {
+					_settings2.default.isNavigating = false;
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+					_toastr2.default.error(e2, "Error in saving personnel bank info.");
+				});
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in querying personnel bank id.");
+			});
+		};
+
+		company_info_main.prototype.updatePersonnelBank = function updatePersonnelBank(personnel_bank_id, bank_id, acct_name, account_no) {
+			var _this13 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = (0, _helpers.DateToday)();
+			var query = (0, _entityManagerFactory.EntityQuery)().from("PERSONNEL_BANK_TRX").where("PERSONNEL_BANK_ID", "==", personnel_bank_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (q1) {
+
+				if (q1.results.length == 0) {
+					_toastr2.default.error("", "No personnel bank with an ID of " + personnel_bank_id + " found.");
+					return;
+				}
+
+				if (account_no != "CHECK") {
+					q1.results[0].BANK_ID = bank_id;
+				}
+
+				q1.results[0].ACCOUNT_NO = account_no;
+				q1.results[0].LAST_UPDATED_BY = _this13.obj_personnel.USER.USER_ID;
+				q1.results[0].LAST_UPDATED_DT = dateToday;
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s2) {
+					_this13.loadPersonnelBank(_this13.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
+					console.log("", "bank info has been updated.");
+				}, function (e2) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e2, "Error in updating personnel bank.");
+				});
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error("", "Error in querying personnel bank.");
+			});
+		};
+
+		company_info_main.prototype.dd_bankChanged = function dd_bankChanged() {
+			var bank_id = this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id;
+			if (bank_id != undefined && bank_id != null && bank_id.length > 0) {
+				var bank = this.obj_personnel.BANK.find(function (b) {
+					return b.id == bank_id;
+				});
+				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm = bank.long_nm;
+				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = this.obj_personnel.HEADER.last_name + ", " + this.obj_personnel.HEADER.given_name + " " + this.obj_personnel.HEADER.middle_name;
+			} else {
+
+				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = "";
+				this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no = "";
+			}
+		};
+
+		company_info_main.prototype.updateCompanyIndex = function updateCompanyIndex(company_id, lastIndex) {
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("COMPANY_SPECIFIC_INDEX").where("COMPANY_SPECIFIC_ID", "==", company_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s) {
+				s.results[0].COMPANY_INDEX = lastIndex + 1;
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s1) {
+					console.log("index was updated.");
+					_settings2.default.isNavigating = false;
+				}, function (e1) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e1, "Error in updating company specific index.");
+				});
+			}, function (e) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.clear();
+				_toastr2.default.error(e, "Error in querying company specific index.");
+			});
+		};
+
+		company_info_main.prototype.btnAdd_accreditation = function btnAdd_accreditation() {
+			this.accreditation_status = "ADD";
+		};
+
+		company_info_main.prototype.btnEdit_accreditation = function btnEdit_accreditation(item) {
+			console.log(item);
+			this.accreditation_status = "EDIT";
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_id = item.accreditation_id;
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id = item.job_grp_id;
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_job_id = item.job_id;
+			var start_dt = (0, _helpers.formatDate)(item.eff_start_dt);
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_start_dt = start_dt;
+			var end_dt = (0, _helpers.formatDate)(item.eff_end_dt);
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_end_dt = end_dt;
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_competency = item.competency;
+		};
+
+		company_info_main.prototype.btnRemove_accreditation = function btnRemove_accreditation(item) {
+			var _this14 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove this accreditation record?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+
+					var query = (0, _entityManagerFactory.EntityQuery)().from('ACCREDITATION_TRX').where('ACCREDITATION_ID', '==', item.accreditation_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+						success.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+							_toastr2.default.success("", "The accreditation info was successfully removed.");
+							_this14.loadAccreditation(_this14.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
+						}, function (error) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error("", "Error in removing accreditation info.");
+						});
+					});
+				}
+			});
+		};
+
+		company_info_main.prototype.clearAccreditationField = function clearAccreditationField() {
+			this.accreditation_status = "";
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_id = "";
+			if (this.obj_personnel.JOB_GROUP.length > 0) {
+				this.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id = this.obj_personnel.JOB_GROUP[0].id;
+				this.dd_jobGroupChange();
+
+				if (this.obj_personnel.JOB.length > 0) {
+					this.obj_personnel.COMPANY_SPECIFIC.model.a_job_id = this.obj_personnel.JOB[0].id;
+				}
+			}
+
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_competency = "";
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_start_dt = "";
+			this.obj_personnel.COMPANY_SPECIFIC.model.a_end_dt = "";
+			$("#a_start_dt").val("");
+			$("#a_end_dt").val("");
+		};
+
+		company_info_main.prototype.Digit = function Digit(event) {
+			return (0, _helpers.isDigit)(event);
+		};
+
+		company_info_main.prototype.validateAccreditation = function validateAccreditation() {
+			var strValidation = "";
+			var _competency = this.obj_personnel.COMPANY_SPECIFIC.model.a_competency;
+			var _start_dt = $("#a_start_dt").val();
+			var _end_dt = $("#a_end_dt").val();
+			if (_competency == undefined || _competency == null || _competency.length == 0) {
+				strValidation += "No competency level specified.<br/>";
+			}
+
+			if (_start_dt == undefined || _start_dt == null || _start_dt.length == 0) {
+				strValidation += "No start date specified. <br/>";
+			} else {
+				if (_end_dt == undefined || _end_dt == null || _end_dt.length == 0) {
+					strValidation += "No end date specified. <br/>";
+				} else {
+					if (!(0, _moment2.default)(_start_dt).isValid()) {
+						strValidation += "Invalid start date. <br/>";
+					} else {
+						if (!(0, _moment2.default)(_end_dt).isValid()) {
+							strValidation += "Invalid end date. <br/>";
+						} else {
+							var d1 = new Date(_start_dt);
+							var d2 = new Date(_end_dt);
+							if (d2 < d1) {
+								strValidation += "end date cannot be greater than start date. <br/>";
+							} else {
+								this.obj_personnel.COMPANY_SPECIFIC.model.a_start_dt = _start_dt;
+								this.obj_personnel.COMPANY_SPECIFIC.model.a_end_dt = _end_dt;
+							}
+						}
+					}
+				}
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				if (this.accreditation_status == "ADD") {
+					this.saveAccreditation(this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
+				} else if (this.accreditation_status == "EDIT") {
+					var accreditation_id = this.obj_personnel.COMPANY_SPECIFIC.model.a_id;
+					this.updateAccreditation(accreditation_id);
+				}
+			}
+		};
+
+		company_info_main.prototype.saveAccreditation = function saveAccreditation(global_company_id) {
+			var _this15 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+
+			var query = (0, _entityManagerFactory.EntityQuery)().from("ACCREDITATION_TRX").orderByDesc("ACCREDITATION_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				var maxID = 1;
+				if (s1.results.length > 0) {
+					maxID = s1.results[0].ACCREDITATION_ID + 1;
+				}
+
+				var accreditation_trx = {
+					ACCREDITATION_ID: maxID,
+					GLOBAL_COMPANY_ID: global_company_id,
+					EFF_START_DT: _this15.convertToGMT8(_this15.obj_personnel.COMPANY_SPECIFIC.model.a_start_dt),
+					EFF_END_DT: _this15.convertToGMT8(_this15.obj_personnel.COMPANY_SPECIFIC.model.a_end_dt),
+					DIVISION_ID: _this15.obj_personnel.COMPANY_SPECIFIC.model.division_id,
+					CATEGORY_ID: _this15.obj_personnel.COMPANY_SPECIFIC.model.category_id,
+					JOB_GRP_ID: _this15.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id,
+					JOB_ID: _this15.obj_personnel.COMPANY_SPECIFIC.model.a_job_id,
+					COMPETENCY: _this15.obj_personnel.COMPANY_SPECIFIC.model.a_competency,
+					HOME_FL: '0',
+					ENTRY_FL: '0',
+					CREATED_BY: _this15.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("ACCREDITATION_TRX", accreditation_trx);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s2) {
+					_toastr2.default.success("", "Record saved.");
+					_this15.clearAccreditationField();
+					_this15.loadAccreditation(global_company_id);
+				}, function (e2) {
+					_settings2.default.isNavigating = false;
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+					_toastr2.default.error(e2, "Error in saving accreditation.");
+				});
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in querying accreditation id.");
+			});
+		};
+
+		company_info_main.prototype.updateAccreditation = function updateAccreditation(accreditation_id) {
+			var _this16 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = (0, _helpers.DateToday)();
+			var query = (0, _entityManagerFactory.EntityQuery)().from("ACCREDITATION_TRX").where("ACCREDITATION_ID", "==", accreditation_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				if (s1.results.length == 0) {
+					_toastr2.default.error("", "Error in querying accreditation info.");
+					return;
+				}
+
+				s1.results[0].JOB_GRP_ID = _this16.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id;
+				s1.results[0].JOB_ID = _this16.obj_personnel.COMPANY_SPECIFIC.model.a_job_id;
+				s1.results[0].COMPETENCY = _this16.obj_personnel.COMPANY_SPECIFIC.model.a_competency;
+				s1.results[0].EFF_START_DT = _this16.convertToGMT8(_this16.obj_personnel.COMPANY_SPECIFIC.model.a_start_dt);
+				s1.results[0].EFF_END_DT = _this16.convertToGMT8(_this16.obj_personnel.COMPANY_SPECIFIC.model.a_end_dt);
+				s1.results[0].LAST_UPDATED_BY = _this16.obj_personnel.USER.USER_ID;
+				s1.results[0].LAST_UPDATED_DT = dateToday;
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s2) {
+					_toastr2.default.success(s2, "Accreditation has been updated.");
+					_this16.clearAccreditationField();
+					_this16.loadAccreditation(_this16.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
+				}, function (e2) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e2, "Error in updating accreditation info.");
+				});
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in querying accreditation info.");
+			});
+		};
+
+		company_info_main.prototype.dd_jobGroupChange = function dd_jobGroupChange() {
+			var tmp = [];
+			var selectedJobGrp = this.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id;
+			_.each(this.obj_personnel.JOB, function (j) {
+				if (selectedJobGrp == j.group) {
+					tmp.push({
+						value: j.value,
+						text: j.text
+					});
+				}
+			});
+			this.accreditation_joblist = tmp;
+		};
+
+		company_info_main.prototype.OrderByText = function OrderByText(a, b) {
+			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
+			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
+			return 0;
+		};
+
+		return company_info_main;
+	}()) || _class);
+});
+define('ppid/forms/company_info_work_exp',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory', 'breeze-client', '../modals/ppid_search', '../modals/DialogBox', 'moment', '../../helpers', 'settings'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory, _breezeClient, _ppid_search, _DialogBox, _moment, _helpers, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.company_info_work_exp = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var company_info_work_exp = exports.company_info_work_exp = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
+		function company_info_work_exp(DialogService, obj_personnel, toastr) {
+			var _this = this;
+
+			_classCallCheck(this, company_info_work_exp);
+
+			this._disableBtnAdd = false;
+			this._disableBtnSave = true;
+			this._disableBtnEdit = false;
+			this._disableBtnRemove = false;
+			this._disableForm = true;
+			this._formStatus = "";
+			this.obj_personnel = null;
+			this.alreadyLoaded = false;
+
+			this.obj_personnel = obj_personnel;
+			this.DialogService = DialogService;
+
+			this.obj_personnel.OBSERVERS.company_work_exp_clicked.push(function (global_indiv_id) {
+				if (!_this.alreadyLoaded) {
+					_this.alreadyLoaded = false;
+					$("#startDt").datepicker();
+					$("#endDt").datepicker();
+				}
+				toastr.clear();
+				toastr.info("", "Loading work experience list...");
+				_this.loadWorkExperience(global_indiv_id);
+				_this.clearField();
+			});
+		}
+
+		company_info_work_exp.prototype.loadWorkExperience = function loadWorkExperience(global_indiv_id) {
+			var _this2 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("WORK_EXPERIENCE_TRX").where("GLOBAL_INDIV_ID", "==", global_indiv_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+
+				var tmp = [];
+				_.each(s1.results, function (r) {
+					var from = (0, _helpers.formatDate)(r.START_DT);
+					var to = (0, _helpers.formatDate)(r.END_DT);
+					var position = _this2.obj_personnel.POSITION.find(function (x) {
+						if (x.value == r.POSITION_CD) return x;
+					});
+
+					tmp.push({
+						work_experience_id: r.WORK_EXPERIENCE_ID,
+						employer: r.EMPLOYER,
+						start_dt: from,
+						end_dt: to,
+						present_fl: r.PRESENT_FL,
+						salary: r.SALARY,
+						position_cd: r.POSITION_CD,
+						position: position.text,
+						freelance_fl: r.FREELANCE_FL,
+						reason_for_leaving: r.REASON_FOR_LEAVING
+					});
+				});
+
+				_this2.obj_personnel.WORK_EXPERIENCE.list = tmp;
+				_settings2.default.isNavigating = false;
+				_toastr2.default.clear();
+				_toastr2.default.success("", "Work experience list has been loaded...");
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.clear();
+				_toastr2.default.error(e1, "Error in loading work experience list.");
+			});
+		};
+
+		company_info_work_exp.prototype.clearField = function clearField() {
+			_toastr2.default.clear();
+			this.obj_personnel.WORK_EXPERIENCE.model = {};
+			this._disableBtnAdd = false;
+			this._disableBtnSave = true;
+			this._disableForm = true;
+			this._formStatus = "";
+			this._disableBtnEdit = false;
+			this._disableBtnRemove = false;
+		};
+
+		company_info_work_exp.prototype.btnAdd = function btnAdd() {
+			this._disableBtnAdd = true;
+			this._disableBtnSave = false;
+			this._disableForm = false;
+			this._formStatus = "ADD";
+			this._disableBtnEdit = true;
+			this._disableBtnRemove = true;
+		};
+
+		company_info_work_exp.prototype.btnEdit = function btnEdit(item) {
+
+			this._disableBtnAdd = true;
+			this._disableBtnSave = false;
+			this._disableForm = false;
+			this._disableBtnEdit = true;
+			this._disableBtnRemove = true;
+
+			this.obj_personnel.WORK_EXPERIENCE.model.work_experience_id = item.work_experience_id;
+			this.obj_personnel.WORK_EXPERIENCE.model.employer = item.employer;
+			this.obj_personnel.WORK_EXPERIENCE.model.start_dt = item.start_dt;
+			this.obj_personnel.WORK_EXPERIENCE.model.end_dt = item.end_dt;
+			this.obj_personnel.WORK_EXPERIENCE.model.present_fl = item.present_fl == 1 ? true : false;
+			this.obj_personnel.WORK_EXPERIENCE.model.salary = item.salary;
+			this.obj_personnel.WORK_EXPERIENCE.model.position_cd = item.position_cd;
+			this.obj_personnel.WORK_EXPERIENCE.model.freelance_fl = item.freelance_fl == 1 ? true : false;
+			this.obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving = item.reason_for_leaving;
+			this._formStatus = "EDIT";
+		};
+
+		company_info_work_exp.prototype.btnRemove = function btnRemove(item) {
+			var _this3 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the work experience?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+					var query = (0, _entityManagerFactory.EntityQuery)().from('WORK_EXPERIENCE_TRX').where('WORK_EXPERIENCE_ID', '==', item.work_experience_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+						success.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+							_toastr2.default.success("", "The work experience was successfully removed.");
+							_this3.loadWorkExperience(_this3.obj_personnel.global_indiv_id);
+						}, function (error) {
+							_toastr2.default.clear();
+							_toastr2.default.error("", "Error in removing work experience.");
+							_settings2.default.isNavigating = false;
+						});
+					});
+				}
+			});
+		};
+
+		company_info_work_exp.prototype.validate = function validate() {
+
+			var strValidation = "";
+			this.obj_personnel.WORK_EXPERIENCE.model.start_dt = $("#startDt").val();
+			this.obj_personnel.WORK_EXPERIENCE.model.end_dt = $("#endDt").val();
+
+			if (this.obj_personnel.WORK_EXPERIENCE.model.employer == undefined || this.obj_personnel.WORK_EXPERIENCE.model.employer == null || this.obj_personnel.WORK_EXPERIENCE.model.employer.length == 0) {
+				strValidation += "No employer specified.<br/>";
+			}
+
+			if (this.obj_personnel.WORK_EXPERIENCE.model.start_dt == undefined || this.obj_personnel.WORK_EXPERIENCE.model.start_dt == null || this.obj_personnel.WORK_EXPERIENCE.model.start_dt.length == 0) {
+				strValidation += "No start date specified.<br/>";
+			} else {
+				if (!(0, _moment2.default)(new Date(this.obj_personnel.WORK_EXPERIENCE.model.start_dt)).isValid()) {
+					strValidation += "Invalid start date.<br/>";
+				}
+			}
+
+			if (this.obj_personnel.WORK_EXPERIENCE.model.end_dt == undefined || this.obj_personnel.WORK_EXPERIENCE.model.end_dt == null || this.obj_personnel.WORK_EXPERIENCE.model.end_dt.length == 0) {
+				strValidation += "No end date specified.<br/>";
+			} else {
+				if (!(0, _moment2.default)(new Date(this.obj_personnel.WORK_EXPERIENCE.model.end_dt)).isValid()) {
+					strValidation += "Invalid end date.<br/>";
+				}
+			}
+
+			if (this.obj_personnel.WORK_EXPERIENCE.model.position_cd == undefined || this.obj_personnel.WORK_EXPERIENCE.model.position_cd.length == 0) {
+				strValidation += "No position specified. <br/>";
+			}
+
+			if (this.obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving == undefined || this.obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving == null || this.obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving.length == 0) {
+				strValidation += "No reason for leaving specified.<br/>";
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				if (this._formStatus == "ADD") {
+					this.saveWorkExp(this.obj_personnel.global_indiv_id);
+				} else if (this._formStatus == "EDIT") {
+					this.updateWorkExp(this.obj_personnel.WORK_EXPERIENCE.model.work_experience_id);
+				}
+			}
+		};
+
+		company_info_work_exp.prototype.saveWorkExp = function saveWorkExp(global_indiv_id) {
+			var _this4 = this;
+
+			var dateToday = (0, _helpers.DateToday)();
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("WORK_EXPERIENCE_TRX").orderByDesc("WORK_EXPERIENCE_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				var MaxId = 1;
+				if (s1.results.length > 0) {
+					MaxId = s1.results[0].WORK_EXPERIENCE_ID + 1;
+				}
+
+				var work_exp_trx = {
+					WORK_EXPERIENCE_ID: MaxId,
+					GLOBAL_INDIV_ID: global_indiv_id,
+					EMPLOYER: _this4.obj_personnel.WORK_EXPERIENCE.model.employer,
+					START_DT: _this4.obj_personnel.WORK_EXPERIENCE.model.start_dt,
+					END_DT: _this4.obj_personnel.WORK_EXPERIENCE.model.end_dt,
+					SALARY: _this4.obj_personnel.WORK_EXPERIENCE.model.salary,
+					POSITION_CD: _this4.obj_personnel.WORK_EXPERIENCE.model.position_cd,
+					REASON_FOR_LEAVING: _this4.obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving,
+					PRESENT_FL: _this4.obj_personnel.WORK_EXPERIENCE.model.present_fl == true ? 1 : 0,
+					FREELANCE_FL: _this4.obj_personnel.WORK_EXPERIENCE.model.freelance_fl == true ? 1 : 0,
+					CREATED_BY: _this4.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("WORK_EXPERIENCE_TRX", work_exp_trx);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s2) {
+
+					_toastr2.default.success("", "Record saved.");
+					_this4.clearField();
+					_this4.loadWorkExperience(_this4.obj_personnel.global_indiv_id);
+				}, function (e2) {
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+
+					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+						var errors = entity.entityAspect.getValidationErrors();
+						if (errors.length > 0) console.log(errors);
+					});
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e2, "Error in saving work experience.");
+				});
+			}, function (e1) {
+
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in querying max id.");
+			});
+		};
+
+		company_info_work_exp.prototype.updateWorkExp = function updateWorkExp(work_exp_id) {
+			var _this5 = this;
+
+			var query = (0, _entityManagerFactory.EntityQuery)().from("WORK_EXPERIENCE_TRX").where("WORK_EXPERIENCE_ID", "==", work_exp_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+
+				s1.results[0].EMPLOYER = _this5.obj_personnel.WORK_EXPERIENCE.model.employer;
+				s1.results[0].START_DT = _this5.obj_personnel.WORK_EXPERIENCE.model.start_dt;
+				s1.results[0].END_DT = _this5.obj_personnel.WORK_EXPERIENCE.model.end_dt;
+				s1.results[0].PRESENT_FL = _this5.obj_personnel.WORK_EXPERIENCE.model.present_fl ? 1 : 0;
+				s1.results[0].SALARY = _this5.obj_personnel.WORK_EXPERIENCE.model.salary;
+				s1.results[0].POSITION_CD = _this5.obj_personnel.WORK_EXPERIENCE.model.position_cd;
+				s1.results[0].FREELANCE_FL = _this5.obj_personnel.WORK_EXPERIENCE.model.freelance_fl ? 1 : 0;
+				s1.results[0].REASON_FOR_LEAVING = _this5.obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving;
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s2) {
+					_toastr2.default.success("", "Record saved.");
+					_this5.clearField();
+					_this5.loadWorkExperience(_this5.obj_personnel.global_indiv_id);
+				}, function (e2) {
+					_toastr2.default.error(e2, "Error in updating work experience.");
+				});
+			}, function (e1) {
+				_toastr2.default.error(e1, "Error in querying work experience.");
+			});
+		};
+
+		return company_info_work_exp;
+	}()) || _class);
+});
+define('ppid/forms/gov_info',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.gov_info = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var gov_info = exports.gov_info = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
+		function gov_info(dialogService, obj_personnel, toastr) {
+			_classCallCheck(this, gov_info);
+
+			this.obj_personnel = null;
+			this._activeTab = 0;
+			this._404_img = "/images/404.png";
+
+			this.dialogService = dialogService;
+			this.obj_personnel = obj_personnel;
+		}
+
+		gov_info.prototype.clickTab_GovInfo = function clickTab_GovInfo(tab_num) {
+			var _this = this;
+
+			if (this.obj_personnel.global_indiv_id.length === 0) return;
+			switch (tab_num) {
+				case 0:
+					this.obj_personnel.OBSERVERS.govinfo_main_clicked.forEach(function (delegate) {
+						_toastr2.default.clear();
+						_toastr2.default.info("", "Loading government info...");
+						delegate(_this.obj_personnel.global_indiv_id);
+					});
+					break;
+			}
+		};
+
+		return gov_info;
+	}()) || _class);
+});
+define('ppid/forms/gov_info_main',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment', 'settings'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.gov_info_main = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var gov_info_main = exports.gov_info_main = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
+		function gov_info_main(obj_personnel, toastr, DialogService) {
+			var _this = this;
+
+			_classCallCheck(this, gov_info_main);
+
+			this.obj_personnel = null;
+			this.alreadyLoaded = false;
+			this._disableOtherGovernmentInfo = true;
+
+
+			$("#affidavit_dt").datepicker();
+			this.obj_personnel = obj_personnel;
+			this.DialogService = DialogService;
+			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_id) {
+				if (tab_num == 3) {
+					if (!_this.alreadyLoaded) {
+						_this.alreadyLoaded = true;
+						$("#affidavit_dt").datepicker();
+						$("#expiry_dt").datepicker();
+						$("#vat_reg_dt").datepicker();
+						toastr.clear();
+						toastr.info("", "Loading data...");
+						_this.load_TaxInformation(global_id);
+						_this.load_TaxAffidavit(global_id);
+						_this.load_Permit(global_id);
+						_this.clearTaxAffidavitField();
+					}
+				}
+
+				if (_this.obj_personnel.USER.COMPANY_ID == 1) {
+					_this._disableOtherGovernmentInfo = false;
+				}
+			});
+
+			this.obj_personnel.OBSERVERS.govinfo_main_clicked.push(function (global_id) {
+				_this.load_TaxInformation(global_id);
+				_this.load_TaxAffidavit(global_id);
+				_this.load_Permit(global_id);
+				_this.clearTaxAffidavitField();
+			});
+
+			this.obj_personnel.OBSERVERS.clear_ppid.push(function () {
+				_this.obj_personnel.GOVERNMENT_INFO = {
+					modelTaxAffidavit: {},
+					modelPermit: {},
+					tax_affidavit: [],
+					permits: []
+				};
+				_this.alreadyLoaded = false;
+			});
+		}
+
+		gov_info_main.prototype.formatDate = function formatDate(strDate) {
+			if (strDate == null || strDate.length == 0) return "";
+			var dt = new Date(strDate);
+			var month = dt.getMonth() + 1;
+			var day = dt.getDate();
+			var year = dt.getFullYear();
+			return ('0' + month).slice(-2) + '/' + ('0' + day).slice(-2) + '/' + ("000" + year).slice(-4);
+		};
+
+		gov_info_main.prototype.convertToGMT8 = function convertToGMT8(date) {
+			if (date == undefined || date == null || date.length == 0) return null;
+			var tempDt = (0, _moment2.default)(date).add(8, 'hours');
+			return new Date(tempDt);
+		};
+
+		gov_info_main.prototype.validate_input = function validate_input(input, type) {
+			switch (type) {
+				case "PAGIBIG":
+					var pagibig = /^(?:\d{4}-\d{4}-\d{4})$/;
+					return pagibig.test(input);
+				case "SSS":
+					var sss = /^(?:\d{2}-\d{7}-\d{1})$/;
+					return sss.test(input);
+				case "PHILHEALTH":
+					var philhealth = /^(?:\d{2}-\d{9}-\d{1})$/;
+					return philhealth.test(input);
+				default:
+					return false;
+			}
+		};
+
+		gov_info_main.prototype.load_TaxInformation = function load_TaxInformation(global_id) {
+			var _this2 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_INDIV_MSTR").where("GLOBAL_INDIV_ID", "==", global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				_this2.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd = querySuccess.results[0].TAX_EXEMPT_CD;
+				_this2.obj_personnel.GOVERNMENT_INFO.sss_no = querySuccess.results[0].SSS_NO;
+				_this2.obj_personnel.GOVERNMENT_INFO.pagibig_no = querySuccess.results[0].PAGIBIG_NO;
+				_this2.obj_personnel.GOVERNMENT_INFO.philhealth_no = querySuccess.results[0].PHILHEALTH_NO;
+				_this2.obj_personnel.GOVERNMENT_INFO.national_id = querySuccess.results[0].NATIONAL_ID;
+				_this2.obj_personnel.GOVERNMENT_INFO.voters_id = querySuccess.results[0].VOTERS_ID;
+				_toastr2.default.clear();
+				_settings2.default.isNavigating = false;
+			}, function (errorQuery) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(errorQuery, "Error in loading Government information.");
+			});
+
+			query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_MSTR").where("GLOBAL_ID", "==", global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				_this2.obj_personnel.GOVERNMENT_INFO.input_tax_cd = querySuccess.results[0].INPUT_TAX_CD;
+				_this2.obj_personnel.GOVERNMENT_INFO.tin = querySuccess.results[0].TIN;
+				_this2.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = _this2.formatDate(querySuccess.results[0].VAT_REG_DT);
+				_this2.obj_personnel.GOVERNMENT_INFO.vat_stat_cd = querySuccess.results[0].VAT_STAT_CD;
+				_toastr2.default.success("", "Tax Information has been loaded.");
+				_settings2.default.isNavigating = false;
+			}, function (errorQuery) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(errorQuery, "Error in loading Government information.");
+			});
+		};
+
+		gov_info_main.prototype.load_TaxAffidavit = function load_TaxAffidavit(global_id) {
+			var _this3 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("TAX_AFFIDAVIT_TRX").where("GLOBAL_ID", "==", global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				_this3.obj_personnel.GOVERNMENT_INFO.tax_affidavit = [];
+				var tmpList = [];
+				_.each(querySuccess.results, function (result) {
+					tmpList.push({
+						tax_affidavit_id: result.TAX_AFFIDAVIT_ID,
+						affidavit_no: result.AFFIDAVIT_NO,
+						affidavit_dt: _this3.formatDate(result.AFFIDAVIT_DT)
+					});
+				});
+				_this3.obj_personnel.GOVERNMENT_INFO.tax_affidavit = tmpList;
+				_settings2.default.isNavigating = false;
+			}, function (errorQuery) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(errorQuery, "Error in loading tax affidavit");
+			});
+		};
+
+		gov_info_main.prototype.load_Permit = function load_Permit(global_id) {
+			var _this4 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("PERMIT_TRX").where("GLOBAL_ID", "==", global_id);
+
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (successQuery) {
+				var tmpList = [];
+				_.each(successQuery.results, function (result) {
+					var place = _this4.obj_personnel.LOCATIONS.find(function (x) {
+						return x.LOCATION_CD == result.PLACE_OF_ISSUE;
+					});
+
+					var permit = _this4.obj_personnel.PERMIT.find(function (x) {
+						return x.value == result.PERMIT_CD;
+					});
+
+					tmpList.push({
+						global_id: result.GLOBAL_ID,
+						permit_no: result.PERMIT_NO,
+						expiry_dt: _this4.formatDate(result.EXPIRY_DT),
+						permit_cd: result.PERMIT_CD,
+						agency_cd: result.AGENCY_CD,
+						permit_id: result.PERMIT_ID,
+						grant_dt: result.GRANT_DT,
+						place_of_issue: result.PLACE_OF_ISSUE,
+						poi: place.LOCATION_DESC,
+						permit_name: permit.text
+					});
+				});
+				_this4.obj_personnel.GOVERNMENT_INFO.permits = tmpList;
+				_settings2.default.isNavigating = false;
+			}, function (errorQuery) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(errorQuery, "Error in loading permits.");
+			});
+		};
+
+		gov_info_main.prototype.clearTaxAffidavitField = function clearTaxAffidavitField() {
+			_settings2.default.isNavigating = false;
+			this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no = "";
+			this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt = "";
+		};
+
+		gov_info_main.prototype.btnAdd_TaxAffidavit = function btnAdd_TaxAffidavit() {
+			var strValidation = "";
+
+			if (this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no == undefined || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no == null || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no.length == 0) {
+				strValidation += "Affidavit no is required.<br/>";
+			}
+
+			this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt = $("#affidavit_dt").val();
+			if (this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt == undefined || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt == null || this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt.length == 0) {
+				strValidation += "Affidavit date is required.<br/>";
+			} else {
+				if (!(0, _moment2.default)(this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt).isValid()) {
+					strValidation += "Invalid affidavit dt.<br/>";
+				}
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				this.insertTaxAffidavit();
+			}
+		};
+
+		gov_info_main.prototype.btnRemove_TaxAffidavit = function btnRemove_TaxAffidavit(item) {
+			var _this5 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the tax affidavit?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+
+					var query = (0, _entityManagerFactory.EntityQuery)().from('TAX_AFFIDAVIT_TRX').where('TAX_AFFIDAVIT_ID', '==', item.tax_affidavit_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+						success.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+							_toastr2.default.success("", "The tax affidavit was successfully removed.");
+							_this5.load_TaxAffidavit(_this5.obj_personnel.global_indiv_id);
+						}, function (error) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error("", "Error in removing tax affidavit.");
+						});
+					});
+				}
+			});
+		};
+
+		gov_info_main.prototype.insertTaxAffidavit = function insertTaxAffidavit() {
+			var _this6 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("TAX_AFFIDAVIT_TRX").orderByDesc("TAX_AFFIDAVIT_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				var Max = 1;
+				if (querySuccess.results.length > 0) {
+					Max = querySuccess.results[0].TAX_AFFIDAVIT_ID + 1;
+				}
+
+				var tax_affidavit = {
+					GLOBAL_ID: _this6.obj_personnel.global_indiv_id,
+					AFFIDAVIT_NO: _this6.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no,
+					TAX_AFFIDAVIT_ID: Max,
+					AFFIDAVIT_DT: _this6.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt,
+					RELEASE_DT: dateToday,
+					RETURN_DT: dateToday,
+					CREATED_BY: _this6.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("TAX_AFFIDAVIT_TRX", tax_affidavit);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+					_toastr2.default.clear();
+					_toastr2.default.success(saveSuccess, "Record saved.");
+					_this6.load_TaxAffidavit(_this6.obj_personnel.global_indiv_id);
+					_this6.clearTaxAffidavitField();
+				}, function (errorSave) {
+					_settings2.default.isNavigating = false;
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+					_toastr2.default.error(errorQuery, "Error in saving Tax affidavit.");
+				});
+			}, function (errorQuery) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(errorQuery, "Error in querying Tax affidavit id.");
+			});
+		};
+
+		gov_info_main.prototype.clearPermitField = function clearPermitField() {
+			_settings2.default.isNavigating = false;
+			this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd = "";
+			this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no = "";
+			this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt = "";
+			this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue = "";
+		};
+
+		gov_info_main.prototype.btnAdd_Permit = function btnAdd_Permit() {
+			var strValidation = "";
+
+			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd.length == 0) {
+				strValidation += "No Permit type specified.<br/>";
+			}
+
+			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no.length == 0) {
+				strValidation += "No Permit number specified.<br/>";
+			}
+
+			this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt = $("#expiry_dt").val();
+			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt.length == 0) {
+				strValidation += "No expiry date specified.<br/>";
+			} else {
+				if (!(0, _moment2.default)(this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt).isValid()) {
+					strValidation += "Invalid expiry date.<br/>";
+				}
+			}
+
+			if (this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue == undefined || this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue == null || this.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue.length == 0) {
+				strValidation += "No place of issuance specified.<br/>";
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				this.insertPermit();
+			}
+		};
+
+		gov_info_main.prototype.btnUpdate_Permit = function btnUpdate_Permit(item) {};
+
+		gov_info_main.prototype.btnRemove_Permit = function btnRemove_Permit(item) {
+			var _this7 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the permit?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+					var query = (0, _entityManagerFactory.EntityQuery)().from('PERMIT_TRX').where('PERMIT_ID', '==', item.permit_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+						success.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+							_toastr2.default.success("", "The permit was successfully removed.");
+							_this7.load_Permit(_this7.obj_personnel.global_indiv_id);
+						}, function (error) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error("", "Error in removing permit.");
+						});
+					});
+				}
+			});
+		};
+
+		gov_info_main.prototype.insertPermit = function insertPermit() {
+			var _this8 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("PERMIT_TRX").orderByDesc("PERMIT_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				var Max = 1;
+				if (querySuccess.results.length > 0) {
+					Max = querySuccess.results[0].PERMIT_ID + 1;
+				}
+
+				var permit = {
+					GLOBAL_ID: _this8.obj_personnel.global_indiv_id,
+					PERMIT_NO: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no,
+					EXPIRY_DT: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt,
+					PERMIT_CD: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd,
+					AGENCY_CD: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd,
+					PERMIT_ID: Max,
+					PLACE_OF_ISSUE: _this8.obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue,
+					CREATED_BY: _this8.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("PERMIT_TRX", permit);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "Record saved.");
+					_this8.load_Permit(_this8.obj_personnel.global_indiv_id);
+					_this8.clearPermitField();
+				}, function (errorSave) {
+					_settings2.default.isNavigating = false;
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+					_toastr2.default.clear();
+					_toastr2.default.error("", errorSave);
+				});
+			});
+		};
+
+		gov_info_main.prototype.validate = function validate() {
+
+			this.obj_personnel.GOVERNMENT_INFO.pagibig_no = $("#_pagibig").val();
+			this.obj_personnel.GOVERNMENT_INFO.philhealth_no = $("#_philhealth").val();
+			this.obj_personnel.GOVERNMENT_INFO.sss_no = $("#_sss").val();
+			var strValidation = "";
+
+			if (this.obj_personnel.GOVERNMENT_INFO.pagibig_no.length > 0) {
+				if (this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.pagibig_no, "PAGIBIG")) {
+					strValidation += "Invalid Pag-ibig No.<br/>";
+				}
+			} else {}
+
+			if (this.obj_personnel.GOVERNMENT_INFO.sss_no.length > 0) {
+				if (this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.sss_no, "SSS")) {
+					strValidation += "Invalid SSS No.<br/>";
+					console.log(this.obj_personnel.GOVERNMENT_INFO.sss_no);
+				}
+			} else {}
+
+			if (this.obj_personnel.GOVERNMENT_INFO.philhealth_no.length > 0) {
+				if (this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.philhealth_no, "PHILHEALTH")) {
+					strValidation += "Invalid Philhealth No.<br/>";
+				}
+			} else {}
+
+			this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = $("#vat_reg_dt").val();
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				this.update();
+			}
+		};
+
+		gov_info_main.prototype.update = function update() {
+			var _this9 = this;
+
+			_settings2.default.isNavigating = true;
+			var philhealth = null;
+			var pagibig = null;
+			var sss = null;
+			if (this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_") {
+				philhealth = this.obj_personnel.GOVERNMENT_INFO.philhealth_no;
+			}
+
+			if (this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____") {
+				pagibig = this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
+			}
+
+			if (this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_") {
+				sss = this.obj_personnel.GOVERNMENT_INFO.sss_no;
+			}
+
+			var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_INDIV_MSTR").where("GLOBAL_INDIV_ID", "==", this.obj_personnel.global_indiv_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess1) {
+				querySuccess1.results[0].TAX_EXEMPT_CD = _this9.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd;
+
+				querySuccess1.results[0].SSS_NO = sss;
+				querySuccess1.results[0].PAGIBIG_NO = pagibig;
+				querySuccess1.results[0].PHILHEALTH_NO = philhealth;
+				querySuccess1.results[0].NATIONAL_ID = _this9.obj_personnel.GOVERNMENT_INFO.national_id;
+				querySuccess1.results[0].VOTERS_ID = _this9.obj_personnel.GOVERNMENT_INFO.voters_id;
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (save1) {
+
+					query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_MSTR").where("GLOBAL_ID", "==", _this9.obj_personnel.global_indiv_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess2) {
+						querySuccess2.results[0].INPUT_TAX_CD = _this9.obj_personnel.GOVERNMENT_INFO.input_tax_cd;
+						querySuccess2.results[0].VAT_REG_DT = _this9.convertToGMT8(_this9.obj_personnel.GOVERNMENT_INFO.vat_reg_dt);
+						querySuccess2.results[0].VAT_STAT_CD = _this9.obj_personnel.GOVERNMENT_INFO.vat_stat_cd;
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (save2) {
+							_toastr2.default.clear();
+							_toastr2.default.success("", "Record saved.");
+							_settings2.default.isNavigating = false;
+						}, function (error2) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error("", error2);
+						});
+					});
+				}, function (error1) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.clear();
+					_toastr2.default.error("", error1);
+				});
+			}, function (queryError1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.clear();
+				_toastr2.default.error(queryError1, "Error in querying other government info.");
+			});
+		};
+
+		gov_info_main.prototype.isDigit = function isDigit(event) {
+			if (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 9 || event.keyCode == 10 || event.keyCode == 13 || event.keyCode == 8 || event.keyCode == 116 || event.keyCode == 46 || event.keyCode <= 40 && event.keyCode >= 37) {
+				return true;
+			} else {
+				return false;
+			}
+		};
+
+		gov_info_main.prototype.input_mask = function input_mask(id, mask) {
+			var myMask = mask;
+			var myCaja = document.getElementById(id);
+			var myText = "";
+			var myNumbers = [];
+			var myOutPut = "";
+			var theLastPos = 1;
+			myText = myCaja.value;
+
+			for (var i = 0; i < myText.length; i++) {
+				if (!isNaN(myText.charAt(i)) && myText.charAt(i) != " ") {
+					myNumbers.push(myText.charAt(i));
+				}
+			}
+
+			for (var j = 0; j < myMask.length; j++) {
+				if (myMask.charAt(j) == "_") {
+					if (myNumbers.length == 0) myOutPut = myOutPut + myMask.charAt(j);else {
+						myOutPut = myOutPut + myNumbers.shift();
+						theLastPos = j + 1;
+					}
+				} else {
+					myOutPut = myOutPut + myMask.charAt(j);
+				}
+			}
+
+			document.getElementById(id).value = myOutPut;
+			document.getElementById(id).setSelectionRange(theLastPos, theLastPos);
+		};
+
+		return gov_info_main;
+	}()) || _class);
+});
+define('ppid/forms/main',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory', 'breeze-client', '../modals/ppid_search', 'moment', '../../helpers', '../../cache_obj', 'settings'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory, _breezeClient, _ppid_search, _moment, _helpers, _cache_obj, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.main = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var main = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default, _cache_obj.cache_obj), _dec(_class = function () {
+		function main(dialogService, obj_personnel, toastr, cache_obj) {
+			var _this = this;
+
+			_classCallCheck(this, main);
+
+			this._disableSearchPersonnel = false;
+			this._disableCreatePersonnel = false;
+			this._disableSavePersonnel = true;
+			this._disableClearData = true;
+			this._disableResetData = true;
+			this._disableForm = true;
+			this._isActiveTab = true;
+			this.gender = ["Male", "Female"];
+			this.selectedGender = "";
+			this.selected_citizenship = "";
+			this.selected_group = "";
+			this.obj_personnel = null;
+			this.cache_obj = null;
+			this._404_img = "/images/404.png";
+			this.primary_img = "/styles/images/abslogo_BIG.png";
+
+			this.obj_personnel = obj_personnel;
+			this.dialogService = dialogService;
+			this.cache_obj = cache_obj;
+			this.obj_personnel.USER = this.cache_obj.USER;
+			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_id) {});
+
+			this.obj_personnel.OBSERVERS.ppid_dialog.push(function (val) {
+				_this.loadData(val);
+			});
+		}
+
+		main.prototype.getAge = function getAge(dateString) {
+			if (dateString == null || dateString.length == 0) return;
+			var today = new Date();
+			var birthDate = new Date(dateString);
+			var age = today.getFullYear() - birthDate.getFullYear();
+			var m = today.getMonth() - birthDate.getMonth();
+			if (m < 0 || m === 0 && today.getDate() < birthDate.getDate()) {
+				age--;
+			}
+			return age;
+		};
+
+		main.prototype.loadData = function loadData(global_id) {
+			var _this2 = this;
+
+			_settings2.default.isNavigating = true;
+
+			this.obj_personnel.global_indiv_id = global_id;
+			var _query = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_INDIV_MSTR').where('GLOBAL_INDIV_ID', '==', global_id);
+
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+
+				_.each(success.results, function (result) {
+					_this2.obj_personnel.HEADER.global_indiv_id = result.GLOBAL_INDIV_ID;
+					_this2.obj_personnel.HEADER.given_name = result.GIVEN_NAME;
+					_this2.obj_personnel.HEADER.last_name = result.LAST_NAME;
+					_this2.obj_personnel.HEADER.middle_name = result.MIDDLE_NAME;
+					_this2.obj_personnel.HEADER.religion_cd = result.RELIGION_CD;
+					if ((0, _moment2.default)(result.BIRTH_DT).isValid()) {
+						var birthdt = _moment2.default.utc(result.BIRTH_DT).format("MM/DD/YYYY");
+						birthdt = new Date(birthdt);
+						if (birthdt.length == 0) {} else {
+							$("#birthDate").datepicker("setValue", new Date(birthdt));
+						}
+						_this2.obj_personnel.HEADER.birth_dt = birthdt;
+					}
+					_this2.obj_personnel.HEADER.age = _this2.getAge(result.BIRTH_DT);
+					_this2.obj_personnel.HEADER.civil_status = result.CIVIL_STATUS;
+					_this2.obj_personnel.HEADER.mother_maiden_name = result.MOTHER_MAIDEN_NAME;
+					_this2.obj_personnel.HEADER.alias = result.ALIAS;
+					_this2.obj_personnel.HEADER.birth_place = result.BIRTH_PLACE;
+					_this2.obj_personnel.HEADER.gender = result.GENDER;
+					switch (result.GENDER) {
+						case "M":
+							_this2.selectedGender = "Male";
+							break;
+						case "F":
+							_this2.selectedGender = "Female";
+							break;
+					}
+					_this2.obj_personnel.HEADER.acr_no = result.ACR_NO;
+				});
+				_toastr2.default.clear();
+				_toastr2.default.success("", "Success");
+				_settings2.default.isNavigating = false;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in retrieving data[1].");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_MSTR').where('GLOBAL_ID', '==', global_id);
+
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+
+				_.each(success.results, function (result) {
+					_this2.obj_personnel.HEADER.tin = result.TIN;
+					_this2.obj_personnel.HEADER.country_cd = result.COUNTRY_CD;
+					_this2.obj_personnel.HEADER.country_base_cd = result.COUNTRY_BASE_CD;
+					_this2.obj_personnel.HEADER.location_base_cd = result.LOCATION_BASE_CD;
+					_this2.obj_personnel.HEADER.status_cd = result.STATUS_CD;
+					_this2.obj_personnel.HEADER.created_by = result.CREATED_BY;
+					_this2.obj_personnel.HEADER.created_dt = _moment2.default.utc(result.CREATED_DT).format("MM/DD/YYY hh:mm A");
+					_this2.obj_personnel.HEADER.last_updated_by = result.LAST_UPDATED_BY;
+					_this2.obj_personnel.HEADER.last_updated_dt = _moment2.default.utc(result.LAST_UPDATED_DT).format("MM/DD/YYYY hh:mm A");
+
+					if (_this2.obj_personnel.HEADER.status_cd == "SUSPEND") {
+						var _pred1 = _breezeClient2.default.Predicate.create("GLOBAL_ID", "==", global_id);
+						var _pred2 = _breezeClient2.default.Predicate.create("SUSPEND_LEVEL", "==", 1);
+						var _finalPred = _breezeClient2.default.Predicate.and([_pred1, _pred2]);
+						_query = (0, _entityManagerFactory.EntityQuery)().from('SUSPEND_TRX').where(_finalPred).orderByDesc("SUSPEND_ID").take(1);
+						(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+							if (success.results.length > 0) {
+								_this2.obj_personnel.HEADER.suspend_id = success.results[0].SUSPEND_ID;
+
+								var start_dt = (0, _helpers.formatDate)(success.results[0].START_DT);
+								_this2.obj_personnel.HEADER.suspension_start = start_dt;
+								$("#suspensionFrom").datepicker("setValue", new Date(start_dt));
+
+								var end_dt = (0, _helpers.formatDate)(success.results[0].END_DT);
+								_this2.obj_personnel.HEADER.suspension_end = end_dt;
+								$("#suspensionTo").datepicker("setValue", new Date(end_dt));
+							}
+						}, function (error) {
+							_toastr2.default.error("", error);
+						});
+					} else {
+						_this2.obj_personnel.HEADER.suspension_start = "";
+						_this2.obj_personnel.HEADER.suspension_end = "";
+					}
+				});
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in retrieving data[2].");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').where('GLOBAL_INDIV_ID', '==', global_id).orderBy('CITIZENSHIP_CD');
+
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmpArr = [];
+
+				_.each(success.results, function (result) {
+					var tmp = _this2.obj_personnel.CITIZENSHIP.find(function (x) {
+						if (x.value === result.CITIZENSHIP_CD) {
+							return x;
+						}
+					});
+
+					if (tmp != null) {
+						tmpArr.push(tmp);
+					}
+				});
+
+				_this2.obj_personnel.HEADER.citizenship = tmpArr;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in Retrieving Citizenship list.');
+			});
+
+			var pred1 = _breezeClient2.default.Predicate.create('GLOBAL_INDIV_ID', '==', global_id);
+			var pred2 = _breezeClient2.default.Predicate.create('STATUS_CD', '==', 'ACTV');
+			var finalPred = _breezeClient2.default.Predicate.and([pred1, pred2]);
+			_query = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').where(finalPred);
+
+			this.obj_personnel.HEADER.group.length = 0;
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmpArr = [];
+
+				_.each(success.results, function (result) {
+					var tmp = _this2.obj_personnel.GROUP.find(function (x) {
+						if (x.value === result.GLOBAL_GRP_ID) {
+							return x;
+						}
+					});
+					if (tmp != null) {
+						tmpArr.push(tmp);
+					}
+				});
+
+				_this2.obj_personnel.HEADER.group = tmpArr;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in Retrieving Group list.');
+			});
+		};
+
+		main.prototype.btnAdd_Citizenship = function btnAdd_Citizenship() {
+			var _this3 = this;
+
+			if (this.selected_citizenship.length > 0) {
+
+				var checkIfExist = this.obj_personnel.HEADER.citizenship.find(function (c) {
+					if (c.value === _this3.selected_citizenship) {
+						return true;
+					}
+				});
+
+				if (checkIfExist) {
+					_toastr2.default.error('The selected citizenship is already in the list.', 'Citizenship function');
+					$('.ddCitizenship').val('');
+					return;
+				}
+
+				var tmp = this.obj_personnel.CITIZENSHIP.find(function (c) {
+					if (c.value === _this3.selected_citizenship) {
+						return c;
+					}
+				});
+
+				if (tmp != null) {
+					this.obj_personnel.HEADER.citizenship.push(tmp);
+
+					this.selected_citizenship = '';
+				}
+			}
+		};
+
+		main.prototype.removeCitizenship = function removeCitizenship(item) {
+			var index = this.obj_personnel.HEADER.citizenship.indexOf(item);
+			this.obj_personnel.HEADER.citizenship.splice(index, 1);
+		};
+
+		main.prototype.removeAllCitizenship = function removeAllCitizenship() {
+			this.obj_personnel.HEADER.citizenship = [];
+		};
+
+		main.prototype.btnAdd_Group = function btnAdd_Group() {
+			var _this4 = this;
+
+			if (this.selected_group.length > 0) {
+				var checkIfExist = this.obj_personnel.HEADER.group.find(function (c) {
+					if (c.value === _this4.selected_group) {
+						return true;
+					}
+				});
+
+				if (checkIfExist) {
+					_toastr2.default.error('The selected group is already added in the list.', 'Group function');
+					$('.ddGroup').val('');
+					return;
+				}
+
+				var tmp = this.obj_personnel.GROUP.find(function (c) {
+					if (c.value === _this4.selected_group) {
+						return c;
+					}
+				});
+
+				if (tmp != null) {
+					this.obj_personnel.HEADER.group.push(tmp);
+
+					this.selected_group = '';
+				}
+			}
+		};
+
+		main.prototype.removeGroup = function removeGroup(item) {
+			var index = this.obj_personnel.HEADER.group.indexOf(item);
+			this.obj_personnel.HEADER.group.splice(index, 1);
+		};
+
+		main.prototype.removeAllGroup = function removeAllGroup() {
+			this.obj_personnel.HEADER.group = [];
+		};
+
+		main.prototype.fnPersonnel = function fnPersonnel(call) {
+			var _this5 = this;
+
+			$("#birthDate").datepicker({
+				endDate: "now"
+			});
+			$("#suspensionFrom").datepicker();
+			$("#suspensionTo").datepicker();
+			switch (call) {
+				case "EDIT":
+					this.dialogService.open({ viewModel: _ppid_search.ppid_search }).whenClosed(function (response) {
+						if (!response.wasCancelled) {
+							_this5._disableSearchPersonnel = true;
+							_this5._disableCreatePersonnel = true;
+							_this5._disableResetData = false;
+							_this5._disableClearData = false;
+							_this5._disableSavePersonnel = false;
+							_this5._disableForm = false;
+							_this5.obj_personnel.editing_status = 'EDIT';
+						} else {
+							console.log('search was cancelled.');
+						}
+					});
+					break;
+				case "CREATE":
+					this._disableSearchPersonnel = true;
+					this._disableCreatePersonnel = true;
+					this._disableResetData = false;
+					this._disableClearData = false;
+					this._disableSavePersonnel = false;
+					this._disableForm = false;
+					this.obj_personnel.editing_status = 'CREATE';
+					this.selected_citizenship = "FIL";
+					this.btnAdd_Citizenship();
+					break;
+				case "CLEAR":
+					this.clearData();
+					break;
+				case "SAVE":
+					if (this.obj_personnel.editing_status == 'CREATE') {
+						this.validateHeader('INSERT');
+					} else if (this.obj_personnel.editing_status == 'EDIT') {
+						this.validateHeader('UPDATE');
+					}
+					break;
+			}
+		};
+
+		main.prototype.validateHeader = function validateHeader(passed_status) {
+			var _this6 = this;
+
+			console.log(this.obj_personnel.HEADER.tin);
+			var strValidation = "";
+			if (this.obj_personnel.HEADER.country_cd == undefined || this.obj_personnel.HEADER.country_cd == null || this.obj_personnel.HEADER.country_cd.length == 0) {
+				strValidation += "No Country specified.<br/>";
+			}
+
+			if (this.obj_personnel.HEADER.tin == undefined || this.obj_personnel.HEADER.tin == null || this.obj_personnel.HEADER.tin.length === 0) {
+				strValidation += "No TIN specified.<br/>";
+			} else {
+				var TinRegex = /^(?:\d{3}-\d{3}-\d{3}-\d{3})$/;
+				var TinRegex2 = /^(?:\d{12})$/;
+				if (!TinRegex.test(this.obj_personnel.HEADER.tin) && !TinRegex2.test(this.obj_personnel.HEADER.tin)) {
+					strValidation += "TIN is invalid.<br/>";
+				} else if (TinRegex2.test(this.obj_personnel.HEADER.tin)) {
+					var set_1 = this.obj_personnel.HEADER.tin.substring(0, 3);
+					var set_2 = this.obj_personnel.HEADER.tin.substring(3, 6);
+					var set_3 = this.obj_personnel.HEADER.tin.substring(6, 9);
+					var set_4 = this.obj_personnel.HEADER.tin.substring(9, 12);
+					this.obj_personnel.HEADER.tin = set_1 + '-' + set_2 + '-' + set_3 + '-' + set_4;
+				}
+			}
+
+			if (this.obj_personnel.HEADER.last_name == undefined || this.obj_personnel.HEADER.last_name == null || this.obj_personnel.HEADER.last_name.length == 0) {
+				strValidation += "No Last Name specified.<br/>";
+			}
+
+			if (this.obj_personnel.HEADER.given_name == undefined || this.obj_personnel.HEADER.given_name == null || this.obj_personnel.HEADER.given_name.length == 0) {
+				strValidation += "No First Name specified.<br/>";
+			}
+
+			if (this.obj_personnel.HEADER.middle_name == undefined || this.obj_personnel.HEADER.middle_name == null || this.obj_personnel.HEADER.middle_name.length == 0) {
+				strValidation += "No Middle Name specified.<br/>";
+			}
+
+			if (this.selectedGender.length == 0) {
+				strValidation += "No Gender specified.<br/>";
+			}
+
+			if (this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.trim().length > 0) {
+				if (!(0, _moment2.default)(this.obj_personnel.HEADER.birth_dt).isValid()) {
+					strValidation += "Invalid date of birth.<br/>";
+				} else {
+					var bdt = new Date(this.obj_personnel.HEADER.birth_dt);
+					var today = new Date();
+					if (today < bdt) {
+						strValidation += "Date of birth cannot be greater than today.<br/>";
+					}
+				}
+			}
+
+			if (this.obj_personnel.HEADER.status_cd == "SUSPEND") {
+
+				var sus_start = null;
+				var sus_end = null;
+				this.obj_personnel.HEADER.suspension_start = $("#suspensionFrom").val();
+				this.obj_personnel.HEADER.suspension_end = $("#suspensionTo").val();
+				if (this.obj_personnel.HEADER.suspension_start != undefined && this.obj_personnel.HEADER.suspension_start != null && this.obj_personnel.HEADER.suspension_start.length > 0) {
+					if (!(0, _moment2.default)(this.obj_personnel.HEADER.suspension_start).isValid()) {
+						strValidation += "Invalid suspension start date.<br/>";
+					} else {
+						sus_start = new Date(this.obj_personnel.HEADER.suspension_start);
+					}
+				} else {
+					strValidation += "No start date of suspension specified.<br/>";
+				}
+
+				if (this.obj_personnel.HEADER.suspension_end != undefined && this.obj_personnel.HEADER.suspension_end != null && this.obj_personnel.HEADER.suspension_end.length > 0) {
+					if (!(0, _moment2.default)(this.obj_personnel.HEADER.suspension_end).isValid()) {
+						strValidation += "Invalid suspension end date.<br/>";
+					} else {
+						sus_end = new Date(this.obj_personnel.HEADER.suspension_end);
+					}
+				} else {
+					strValidation += "No end date of suspension specified.<br/>";
+				}
+
+				if (sus_start != null && sus_end != null) {
+					if (sus_end < sus_start) {
+						strValidation += "end date of suspension cannot be greater than the start date.<br/>";
+					}
+				}
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error(strValidation, 'Personnel info');
+				return;
+			} else {
+				var mother_maiden_nm = this.obj_personnel.HEADER.mother_maiden_name;
+				var alias_nick = this.obj_personnel.HEADER.alias;
+				var first_nm = this.obj_personnel.HEADER.given_name;
+				var middle_nm = this.obj_personnel.HEADER.middle_name;
+				var last_nm = this.obj_personnel.HEADER.last_name;
+				if (mother_maiden_nm != null) this.obj_personnel.HEADER.mother_maiden_name = mother_maiden_nm.toUpperCase();
+				if (alias_nick != null) this.obj_personnel.HEADER.alias = alias_nick.toUpperCase();
+				if (first_nm != null) this.obj_personnel.HEADER.given_name = first_nm.toUpperCase();
+				if (middle_nm != null) this.obj_personnel.HEADER.middle_name = middle_nm.toUpperCase();
+				if (last_nm != null) this.obj_personnel.HEADER.last_name = last_nm.toUpperCase();
+			}
+
+			if (passed_status.includes("INSERT")) {
+				var query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_MSTR").where("GLOBAL_ID", "==", this.obj_personnel.HEADER.tin + this.obj_personnel.HEADER.country_cd);
+				(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+
+					if (s1.results.length > 0) {
+						_toastr2.default.clear();
+						_toastr2.default.error("Tin already exist.", "Personnel info");
+					} else {
+						_this6.saveHeader();
+					}
+				}, function (e1) {
+					_toastr2.default.error(e1, "Personnel info");
+				});
+			} else if (passed_status.includes('UPDATE')) {
+				this.updateHeader();
+			}
+		};
+
+		main.prototype.saveHeader = function saveHeader() {
+			var _this7 = this;
+
+			_settings2.default.isNavigating = true;
+			_toastr2.default.clear();
+			var varInsert = null;
+			var bdate = null;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+
+			this.obj_personnel.HEADER.birth_dt = $("#birthDate").val();
+
+			if (this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.length > 0) {
+				bdate = new _moment2.default(new Date(this.obj_personnel.HEADER.birth_dt)).add(8, 'hours');
+				bdate = new Date(bdate);
+			}
+
+			var varInsert_2 = (0, _entityManagerFactory.EntityManager)().createEntity('GLOBAL_MSTR', {
+				GLOBAL_ID: this.obj_personnel.HEADER.tin + this.obj_personnel.HEADER.country_cd,
+				COUNTRY_CD: this.obj_personnel.HEADER.country_cd,
+				TIN: this.obj_personnel.HEADER.tin,
+				COUNTRY_BASE_CD: this.obj_personnel.HEADER.country_base_cd,
+				LOCATION_BASE_CD: this.obj_personnel.HEADER.location_base_cd,
+				STATUS_CD: this.obj_personnel.HEADER.status_cd,
+				CREATED_BY: this.obj_personnel.USER.USER_ID,
+				CREATED_DT: dateToday,
+				ACTIVE_FL: '1',
+				PARK_FL: '0',
+				INDIV_FL: 1
+			});
+
+			console.log(varInsert_2);
+
+			(0, _entityManagerFactory.EntityManager)().addEntity(varInsert_2);
+			(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+				varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('GLOBAL_INDIV_MSTR', {
+					GLOBAL_INDIV_ID: _this7.obj_personnel.HEADER.tin + _this7.obj_personnel.HEADER.country_cd,
+
+					EMERGENCY_RELATION_CD: null,
+					INDIV_ID: 0,
+					GIVEN_NAME: _this7.obj_personnel.HEADER.given_name,
+					MIDDLE_NAME: _this7.obj_personnel.HEADER.middle_name,
+					LAST_NAME: _this7.obj_personnel.HEADER.last_name,
+					BIRTH_DT: bdate,
+					BIRTH_PLACE: _this7.obj_personnel.HEADER.birth_place,
+					GENDER: _this7.selectedGender == 'Male' ? 'M' : 'F',
+					CIVIL_STATUS: _this7.obj_personnel.HEADER.civil_status,
+					MOTHER_MAIDEN_NAME: _this7.obj_personnel.HEADER.mother_maiden_name,
+					ACR_NO: _this7.obj_personnel.HEADER.acr_no,
+					RELIGION_CD: _this7.obj_personnel.HEADER.religion_cd,
+					ALIAS: _this7.obj_personnel.HEADER.alias,
+					CREATED_BY: _this7.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				});
+
+				(0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_2) {
+
+					_this7.obj_personnel.HEADER.global_indiv_id = _this7.obj_personnel.HEADER.tin + _this7.obj_personnel.HEADER.country_cd;
+					_this7.obj_personnel.global_indiv_id = _this7.obj_personnel.HEADER.global_indiv_id;
+					_this7.obj_personnel.editing_status = 'EDIT';
+					_toastr2.default.success(success_2, "Record saved.");
+					_settings2.default.isNavigating = false;
+
+					var getMax = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').orderByDesc('CITIZENSHIP_ID').take(1);
+
+					(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
+						var Max = 1;
+						if (successMax.results.length > 0) {
+							Max = successMax.results[0].CITIZENSHIP_ID;
+
+							_.each(_this7.obj_personnel.HEADER.citizenship, function (c) {
+								Max += 1;
+
+								var tempCiti = (0, _entityManagerFactory.EntityManager)().createEntity('CITIZENSHIP_TRX', {
+									CITIZENSHIP_CD: c.value,
+									GLOBAL_INDIV_ID: _this7.obj_personnel.HEADER.global_indiv_id,
+									CITIZENSHIP_ID: Max,
+									CREATED_BY: _this7.obj_personnel.USER.USER_ID,
+									CREATED_DT: dateToday
+								});
+
+								(0, _entityManagerFactory.EntityManager)().addEntity(tempCiti);
+							});
+
+							if (_this7.obj_personnel.HEADER.citizenship.length > 0) {
+								(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_3) {
+									console.log(success_3);
+								}, function (failed_3) {
+									_toastr2.default.error(failed_3, 'Error');
+								});
+							}
+						}
+					}, function (failedMax) {
+						_toastr2.default.error(failedMax, "Error in saving citizenship.");
+					});
+
+					getMax = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').orderByDesc('GRP_INDIV_ID').take(1);
+
+					(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
+						var Max = 1;
+						if (successMax.results.length > 0) {
+							Max = successMax.results[0].GRP_INDIV_ID;
+
+							_.each(_this7.obj_personnel.HEADER.group, function (g) {
+								Max += 1;
+								var tempGroup = (0, _entityManagerFactory.EntityManager)().createEntity('GRP_INDIV_MSTR', {
+									GLOBAL_INDIV_ID: _this7.obj_personnel.HEADER.global_indiv_id,
+									GLOBAL_GRP_ID: g.value,
+									GRP_INDIV_ID: Max,
+									STATUS_CD: 'ACTV',
+									CREATED_BY: _this7.obj_personnel.USER.USER_ID,
+									CREATED_DT: dateToday
+								});
+								(0, _entityManagerFactory.EntityManager)().addEntity(tempGroup);
+							});
+
+							if (_this7.obj_personnel.HEADER.group.length > 0) {
+								(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_3) {
+									console.log(success_3);
+								}, function (failed_3) {
+									_toastr2.default.error(failed_3, 'Error');
+								});
+							}
+						}
+					}, function (failedMax) {
+						_toastr2.default.error(failedMax, "Error in saving citizenship.");
+					});
+
+					if (_this7.obj_personnel.HEADER.status_cd == "SUSPEND") {
+						var getMax = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").orderByDesc("SUSPEND_ID").take(1);
+						(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (success_suspend) {
+
+							var maxId = 1;
+							if (success_suspend.results.length > 0) {
+								maxId = success_suspend.results[0].SUSPEND_ID + 1;
+							}
+
+							var suspend_trx = (0, _entityManagerFactory.EntityManager)().createEntity("SUSPEND_TRX", {
+								SUSPEND_ID: maxId,
+								GLOBAL_ID: _this7.obj_personnel.HEADER.tin + _this7.obj_personnel.HEADER.country_cd,
+								SUSPEND_LEVEL: 1,
+								START_DT: _this7.obj_personnel.HEADER.suspension_start,
+								END_DT: _this7.obj_personnel.HEADER.suspension_end,
+								COMPANY_ID: 0,
+								CREATED_BY: _this7.obj_personnel.USER.USER_ID,
+								CREATED_DT: dateToday
+							});
+							(0, _entityManagerFactory.EntityManager)().addEntity(suspend_trx);
+							(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (suspend_saved) {
+								_toastr2.default.success("", "Suspension details saved.");
+							}, function (suspend_error) {
+								_toastr2.default.error(suspend_error, "error in saving suspension details.");
+							});
+						});
+					} else {
+						_this7.obj_personnel.HEADER.suspension_start = "";
+						_this7.obj_personnel.HEADER.suspension_end = "";
+						$("#suspensionFrom").datepicker("setValue", new Date());
+						$("#suspensionTo").datepicker("setValue", new Date());
+					}
+				}, function (failed_2) {
+					if (varInsert != null) {
+						varInsert.entityAspect().setDeleted();
+					}
+
+					if (varInsert_2 != null) {
+						varInsert_2.entityAspect.setDeleted();
+					}
+
+					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+						var errors = entity.entityAspect.getValidationErrors();
+						if (errors.length > 0) console.log(errors);
+					});
+
+					console.log(failed_2);
+					_toastr2.default.error(failed_2, "Error occured.");
+				});
+			}, function (failed) {
+				if (varInsert_2 != null) {
+					varInsert_2.entityAspect.setDeleted();
+				}
+
+				(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+					var errors = entity.entityAspect.getValidationErrors();
+					if (errors.length > 0) console.log(errors);
+				});
+				console.log(failed);
+				_toastr2.default.error(failed, "Error occured.");
+			});
+		};
+
+		main.prototype.updateHeader = function updateHeader() {
+			var _this8 = this;
+
+			_settings2.default.isNavigating = true;
+			_toastr2.default.clear();
+			var dateToday = null;
+			var bdate = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+
+			this.obj_personnel.HEADER.birth_dt = $("#birthDate").val();
+
+			if (this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.length > 0) {
+				bdate = new _moment2.default(new Date(this.obj_personnel.HEADER.birth_dt)).add(8, 'hours');
+				bdate = new Date(bdate);
+			}
+
+			var getEntity = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_MSTR').where('GLOBAL_ID', '==', this.obj_personnel.HEADER.global_indiv_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(getEntity).then(function (item) {
+
+				if (item.results.length == 0) {
+					_toastr2.default.clear();
+					_toastr2.default.error('No data for editing retrieved.', 'Error in updating record.');
+					return;
+				}
+
+				item.results[0].COUNTRY_BASE_CD = _this8.obj_personnel.HEADER.country_base_cd;
+				item.results[0].LOCATION_BASE_CD = _this8.obj_personnel.HEADER.location_base_cd;
+				item.results[0].LAST_UPDATED_BY = _this8.obj_personnel.USER.USER_ID;
+				item.results[0].LAST_UPDATED_DT = dateToday;
+				item.results[0].STATUS_CD = _this8.obj_personnel.HEADER.status_cd;
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+					var getEntity = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_INDIV_MSTR').where('GLOBAL_INDIV_ID', '==', _this8.obj_personnel.HEADER.global_indiv_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(getEntity).then(function (item_2) {
+						if (item_2.results.length == 0) {
+							_toastr2.default.clear();
+							_toastr2.default.error('No data for editing retrieved.', 'Error in updating record.');
+							return;
+						}
+
+						item_2.results[0].GIVEN_NAME = _this8.obj_personnel.HEADER.given_name.toUpperCase();
+						item_2.results[0].MIDDLE_NAME = _this8.obj_personnel.HEADER.middle_name.toUpperCase();
+						item_2.results[0].LAST_NAME = _this8.obj_personnel.HEADER.last_name.toUpperCase();
+						item_2.results[0].BIRTH_DT = bdate;
+						item_2.results[0].BIRTH_PLACE = _this8.obj_personnel.HEADER.birth_place;
+						item_2.results[0].GENDER = _this8.selectedGender == 'Male' ? 'M' : 'F';
+						item_2.results[0].CIVIL_STATUS = _this8.obj_personnel.HEADER.civil_status;
+						item_2.results[0].MOTHER_MAIDEN_NAME = _this8.obj_personnel.HEADER.mother_maiden_name;
+						item_2.results[0].ACR_NO = _this8.obj_personnel.HEADER.acr_no;
+						item_2.results[0].RELIGION_CD = _this8.obj_personnel.HEADER.religion_cd;
+						item_2.results[0].ALIAS = _this8.obj_personnel.HEADER.alias;
+						item_2.results[0].LAST_UPDATED_BY = _this8.obj_personnel.USER.USER_ID;
+						item_2.results[0].LAST_UPDATED_DT = dateToday;
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_2) {
+							_toastr2.default.success('', 'Record updated.');
+							_settings2.default.isNavigating = false;
+
+							var getCitizenshipList = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').where('GLOBAL_INDIV_ID', '==', _this8.obj_personnel.HEADER.global_indiv_id);
+							(0, _entityManagerFactory.EntityManager)().executeQuery(getCitizenshipList).then(function (query) {
+
+								_.each(query.results, function (result) {
+									var doesExist = _this8.obj_personnel.HEADER.citizenship.some(function (x) {
+										return x.value == result.CITIZENSHIP_CD;
+									});
+
+									if (!doesExist) {
+										result.entityAspect.setDeleted();
+									}
+								});
+
+								var getMax = (0, _entityManagerFactory.EntityQuery)().from('CITIZENSHIP_TRX').orderByDesc('CITIZENSHIP_ID').take(1);
+								(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (getMaxSuccess) {
+									var Max = 1;
+									var newCount = 0;
+									if (getMaxSuccess.results.length > 0) {
+
+										Max = getMaxSuccess.results[0].CITIZENSHIP_ID;
+
+										_.each(_this8.obj_personnel.HEADER.citizenship, function (citi) {
+											var doesExist = query.results.some(function (x) {
+												return x.CITIZENSHIP_CD == citi.value;
+											});
+											if (!doesExist) {
+												Max += 1;
+												newCount++;
+												var tempEnt = (0, _entityManagerFactory.EntityManager)().createEntity('CITIZENSHIP_TRX', {
+													CITIZENSHIP_CD: citi.value,
+													GLOBAL_INDIV_ID: _this8.obj_personnel.HEADER.global_indiv_id,
+													CITIZENSHIP_ID: Max,
+													CREATED_BY: _this8.obj_personnel.USER.USER_ID,
+													CREATED_DT: dateToday
+												});
+												(0, _entityManagerFactory.EntityManager)().addEntity(tempEnt);
+											}
+										});
+
+										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_3) {
+											_toastr2.default.success(success_3, 'Citizenship list was updated.');
+										}, function (error) {
+											(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+												var errors = entity.entityAspect.getValidationErrors();
+												if (errors.length > 0) console.log(errors);
+											});
+											console.log(error);
+											_toastr2.default.error("Error Occured_3", error);
+										});
+									}
+								});
+							});
+
+							var getGroup = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').where('GLOBAL_INDIV_ID', '==', _this8.obj_personnel.HEADER.global_indiv_id);
+							(0, _entityManagerFactory.EntityManager)().executeQuery(getGroup).then(function (queryGroup) {
+
+								_.each(queryGroup.results, function (result) {
+									var doesExist = _this8.obj_personnel.HEADER.group.some(function (x) {
+										return x.value == result.GLOBAL_GRP_ID;
+									});
+									if (!doesExist) {
+										result.entityAspect.setDeleted();
+									}
+								});
+
+								var getMax = (0, _entityManagerFactory.EntityQuery)().from('GRP_INDIV_MSTR').orderByDesc('GRP_INDIV_ID').take(1);
+								(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (queryMax) {
+									var Max = 1;
+
+									if (queryMax.results.length > 0) {
+										Max = queryMax.results[0].GRP_INDIV_ID;
+										_.each(_this8.obj_personnel.HEADER.group, function (g) {
+											var doesExist = queryGroup.results.some(function (x) {
+												return x.GLOBAL_GRP_ID == g.value;
+											});
+
+											if (!doesExist) {
+												Max += 1;
+												var tempEnt = (0, _entityManagerFactory.EntityManager)().createEntity('GRP_INDIV_MSTR', {
+													GLOBAL_INDIV_ID: _this8.obj_personnel.HEADER.global_indiv_id,
+													GLOBAL_GRP_ID: g.value,
+													GRP_INDIV_ID: Max,
+													STATUS_CD: 'ACTV',
+													CREATED_BY: _this8.obj_personnel.USER.USER_ID,
+													CREATED_DT: dateToday
+												});
+												(0, _entityManagerFactory.EntityManager)().addEntity(tempEnt);
+											} else {
+
+												var index = _.findIndex(queryGroup.results, function (o) {
+													return o.GLOBAL_GRP_ID == g.value;
+												});
+												if (index != -1 && queryGroup.results[index].STATUS_CD == 'INACTV') {
+													queryGroup.results[index].STATUS_CD = 'ACTV';
+													queryGroup.results[index].LAST_UPDATED_BY = _this8.obj_personnel.USER.USER_ID;
+													queryGroup.results[index].LAST_UPDATED_DT = dateToday;
+												}
+											}
+										});
+
+										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success_710) {
+											_toastr2.default.success(success_710, 'Group list was updated.');
+										}, function (error_712) {
+											(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+												var errors = entity.entityAspect.getValidationErrors();
+												if (errors.length > 0) console.log(errors);
+											});
+											console.log(error_712);
+											_toastr2.default.error("Error Occured_4", error_712);
+										});
+									}
+								});
+							});
+
+							if (_this8.obj_personnel.HEADER.status_cd == "SUSPEND") {
+								var suspend_start = null;
+								var suspend_end = null;
+								if ((0, _moment2.default)(_this8.obj_personnel.HEADER.suspension_start).isValid()) {
+									suspend_start = new Date((0, _moment2.default)(_this8.obj_personnel.HEADER.suspension_start).add(8, "hours"));
+								}
+								if ((0, _moment2.default)(_this8.obj_personnel.HEADER.suspension_end).isValid()) {
+									suspend_end = new Date((0, _moment2.default)(_this8.obj_personnel.HEADER.suspension_end).add(8, "hours"));
+								}
+
+								if (_this8.obj_personnel.HEADER.suspend_id != undefined && _this8.obj_personnel.HEADER.suspend_id != null && _this8.obj_personnel.HEADER.suspend_id.toString().length > 0) {
+									var getSuspend = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").where("SUSPEND_ID", "==", _this8.obj_personnel.HEADER.suspend_id);
+									(0, _entityManagerFactory.EntityManager)().executeQuery(getSuspend).then(function (success_getSuspend) {
+										success_getSuspend.results[0].START_DT = suspend_start;
+										success_getSuspend.results[0].END_DT = suspend_end;
+										success_getSuspend.results[0].LAST_UPDATED_BY = _this8.obj_personnel.USER.USER_ID;
+										success_getSuspend.results[0].LAST_UPDATED_DT = dateToday;
+										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (save_success) {
+											_toastr2.default.success("", "Suspension date updated.");
+										}, function (save_error) {
+											_toastr2.default.error(save_error, "error in updating suspension date.");
+										});
+									}, function (error_getSuspend) {
+										_toastr2.default.error(error_getSuspend, "error in updating suspension date.");
+									});
+								} else {
+									var getMax = (0, _entityManagerFactory.EntityQuery)().from("SUSPEND_TRX").orderByDesc("SUSPEND_ID").take(1);
+									(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (success_suspend) {
+										var maxId = 1;
+										if (success_suspend.results.length > 0) {
+											maxId = success_suspend.results[0].SUSPEND_ID + 1;
+										}
+										var suspend_trx = (0, _entityManagerFactory.EntityManager)().createEntity("SUSPEND_TRX", {
+											SUSPEND_ID: maxId + "",
+											GLOBAL_ID: _this8.obj_personnel.HEADER.tin + _this8.obj_personnel.HEADER.country_cd,
+											SUSPEND_LEVEL: 1,
+											START_DT: suspend_start,
+											END_DT: suspend_end,
+											COMPANY_ID: 0,
+											CREATED_BY: _this8.obj_personnel.USER.USER_ID,
+											CREATED_DT: dateToday
+										});
+										(0, _entityManagerFactory.EntityManager)().addEntity(suspend_trx);
+										(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (suspend_saved) {
+											_toastr2.default.success("", "Suspension details saved.");
+										}, function (suspend_error) {
+											_toastr2.default.error(suspend_error, "error in saving suspension details.");
+										});
+									});
+								}
+							} else {
+								_this8.obj_personnel.HEADER.suspension_start = "";
+								_this8.obj_personnel.HEADER.suspension_end = "";
+								$("#suspensionFrom").datepicker("setValue", new Date());
+								$("#suspensionTo").datepicker("setValue", new Date());
+							}
+						}, function (error) {
+							(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+								var errors = entity.entityAspect.getValidationErrors();
+								if (errors.length > 0) console.log(errors);
+							});
+							console.log(error);
+							_toastr2.default.error("Error Occured_2", error);
+						});
+					});
+				}, function (error) {
+					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+						var errors = entity.entityAspect.getValidationErrors();
+						if (errors.length > 0) console.log(errors);
+					});
+					console.log(error);
+					_toastr2.default.error("Error Occured_1", error);
+				});
+			});
+		};
+
+		main.prototype.btnUpload = function btnUpload() {
+			_toastr2.default.clear();
+			_toastr2.default.info("Image Upload under maintenance.", "");
+		};
+
+		main.prototype.clickTab_main = function clickTab_main(index) {
+			var _this9 = this;
+
+			if (this.obj_personnel.global_indiv_id.length === 0) return;
+			switch (index) {
+				case 0:
+					_toastr2.default.clear();
+					_toastr2.default.info("Loading employee info...", "");
+					this.loadData(this.obj_personnel.global_indiv_id);
+					break;
+				case 1:
+					_toastr2.default.clear();
+					_toastr2.default.info("Loading contact list...", "");
+					this.obj_personnel.OBSERVERS.maintab_contact_clicked.forEach(function (delegate) {
+						delegate(_this9.obj_personnel.global_indiv_id);
+					});
+					break;
+				case 2:
+					_toastr2.default.clear();
+					_toastr2.default.info("Loading Educational Achievement...", "");
+					this.obj_personnel.OBSERVERS.maintab_education_clicked.forEach(function (delegate) {
+						delegate(_this9.obj_personnel.global_indiv_id);
+					});
+					break;
+				case 3:
+					_toastr2.default.clear();
+
+					break;
+				case 4:
+					_toastr2.default.clear();
+
+					break;
+				case 5:
+					_toastr2.default.clear();
+
+					break;
+			}
+		};
+
+		main.prototype.clearData = function clearData() {
+			this._disableSavePersonnel = true;
+			this._disableClearData = true;
+			this._disableCreatePersonnel = false;
+			this._disableSearchPersonnel = false;
+			this.obj_personnel.global_indiv_id = "";
+			this.obj_personnel.HEADER = {
+				citizenship: [],
+				group: []
+			};
+			this.selectedGender = "";
+			this.selected_citizenship = "";
+			this.selected_group = "";
+			this._disableForm = true;
+			this.obj_personnel.editing_status = "";
+			_toastr2.default.clear();
+			this.obj_personnel.OBSERVERS.clear_ppid.forEach(function (delegate) {
+				delegate();
+			});
+		};
+
+		main.prototype.DigitOnly = function DigitOnly(event) {
+			return (0, _helpers.isDigit)(event);
+		};
+
+		main.prototype.mask = function mask(id, _mask) {
+			(0, _helpers.input_mask)(id, _mask);
+		};
+
+		return main;
+	}()) || _class);
+	exports.main = main;
+});
+define('ppid/forms/main_contact',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment', 'settings', '../../helpers'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment, _settings, _helpers) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.main_contact = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var main_contact = exports.main_contact = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
+		function main_contact(obj_personnel, toastr, DialogService) {
+			var _this = this;
+
+			_classCallCheck(this, main_contact);
+
+			this._disableForm = true;
+			this._disableBtnAdd = false;
+			this._disableBtnSave = true;
+			this._disableAddressTable = false;
+			this._disableContactTable = false;
+			this.lblCreatedBy = "";
+			this.lblUpdatedBy = "";
+			this.obj_personnel = null;
+
+			this.DialogService = DialogService;
+			this.obj_personnel = obj_personnel;
+			this.obj_personnel.OBSERVERS.maintab_contact_clicked.push(function (val) {
+				_this.loadMain_Address(val);
+				_this.loadMain_Contact(val);
+				_this.loadMain_EmailWeb(val);
+				_this.clearAddressData();
+				_this.clearContactData();
+
+				_this.loadLog_V2(val);
+			});
+
+			this.obj_personnel.OBSERVERS.clear_ppid.push(function (val) {
+				_this.obj_personnel.CONTACT = {
+					status: "",
+					modelAddress: {},
+					statusContact: "Add",
+					modelContact: {},
+					modelInternet: {},
+					address: [],
+					contact: [],
+					email: [],
+					website: []
+				};
+				_this.clearAddressData();
+				_this.clearContactData();
+				_this.clearEmailWebData();
+			});
+		}
+
+		main_contact.prototype.loadMain_Address = function loadMain_Address(global_id) {
+			var _this2 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').where('GLOBAL_ID', '==', global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+				var tmp = [];
+				var tmpFullAddress = [];
+				_.each(success.results, function (result) {
+					var strFullAddress = "";
+					if (result.UNIT_NO != null && result.UNIT_NO.length > 0) tmpFullAddress.push(result.UNIT_NO);
+					if (result.HOUSE_NO != null && result.HOUSE_NO.length > 0) tmpFullAddress.push(result.HOUSE_NO);
+					if (result.BLOCK_LOT != null && result.BLOCK_LOT.length > 0) tmpFullAddress.push(result.BLOCK_LOT);
+					if (result.BLDG_NAME != null && result.BLDG_NAME.length > 0) tmpFullAddress.push(result.BLDG_NAME);
+					if (result.STREET_NAME != null && result.STREET_NAME.length > 0) tmpFullAddress.push(result.STREET_NAME);
+					if (result.SUB_VILLAGE != null && result.SUB_VILLAGE.length > 0) tmpFullAddress.push(result.SUB_VILLAGE);
+					if (result.BARANGAY != null && result.BARANGAY.length > 0) tmpFullAddress.push(result.BARANGAY);
+					if (result.DISTRICT != null && result.DISTRICT.length > 0) tmpFullAddress.push(result.DISTRICT);
+					if (result.CITY_TOWN != null && result.CITY_TOWN.length > 0) tmpFullAddress.push(result.CITY_TOWN);
+					if (result.STATE_PROVINCE != null && result.STATE_PROVINCE.length > 0) {
+						var text = _this2.obj_personnel.LOCATIONS.find(function (l) {
+							if (l.value == result.STATE_PROVINCE) return l.text;
+						});
+						tmpFullAddress.push(text);
+					}
+					if (result.REGION != null && result.REGION.length > 0) tmpFullAddress.push(result.REGION);
+					if (result.ZIPCODE != null && result.ZIPCODE.length > 0) tmpFullAddress.push(result.ZIPCODE);
+					if (result.COUNTRY_CD != null && result.COUNTRY_CD.length > 0) tmpFullAddress.push(result.COUNTRY_CD);
+
+					if (tmpFullAddress.length > 0) {
+						strFullAddress = tmpFullAddress.join(' ');
+						tmpFullAddress = [];
+					}
+
+					tmp.push({
+						global_id: result.GLOBAL_ID,
+						addr_id: result.ADDR_ID,
+						country_cd: result.COUNTRY_CD,
+						region: result.REGION,
+						state_province: result.STATE_PROVINCE,
+						city_town: result.CITY_TOWN,
+						district: result.DISTRICT,
+						barangay: result.BARANGAY,
+						sub_village: result.SUB_VILLAGE,
+						phase: result.PHASE,
+						permanent_fl: result.PERMANENT_FL,
+						present_fl: result.PRESENT_FL,
+						block_lot: result.BLOCK_LOT,
+						street_name: result.STREET_NAME,
+						house_no: result.HOUSE_NO,
+						bldg_name: result.BLDG_NAME,
+						unit_no: result.UNIT_NO,
+						zipcode: result.ZIPCODE,
+						residential_type: result.RESIDENTIAL_TYPE,
+						house_ownership: result.HOUSE_OWNERSHIP,
+						mailing_fl: result.MAILING_FL,
+						postal_box: result.POSTAL_BOX,
+						remarks: result.REMARKS,
+						sketch_path: result.SKETCH_PATH,
+						full_address: strFullAddress
+					});
+				});
+
+				_this2.obj_personnel.CONTACT.address = tmp;
+				_settings2.default.isNavigating = false;
+				_toastr2.default.clear();
+				_toastr2.default.success("", "Contact info has been loaded.");
+			});
+		};
+
+		main_contact.prototype.loadMain_Contact = function loadMain_Contact(global_id) {
+			var _this3 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from('CONTACT_INFO_TRX').where('GLOBAL_ID', '==', global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+				var tmp = [];
+				_.each(success.results, function (result) {
+					var type = _this3.obj_personnel.CONTACT_TYPE.find(function (x) {
+						return x.value == result.PHONE_TYPE;
+					});
+					var contact = {
+						contact_no_id: result.CONTACT_NO_ID,
+						global_id: result.GLOBAL_ID,
+						phone_type_text: type.text,
+						phone_type: result.PHONE_TYPE,
+						area_cd: result.AREA_CD,
+						phone_no: result.PHONE_NO,
+						local_no: result.LOCAL_NO
+					};
+					tmp.push(contact);
+				});
+				_this3.obj_personnel.CONTACT.contact = tmp;
+				_settings2.default.isNavigating = false;
+			}, function (error) {
+				_toastr2.default.error(error, "Error in loading contact details.");
+			});
+		};
+
+		main_contact.prototype.loadMain_EmailWeb = function loadMain_EmailWeb(global_id) {
+			var _this4 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where("GLOBAL_ID", "==", global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+
+				var tmpEmail = [];
+				var tmpWeb = [];
+				_.each(querySuccess.results, function (result) {
+
+					if (result.EMAIL_FL == 1) {
+						var email = {
+							internet_id: result.INTERNET_ID,
+							web_addr: result.WEB_ADDR
+						};
+						tmpEmail.push(email);
+					} else if (result.REC_STAT_FL == 1) {
+						var web = {
+							internet_id: result.INTERNET_ID,
+							web_addr: result.WEB_ADDR
+						};
+						tmpWeb.push(web);
+					}
+				});
+
+				_this4.obj_personnel.CONTACT.email = tmpEmail;
+				_this4.obj_personnel.CONTACT.website = tmpWeb;
+			}, function (queryError) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(queryError, "Error in loading email data.");
+			});
+		};
+
+		main_contact.prototype.loadLog = function loadLog(global_id) {
+			var _this5 = this;
+
+			var createdBy = null;
+			var dtCreated = null;
+			var updatedBy = null;
+			var dtUpdated = null;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("ADDR_TRX").where("GLOBAL_ID", "==", global_id).orderBy("CREATED_DT").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				if (s1.results.length == 1) {
+					dtCreated = new Date(s1.results[0].CREATED_DT);
+					createdBy = s1.results[0].CREATED_BY;
+				}
+
+				query = (0, _entityManagerFactory.EntityQuery)().from("CONTACT_INFO_TRX").where("GLOBAL_ID", "==", global_id).orderBy("CREATED_DT").take(1);
+				(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s2) {
+					if (s2.results.length == 1) {
+						var tmpDt = new Date(s2.results[0].CREATED_DT);
+						if (dtCreated == null || dtCreated > tmpDt) {
+							dtCreated = tmpDt;
+							createdBy = s2.results[0].CREATED_BY;
+						}
+					}
+
+					query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where("GLOBAL_ID", "==", global_id).orderBy("CREATED_DT").take(1);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s3) {
+						if (s3.results.length == 1) {
+							var tmpDt = new Date(s3.results[0].CREATED_DT);
+							if (dtCreated == null || dtCreated > tmpDt) {
+								dtCreated = tmpDt;
+								createdBy = s3.results[0].CREATED_BY;
+							}
+						}
+						if (createdBy != null) {
+							_this5.lblCreatedBy = createdBy + ' ' + _moment2.default.utc(dtCreated).format("MM/DD/YYYY hh:mm A");
+						} else {
+							_this5.lblCreatedBy = "";
+						}
+					});
+				});
+			});
+
+			var query2 = (0, _entityManagerFactory.EntityQuery)().from("ADDR_TRX").where("GLOBAL_ID", "==", global_id).orderByDesc("LAST_UPDATED_DT").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query2).then(function (ss1) {
+				if (ss1.results.length == 1) {
+					if (ss1.results[0].LAST_UPDATED_BY != null) {
+						updatedBy = ss1.results[0].LAST_UPDATED_BY;
+						dtUpdated = new Date(ss1.results[0].LAST_UPDATED_DT);
+					}
+				}
+				query2 = (0, _entityManagerFactory.EntityQuery)().from("CONTACT_INFO_TRX").where("GLOBAL_ID", "==", global_id).orderByDesc("LAST_UPDATED_DT").take(1);
+				(0, _entityManagerFactory.EntityManager)().executeQuery(query2).then(function (ss2) {
+					if (ss2.results.length == 1) {
+						if (ss2.results[0].LAST_UPDATED_BY != null) {
+							var tmpDt = new Date(ss2.results[0].LAST_UPDATED_DT);
+							if (dtUpdated == null || dtUpdated < tmpDt) {
+								updatedBy = ss2.results[0].LAST_UPDATED_BY;
+								dtUpdated = tmpDt;
+							}
+						}
+					}
+
+					query2 = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where("GLOBAL_ID", "==", global_id).orderByDesc("LAST_UPDATED_DT").take(1);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query2).then(function (ss3) {
+						if (ss3.results.length == 1) {
+							if (ss3.results[0].LAST_UPDATED_BY != null) {
+								var tmpDt = new Date(ss3.results[0].LAST_UPDATED_DT);
+								if (dtUpdated == null || dtUpdated < tmpDt) {
+									updatedBy = ss3.results[0].LAST_UPDATED_BY;
+									dtUpdated = tmpDt;
+								}
+							}
+						}
+						if (updatedBy != null) {
+							_this5.lblUpdatedBy = updatedBy + ' ' + _moment2.default.utc(dtUpdated).format("MM/DD/YYYY hh:mm A");
+						} else {
+							_this5.lblUpdatedBy = "";
+						}
+					});
+				});
+			});
+		};
+
+		main_contact.prototype.loadLog_V2 = function loadLog_V2(global_id) {
+			var _this6 = this;
+
+			var tmpList = [];
+			var query = (0, _entityManagerFactory.EntityQuery)().from("ADDR_TRX").where("GLOBAL_ID", "==", global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				_.each(s1.results, function (r) {
+					if (r.CREATED_BY != null) {
+						var _user = r.CREATED_BY;
+						var _date = new Date(r.CREATED_DT);
+						tmpList.push({
+							user: _user,
+							date: _date
+						});
+					}
+
+					if (r.LAST_UPDATED_BY != null) {
+						var _user = r.LAST_UPDATED_BY;
+						var _date = new Date(r.LAST_UPDATED_DT);
+						tmpList.push({
+							user: _user,
+							date: _date
+						});
+					}
+				});
+
+				query = (0, _entityManagerFactory.EntityQuery)().from("CONTACT_INFO_TRX").where("GLOBAL_ID", "==", global_id);
+				(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s2) {
+					_.each(s2.results, function (r2) {
+						if (r2.CREATED_BY != null) {
+							var _user = r2.CREATED_BY;
+							var _date = new Date(r2.CREATED_DT);
+							tmpList.push({
+								user: _user,
+								date: _date
+							});
+						}
+
+						if (r2.LAST_UPDATED_BY != null) {
+							var _user = r2.LAST_UPDATED_BY;
+							var _date = new Date(r2.LAST_UPDATED_DT);
+							tmpList.push({
+								user: _user,
+								date: _date
+							});
+						}
+					});
+
+					query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where("GLOBAL_ID", "==", global_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s3) {
+
+						_.each(s3.results, function (r3) {
+							if (r3.CREATED_BY != null) {
+								var _user = r3.CREATED_BY;
+								var _date = new Date(r3.CREATED_DT);
+								tmpList.push({
+									user: _user,
+									date: _date
+								});
+							}
+
+							if (r3.LAST_UPDATED_BY != null) {
+								var _user = r3.LAST_UPDATED_BY;
+								var _date = new Date(r3.LAST_UPDATED_DT);
+								tmpList.push({
+									user: _user,
+									date: _date
+								});
+							}
+						});
+
+						tmpList.sort(_this6.OrderByDate);
+						var LastIndex = tmpList.length - 1;
+						if (tmpList.length > 0) {
+							_this6.lblCreatedBy = tmpList[0].user + ' ' + _moment2.default.utc(tmpList[0].date).format("MM/DD/YYYY hh:mm A");
+							_this6.lblUpdatedBy = tmpList[LastIndex].user + ' ' + _moment2.default.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+						} else {
+							_this6.lblCreatedBy = "";
+							_this6.lblUpdatedBy = "";
+						}
+					});
+				});
+			});
+		};
+
+		main_contact.prototype.OrderByDate = function OrderByDate(a, b) {
+			if (a.date > b.date) return 1;
+			if (a.date < b.date) return -1;
+			return 0;
+		};
+
+		main_contact.prototype.clearAddressData = function clearAddressData() {
+
+			_settings2.default.isNavigating = false;
+			this.obj_personnel.CONTACT.modelAddress = {};
+			this.obj_personnel.CONTACT.status = "";
+			this._disableBtnAdd = false;
+			this._disableBtnSave = true;
+			this._disableForm = true;
+			this._disableAddressTable = false;
+		};
+
+		main_contact.prototype.clearContactData = function clearContactData() {
+
+			_settings2.default.isNavigating = false;
+			this._disableContactTable = false;
+			this.obj_personnel.CONTACT.statusContact = "Add";
+			this.obj_personnel.CONTACT.modelContact = {};
+		};
+
+		main_contact.prototype.clearEmailWebData = function clearEmailWebData() {
+
+			_settings2.default.isNavigating = false;
+			this.obj_personnel.CONTACT.modelInternet = {};
+		};
+
+		main_contact.prototype.isNumberKey = function isNumberKey(evt) {
+			var charCode = evt.which ? evt.which : event.keyCode;
+			if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+			return true;
+		};
+
+		main_contact.prototype.dd_provinceChanged = function dd_provinceChanged() {
+			var prov = this.obj_personnel.CONTACT.modelAddress.state_province;
+			if (prov != undefined && prov != null && prov.length != 0) {
+				var selectedProv = this.obj_personnel.PROVINCE.find(function (p) {
+					if (p.value == prov) {
+						return p;
+					}
+				});
+
+				if (selectedProv != null) {
+					this.obj_personnel.CONTACT.modelAddress.region = selectedProv.group;
+					this.dd_regionChanged();
+				}
+			}
+		};
+
+		main_contact.prototype.dd_regionChanged = function dd_regionChanged() {
+			var reg = this.obj_personnel.CONTACT.modelAddress.region;
+			if (reg != undefined && reg != null && reg.length != 0) {
+				var selectedRegion = this.obj_personnel.REGION.find(function (r) {
+					if (r.value == reg) return r;
+				});
+
+				if (selectedRegion != null) {
+					this.obj_personnel.CONTACT.modelAddress.country_cd = selectedRegion.group;
+				}
+			}
+		};
+
+		main_contact.prototype.btnAdd_Address = function btnAdd_Address() {
+			this.obj_personnel.CONTACT.status = "ADD";
+			this._disableBtnAdd = true;
+			this._disableBtnSave = false;
+			this._disableForm = false;
+			this._disableAddressTable = true;
+		};
+
+		main_contact.prototype.btnEdit_Address = function btnEdit_Address(address) {
+			this._disableBtnAdd = true;
+			this._disableBtnSave = false;
+			this._disableForm = false;
+			this._disableAddressTable = true;
+			this.obj_personnel.CONTACT.status = "EDIT";
+			this.obj_personnel.CONTACT.modelAddress = address;
+			this.obj_personnel.CONTACT.modelAddress.present_fl = this.obj_personnel.CONTACT.modelAddress.present_fl == '1' ? true : false;
+			this.obj_personnel.CONTACT.modelAddress.permanent_fl = this.obj_personnel.CONTACT.modelAddress.permanent_fl == '1' ? true : false;
+		};
+
+		main_contact.prototype.btnRemoveAddress = function btnRemoveAddress(item) {
+			var _this7 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the address?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+					var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').where('ADDR_ID', '==', item.addr_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+						success.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+							_toastr2.default.success("", "The address was successfully removed.");
+							_this7.loadMain_Address(_this7.obj_personnel.global_indiv_id);
+
+							_this7.loadLog_V2(_this7.obj_personnel.global_indiv_id);
+						}, function (error) {
+							_toastr2.default.clear();
+							_toastr2.default.error("", "Error in removing address.");
+							_settings2.default.isNavigating = false;
+						});
+					});
+				}
+			});
+		};
+
+		main_contact.prototype.validateAddress = function validateAddress() {
+			var strValidation = "";
+			if (this.obj_personnel.CONTACT.modelAddress.country_cd == undefined || this.obj_personnel.CONTACT.modelAddress.country_cd == null || this.obj_personnel.CONTACT.modelAddress.country_cd.length == 0) {
+				strValidation += "No country specified.<br/>";
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error(strValidation, "");
+				return;
+			} else {
+				if (this.obj_personnel.CONTACT.status == 'ADD') {
+					this.insertAddress();
+				} else if (this.obj_personnel.CONTACT.status == 'EDIT') {
+					this.updateAddress();
+				}
+			}
+		};
+
+		main_contact.prototype.insertAddress = function insertAddress() {
+			var _this8 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+
+			var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').orderByDesc('ADDR_ID').take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+
+				var Max = 1;
+				if (success.results.length > 0) {
+					Max = success.results[0].ADDR_ID + 1;
+				}
+
+
+				var _address = {
+					ADDR_ID: Max,
+					BARANGAY: _this8.obj_personnel.CONTACT.modelAddress.barangay,
+					BLDG_NAME: _this8.obj_personnel.CONTACT.modelAddress.bldg_name,
+					BLOCK_LOT: _this8.obj_personnel.CONTACT.modelAddress.block_lot,
+					CITY_TOWN: _this8.obj_personnel.CONTACT.modelAddress.city_town,
+					COUNTRY_CD: _this8.obj_personnel.CONTACT.modelAddress.country_cd,
+					DISTRICT: _this8.obj_personnel.CONTACT.modelAddress.district,
+					GLOBAL_ID: _this8.obj_personnel.HEADER.global_indiv_id,
+					HOUSE_NO: _this8.obj_personnel.CONTACT.modelAddress.house_no,
+
+					MAILING_FL: 0,
+					PERMANENT_FL: _this8.obj_personnel.CONTACT.modelAddress.permanent_fl ? 1 : 0,
+
+					PRESENT_FL: _this8.obj_personnel.CONTACT.modelAddress.present_fl ? 1 : 0,
+
+					REGION: _this8.obj_personnel.CONTACT.modelAddress.region,
+					REMARKS: _this8.obj_personnel.CONTACT.modelAddress.remarks,
+
+					STATE_PROVINCE: _this8.obj_personnel.CONTACT.modelAddress.state_province,
+					STREET_NAME: _this8.obj_personnel.CONTACT.modelAddress.street_name,
+					SUB_VILLAGE: _this8.obj_personnel.CONTACT.modelAddress.sub_village,
+					UNIT_NO: _this8.obj_personnel.CONTACT.modelAddress.unit_no,
+					ZIPCODE: _this8.obj_personnel.CONTACT.modelAddress.zipcode,
+					CREATED_BY: _this8.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+
+				var address = (0, _entityManagerFactory.EntityManager)().createEntity('ADDR_TRX', _address);
+
+				(0, _entityManagerFactory.EntityManager)().addEntity(address);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "Record saved.");
+					_this8.loadMain_Address(_this8.obj_personnel.global_indiv_id);
+
+					_this8.loadLog_V2(_this8.obj_personnel.global_indiv_id);
+					_this8.clearAddressData();
+				}, function (error) {
+					if (address != null) {
+						address.entityAspect.setDeleted();
+					}
+					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+						var errors = entity.entityAspect.getValidationErrors();
+						if (errors.length > 0) console.log(errors);
+					});
+					_toastr2.default.clear();
+					_toastr2.default.error(error, "Error in saving address.");
+
+					_settings2.default.isNavigating = false;
+				});
+			});
+		};
+
+		main_contact.prototype.updateAddress = function updateAddress() {
+			var _this9 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from('ADDR_TRX').where('ADDR_ID', '==', this.obj_personnel.CONTACT.modelAddress.addr_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (success) {
+				success.results[0].BARANGAY = _this9.obj_personnel.CONTACT.modelAddress.barangay;
+				success.results[0].BLDG_NAME = _this9.obj_personnel.CONTACT.modelAddress.bldg_name;
+				success.results[0].BLOCK_LOT = _this9.obj_personnel.CONTACT.modelAddress.block_lot;
+				success.results[0].CITY_TOWN = _this9.obj_personnel.CONTACT.modelAddress.city_town;
+				success.results[0].COUNTRY_CD = _this9.obj_personnel.CONTACT.modelAddress.country_cd;
+				success.results[0].DISTRICT = _this9.obj_personnel.CONTACT.modelAddress.district;
+				success.results[0].HOUSE_NO = _this9.obj_personnel.CONTACT.modelAddress.house_no;
+				success.results[0].PERMANENT_FL = _this9.obj_personnel.CONTACT.modelAddress.permanent_fl ? '1' : '0';
+				success.results[0].PRESENT_FL = _this9.obj_personnel.CONTACT.modelAddress.present_fl ? '1' : '0';
+				success.results[0].REGION = _this9.obj_personnel.CONTACT.modelAddress.region;
+				success.results[0].REMARKS = _this9.obj_personnel.CONTACT.modelAddress.remarks;
+				success.results[0].STATE_PROVINCE = _this9.obj_personnel.CONTACT.modelAddress.state_province;
+				success.results[0].STREET_NAME = _this9.obj_personnel.CONTACT.modelAddress.street_name;
+				success.results[0].SUB_VILLAGE = _this9.obj_personnel.CONTACT.modelAddress.sub_village;
+				success.results[0].UNIT_NO = _this9.obj_personnel.CONTACT.modelAddress.unit_no;
+				success.results[0].ZIPCODE = _this9.obj_personnel.CONTACT.modelAddress.zipcode;
+				success.results[0].LAST_UPDATED_BY = _this9.obj_personnel.USER.USER_ID;
+				success.results[0].LAST_UPDATED_DT = dateToday;
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "Record updated sucessfully.");
+					_this9.loadMain_Address(_this9.obj_personnel.global_indiv_id);
+					_this9.clearAddressData();
+
+					_this9.loadLog_V2(_this9.obj_personnel.global_indiv_id);
+				}, function (error) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.clear();
+					console.log(error);
+					_toastr2.default.error(error, 'Error in updating address.');
+				});
+			});
+		};
+
+		main_contact.prototype.btnEdit_Contact = function btnEdit_Contact(contact) {
+			this._disableContactTable = true;
+			this.obj_personnel.CONTACT.statusContact = "Edit";
+			this.obj_personnel.CONTACT.modelContact.contact_no_id = contact.contact_no_id;
+			this.obj_personnel.CONTACT.modelContact.phone_type = contact.phone_type;
+			this.obj_personnel.CONTACT.modelContact.area_cd = contact.area_cd;
+			this.obj_personnel.CONTACT.modelContact.phone_no = contact.phone_no;
+			this.obj_personnel.CONTACT.modelContact.local_no = contact.local_no;
+		};
+
+		main_contact.prototype.btnRemove_Contact = function btnRemove_Contact(contact) {
+			var _this10 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the contact?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+					var query = (0, _entityManagerFactory.EntityQuery)().from("CONTACT_INFO_TRX").where("CONTACT_NO_ID", "==", contact.contact_no_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+						if (querySuccess.results.length == 0) {
+							_toastr2.default.clear();
+							_toastr2.default.error("", "No to-be-remove record found.");
+						}
+						querySuccess.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
+							_toastr2.default.clear();
+							_toastr2.default.success("", "The contact was successfully removed.");
+							_this10.loadMain_Contact(_this10.obj_personnel.global_indiv_id);
+							_this10.clearContactData();
+
+							_this10.loadLog_V2(_this10.obj_personnel.global_indiv_id);
+						}, function (removeError) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error(removeError, "Error in removing contact.");
+						});
+					});
+				}
+			});
+		};
+
+		main_contact.prototype.validateContact = function validateContact() {
+			var strValidation = "";
+
+			if (this.obj_personnel.CONTACT.modelContact.phone_type == undefined || this.obj_personnel.CONTACT.modelContact.phone_type == null || this.obj_personnel.CONTACT.modelContact.phone_type.length == 0) {
+				strValidation += "Phone type is required.<br/>";
+			}
+
+			if (this.obj_personnel.CONTACT.modelContact.area_cd == undefined || this.obj_personnel.CONTACT.modelContact.area_cd == null || this.obj_personnel.CONTACT.modelContact.area_cd.length == 0) {
+				strValidation += "Area Code is required.<br/>";
+			}
+
+			if (this.obj_personnel.CONTACT.modelContact.phone_no == undefined || this.obj_personnel.CONTACT.modelContact.phone_no == null || this.obj_personnel.CONTACT.modelContact.phone_no.length == 0) {
+				strValidation += "Phone number is required.<br/>";
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				if (this.obj_personnel.CONTACT.statusContact == "Add") {
+					this.insertContact();
+				} else if (this.obj_personnel.CONTACT.statusContact == "Edit") {
+					this.updateContact();
+				}
+			}
+		};
+
+		main_contact.prototype.insertContact = function insertContact() {
+			var _this11 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("CONTACT_INFO_TRX").orderByDesc("CONTACT_NO_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (Success) {
+				var Max = 1;
+				if (Success.results.length > 0) {
+					Max = Success.results[0].CONTACT_NO_ID + 1;
+				}
+				var Contact = (0, _entityManagerFactory.EntityManager)().createEntity("CONTACT_INFO_TRX", {
+					AREA_CD: _this11.obj_personnel.CONTACT.modelContact.area_cd,
+					CONTACT_NO_ID: Max,
+					COUNTRY_CD: "PH",
+					GLOBAL_ID: _this11.obj_personnel.global_indiv_id,
+					LOCAL_NO: _this11.obj_personnel.CONTACT.modelContact.local_no,
+					PHONE_NO: _this11.obj_personnel.CONTACT.modelContact.phone_no,
+					PHONE_TYPE: _this11.obj_personnel.CONTACT.modelContact.phone_type,
+					CREATED_BY: _this11.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+
+				});
+				(0, _entityManagerFactory.EntityManager)().addEntity(Contact);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "Contact successfully added.");
+					_this11.loadMain_Contact(_this11.obj_personnel.global_indiv_id);
+					_this11.clearContactData();
+
+					_this11.loadLog_V2(_this11.obj_personnel.global_indiv_id);
+				}, function (error) {
+					_settings2.default.isNavigating = false;
+					if (Contact != null) {
+						Contact.entityAspect.setDeleted();
+					}
+					_toastr2.default.clear();
+					_toastr2.default.error(error, "Error in adding contact.");
+				});
+			});
+		};
+
+		main_contact.prototype.updateContact = function updateContact() {
+			var _this12 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from('CONTACT_INFO_TRX').where("CONTACT_NO_ID", "==", this.obj_personnel.CONTACT.modelContact.contact_no_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (Success) {
+
+				if (Success.results.length == 0) {
+					_toastr2.default.clear();
+					_toastr2.default.error("", "No record to be updated found.");
+					return;
+				}
+				Success.results[0].AREA_CD = _this12.obj_personnel.CONTACT.modelContact.area_cd;
+				Success.results[0].LOCAL_NO = _this12.obj_personnel.CONTACT.modelContact.local_no;
+				Success.results[0].PHONE_NO = _this12.obj_personnel.CONTACT.modelContact.phone_no;
+				Success.results[0].PHONE_TYPE = _this12.obj_personnel.CONTACT.modelContact.phone_type;
+				Success.results[0].LAST_UPDATED_BY = _this12.obj_personnel.USER.USER_ID;
+				Success.results[0].LAST_UPDATED_DT = dateToday;
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "The contact was successfully updated.");
+					_this12.loadMain_Contact(_this12.obj_personnel.global_indiv_id);
+					_this12.clearContactData();
+
+					_this12.loadLog_V2(_this12.obj_personnel.global_indiv_id);
+				}, function (errorSave) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.clear();
+					_toastr2.default.error(errorSave, "Error in updating contact.");
+					console.log(errorSave);
+				});
+			});
+		};
+
+		main_contact.prototype.validateEmail = function validateEmail(email) {
+			var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			return re.test(email);
+		};
+
+		main_contact.prototype.validateWeb = function validateWeb(URL) {
+			var regEx = /^\s*[a-z](?:[-a-z0-9\+\.])*:(?:\/\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:])*@)?(?:\[(?:(?:(?:[0-9a-f]{1,4}:){6}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|::(?:[0-9a-f]{1,4}:){5}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:[0-9a-f]{1,4}:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3})|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|v[0-9a-f]+[-a-z0-9\._~!\$&\'\(\)\*\+,;=:]+)\]|(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}|(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=@])*)(?::[0-9]*)?(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))*)*|\/(?:(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))*)*)?|(?:(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))+)(?:\/(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@]))*)*|(?!(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@])))(?:\?(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@])|[\uE000-\uF8FF\uF0000-\uFFFFD|\u100000-\u10FFFD\/\?])*)?(?:\#(?:(?:%[0-9a-f][0-9a-f]|[-a-z0-9\._~\uA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u10000-\u1FFFD\u20000-\u2FFFD\u30000-\u3FFFD\u40000-\u4FFFD\u50000-\u5FFFD\u60000-\u6FFFD\u70000-\u7FFFD\u80000-\u8FFFD\u90000-\u9FFFD\uA0000-\uAFFFD\uB0000-\uBFFFD\uC0000-\uCFFFD\uD0000-\uDFFFD\uE1000-\uEFFFD!\$&\'\(\)\*\+,;=:@])|[\/\?])*)?\s*$/i;
+			return regEx.test(URL);
+		};
+
+		main_contact.prototype.btnAdd_EmailWeb = function btnAdd_EmailWeb(isEmail) {
+
+			if (isEmail) {
+				if (this.obj_personnel.CONTACT.modelInternet.email_addr == undefined || this.obj_personnel.CONTACT.modelInternet.email_addr.length == 0) {
+					_toastr2.default.clear();
+					_toastr2.default.error("", "No email specified.");
+					return;
+				}
+
+				if (this.validateEmail(this.obj_personnel.CONTACT.modelInternet.email_addr)) {
+					this.insertEmailWeb(isEmail);
+				} else {
+					_toastr2.default.error("Invalid email.");
+				}
+			} else {
+				if (this.obj_personnel.CONTACT.modelInternet.url == undefined || this.obj_personnel.CONTACT.modelInternet.url.length == 0) {
+					_toastr2.default.clear();
+					_toastr2.default.error("", "No URL specified.");
+					return;
+				}
+
+				this.insertEmailWeb(isEmail);
+			}
+		};
+
+		main_contact.prototype.btnRemove_EmailWeb = function btnRemove_EmailWeb(internet_id, isEmail) {
+			var _this13 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the " + (isEmail ? "Email address" : "website url") + "?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+					var query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where("INTERNET_ID", "==", internet_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+						if (querySuccess.results.length == 0) {
+							_toastr2.default.clear();
+							_toastr2.default.error("", "No to-be-remove record found.");
+						}
+						querySuccess.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
+							_toastr2.default.clear();
+							_toastr2.default.success("", "The " + (isEmail ? "Email address" : "website url") + " was successfully removed.");
+							_this13.loadMain_EmailWeb(_this13.obj_personnel.global_indiv_id);
+							_this13.clearEmailWebData();
+						}, function (removeError) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error(removeError, "Error in removing " + (isEmail ? "Email address" : "website url") + " .");
+						});
+					});
+				}
+			});
+		};
+
+		main_contact.prototype.btnRemove_AllEmailWeb = function btnRemove_AllEmailWeb(isEmail) {
+			var _this14 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove all.", message: "Are you sure you want to remove all the " + (isEmail ? "Email address" : "website url") + "?" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+					var pred1 = _breezeClient2.default.Predicate.create("GLOBAL_ID", "==", _this14.obj_personnel.global_indiv_id);
+					var pred2 = _breezeClient2.default.Predicate.create("EMAIL_FL", "==", isEmail ? 1 : 0);
+					var finalPred = _breezeClient2.default.Predicate.and([pred1, pred2]);
+					var query = (0, _entityManagerFactory.EntityQuery)().from("INTERNET_TRX").where(finalPred);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+						if (querySuccess.results.length == 0) {
+							_toastr2.default.clear();
+							_toastr2.default.error("", "No to-be-remove record found.");
+						}
+
+						_.each(querySuccess.results, function (result) {
+							result.entityAspect.setDeleted();
+						});
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
+							_toastr2.default.clear();
+							_toastr2.default.success("", "The " + (isEmail ? "Email address" : "website url") + " was successfully removed.");
+							_this14.loadMain_EmailWeb(_this14.obj_personnel.global_indiv_id);
+							_this14.clearEmailWebData();
+						}, function (removeError) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error(removeError, "Error in removing " + (isEmail ? "Email address" : "website url") + " .");
+						});
+					});
+				}
+			});
+		};
+
+		main_contact.prototype.insertEmailWeb = function insertEmailWeb(isEmail) {
+			var _this15 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from('INTERNET_TRX').orderByDesc('INTERNET_ID').take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				var Max = 1;
+				if (querySuccess.results.length > 0) {
+					Max = querySuccess.results[0].INTERNET_ID + 1;
+				}
+
+				var internet_trx = {
+					GLOBAL_ID: _this15.obj_personnel.global_indiv_id,
+					WEB_ADDR: isEmail ? _this15.obj_personnel.CONTACT.modelInternet.email_addr : _this15.obj_personnel.CONTACT.modelInternet.url,
+					INTERNET_ID: Max,
+					EMAIL_FL: isEmail ? 1 : 0,
+					REC_STAT_FL: 1,
+					CREATED_BY: _this15.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("INTERNET_TRX", internet_trx);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "The " + (isEmail ? "Email" : "Website") + " successfully added.");
+					_this15.loadMain_EmailWeb(_this15.obj_personnel.global_indiv_id);
+					_this15.clearEmailWebData();
+
+					_this15.loadLog_V2(_this15.obj_personnel.global_indiv_id);
+				}, function (errorSave) {
+
+					_settings2.default.isNavigating = false;
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+
+					_toastr2.default.clear();
+					_toastr2.default.success(errorSave, "Error in saving " + (isEmail ? "Email." : "Website."));
+				});
+			});
+		};
+
+		return main_contact;
+	}()) || _class);
+});
+define('ppid/forms/main_educational',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment', 'settings'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.main_educational = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var main_educational = exports.main_educational = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
+		function main_educational(obj_personnel, toastr, DialogService) {
+			var _this = this;
+
+			_classCallCheck(this, main_educational);
+
+			this.obj_personnel = null;
+			this._disableForm = true;
+			this._disableTable = false;
+			this._disableBtnAdd = false;
+			this._disableBtnSave = true;
+			this.lblCreatedBy = "";
+			this.lblUpdatedBy = "";
+
+			this.obj_personnel = obj_personnel;
+			this.DialogService = DialogService;
+			this.obj_personnel.OBSERVERS.maintab_education_clicked.push(function (val) {
+				_this.loadMain_Educational(val);
+				_this.loadLog(val);
+				_this.clearData();
+			});
+
+			this.obj_personnel.OBSERVERS.clear_ppid.push(function () {
+				_this.obj_personnel.EDUCATIONAL_ACHIEVEMENT = {
+					status: "",
+					model: {},
+					list: []
+				};
+			});
+		}
+
+		main_educational.prototype.loadMain_Educational = function loadMain_Educational(global_id) {
+			var _this2 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").where("GLOBAL_INDIV_ID", "==", global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				var tmpList = [];
+				_.each(querySuccess.results, function (result) {
+					var school = _this2.obj_personnel.SCHOOLS.find(function (x) {
+						return x.school_cd == result.SCHOOL_CD;
+					});
+					var level = _this2.obj_personnel.LEVEL.find(function (x) {
+						return x.value == result.EDUCATION_LEVEL;
+					});
+					var education = {
+						start_yr: result.START_YR,
+						course: result.COURSE,
+						education_id: result.EDUCATION_ID,
+						education_level: result.EDUCATION_LEVEL,
+						end_yr: result.END_YR,
+						school_cd: result.SCHOOL_CD,
+						honor_awards: result.HONOR_AWARDS,
+						completed_fl: result.COMPLETED_FL,
+						school_name: school.school_name,
+						level_name: level.text
+					};
+					tmpList.push(education);
+				});
+				_this2.obj_personnel.EDUCATIONAL_ACHIEVEMENT.list = tmpList;
+				_toastr2.default.clear();
+				_toastr2.default.success("", "Success");
+				_settings2.default.isNavigating = false;
+			}, function (error) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(error, "Error in loading educational details.");
+			});
+		};
+
+		main_educational.prototype.loadLog = function loadLog(global_id) {
+			var _this3 = this;
+
+			var tmpList = [];
+			var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").where("GLOBAL_INDIV_ID", "==", global_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				_.each(s1.results, function (r) {
+					if (r.CREATED_BY != null) {
+						var _user = r.CREATED_BY;
+						var _date = new Date(r.CREATED_DT);
+						tmpList.push({
+							user: _user,
+							date: _date
+						});
+					}
+
+					if (r.LAST_UPDATED_DT != null) {
+						var _user = r.LAST_UPDATED_BY;
+						var _date = r.LAST_UPDATED_DT;
+						tmpList.push({
+							user: _user,
+							date: _date
+						});
+					}
+				});
+
+				tmpList.sort(_this3.OrderByDate);
+				var LastIndex = tmpList.length - 1;
+				if (tmpList.length > 0) {
+					_this3.lblCreatedBy = tmpList[0].user + ' ' + _moment2.default.utc(tmpList[0].date).format("MM/DD/YYYY hh:mm A");
+					_this3.lblUpdatedBy = tmpList[LastIndex].user + ' ' + _moment2.default.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+				} else {
+					_this3.lblCreatedBy = "";
+					_this3.lblUpdatedBy = "";
+				}
+			});
+		};
+
+		main_educational.prototype.OrderByDate = function OrderByDate(a, b) {
+			if (a.date > b.date) return 1;
+			if (a.date < b.date) return -1;
+			return 0;
+		};
+
+		main_educational.prototype.btnAdd = function btnAdd() {
+			this._disableForm = false;
+			this._disableTable = true;
+			this._disableBtnAdd = true;
+			this._disableBtnSave = false;
+			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status = "ADD";
+		};
+
+		main_educational.prototype.btnEdit = function btnEdit(education) {
+			this._disableForm = false;
+			this._disableTable = true;
+			this._disableBtnAdd = true;
+			this._disableBtnSave = false;
+			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model = {
+				education_id: education.education_id,
+				education_level: education.education_level,
+				start_yr: education.start_yr + "",
+				end_yr: education.end_yr + "",
+				school_cd: education.school_cd,
+				course: education.course,
+				honor_awards: education.honor_awards,
+				completed_fl: education.completed_fl == "1"
+			};
+			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status = "EDIT";
+		};
+
+		main_educational.prototype.clearData = function clearData() {
+			_settings2.default.isNavigating = false;
+			this._disableForm = true;
+			this._disableTable = false;
+			this._disableBtnAdd = false;
+			this._disableBtnSave = true;
+			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model = {};
+			this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status = "";
+		};
+
+		main_educational.prototype.validate = function validate() {
+			var strValidation = "";
+			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level.length == 0) {
+				strValidation += "No level specified.<br/>";
+			}
+
+			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr.length == 0) {
+				strValidation += "No start year specified.<br/>";
+			}
+
+			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr.length == 0) {
+				strValidation += "No end year specified.<br/>";
+			}
+
+			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd.length == 0) {
+				strValidation += "No school specified.<br/>";
+			}
+
+			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course == undefined || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course == null || this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course.length == 0) {
+				strValidation += "No degree/major specified.<br/>";
+			}
+
+			if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr != undefined && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr != null && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr.length > 0) {
+				if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr != undefined && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr != null && this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr.length > 0) {
+					if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr > this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr) {
+						strValidation += "Start year cannot be greater than end year.<br/>";
+					}
+				}
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+				if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status == "ADD") {
+					this.insert();
+				} else if (this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.status == "EDIT") {
+					this.update();
+				}
+			}
+		};
+
+		main_educational.prototype.insert = function insert() {
+			var _this4 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").orderByDesc("EDUCATION_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				var Max = 1;
+				if (querySuccess.results.length > 0) {
+					Max = querySuccess.results[0].EDUCATION_ID + 1;
+				}
+
+				var education_trx = {
+					GLOBAL_INDIV_ID: _this4.obj_personnel.global_indiv_id,
+					START_YR: _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr,
+					COURSE: _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course,
+					EDUCATION_ID: Max,
+					EDUCATION_LEVEL: _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level,
+					END_YR: _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr,
+					SCHOOL_CD: _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd,
+					YR_GRADUATED: 0,
+					HONOR_AWARDS: _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards,
+					COMPLETED_FL: _this4.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl ? 1 : 0,
+					CREATED_BY: _this4.obj_personnel.USER.USER_ID,
+					CREATED_DT: dateToday
+				};
+
+				var entity = (0, _entityManagerFactory.EntityManager)().createEntity("EDUCATION_TRX", education_trx);
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (saveSuccess) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "Record saved.");
+					_this4.loadMain_Educational(_this4.obj_personnel.global_indiv_id);
+					_this4.clearData();
+				}, function (saveError) {
+
+					_settings2.default.isNavigating = false;
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+					_toastr2.default.clear();
+					_toastr2.default.error("", saveError);
+				});
+			});
+		};
+
+		main_educational.prototype.update = function update() {
+			var _this5 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = null;
+			dateToday = new _moment2.default(new Date()).add(8, 'hours');
+			dateToday = new Date(dateToday);
+			var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").where("EDUCATION_ID", "==", this.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+				if (querySuccess.results.length == 0) {
+					_toastr2.default.clear();
+					_toastr2.default.error("", "Error in query data to be updated");
+				}
+				querySuccess.results[0].START_YR = _this5.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr;
+				querySuccess.results[0].COURSE = _this5.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course;
+				querySuccess.results[0].EDUCATION_LEVEL = _this5.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level;
+				querySuccess.results[0].END_YR = _this5.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr;
+				querySuccess.results[0].SCHOOL_CD = _this5.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd;
+				querySuccess.results[0].HONOR_AWARDS = _this5.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards;
+				querySuccess.results[0].COMPLETED_FL = _this5.obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl ? 1 : 0;
+				querySuccess.results[0].LAST_UPDATED_BY = _this5.obj_personnel.USER.USER_ID;
+				querySuccess.results[0].LAST_UPDATED_DT = dateToday;
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (updateSuccess) {
+					_toastr2.default.clear();
+					_toastr2.default.success("", "Record updated.");
+					_this5.loadMain_Educational(_this5.obj_personnel.global_indiv_id);
+					_this5.clearData();
+				}, function (updateError) {
+
+					_settings2.default.isNavigating = false;
+					_toastr2.default.clear();
+					_toastr2.default.error("", updateError);
+				});
+			});
+		};
+
+		main_educational.prototype.btnRemove = function btnRemove(educ) {
+			var _this6 = this;
+
+			this.DialogService.open({ viewModel: _DialogBox.DialogBox, model: { title: "Confirm remove.", message: "Are you sure you want to remove the educational achievement" } }).whenClosed(function (response) {
+				if (!response.wasCancelled) {
+					_settings2.default.isNavigating = true;
+					var query = (0, _entityManagerFactory.EntityQuery)().from("EDUCATION_TRX").where("EDUCATION_ID", "==", educ.education_id);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (querySuccess) {
+						if (querySuccess.results.length == 0) {
+							_toastr2.default.clear();
+							_toastr2.default.error("", "No to-be-remove record found.");
+						}
+						querySuccess.results[0].entityAspect.setDeleted();
+
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (removeSuccess) {
+							_toastr2.default.clear();
+							_toastr2.default.success("", "The educational achievement was successfully removed.");
+							_this6.loadMain_Educational(_this6.obj_personnel.global_indiv_id);
+							_this6.clearData();
+						}, function (removeError) {
+							_settings2.default.isNavigating = false;
+							_toastr2.default.clear();
+							_toastr2.default.error(removeError, "Error in removing educational achievement.");
+						});
+					});
+				}
+			});
+		};
+
+		return main_educational;
+	}()) || _class);
+});
+define('ppid/forms/miscellaneous',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.miscellaneous = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var miscellaneous = exports.miscellaneous = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
+		function miscellaneous(dialogService, obj_personnel, toastr) {
+			var _this = this;
+
+			_classCallCheck(this, miscellaneous);
+
+			this.obj_personnel = null;
+
+			this.dialogService = dialogService;
+			this.obj_personnel = obj_personnel;
+			this.obj_personnel.OBSERVERS.ppid_dialog.push(function (all) {
+				_this.CloseSearch(all);
+			});
+		}
+
+		miscellaneous.prototype.CloseSearch = function CloseSearch(global_id) {};
+
+		return miscellaneous;
+	}()) || _class);
+});
+define('ppid/forms/relative',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', 'aurelia-dialog', '../../entity-manager-factory'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _entityManagerFactory) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.relative = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var relative = exports.relative = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
+		function relative(dialogService, obj_personnel, toastr) {
+			_classCallCheck(this, relative);
+
+			this.obj_personnel = null;
+			this._tab0_loaded = false;
+			this._404_img = "/images/404.png";
+
+			this.dialogService = dialogService;
+			this.obj_personnel = obj_personnel;
+		}
+
+		relative.prototype.clickTab_relative = function clickTab_relative(tab_num) {
+			var _this = this;
+
+			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
+
+			switch (tab_num) {
+				case 0:
+					_toastr2.default.clear();
+					_toastr2.default.info("", "Loading parents' info...");
+					this.obj_personnel.OBSERVERS.relative_parents_clicked.forEach(function (delegate) {
+						delegate(_this.obj_personnel.global_indiv_id);
+					});
+			}
+		};
+
+		return relative;
+	}()) || _class);
+});
+define('ppid/forms/relative_parent',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment', 'settings', '../../helpers'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment, _settings, _helpers) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.relative_parent = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _moment2 = _interopRequireDefault(_moment);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var relative_parent = exports.relative_parent = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
+		function relative_parent(obj_personnel, toastr, DialogService) {
+			var _this = this;
+
+			_classCallCheck(this, relative_parent);
+
+			this.obj_personnel = null;
+			this.alreadyLoaded = false;
+			this.status = ["Dependent", "Deceased"];
+			this.selectedStatus = null;
+
+			this.obj_personnel = obj_personnel;
+			this.DialogService = DialogService;
+
+			this.obj_personnel.OBSERVERS.tab_changed.push(function (tab_num, global_indiv_id) {
+				if (tab_num == 1) {
+					if (!_this.alreadyLoaded) {
+						_this.alreadyLoaded = true;
+						$("#fBirthDate").datepicker();
+						$("#fDeceasedDate").datepicker();
+						$("#mBirthDate").datepicker();
+						$("#mDeceasedDate").datepicker();
+						toastr.clear();
+						toastr.info("", "Loading parents data...");
+						_this.loadParent(global_indiv_id);
+					}
+				}
+			});
+
+			this.obj_personnel.OBSERVERS.relative_parents_clicked.push(function (global_indiv_id) {
+				_this.loadParent(global_indiv_id);
+			});
+		}
+
+		relative_parent.prototype.loadParent = function loadParent(global_indiv_id) {
+			var _this2 = this;
+
+			_settings2.default.isNavigating = true;
+			var pred1 = _breezeClient2.default.Predicate.create("GLOBAL_INDIV_ID", "==", global_indiv_id);
+			var pred2 = _breezeClient2.default.Predicate.create("RELATIVE_CD", "==", "FATHER");
+			var pred3 = _breezeClient2.default.Predicate.create("RELATIVE_CD", "==", "MOTHER");
+			var _pred1 = _breezeClient2.default.Predicate.or([pred2, pred3]);
+			var finalPred = _breezeClient2.default.Predicate.and([pred1, _pred1]);
+
+			var query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_TRX").where(finalPred);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+
+				_.each(s1.results, function (result) {
+					var birthDt = (0, _helpers.formatDate)(result.BIRTH_DT);
+					var deceasedDt = (0, _helpers.formatDate)(result.DECEASED_DT);
+					if (result.RELATIVE_CD == "FATHER") {
+						var father = {
+							relative_id: result.RELATIVE_ID,
+							global_indiv_id: result.GLOBAL_INDIV_ID,
+							given_name: result.GIVEN_NAME,
+							middle_name: result.MIDDLE_NAME,
+							last_name: result.LAST_NAME,
+							birth_dt: birthDt,
+							phone_no: result.PHONE_NO,
+							occupation: result.OCCUPATION,
+							employer: result.EMPLOYER,
+							status: result.DEPENDENT_FL,
+							dependent_fl: result.DEPENDENT_FL,
+							deceased_dt: deceasedDt,
+							in_case_of_emergency_fl: result.IN_CASE_OF_EMERGENCY_FL,
+							relative_cd: result.RELATIVE_CD
+						};
+
+						if (father.dependent_fl == 0) {
+							_this2.obj_personnel.RELATIVE.parents.father.status = "Dependent";
+							$("#fstatus_dependent").prop("checked", true);
+							$("#fstatus_deceased").prop("checked", false);
+						} else if (father.dependent_fl == 1) {
+							_this2.obj_personnel.RELATIVE.parents.father.status = "Deceased";
+							$("#fstatus_dependent").prop("checked", false);
+							$("#fstatus_deceased").prop("checked", true);
+						}
+
+						_this2.obj_personnel.RELATIVE.parents.father = father;
+					}
+					if (result.RELATIVE_CD == "MOTHER") {
+						var mother = {
+							relative_id: result.RELATIVE_ID,
+							global_indiv_id: result.GLOBAL_INDIV_ID,
+							given_name: result.GIVEN_NAME,
+							middle_name: result.MIDDLE_NAME,
+							last_name: result.LAST_NAME,
+							birth_dt: birthDt,
+							phone_no: result.PHONE_NO,
+							occupation: result.OCCUPATION,
+							employer: result.EMPLOYER,
+							status: result.DEPENDENT_FL == 0 ? "Dependent" : "Deceased",
+							dependent_fl: result.DEPENDENT_FL,
+							deceased_dt: deceasedDt,
+							in_case_of_emergency_fl: result.IN_CASE_OF_EMERGENCY_FL,
+							relative_cd: result.RELATIVE_CD
+						};
+						_this2.obj_personnel.RELATIVE.parents.mother = mother;
+						console.log(mother.dependent_fl);
+						if (mother.dependent_fl == 0) {
+							_this2.obj_personnel.RELATIVE.parents.mother.status = "Dependent";
+							$("#mstatus_dependent").prop("checked", true);
+							$("#mstatus_deceased").prop("checked", false);
+						} else if (mother.dependent_fl == 1) {
+							_this2.obj_personnel.RELATIVE.parents.mother.status = "Deceased";
+							$("#mstatus_dependent").prop("checked", false);
+							$("#mstatus_deceased").prop("checked", true);
+						} else {
+							$("#mstatus_dependent").prop("checked", false);
+							$("#mstatus_deceased").prop("checked", false);
+							_this2.obj_personnel.RELATIVE.parents.mother.status = "";
+						}
+					}
+
+					_this2.loadParentAddress(result.RELATIVE_ID, result.RELATIVE_CD == "MOTHER" ? true : false);
+				});
+
+				_toastr2.default.clear();
+				_toastr2.default.success("", "Relative info has been loaded...");
+				_settings2.default.isNavigating = false;
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in loading parents data.");
+			});
+		};
+
+		relative_parent.prototype.loadParentAddress = function loadParentAddress(relative_id, isMother) {
+			var _this3 = this;
+
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_ADDR_TRX").where("RELATIVE_ID", "==", relative_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+
+				if (s1.results.length == 0) return;
+
+				if (isMother) {
+					_this3.obj_personnel.RELATIVE.parents.mother.unit_no = s1.results[0].UNIT_NO;
+					_this3.obj_personnel.RELATIVE.parents.mother.house_no = s1.results[0].HOUSE_NO;
+					_this3.obj_personnel.RELATIVE.parents.mother.block_lot = s1.results[0].BLOCK_LOT;
+					_this3.obj_personnel.RELATIVE.parents.mother.bldg_name = s1.results[0].BLDG_NAME;
+					_this3.obj_personnel.RELATIVE.parents.mother.street_name = s1.results[0].STREET_NAME;
+					_this3.obj_personnel.RELATIVE.parents.mother.sub_village = s1.results[0].SUB_VILLAGE;
+					_this3.obj_personnel.RELATIVE.parents.mother.barangay = s1.results[0].BARANGAY;
+					_this3.obj_personnel.RELATIVE.parents.mother.district = s1.results[0].DISTRICT;
+					_this3.obj_personnel.RELATIVE.parents.mother.city_town = s1.results[0].CITY_TOWN;
+					_this3.obj_personnel.RELATIVE.parents.mother.state_province = s1.results[0].STATE_PROVINCE;
+					_this3.obj_personnel.RELATIVE.parents.mother.region = s1.results[0].REGION;
+					_this3.obj_personnel.RELATIVE.parents.mother.zipcode = s1.results[0].ZIPCODE;
+					_this3.obj_personnel.RELATIVE.parents.mother.country_cd = s1.results[0].COUNTRY_CD;
+				} else {
+					_this3.obj_personnel.RELATIVE.parents.father.unit_no = s1.results[0].UNIT_NO;
+					_this3.obj_personnel.RELATIVE.parents.father.house_no = s1.results[0].HOUSE_NO;
+					_this3.obj_personnel.RELATIVE.parents.father.block_lot = s1.results[0].BLOCK_LOT;
+					_this3.obj_personnel.RELATIVE.parents.father.bldg_name = s1.results[0].BLDG_NAME;
+					_this3.obj_personnel.RELATIVE.parents.father.street_name = s1.results[0].STREET_NAME;
+					_this3.obj_personnel.RELATIVE.parents.father.sub_village = s1.results[0].SUB_VILLAGE;
+					_this3.obj_personnel.RELATIVE.parents.father.barangay = s1.results[0].BARANGAY;
+					_this3.obj_personnel.RELATIVE.parents.father.district = s1.results[0].DISTRICT;
+					_this3.obj_personnel.RELATIVE.parents.father.city_town = s1.results[0].CITY_TOWN;
+					_this3.obj_personnel.RELATIVE.parents.father.state_province = s1.results[0].STATE_PROVINCE;
+					_this3.obj_personnel.RELATIVE.parents.father.region = s1.results[0].REGION;
+					_this3.obj_personnel.RELATIVE.parents.father.zipcode = s1.results[0].ZIPCODE;
+					_this3.obj_personnel.RELATIVE.parents.father.country_cd = s1.results[0].COUNTRY_CD;
+				}
+
+				_settings2.default.isNavigating = false;
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in parent's address.");
+			});
+		};
+
+		relative_parent.prototype.checkChange = function checkChange(isMother, status) {
+			if (isMother) {
+
+				if (status == "Dependent") {
+					$("#mstatus_deceased").prop("checked", false);
+				} else if (status = "Deceased") {
+					$("#mstatus_dependent").prop("checked", false);
+				}
+
+				var isChecked_dependent = $('#mstatus_dependent').is(":checked");
+				var isChecked_deceased = $("#mstatus_deceased").is(":checked");
+				if (isChecked_dependent) {
+					this.obj_personnel.RELATIVE.parents.mother.status = "Dependent";
+					this.obj_personnel.RELATIVE.parents.mother.deceased_dt = "";
+					$("#mDeceasedDate").val("");
+				} else if (isChecked_deceased) {
+					this.obj_personnel.RELATIVE.parents.mother.status = "Deceased";
+				} else if (isChecked_dependent == false && isChecked_deceased == false) {
+					this.obj_personnel.RELATIVE.parents.mother.status = "";
+					this.obj_personnel.RELATIVE.parents.mother.deceased_dt = "";
+					$("#mDeceasedDate").val("");
+				}
+			} else {
+
+				if (status == "Dependent") {
+					$("#fstatus_deceased").prop("checked", false);
+				} else if (status = "Deceased") {
+					$("#fstatus_dependent").prop("checked", false);
+				}
+
+				var isChecked_dependent = $('#fstatus_dependent').is(":checked");
+				var isChecked_deceased = $("#fstatus_deceased").is(":checked");
+				if (isChecked_dependent) {
+					this.obj_personnel.RELATIVE.parents.father.status = "Dependent";
+					this.obj_personnel.RELATIVE.parents.father.deceased_dt = "";
+					$("#fDeceasedDate").val("");
+				} else if (isChecked_deceased) {
+					this.obj_personnel.RELATIVE.parents.father.status = "Deceased";
+				} else if (isChecked_dependent == false && isChecked_deceased == false) {
+					this.obj_personnel.RELATIVE.parents.father.status = "";
+					this.obj_personnel.RELATIVE.parents.father.deceased_dt = "";
+					$("#fDeceasedDate").val("");
+				}
+			}
+		};
+
+		relative_parent.prototype.dd_provinceChanged = function dd_provinceChanged(isMother) {
+			var prov = null;
+			if (isMother) {
+				prov = this.obj_personnel.RELATIVE.parents.mother.state_province;
+			} else {
+				prov = this.obj_personnel.RELATIVE.parents.father.state_province;
+			}
+			if (prov != undefined && prov != null && prov.length != 0) {
+				var selectedProv = this.obj_personnel.PROVINCE.find(function (p) {
+					if (p.value == prov) {
+						return p;
+					}
+				});
+
+				if (selectedProv != null) {
+					if (isMother) {
+						this.obj_personnel.RELATIVE.parents.mother.region = selectedProv.group;
+					} else {
+						this.obj_personnel.RELATIVE.parents.father.region = selectedProv.group;
+					}
+					this.dd_regionChanged(isMother);
+				}
+			}
+		};
+
+		relative_parent.prototype.dd_regionChanged = function dd_regionChanged(isMother) {
+			var reg = null;
+			if (isMother) {
+				reg = this.obj_personnel.RELATIVE.parents.mother.region;
+			} else {
+				reg = this.obj_personnel.RELATIVE.parents.father.region;
+			}
+			if (reg != undefined && reg != null && reg.length != 0) {
+				var selectedRegion = this.obj_personnel.REGION.find(function (r) {
+					if (r.value == reg) return r;
+				});
+
+				if (selectedRegion != null) {
+					if (isMother) {
+						reg = this.obj_personnel.RELATIVE.parents.mother.country_cd = selectedRegion.group;
+					} else {
+						reg = this.obj_personnel.RELATIVE.parents.father.country_cd = selectedRegion.group;
+					}
+				}
+			}
+		};
+
+		relative_parent.prototype.validate = function validate() {
+
+			var strValidation = "";
+
+			this.obj_personnel.RELATIVE.parents.mother.birth_dt = $("#mBirthDate").val();
+			this.obj_personnel.RELATIVE.parents.mother.deceased_dt = $("#mDeceasedDate").val();
+			switch (this.obj_personnel.RELATIVE.parents.mother.status) {
+				case "Dependent":
+					this.obj_personnel.RELATIVE.parents.mother.dependent_fl = 0;
+					break;
+				case "Deceased":
+					this.obj_personnel.RELATIVE.parents.mother.dependent_fl = 1;
+					break;
+				default:
+					this.obj_personnel.RELATIVE.parents.mother.dependent_fl = null;
+					break;
+			}
+			this.obj_personnel.RELATIVE.parents.father.birth_dt = $("#fBirthDate").val();
+			this.obj_personnel.RELATIVE.parents.father.deceased_dt = $("#fDeceasedDate").val();
+			switch (this.obj_personnel.RELATIVE.parents.father.status) {
+				case "Dependent":
+					this.obj_personnel.RELATIVE.parents.father.dependent_fl = 0;
+					break;
+				case "Deceased":
+					this.obj_personnel.RELATIVE.parents.father.dependent_fl = 1;
+					break;
+				default:
+					this.obj_personnel.RELATIVE.parents.father.dependent_fl = null;
+					break;
+			}
+
+			if (this.obj_personnel.RELATIVE.parents.mother.relative_id != undefined && this.obj_personnel.RELATIVE.parents.mother.relative_id.toString().length > 0) {
+
+				if (this.obj_personnel.RELATIVE.parents.mother.last_name == null || this.obj_personnel.RELATIVE.parents.mother.last_name.length == 0) {
+					strValidation += "[Mother] No Last Name specified.<br/>";
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.mother.given_name == null || this.obj_personnel.RELATIVE.parents.mother.given_name.length == 0) {
+					strValidation += "[Mother] No Given Name specified.<br/>";
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.mother.birth_dt.length > 0) {
+					if (!(0, _moment2.default)(new Date(this.obj_personnel.RELATIVE.parents.mother.birth_dt)).isValid()) {
+						strValidation += "Invalid birth date.<br/>";
+					}
+				} else {
+					strValidation += "[Mother] No Birth date specified. <br/>";
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.mother.dependent_fl == 1) {
+					if (this.obj_personnel.RELATIVE.parents.mother.deceased_dt.length > 0) {
+						if (!(0, _moment2.default)(new Date(this.obj_personnel.RELATIVE.parents.mother.deceased_dt)).isValid()) {
+							strValidation += "[Mother] Invalid deceased date. <br/>";
+						}
+					} else {
+						strValidation += "[Mother] No deceased date specified.<br/>";
+					}
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.mother.country_cd == undefined || this.obj_personnel.RELATIVE.parents.mother.country_cd.length == 0) {
+					strValidation += "[Mother] No country specified.<br/>";
+				}
+			} else {
+
+				if (this.obj_personnel.RELATIVE.parents.mother.last_name != null && this.obj_personnel.RELATIVE.parents.mother.last_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.mother.given_name == null || this.obj_personnel.RELATIVE.parents.mother.given_name.length == 0) {
+						strValidation += "[Mother] No given name specified.<br/>";
+					}
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.mother.given_name != null && this.obj_personnel.RELATIVE.parents.mother.given_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.mother.last_name == null || this.obj_personnel.RELATIVE.parents.mother.last_name.length == 0) {
+						strValidation += "[Mother] No last name specified.<br/>";
+					}
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.mother.last_name != null && this.obj_personnel.RELATIVE.parents.mother.last_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.mother.given_name != null && this.obj_personnel.RELATIVE.parents.mother.given_name.length > 0) {
+
+						if (this.obj_personnel.RELATIVE.parents.mother.country_cd.length == 0) {
+							strValidation += "[Mother] No country specified.<br/>";
+						}
+
+						if (this.obj_personnel.RELATIVE.parents.mother.dependent_fl == 1) {
+							if (this.obj_personnel.RELATIVE.parents.mother.deceased_dt.length > 0) {
+								if (!(0, _moment2.default)(new Date(this.obj_personnel.RELATIVE.parents.mother.deceased_dt)).isValid()) {
+									strValidation += "[Mother] Invalid deceased date.<br/>";
+								}
+							} else {
+								strValidation += "[Mother] No deceased date specified.<br/>";
+							}
+						} else if (this.obj_personnel.RELATIVE.parents.mother.dependent_fl == -1) {
+							strValidation += "[Mother] No status specified.<br/>";
+						}
+					}
+				}
+			}
+
+			if (this.obj_personnel.RELATIVE.parents.father.relative_id != undefined && this.obj_personnel.RELATIVE.parents.father.relative_id.toString().length > 0) {
+				if (this.obj_personnel.RELATIVE.parents.father.last_name == null || this.obj_personnel.RELATIVE.parents.father.last_name.length == 0) {
+					strValidation += "[Father] No Last Name specified.<br/>";
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.father.given_name == null || this.obj_personnel.RELATIVE.parents.father.given_name.length == 0) {
+					strValidation += "[Father] No Given Name specified.<br/>";
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.father.birth_dt.length > 0) {
+					if (!(0, _moment2.default)(new Date(this.obj_personnel.RELATIVE.parents.father.birth_dt)).isValid()) {
+						strValidation += "[Father] Invalid birth date.<br/>";
+					}
+				} else {
+					strValidation += "[Father] No Birth date specified. <br/>";
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.father.dependent_fl == 1) {
+					if (this.obj_personnel.RELATIVE.parents.father.deceased_dt.length > 0) {
+						if (!(0, _moment2.default)(new Date(this.obj_personnel.RELATIVE.parents.father.deceased_dt)).isValid()) {
+							strValidation += "[Father] Invalid deceased date. <br/>";
+						}
+					} else {
+						strValidation += "[Father] No deceased date specified.<br/>";
+					}
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.father.country_cd.length == 0) {
+					strValidation += "[Father] No country specified.<br/>";
+				}
+			} else {
+
+				if (this.obj_personnel.RELATIVE.parents.father.last_name != null && this.obj_personnel.RELATIVE.parents.father.last_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.father.given_name == null || this.obj_personnel.RELATIVE.parents.father.given_name.length == 0) {
+						strValidation += "[Father] No given name specified.<br/>";
+					}
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.father.given_name != null && this.obj_personnel.RELATIVE.parents.father.given_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.father.last_name == null || this.obj_personnel.RELATIVE.parents.father.last_name.length == 0) {
+						strValidation += "[Father] No last name specified.<br/>";
+					}
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.father.last_name != null && this.obj_personnel.RELATIVE.parents.father.last_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.father.given_name != null && this.obj_personnel.RELATIVE.parents.father.given_name.length > 0) {
+
+						if (this.obj_personnel.RELATIVE.parents.father.country_cd.length == 0) {
+							strValidation += "[Father] No country specified.<br/>";
+						}
+
+						if (this.obj_personnel.RELATIVE.parents.father.dependent_fl == 1) {
+							if (this.obj_personnel.RELATIVE.parents.father.deceased_dt.length > 0) {
+								if (!(0, _moment2.default)(new Date(this.obj_personnel.RELATIVE.parents.father.deceased_dt)).isValid()) {
+									strValidation += "[Father] Invalid deceased date.<br/>";
+								}
+							} else {
+								strValidation += "[Father] No deceased date specified.<br/>";
+							}
+						} else if (this.obj_personnel.RELATIVE.parents.father.dependent_fl == -1) {
+							strValidation += "[Father] No status specified.<br/>";
+						}
+					}
+				}
+			}
+
+			if (strValidation.length > 0) {
+				_toastr2.default.clear();
+				_toastr2.default.error("", strValidation);
+			} else {
+
+				if (this.obj_personnel.RELATIVE.parents.mother.relative_id > 0) {
+					this.updateRelative(this.obj_personnel.RELATIVE.parents.mother.relative_id, true);
+				} else if (this.obj_personnel.RELATIVE.parents.mother.last_name != null && this.obj_personnel.RELATIVE.parents.mother.last_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.mother.given_name != null && this.obj_personnel.RELATIVE.parents.mother.given_name.length > 0) {
+						this.saveRelative(this.obj_personnel.global_indiv_id, true);
+					}
+				}
+
+				if (this.obj_personnel.RELATIVE.parents.father.relative_id > 0) {
+					this.updateRelative(this.obj_personnel.RELATIVE.parents.father.relative_id, false);
+				} else if (this.obj_personnel.RELATIVE.parents.father.last_name != null && this.obj_personnel.RELATIVE.parents.father.last_name.length > 0) {
+					if (this.obj_personnel.RELATIVE.parents.father.given_name != null && this.obj_personnel.RELATIVE.parents.father.given_name.length > 0) {
+						this.saveRelative(this.obj_personnel.global_indiv_id, false);
+					}
+				}
+			}
+		};
+
+		relative_parent.prototype.convertToGMT8 = function convertToGMT8(date) {
+			if (date == undefined || date == null || date.length == 0) return null;
+			var tempDt = (0, _moment2.default)(date).add(8, 'hours');
+			return new Date(tempDt);
+		};
+
+		relative_parent.prototype.saveRelative = function saveRelative(global_indiv_id, isMother) {
+			var _this4 = this;
+
+			_settings2.default.isNavigating = true;
+			var dateToday = (0, _helpers.DateToday)();
+			var query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_TRX").orderByDesc("RELATIVE_ID").take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+				var MaxId = 1;
+				if (s1.results.length > 0) {
+					MaxId = s1.results[0].RELATIVE_ID + 1;
+				}
+
+				var entity = null;
+				if (isMother) {
+					var birthdate = _this4.convertToGMT8(_this4.obj_personnel.RELATIVE.parents.mother.birth_dt);
+					var deceased_dt = _this4.obj_personnel.RELATIVE.parents.mother.deceased_dt;
+					var mother = {
+						RELATIVE_ID: MaxId,
+						GLOBAL_INDIV_ID: global_indiv_id,
+						LAST_NAME: _this4.obj_personnel.RELATIVE.parents.mother.last_name,
+						GIVEN_NAME: _this4.obj_personnel.RELATIVE.parents.mother.given_name,
+						MIDDLE_NAME: _this4.obj_personnel.RELATIVE.parents.mother.middle_name,
+						BIRTH_DT: birthdate,
+						PHONE_NO: _this4.obj_personnel.RELATIVE.parents.mother.phone_no,
+						OCCUPATION: _this4.obj_personnel.RELATIVE.parents.mother.occupation,
+						EMPLOYER: _this4.obj_personnel.RELATIVE.parents.mother.employer,
+						DEPENDENT_FL: _this4.obj_personnel.RELATIVE.parents.mother.dependent_fl,
+						DECEASED_DT: deceased_dt,
+						IN_CASE_OF_EMERGENCY_FL: 0,
+						RELATIVE_CD: "MOTHER",
+						CREATED_BY: _this4.obj_personnel.USER.USER_ID,
+						CREATED_DT: dateToday
+					};
+					entity = (0, _entityManagerFactory.EntityManager)().createEntity("RELATIVE_TRX", mother);
+				} else {
+					var birthdate = _this4.convertToGMT8(_this4.obj_personnel.RELATIVE.parents.father.birth_dt);
+					var deceased_dt = _this4.convertToGMT8(_this4.obj_personnel.RELATIVE.parents.father.deceased_dt);
+					var father = {
+						RELATIVE_ID: MaxId,
+						GLOBAL_INDIV_ID: global_indiv_id,
+						LAST_NAME: _this4.obj_personnel.RELATIVE.parents.father.last_name,
+						GIVEN_NAME: _this4.obj_personnel.RELATIVE.parents.father.given_name,
+						MIDDLE_NAME: _this4.obj_personnel.RELATIVE.parents.father.middle_name,
+						BIRTH_DT: birthdate,
+						PHONE_NO: _this4.obj_personnel.RELATIVE.parents.father.phone_no,
+						OCCUPATION: _this4.obj_personnel.RELATIVE.parents.father.occupation,
+						EMPLOYER: _this4.obj_personnel.RELATIVE.parents.father.employer,
+						DEPENDENT_FL: _this4.obj_personnel.RELATIVE.parents.father.dependent_fl,
+						DECEASED_DT: deceased_dt,
+						IN_CASE_OF_EMERGENCY_FL: 0,
+						RELATIVE_CD: "FATHER",
+						CREATED_BY: _this4.obj_personnel.USER.USER_ID,
+						CREATED_DT: dateToday
+					};
+					entity = (0, _entityManagerFactory.EntityManager)().createEntity("RELATIVE_TRX", father);
+				}
+
+				(0, _entityManagerFactory.EntityManager)().addEntity(entity);
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s2) {
+					query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_ADDR_TRX").orderByDesc("RELATIVE_ADDR_ID").take(1);
+					(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s3) {
+						var MaxAddrId = 1;
+						if (s3.results.length > 0) {
+							MaxAddrId = s3.results[0].RELATIVE_ADDR_ID + 1;
+						}
+
+						var entity2 = null;
+						if (isMother) {
+							var addr_trx = {
+								RELATIVE_ID: MaxId,
+								RELATIVE_ADDR_ID: MaxAddrId,
+								COUNTRY_CD: _this4.obj_personnel.RELATIVE.parents.mother.country_cd,
+								REGION: _this4.obj_personnel.RELATIVE.parents.mother.region,
+								STATE_PROVINCE: _this4.obj_personnel.RELATIVE.parents.mother.state_province,
+								CITY_TOWN: _this4.obj_personnel.RELATIVE.parents.mother.city_town,
+								DISTRICT: _this4.obj_personnel.RELATIVE.parents.mother.district,
+								BARANGAY: _this4.obj_personnel.RELATIVE.parents.mother.barangay,
+								SUB_VILLAGE: _this4.obj_personnel.RELATIVE.parents.mother.sub_village,
+								PHASE: _this4.obj_personnel.RELATIVE.parents.mother.phase,
+								BLOCK_LOT: _this4.obj_personnel.RELATIVE.parents.mother.block_lot,
+								STREET_NAME: _this4.obj_personnel.RELATIVE.parents.mother.street_name,
+								HOUSE_NO: _this4.obj_personnel.RELATIVE.parents.mother.house_no,
+								BLDG_NAME: _this4.obj_personnel.RELATIVE.parents.mother.bldg_name,
+								UNIT_NO: _this4.obj_personnel.RELATIVE.parents.mother.unit_no,
+								ZIPCODE: _this4.obj_personnel.RELATIVE.parents.mother.zipcode,
+
+								PERMANENT_FL: 0,
+								MAILING_FL: 0,
+								PRESENT_FL: 0,
+								CREATED_BY: _this4.obj_personnel.USER.USER_ID,
+								CREATED_DT: dateToday
+							};
+							entity2 = (0, _entityManagerFactory.EntityManager)().createEntity("RELATIVE_ADDR_TRX", addr_trx);
+						} else {
+							var addr_trx = {
+								RELATIVE_ID: MaxId,
+								RELATIVE_ADDR_ID: MaxAddrId,
+								COUNTRY_CD: _this4.obj_personnel.RELATIVE.parents.father.country_cd,
+								REGION: _this4.obj_personnel.RELATIVE.parents.father.region,
+								STATE_PROVINCE: _this4.obj_personnel.RELATIVE.parents.father.state_province,
+								CITY_TOWN: _this4.obj_personnel.RELATIVE.parents.father.city_town,
+								DISTRICT: _this4.obj_personnel.RELATIVE.parents.father.district,
+								BARANGAY: _this4.obj_personnel.RELATIVE.parents.father.barangay,
+								SUB_VILLAGE: _this4.obj_personnel.RELATIVE.parents.father.sub_village,
+								PHASE: _this4.obj_personnel.RELATIVE.parents.father.phase,
+								BLOCK_LOT: _this4.obj_personnel.RELATIVE.parents.father.block_lot,
+								STREET_NAME: _this4.obj_personnel.RELATIVE.parents.father.street_name,
+								HOUSE_NO: _this4.obj_personnel.RELATIVE.parents.father.house_no,
+								BLDG_NAME: _this4.obj_personnel.RELATIVE.parents.father.bldg_name,
+								UNIT_NO: _this4.obj_personnel.RELATIVE.parents.father.unit_no,
+								ZIPCODE: _this4.obj_personnel.RELATIVE.parents.father.zipcode,
+
+								PERMANENT_FL: 0,
+								MAILING_FL: 0,
+								PRESENT_FL: 0,
+								CREATED_BY: _this4.obj_personnel.USER.USER_ID,
+								CREATED_DT: dateToday
+							};
+							entity2 = (0, _entityManagerFactory.EntityManager)().createEntity("RELATIVE_ADDR_TRX", addr_trx);
+						}
+
+						(0, _entityManagerFactory.EntityManager)().addEntity(entity2);
+						(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s4) {
+							_toastr2.default.clear();
+							_toastr2.default.success("", "Record saved.");
+							_this4.loadParent(global_indiv_id);
+						}, function (e4) {
+							if (entity2 != null) {
+								entity2.entityAspect.setDeleted();
+							}
+							_settings2.default.isNavigating = false;
+							_toastr2.default.error(e4, "Error in saving relative address.");
+						});
+					}, function (e3) {
+						_settings2.default.isNavigating = false;
+						_toastr2.default.error(e3, "Error in querying relative address id.");
+					});
+				}, function (e2) {
+					if (entity != null) {
+						entity.entityAspect.setDeleted();
+					}
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e2, "Error in saving relative info.");
+				});
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in querying relative id.");
+			});
+		};
+
+		relative_parent.prototype.updateRelative = function updateRelative(relative_id, isMother) {
+			var _this5 = this;
+
+			var dateToday = (0, _helpers.DateToday)();
+			_settings2.default.isNavigating = true;
+			var query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_TRX").where("RELATIVE_ID", "==", relative_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s1) {
+
+				if (isMother) {
+					s1.results[0].LAST_NAME = _this5.obj_personnel.RELATIVE.parents.mother.last_name;
+					s1.results[0].GIVEN_NAME = _this5.obj_personnel.RELATIVE.parents.mother.given_name;
+					s1.results[0].MIDDLE_NAME = _this5.obj_personnel.RELATIVE.parents.mother.middle_name;
+					s1.results[0].BIRTH_DT = _this5.convertToGMT8(_this5.obj_personnel.RELATIVE.parents.mother.birth_dt);
+					s1.results[0].PHONE_NO = _this5.obj_personnel.RELATIVE.parents.mother.phone_no;
+					s1.results[0].OCCUPATION = _this5.obj_personnel.RELATIVE.parents.mother.occupation;
+					s1.results[0].EMPLOYER = _this5.obj_personnel.RELATIVE.parents.mother.employer;
+					s1.results[0].DEPENDENT_FL = _this5.obj_personnel.RELATIVE.parents.mother.dependent_fl;
+					if (_this5.obj_personnel.RELATIVE.parents.mother.dependent_fl == 1) {
+						s1.results[0].DECEASED_DT = _this5.convertToGMT8(_this5.obj_personnel.RELATIVE.parents.mother.deceased_dt);
+					} else {
+						s1.results[0].DECEASED_DT = null;
+					}
+					s1.results[0].LAST_UPDATED_BY = _this5.obj_personnel.USER.USER_ID;
+					s1.results[0].LAST_UPDATED_DT = dateToday;
+				} else {
+					s1.results[0].LAST_NAME = _this5.obj_personnel.RELATIVE.parents.father.last_name;
+					s1.results[0].GIVEN_NAME = _this5.obj_personnel.RELATIVE.parents.father.given_name;
+					s1.results[0].MIDDLE_NAME = _this5.obj_personnel.RELATIVE.parents.father.middle_name;
+					s1.results[0].BIRTH_DT = _this5.convertToGMT8(_this5.obj_personnel.RELATIVE.parents.father.birth_dt);
+					s1.results[0].PHONE_NO = _this5.obj_personnel.RELATIVE.parents.father.phone_no;
+					s1.results[0].OCCUPATION = _this5.obj_personnel.RELATIVE.parents.father.occupation;
+					s1.results[0].EMPLOYER = _this5.obj_personnel.RELATIVE.parents.father.employer;
+					s1.results[0].DEPENDENT_FL = _this5.obj_personnel.RELATIVE.parents.father.dependent_fl;
+					if (_this5.obj_personnel.RELATIVE.parents.father.dependent_fl == 1) {
+						s1.results[0].DECEASED_DT = _this5.convertToGMT8(_this5.obj_personnel.RELATIVE.parents.father.deceased_dt);
+					} else {
+						s1.results[0].DECEASED_DT = null;
+					}
+					s1.results[0].LAST_UPDATED_BY = _this5.obj_personnel.USER.USER_ID;
+					s1.results[0].LAST_UPDATED_DT = dateToday;
+				}
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s3) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.success("", "Record saved.");
+				}, function (e3) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e3, "Error in updating personnel info.");
+				});
+			}, function (e1) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e1, "Error in querying mother's info.");
+			});
+
+			var query2 = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_ADDR_TRX").where("RELATIVE_ID", "==", relative_id);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(query2).then(function (s2) {
+
+				if (isMother) {
+					s2.results[0].COUNTRY_CD = _this5.obj_personnel.RELATIVE.parents.mother.country_cd;
+					s2.results[0].REGION = _this5.obj_personnel.RELATIVE.parents.mother.region;
+					s2.results[0].STATE_PROVINCE = _this5.obj_personnel.RELATIVE.parents.mother.state_province;
+					s2.results[0].CITY_TOWN = _this5.obj_personnel.RELATIVE.parents.mother.city_town;
+					s2.results[0].DISTRICT = _this5.obj_personnel.RELATIVE.parents.mother.district;
+					s2.results[0].BARANGAY = _this5.obj_personnel.RELATIVE.parents.mother.barangay;
+					s2.results[0].SUB_VILLAGE = _this5.obj_personnel.RELATIVE.parents.mother.sub_village;
+					s2.results[0].PHASE = _this5.obj_personnel.RELATIVE.parents.mother.phase;
+					s2.results[0].BLOCK_LOT = _this5.obj_personnel.RELATIVE.parents.mother.block_lot;
+					s2.results[0].STREET_NAME = _this5.obj_personnel.RELATIVE.parents.mother.street_name;
+					s2.results[0].HOUSE_NO = _this5.obj_personnel.RELATIVE.parents.mother.house_no;
+					s2.results[0].BLDG_NAME = _this5.obj_personnel.RELATIVE.parents.mother.bldg_name;
+					s2.results[0].UNIT_NO = _this5.obj_personnel.RELATIVE.parents.mother.unit_no;
+					s2.results[0].ZIPCODE = _this5.obj_personnel.RELATIVE.parents.mother.zipcode;
+					s2.results[0].LAST_UPDATED_BY = _this5.obj_personnel.USER.USER_ID;
+					s2.results[0].LAST_UPDATED_DT = dateToday;
+				} else {
+					s2.results[0].COUNTRY_CD = _this5.obj_personnel.RELATIVE.parents.father.country_cd;
+					s2.results[0].REGION = _this5.obj_personnel.RELATIVE.parents.father.region;
+					s2.results[0].STATE_PROVINCE = _this5.obj_personnel.RELATIVE.parents.father.state_province;
+					s2.results[0].CITY_TOWN = _this5.obj_personnel.RELATIVE.parents.father.city_town;
+					s2.results[0].DISTRICT = _this5.obj_personnel.RELATIVE.parents.father.district;
+					s2.results[0].BARANGAY = _this5.obj_personnel.RELATIVE.parents.father.barangay;
+					s2.results[0].SUB_VILLAGE = _this5.obj_personnel.RELATIVE.parents.father.sub_village;
+					s2.results[0].PHASE = _this5.obj_personnel.RELATIVE.parents.father.phase;
+					s2.results[0].BLOCK_LOT = _this5.obj_personnel.RELATIVE.parents.father.block_lot;
+					s2.results[0].STREET_NAME = _this5.obj_personnel.RELATIVE.parents.father.street_name;
+					s2.results[0].HOUSE_NO = _this5.obj_personnel.RELATIVE.parents.father.house_no;
+					s2.results[0].BLDG_NAME = _this5.obj_personnel.RELATIVE.parents.father.bldg_name;
+					s2.results[0].UNIT_NO = _this5.obj_personnel.RELATIVE.parents.father.unit_no;
+					s2.results[0].ZIPCODE = _this5.obj_personnel.RELATIVE.parents.father.zipcode;
+					s2.results[0].LAST_UPDATED_BY = _this5.obj_personnel.USER.USER_ID;
+					s2.results[0].LAST_UPDATED_DT = dateToday;
+				}
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (s4) {
+					_settings2.default.isNavigating = false;
+				}, function (e4) {
+					_settings2.default.isNavigating = false;
+					_toastr2.default.error(e4, "Error in updating personnel address.");
+				});
+			}, function (e2) {
+				_settings2.default.isNavigating = false;
+				_toastr2.default.error(e2, "Error in querying Mother's info.");
+			});
+		};
+
+		return relative_parent;
+	}()) || _class);
+});
+define('ppid/forms/relative_siblings',["exports"], function (exports) {
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var relative_siblings = exports.relative_siblings = function relative_siblings() {
+		_classCallCheck(this, relative_siblings);
+	};
+});
+define('ppid/modals/DialogBox',['exports', 'aurelia-framework', 'aurelia-dialog'], function (exports, _aureliaFramework, _aureliaDialog) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.DialogBox = undefined;
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var DialogBox = exports.DialogBox = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogController), _dec(_class = function () {
+		function DialogBox(controller) {
+			_classCallCheck(this, DialogBox);
+
+			this.message = "Sample Message";
+			this.title = "Sample Title";
+
+			this.controller = controller;
+		}
+
+		DialogBox.prototype.activate = function activate(info) {
+			this.message = info.message;
+			this.title = info.title;
+		};
+
+		return DialogBox;
+	}()) || _class);
+});
+define('ppid/modals/photo_list',["exports"], function (exports) {
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var photo_list = exports.photo_list = function photo_list() {
+		_classCallCheck(this, photo_list);
+	};
+});
+define('ppid/modals/ppid_search',['exports', 'aurelia-framework', 'aurelia-dialog', 'multi-observer', '../.././masterfiles', 'breeze-client', '../../entity-manager-factory', '../../helpers', '../obj_personnel', 'toastr'], function (exports, _aureliaFramework, _aureliaDialog, _multiObserver, _masterfiles, _breezeClient, _entityManagerFactory, _helpers, _obj_personnel, _toastr) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ppid_search = undefined;
+
+	var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var ppid_search = exports.ppid_search = (_dec = (0, _aureliaFramework.inject)(_multiObserver.MultiObserver, _aureliaDialog.DialogController, _aureliaFramework.ObserverLocator, _obj_personnel.obj_personnel, _toastr2.default), _dec(_class = function () {
+		function ppid_search(multiObserver, controller, observerLocator, obj_personnel, toastr) {
+			var _this = this;
+
+			_classCallCheck(this, ppid_search);
+
+			this.obj_personnel = null;
+			this.varFilterArrayLength = 0;
+			this.varFilterArray = [];
+			this.lstPredicates = [];
+			this.currPredicate = null;
+			this.observerLocator = null;
+
+			this.controller = controller;
+			this.observerLocator = observerLocator;
+			this.obj_personnel = obj_personnel;
+
+			multiObserver.observe([[this, "_bglobal_indiv_id"], [this, "_blast_name"], [this, "_bfirst_name"], [this, "_bnickname"]], function (newValue, oldValue) {
+				return _this.onSpeculateProp(newValue, oldValue);
+			});
+		}
+
+		ppid_search.prototype.fnManualFilter = function fnManualFilter(tmpVar) {
+			var _this2 = this;
+
+			this.lstPredicates = [];
+
+			_.each(this._rppid_queries.querySelectorAll('input'), function (all) {
+				var varOb = _this2.observerLocator.getObserver(_this2, all.getAttribute('searchable').replace('_s', '_b'));
+				if (varOb.getValue() != undefined && varOb.getValue() != null && varOb.getValue() != "" && varOb.getValue() != "undefined") {
+					if (varOb.propertyName.indexOf('global_indiv_id') > -1) {
+							if (varOb.getValue().length >= 17) _this2.lstPredicates.push(_breezeClient2.default.Predicate.create(varOb.propertyName.replace('_b', '').toUpperCase(), "==", varOb.getValue().toUpperCase()));
+						} else if (!(varOb.propertyName.indexOf('global_indiv_id') > -1)) {
+						_this2.lstPredicates.push(_breezeClient2.default.Predicate.create(varOb.propertyName.replace('_b', '').toUpperCase().replace('FIRST_NAME', 'GIVEN_NAME').replace('NICKNAME', 'ALIAS'), _breezeClient2.default.FilterQueryOp.Contains, varOb.getValue().toUpperCase()));
+					}
+
+					if (tmpVar.length > 0) {
+						tmpVar = (0, _helpers.getFilter)(tmpVar, varOb.getValue(), all.getAttribute('searchable').replace('_s', ''));
+					}
+				}
+			});
+			return tmpVar;
+		};
+
+		ppid_search.prototype.onSpeculateProp = function onSpeculateProp(newValue, oldValue) {
+			var _this3 = this;
+
+			var varValuesHasChanged = false;
+
+			_.each(this._rppid_queries.querySelectorAll('input'), function (all) {
+				var varOb = _this3.observerLocator.getObserver(_this3, all.getAttribute('searchable').replace('_s', '_b'));
+
+				if (varOb.getValue() != '' && varOb.getValue() !== undefined) {
+					varValuesHasChanged = true;
+				}
+			});
+
+			if (!varValuesHasChanged) return;
+
+			var tmpVar = this.fnManualFilter(this.varFilterArray);
+
+			if (tmpVar.length > 0) {
+				var tmpVarNew = _.sortBy(tmpVar, 'GLOBAL_INDIV_ID').reverse();
+				this.varFilterArray = tmpVarNew;
+				this.varFilterArrayLength = this.varFilterArray.length;
+				return;
+			}
+
+			if (this.lstPredicates.length == 0) return;
+
+			this.currPredicate = this.lstPredicates;
+			setTimeout(function (a) {
+				if (a !== _this3.currPredicate) return;
+
+				var _query = (0, _entityManagerFactory.EntityQuery)().from('GLOBAL_INDIV_MSTR').where(_breezeClient2.default.Predicate.and(_this3.currPredicate)).orderBy('GLOBAL_INDIV_ID desc').select('GLOBAL_INDIV_ID,GIVEN_NAME,LAST_NAME,ALIAS');
+				(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+					tmpVar = [];
+					_.each(success.results, function (all) {
+						tmpVar.push({
+							GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
+
+							GROUP: "Test group",
+							LAST_NAME: all.LAST_NAME,
+							FIRST_NAME: all.GIVEN_NAME,
+							NICK_NAME: all.ALIAS
+						});
+					});
+
+					_this3.varFilterArray = tmpVar;
+					_this3.varFilterArrayLength = _this3.varFilterArray.length;
+				}, function (failed) {
+					_toastr2.default.error(failed, "Failed loading Personnel Info");
+				});
+			}, 500, this.currPredicate);
+		};
+
+		ppid_search.prototype.selectedPersonnel = function selectedPersonnel(item) {
+			this.obj_personnel.OBSERVERS.ppid_dialog.forEach(function (all) {
+				all(item.GLOBAL_INDIV_ID);
+			});
+			this.controller.ok();
+		};
+
+		ppid_search.prototype.fnKeyup = function fnKeyup(evt, item) {
+			if (evt.keyCode == 13) {
+				if (this.varFilterArray.length == 1) {
+					this.selectedPersonnel(this.varFilterArray[0]);
+				}
+			}
+		};
+
+		return ppid_search;
+	}()) || _class);
+});
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\r\n  <!--<link href=\"/styles/bootstrap.css\" rel=\"stylesheet\" />-->\r\n  <link rel=\"stylesheet\" href=\"/styles/styles.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/datepicker.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/toastr.css\">\r\n  <link href=\"/styles/font-awesome.min.css\" rel=\"stylesheet\" />\r\n  <require from='nav-bar'></require>\r\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\r\n  <!--<require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff\"></require>\r\n  <require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff2\"></require>-->\r\n  \r\n  <nav-bar router.bind=\"router\"></nav-bar>\r\n\r\n  <div class=\"page-host\">\r\n    <router-view></router-view>\r\n  </div>\r\n\r\n  <!--<router-view></router-view>-->\r\n</template>\r\n"; });
 define('text!blankpage.html', ['module'], function(module) { module.exports = "<template>\r\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\r\n      \r\n\r\n    </div>\r\n    \r\n\r\n</template>"; });
 define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\r\n  <section class=\"au-animate\">\r\n    <h2>${heading}</h2>\r\n    <div>\r\n      <div class=\"col-md-2\">\r\n        <ul class=\"well nav nav-pills nav-stacked\">\r\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\r\n            <a href.bind=\"row.href\">${row.title}</a>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n      <div class=\"col-md-10\" style=\"padding: 0\">\r\n        <router-view></router-view>\r\n      </div>\r\n    </div>\r\n  </section>\r\n</template>\r\n"; });
@@ -12372,6 +14601,8 @@ define('text!mainpage.html', ['module'], function(module) { module.exports = "<t
 define('text!nav-bar.html', ['module'], function(module) { module.exports = "<template>\r\n  <nav class=\"navbar navbar-default navbar-fixed-top backroundTab\" role=\"navigation\" >\r\n    <div class=\"navbar-header\" style=\"background-color:#2191c0;margin-right:20px;margin-left:20px;\">\r\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\r\n        <span class=\"sr-only\">Toggle Navigation</span>\r\n        <span class=\"icon-bar\"></span>\r\n        <span class=\"icon-bar\"></span>\r\n        <span class=\"icon-bar\"></span>\r\n      </button>\r\n      <a class=\"navbar-brand\" href=\"#\" >\r\n        <i class=\"fa fa-home\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\r\n        <span style=\"color:white\">${router.title}</span>\r\n      </a>\r\n\r\n    </div>\r\n\r\n    <div class=\"collapse navbar-collapse  .navbar-right\" id=\"bs-example-navbar-collapse-1\">\r\n      <!--<ul class=\"nav navbar-nav\">\r\n        <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\r\n          <a if.bind=\"row.title!='PPMS'\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\r\n        </li>\r\n      </ul>-->\r\n    <!--   <img if.bind=\"_cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=hdpi.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/> -->\r\n<!-- \r\n      <form method=\"post\" enctype=\"multipart/form-data\" action=\"/ViewFile/Upload\">\r\n          <div>\r\n              <p>Upload one or more files using this form:</p>\r\n              <input type=\"file\" name=\"files\" />\r\n          </div>\r\n          <div>\r\n               <input type=\"submit\" value=\"Upload\" />\r\n          </div>\r\n      </form> -->\r\n      <ul class=\"nav navbar-nav\">\r\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"home()\" href=\"#\">HOME</a>\r\n         \r\n        </li>\r\n          \r\n        <!--<li  if.bind=\"_cache_obj.USER.USER_ID===undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" click.trigger=\"fnLogin()\" href=\"#\">LOG-IN</a>\r\n        </li>-->\r\n      </ul>\r\n      <ul class=\"nav navbar-nav\">\r\n        <li class=\"loader\" if.bind=\"router.isNavigating || settings.isNavigating\">\r\n          <i class=\"fa fa-spinner fa-spin fa-2x\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\r\n        </li>\r\n      </ul>\r\n      <ul class=\"nav navbar-nav navbar-right\" style=\"background-color:#2191c0;height:50px;\"  if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n        <li style=\"color:white;font-size:13px;margin-top:16px;margin-right:20px;margin-left:20px;\">\r\n          ${_cache_obj.USER.USER_ID}\r\n        </li>\r\n        <li class=\"dropdown\">\r\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"  style=\"color:white;font-size:13px;\">PASSWORD<span class=\"caret\"></span></a>\r\n          <ul class=\"dropdown-menu\">\r\n            <li><a href=\"#\" click.trigger=\"changePassword()\">CHANGE PASSWORD</a></li>\r\n            <!--<li role=\"separator\" class=\"divider\"></li>-->\r\n            <!--<li><a href=\"#\">EMAIL PASSWORD</a></li>-->\r\n          </ul>\r\n        </li>\r\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"logout()\" href=\"#\">LOG-OUT</a>\r\n        </li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n</template>\r\n"; });
 define('text!users.html', ['module'], function(module) { module.exports = "<template>\r\n  <require from=\"blur-image\"></require>\r\n\r\n  <section class=\"au-animate\">\r\n      <h2>${heading}</h2>\r\n      <div class=\"row au-stagger\">\r\n        <div class=\"col-sm-6 col-md-3 card-container au-animate\" repeat.for=\"user of users\">\r\n            <div class=\"card\">\r\n                <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\r\n                <div class=\"avatar\">\r\n                    <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\r\n                </div>\r\n                <div class=\"content\">\r\n                    <p class=\"name\">${user.login}</p>\r\n                    <p><a target=\"_blank\" class=\"btn btn-default\" href.bind=\"user.html_url\">Contact</a></p>\r\n                </div>\r\n            </div>\r\n        </div>\r\n      </div>\r\n  </section>\r\n</template>\r\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\r\n  <section class=\"au-animate\">\r\n    <h2>${heading}</h2>\r\n\r\n    <form role=\"form\" submit.delegate=\"submit()\">\r\n      <div class=\"form-group\">\r\n        <label for=\"fn\">First Name</label>\r\n        <input type=\"text\" value.bind=\"firstName\" class=\"form-control\" id=\"fn\" placeholder=\"first name\">\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label for=\"ln\">Last Name</label>\r\n        <input type=\"text\" value.bind=\"lastName\" class=\"form-control\" id=\"ln\" placeholder=\"last name\">\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label>Full Name</label>\r\n        <p class=\"help-block\">${fullName | upper}</p>\r\n      </div>\r\n      <button type=\"submit\" class=\"btn btn-default\">Submit</button>\r\n    </form>\r\n  </section>\r\n</template>\r\n"; });
+define('text!ppfcs/buh.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;width:800px;text-align:center;\" class=\"divBackground\">\r\n\t\t<table>\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>GLOBAL ID:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.OPTIONAL_GLOBAL_ID\" disabled.bind=\"_disableCells\" id=\"txtGlobalID\"/></td>\r\n\t\t\t\t<td class=\"text-right\"><label>E-Mail:</label></td>\r\n\t\t\t\t<td colspan=\"2\" class=\"text-left\"><input id=\"txtEmail\" value.bind=\"_objBUH.EMAIL_ADDRESS\"  disabled.bind=\"_disableCells\" style=\"width:250px;\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>LAST NAME:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.LAST_NAME\" id=\"txtLastName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>FIRST NAME:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.FIRST_NAME\" id=\"txtFirstName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>MIDDLE:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.MIDDLE_NAME\"  id=\"txtMiddle\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"7\" style=\"text-align:center;\"><br/>\r\n\t\t\t\t\t<input type=\"Button\" id=\"btnGlobalID\" value=\"Search\" click.delegate=\"fnCRUD('search')\" disabled.bind=\"_disableSearch\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnAdd\"  disabled.bind=\"_disableAdd\" value=\"Add\" click.delegate=\"fnCRUD('add')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnDelete\" disabled.bind=\"_disableDelete\"  value=\"Delete\" click.delegate=\"fnCRUD('delete')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnSave\" disabled.bind=\"_disableSave\" value=\"Save\" click.delegate=\"fnCRUD('save')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnCancel\" value=\"Cancel/Clear\" click.delegate=\"fnCRUD('cancel')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<br/><br/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\r\n\t\t</table>\r\n\r\n\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\" >\r\n\t\t\t<thead>\r\n\t\t\t\t<tr><td class=\"colorCell\">PROGRAM ID</td>\r\n\t\t\t\t\t<td class=\"colorCell\">PROGRAM TITLE</td>\r\n\t\t\t\t\t<td class=\"colorCell\"><input type=\"button\" value=\"+\" disabled.bind=\"_disableGrid\" click.delegate=\"searchPrograms()\"/> </td>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr repeat.for=\"item of _objBUH.PROGRAMS\">\r\n\t\t\t\t\t<td>${item.PROGRAM_CD}</td>\r\n\t\t\t\t\t<td>${item.PROGRAM_TITLE}</td>\r\n\t\t\t\t\t<td><input type=\"button\" value=\"-\" disabled.bind=\"_disableGrid\" click.delegate=\"$parent.deleteSelected($index)\"/>\r\n\t\t\t\t\t</td> \r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>  \r\n\r\n\r\n\t\t<!--<input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n\t\t<input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\">--> \r\n\r\n\r\n\r\n\t\t<br/>\r\n\t\t<br/>\r\n\t\t<table class= \"table-bordered\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<strong>${_user.USER_ID}</strong> \r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\r\n\r\n\t</template>"; });
+define('text!ppid/ppid.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Program Personal Information Database</h3>\r\n\t<!-- <div style=\"background:#A2A2D0; width:100%; height:38px; padding:5px;\">\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"FindUsers()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"\" value=\"ADD NEW PROGRAM PERSONNEL\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<label hidden.bind=\"obj_personnel.global_indiv_id.length==0\">Global Id: ${obj_personnel.global_indiv_id}</label>\r\n\t</div> -->\r\n\t<require from=\"./forms/main\"></require>\r\n\t<require from=\"./forms/relative\"></require>\r\n\t<require from=\"./forms/awards_training\"></require>\r\n\t<require from=\"./forms/gov_info\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<!--<require from=\"converters/filtercustom\"></require>\r\n\t<require from=\"converters/sorttext\"></require>-->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Personnel Info</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"company_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"gov_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_character_ref\" aria-controls=\"relative_character_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(1)\">Relative</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#awards_training\" aria-controls=\"awards_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Awards, Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<main></main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_character_ref\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<relative></relative>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"awards_training\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<awards_training></awards_training>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info></gov_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!modals/budget.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n     \r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>BUDGET TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    BUDGET ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM IO\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bBDGT_TMPL_ID\" searchable=\"_sBDGT_TMPL_ID\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_IO\" searchable=\"_sPROGRAM_IO\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bAPPR_STAT_CD\" searchable=\"_sAPPR_STAT_CD\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <!-- | sorttext:'PROGRAM_TITLE':'ascending'  -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedBudget(item)\">\r\n                <td>\r\n                    ${item.BDGT_TMPL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_TITLE}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_IO}\r\n                </td>\r\n                <td>\r\n                    ${item.APPR_STAT_CD}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
 define('text!modals/buh-program-dialog.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n  <!--<ux-dialog-header class=\"colorHeader\">\r\n        \r\n                    <h4 class=\"modal-title\">SELECT PROGRAMS</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PROGRAMS</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:420px; overflow: auto;\">\r\n  <table>\r\n    <tr>\r\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td class=\"colorCell2\" style=\"width:140px\">PROGRAM CODE</td>\r\n                        <td class=\"colorCell2\">PROGRAM TITLE</td>\r\n                    </tr>\r\n                    <tr ref=\"_rGROUP_TITLE\">\r\n                        <td class=\"colorCell2\" style=\"width:140px\">\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\r\n                        </td>\r\n                        <td class=\"colorCell2\" >\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                        </td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n                        <td>${item.PROGRAM_CD}</td>\r\n                        <td>${item.PROGRAM_TITLE}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n    </td>\r\n    <td style=\"vertical-align:top;\">\r\n\r\n\r\n        <div style=\"height:350px; overflow: auto;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td colspan=3 class=\"colorCell2\" >\r\n                            SELECTED\r\n                        </td>\r\n                    </tr>\r\n                    <tr>\r\n                        <td class=\"colorCell2\"  style=\"width:140px\">\r\n                            PROGRAM CODE\r\n                        </td>\r\n                        <td colspan=2 class=\"colorCell2\" >\r\n                            PROGRAM TITLE\r\n                        </td>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArraySelected\">\r\n                        <td style=\"width:140px\">\r\n                            ${item.PROGRAM_CD}\r\n                        </td>\r\n                        <td>\r\n                            ${item.PROGRAM_TITLE}\r\n                        </td>\r\n                        <td>\r\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n\r\n    </td>\r\n</tr>\r\n<tr>\r\n    <td colspan=2>\r\n        <div style=\"width:100%;text-align:center;\">\r\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\r\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\r\n        </div>\r\n    </td>\r\n</tr>\r\n</table>\r\n</div>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n</ux-dialog-footer>    \r\n\r\n</ux-dialog>\r\n</template>\r\n\r\n"; });
 define('text!modals/buh-search.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                GLOBAL ID (OPTIONAL)\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                FIRST NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                MIDDLE NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                LAST NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n               E-MAIL\r\n             </td>\r\n           </tr>\r\n           <tr ref=\"_rBUH_SEARCH\">\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bOPTIONAL_GLOBAL_ID\" searchable=\"_sOPTIONAL_GLOBAL_ID\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bFIRST_NAME\" searchable=\"_sFIRST_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bEMAIL_ADDRESS\" searchable=\"_sEMAIL_ADDRESS\" />\r\n            </td>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <tr repeat.for=\"item of varFilterArray | sorttext:'LAST_NAME':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedBUH(item)\">\r\n            <td>\r\n              ${item.OPTIONAL_GLOBAL_ID}\r\n            </td>\r\n            <td>\r\n              ${item.FIRST_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.MIDDLE_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.LAST_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.EMAIL_ADDRESS}\r\n            </td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </div>\r\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n  </ux-dialog-body>\r\n  <ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
@@ -12386,27 +14617,26 @@ define('text!modals/modalcontainer.html', ['module'], function(module) { module.
 define('text!modals/paymentterm.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n      <h4 class=\"modal-title\">SELECT PAYMENT TERM</h4>\r\n    </ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PAYMENT TERM</b></span></ux-dialog-header>\r\n\r\n    <ux-dialog-body>\r\n      <table keyup.delegate=\"fnKeyup($event,'')\"  class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <tbody>\r\n          <tr repeat.for=\"item of varFilterArray\" click.delegate=\"$parent.selectedTerm(item)\">\r\n            <td>\r\n              ${item.REF_DESC}\r\n            </td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n     <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n   </ux-dialog-footer>\r\n </ux-dialog>\r\n</template>"; });
 define('text!modals/program.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM CODE\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM NAME\r\n              </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" />\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" />\r\n              </td>\r\n            </tr>\r\n          </thead>\r\n          <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedProgram(item)\">\r\n              <td>\r\n                ${item.PROGRAM_CD}\r\n              </td>\r\n              <td>\r\n                ${item.PROGRAM_TITLE}\r\n              </td>\r\n            </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n      <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
 define('text!modals/talentmanagergroups.html', ['module'], function(module) { module.exports = "<template>\r\n    <ux-dialog>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sort\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n    <thead class=\"table-default\">\r\n        <tr>\r\n            <td class=\"colorCell2\">\r\n                GLOBAL ID\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                GROUP NAME\r\n            </td>\r\n        </tr>\r\n        <tr ref=\"_rGROUP_TITLE\">\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_GRP_ID\" searchable=\"_sGLOBAL_GRP_ID\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGROUP_NAME\" searchable=\"_sGROUP_NAME\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n        </tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr repeat.for=\"item of varFilterArray | sort:'GROUP_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n            <td>\r\n                ${item.GLOBAL_GRP_ID}\r\n            </td>\r\n            <td>\r\n                ${item.GROUP_NAME}\r\n            </td>\r\n        </tr>\r\n    </tbody>\r\n</table>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
-define('text!ppfcs/buh.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;width:800px;text-align:center;\" class=\"divBackground\">\r\n\t\t<table>\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>GLOBAL ID:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.OPTIONAL_GLOBAL_ID\" disabled.bind=\"_disableCells\" id=\"txtGlobalID\"/></td>\r\n\t\t\t\t<td class=\"text-right\"><label>E-Mail:</label></td>\r\n\t\t\t\t<td colspan=\"2\" class=\"text-left\"><input id=\"txtEmail\" value.bind=\"_objBUH.EMAIL_ADDRESS\"  disabled.bind=\"_disableCells\" style=\"width:250px;\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>LAST NAME:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.LAST_NAME\" id=\"txtLastName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>FIRST NAME:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.FIRST_NAME\" id=\"txtFirstName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>MIDDLE:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.MIDDLE_NAME\"  id=\"txtMiddle\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"7\" style=\"text-align:center;\"><br/>\r\n\t\t\t\t\t<input type=\"Button\" id=\"btnGlobalID\" value=\"Search\" click.delegate=\"fnCRUD('search')\" disabled.bind=\"_disableSearch\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnAdd\"  disabled.bind=\"_disableAdd\" value=\"Add\" click.delegate=\"fnCRUD('add')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnDelete\" disabled.bind=\"_disableDelete\"  value=\"Delete\" click.delegate=\"fnCRUD('delete')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnSave\" disabled.bind=\"_disableSave\" value=\"Save\" click.delegate=\"fnCRUD('save')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnCancel\" value=\"Cancel/Clear\" click.delegate=\"fnCRUD('cancel')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<br/><br/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\r\n\t\t</table>\r\n\r\n\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\" >\r\n\t\t\t<thead>\r\n\t\t\t\t<tr><td class=\"colorCell\">PROGRAM ID</td>\r\n\t\t\t\t\t<td class=\"colorCell\">PROGRAM TITLE</td>\r\n\t\t\t\t\t<td class=\"colorCell\"><input type=\"button\" value=\"+\" disabled.bind=\"_disableGrid\" click.delegate=\"searchPrograms()\"/> </td>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr repeat.for=\"item of _objBUH.PROGRAMS\">\r\n\t\t\t\t\t<td>${item.PROGRAM_CD}</td>\r\n\t\t\t\t\t<td>${item.PROGRAM_TITLE}</td>\r\n\t\t\t\t\t<td><input type=\"button\" value=\"-\" disabled.bind=\"_disableGrid\" click.delegate=\"$parent.deleteSelected($index)\"/>\r\n\t\t\t\t\t</td> \r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>  \r\n\r\n\r\n\t\t<!--<input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n\t\t<input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\">--> \r\n\r\n\r\n\r\n\t\t<br/>\r\n\t\t<br/>\r\n\t\t<table class= \"table-bordered\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<strong>${_user.USER_ID}</strong> \r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\r\n\r\n\t</template>"; });
-define('text!ppid/ppid.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Program Personal Information Database</h3>\r\n\t<!-- <div style=\"background:#A2A2D0; width:100%; height:38px; padding:5px;\">\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"FindUsers()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"\" value=\"ADD NEW PROGRAM PERSONNEL\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<label hidden.bind=\"obj_personnel.global_indiv_id.length==0\">Global Id: ${obj_personnel.global_indiv_id}</label>\r\n\t</div> -->\r\n\t<require from=\"./forms/main\"></require>\r\n\t<require from=\"./forms/relative_character_ref\"></require>\r\n\t<require from=\"./forms/e_a_s_t\"></require>\r\n\t<require from=\"./forms/gov_info\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<!--<require from=\"converters/filtercustom\"></require>\r\n\t<require from=\"converters/sorttext\"></require>-->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Personnel Info</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#relative_character_ref\" aria-controls=\"other_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(1)\">Relative & Character Ref.</a></li> -->\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Experience, Awards, Seminars, & Training</a></li> -->\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"staff\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n        </ul>\r\n\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<main></main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_character_ref\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<relative_character_ref></relative_character_ref>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<e_a_s_t></e_a_s_t>\r\n\t\t\t</div> -->\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info></gov_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!tools/gridpaging.html', ['module'], function(module) { module.exports = "<template>\r\n\t<nav>\r\n        <ul class=\"pagination\">\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Previous\" click.delegate=\"endClick(0)\" if.bind=\"_currentIndex!=0 && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&laquo;</span>\r\n                </a>\r\n            </li>\r\n            <li repeat.for=\"item of _PagesShow\">\r\n                    <a style=\"cursor:pointer\" click.delegate=\"$parent.selectedClick($index)\" >${item}</a>\r\n            </li>\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Next\"  click.delegate=\"endClick(1)\" if.bind=\"_Pages.length-1>_currentIndex && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&raquo;</span>\r\n                </a>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</template>"; });
 define('text!ppfcs/actual_cost/actual_cost.html', ['module'], function(module) { module.exports = "<template>\r\n  <!--   <iframe src=\"http://localhost:15253\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe> -->\r\n  <iframe src=\"http://absppms2:8084\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe>\r\n  </template>"; });
-define('text!ppid/forms/company_info.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./miscellaneous\"></require>\r\n\t<require from=\"./company_info_main\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#company_specific\" aria-controls=\"company_specific\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(0)\" >Company Specific</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#company_endorsement\" aria-controls=\"company_endorsement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Endorsement</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_branding\" aria-controls=\"company_branding\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Image Branding / Target Market</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#miscellaneous\" aria-controls=\"guest\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Miscellaneous</a></li> -->\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"company_specific\"  style=\"height:550px; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<company_info_main></company_info_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_endorsement\"  style=\"width:980px;height:500px; background:#00C4B0; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_branding\"  style=\"width:980px;height:550px; background:#FFBF00; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"miscellaneous\"  style=\"width:1024px;height:620px; background:#E3E3E3; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<miscellaneous></miscellaneous>\r\n\t\t\t</div> -->\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/company_info_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">ID #</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.id_no\" disabled.bind=\"_disableIDNo\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"1\" id=\"_start_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Kapamilya Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"kapamilya_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">is Exclusive?</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_companyChanged()\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.company_id\" >\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COMPANY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"_end_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Membership Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"membership_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.membership_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd\" disabled.bind=\"_disableStatus\" >\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.STATUS\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'INACTV'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Reason for Cessation</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CESSATION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'INACTV'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.remarks\" > </textarea>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'SUSPEND'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Suspension Start Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"suspended_start_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'SUSPEND'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Suspension End Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"suspended_end_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"margin-left:20px; margin-right: 20px;\">\r\n\t\t\t\t\t\t<b>Note: The Start Date refers to the commencement date of the FIRST contract executed by Talent with Company while the End Date refers to the expiration date of the LAST contract executed by Talent with Company. Unless expressly stated, the dates do not imply or indicate continuous tenure or engagement during the period between the Start Date and End Date.</b>\r\n\t\t\t\t\t</div>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\" style=\"vertical-align: left;\">\r\n\t\t\t\t\t<table style=\"width: 500px;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Division</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" change.delegate=\"dd_divisionChanged()\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.division_id\">\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.DIVISION\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location(RNG only)</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" disabled.bind=\"_disableLocations\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.location_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"--NONE--\">--NONE--</option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS_RNG\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Category</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.category_id\">\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CATEGORY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Job</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.job_id\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.JOB\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Payroll Group</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PAYROLL_GROUP\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Professional Type</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROFESSIONAL_TYPE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t\t\t\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t\t\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#contracts\" aria-controls=\"contracts\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Contracts</a></li>\r\n\t\t\t\t\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#accreditation\" aria-controls=\"accreditation\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Accreditation</a></li>\r\n\t\t\t\t\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#bank_info\" aria-controls=\"bank_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Bank Information</a></li>\r\n        \t\t\t\t</ul>\r\n        \t\t\t\t<div class='tab-content'>\r\n        \t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"contracts\"  style=\"width:850px;height:100px; margin-left:auto; margin-right:auto;\">\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Project Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"> </td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of contracts\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"contracts == null || contracts.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</div>\r\n\r\n\t\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"accreditation\"  style=\"width:850px;height:200px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t\t\t\t\t<!-- <br/> -->\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Job Group</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" disabled.bind=\"_disableTabsInput\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CATEGORY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.accreditation_start_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Job</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.accreditation_end_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Competency Level</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Memo</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput\" >Save</button>&nbsp;\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput\" >Clear</button>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Job group</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Job</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Level</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Division</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Home</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Entry</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Memo</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.COMPANY_SPECIFIC.model.accreditation\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.job_grp_id}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.job_id}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.competency}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.end_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.division_id}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.home_fl}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.entry_fl}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.accreditation_memo}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>-</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>X</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.COMPANY_SPECIFIC.model.accreditation == null || obj_personnel.COMPANY_SPECIFIC.model.accreditation.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"11\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</div>\r\n\r\n\t\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"bank_info\"  style=\"width:850px;height:100px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t\t\t\t\t<!-- <br/> -->\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bank Information</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" disabled.bind=\"_disableTabsInput\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id\" change.delegate=\"dd_bankChanged()\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.BANK\" value.bind=\"item.id\">${item.bank_cd}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Account Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" readonly value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<table style=\"width: 500px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bank Branch</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" readonly value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Account Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</div>\r\n        \t\t\t\t</div>\r\n        \t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/e_a_s_t.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#e_a_s_t_work\" aria-controls=\"e_a_s_t_work\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Work Experience</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t_awards\" aria-controls=\"e_a_s_t_awards\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Awards</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t_seminar_training\" aria-controls=\"e_a_s_t_seminar_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"e_a_s_t_work\"  style=\"width:980px;height:550px; background:#E32636; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t_awards\"  style=\"width:980px;height:550px; background:#C46210; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t_seminar_training\"  style=\"width:980px;height:550px; background:#EFDECD; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/gov_info.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./gov_info_main\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" style=\"\" class=\"active\"><a href=\"#gov_info_main\" aria-controls=\"gov_info_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(0)\">Government Information</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#gov_exam_passed\" aria-controls=\"gov_exam_passed\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Government Exam Passed</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_criminal_rec\" aria-controls=\"gov_criminal_rec\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Criminal / Civil / Labor and administrative case</a></li> -->\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"gov_info_main\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_main></gov_info_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_exam_passed\"  style=\"width:980px;height:550px; background:#9F2B68; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_criminal_rec\"  style=\"width:980px;height:550px; background:#F19CBB; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div> -->\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/gov_info_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 500px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table style=\"width: 100%\">\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Tax Information</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax ID Number(TIN)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled value.bind=\"obj_personnel.GOVERNMENT_INFO.tin\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Exemption</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.tax_exempt_cd\" tabindex=\"1\"  >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.TAX_EXEMPT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Type</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.input_tax_cd\" tabindex=\"2\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.INPUT_TAX\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" id=\"affidavit_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_TaxAffidavit()\" tabindex=\"5\"  />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 120px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.tax_affidavit\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_TaxAffidavit(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Government permits</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t \t<table>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd\" disabled.bind=\"_disableForm\" tabindex=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PERMIT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"6\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"7\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"8\" id=\"expiry_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"9\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"\" tabindex=\"10\" />&nbsp;&nbsp; -->\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Permit()\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t \t\t\t\t<div style=\"height:120px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t \t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td class=\"colorCell\">Edit</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.permits\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.expiry_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.poi}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td>-</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Permit(item)\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t \t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t \t\t\t\t</div>\r\n\t\t\t\t\t\t\t \t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Other Government Info</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Classification</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_stat_cd\" tabindex=\"11\"  >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.VAT_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Registration Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"12\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_reg_dt\" id=\"vat_reg_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">SSS Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"13\" value.bind=\"obj_personnel.GOVERNMENT_INFO.sss_no\" id=\"_sss\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_sss', '__-_______-_')\" placeholder=\"00-0000000-00\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">PAG-IBIG Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"14\" value.bind=\"obj_personnel.GOVERNMENT_INFO.pagibig_no\" id=\"_pagibig\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_pagibig', '____-____-____')\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Philhealth</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"15\" value.bind=\"obj_personnel.GOVERNMENT_INFO.philhealth_no\" id=\"_philhealth\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_philhealth', '__-_________-_')\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">National ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"16\" value.bind=\"obj_personnel.GOVERNMENT_INFO.national_id\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Voter's ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"17\" value.bind=\"obj_personnel.GOVERNMENT_INFO.voters_id\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" tabindex=\"18\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./main_contact\"></require>\r\n\t<require from=\"./main_educational\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center;\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main_main\" aria-controls=\"main_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(0)\">Employee Personal Info</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_contact\" aria-controls=\"main_contact\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(1)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Contact</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_educ_achievement\" aria-controls=\"main_educ_achievement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(2)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Educational Achievement</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#main_char_interest\" aria-controls=\"main_char_interest\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(3)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Characteristic/Interest</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_skills_talent\" aria-controls=\"main_skills_talent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(4)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Skills/Talent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_lang_dialect\" aria-controls=\"main_lang_dialect\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(5)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Language/Dialect</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_medical_rec\" aria-controls=\"main_medical_rec\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(6)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Medical Record</a></li> -->\r\n\t\t</ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main_main\"  style=\"height:550px; margin-left:auto; margin-right:auto;\" >\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t\t<table style=\"margin-left: 25px;\">\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_cd\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Surname*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.last_name\" disabled.bind=\"_disableForm\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr style=\"height:35px;\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gender*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<label repeat.for=\"g of gender\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"_gender\" value.bind=\"g\" checked.bind=\"selectedGender\" disabled.bind=\"_disableForm\" tabindex=\"6\" />${g}\r\n\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<span style=\"margin: 20px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"M\" checked.bind=\"selectedGender\" />Male \r\n\t\t\t\t\t\t\t\t\t\t\t</span>\r\n\t\t\t\t\t\t\t\t\t\t\t<span>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"F\" checked.bind=\"selectedGender\" />Female\r\n\t\t\t\t\t\t\t\t\t\t\t</span>-->\r\n\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth place</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.birth_place\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Civil Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.civil_status\" disabled.bind=\"_disableForm\" tabindex=\"12\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CIVIL_STATUS\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"15\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_citizenship\" class='ddCitizenship' disabled.bind=\"_disableForm\" tabindex=\"18\" id=\"citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CITIZENSHIP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Citizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllCitizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"citi of obj_personnel.HEADER.citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeCitizenship(citi)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n\t\t\t\t\t\t\t\t<table style=\"padding: 0px; margin: 0px;\">\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Global ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\"  value.bind=\"obj_personnel.HEADER.global_indiv_id\" readonly />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.given_name\" disabled.bind=\"_disableForm\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Alias/NickName</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.alias\" disabled.bind=\"_disableForm\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"birthDate\" value.bind=\"obj_personnel.HEADER.birth_dt\" disabled.bind=\"_disableForm\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Religion</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.religion_cd\" disabled.bind=\"_disableForm\" tabindex=\"13\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELIGION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">If Alien, ACR No.</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.acr_no\" disabled.bind=\"_disableForm\" tabindex=\"16\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Group Name(s)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_group\" class=\"ddGroup\" disabled.bind=\"_disableForm\" tabindex=\"19\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.GROUP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Group()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr></tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>-->\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width: 300px;\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllGroup()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"grp of obj_personnel.HEADER.group\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeGroup(grp)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table style=\"margin: 0px; padding: 0px;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">TIN*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.tin\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Middle Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.middle_name\" disabled.bind=\"_disableForm\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle; padding: 0px;\" class=\"text-left\">Mother's Maiden Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.mother_maiden_name\" disabled.bind=\"_disableForm\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  readonly value.bind=\"obj_personnel.HEADER.age\" disabled.bind=\"_disableForm\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.location_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"14\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">STATUS</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.status_cd\" disabled.bind=\"_disableForm\" tabindex=\"17\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"status of obj_personnel.STATUS\" value.bind=\"status.value\">${status.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\" class=\"text-center\"><strong>Suspension Date</strong></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionFrom\" value.bind=\"obj_personnel.HEADER.suspension_start\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionTo\" value.bind=\"obj_personnel.HEADER.suspension_end\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<!-- -   <img if.bind=\"cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=abslogo_BIG.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/>  -->\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"width: 150px; height: 150px; border: dashed 2px black;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<img src.bind=\"primary_img\" style=\"height: 100%; width: 100%;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"btnUpload()\">Add/Edit Photo</button>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<h5>\r\n\t\t\t\t\t\t( <strong>Note</strong> : * is required )\r\n\t\t\t\t\t</h5>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSearchPersonnel\" click.trigger=\"fnPersonnel('EDIT')\">EDIT PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableCreatePersonnel\" click.trigger=\"fnPersonnel('CREATE')\" >CREATE PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableClearData\" click.trigger=\"fnPersonnel('CLEAR')\" >CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<!--<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableResetData\" click.trigger=\"fnPersonnel('RESET')\">RESET/REFRESH</button>&nbsp;&nbsp;-->\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"fnPersonnel('SAVE')\">SAVE PERSONNEL</button>&nbsp;&nbsp;\r\n\r\n\t\t\t\t</div>\r\n\r\n\t\t\t\t<br/>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 320px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${obj_personnel.HEADER.created_by}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${obj_personnel.HEADER.last_updated_by}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!-- <td>\r\n\t\t\t\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<strong>${obj_personnel.USER.USER_ID}</strong> \r\n\t\t\t\t\t\t\t</td> -->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_contact\"  style=\"height:550px; margin-left:auto; margin-right:auto;  overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_contact></main_contact>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_educ_achievement\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_educational></main_educational>\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<!--<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_char_interest\"  style=\"width:980px;height:550px; background:#7CB9E8; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_skills_talent\"  style=\"width:980px;height:550px; background:#C9FFE5; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_lang_dialect\"  style=\"width:980px;height:550px; background:#B284BE; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_medical_rec\"  style=\"width:980px;height:550px; background:#5D8AA8; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t</div> -->\r\n\t\t</div>\r\n\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/main_contact.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div >\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Address</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.unit_no\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.bldg_name\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.barangay\" tabindex=\"7\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.state_province\" tabindex=\"10\" disabled.bind=\"_disableForm\">\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\t\t\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.state_province\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.country_cd\" tabindex=\"13\" disabled.bind=\"_disableForm\">\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.country_cd\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.house_no\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street/Phase</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.street_name\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Distict</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.district\" tabindex=\"8\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.region\" change.delegate=\"dd_regionChanged()\" tabindex=\"11\" disabled.bind=\"_disableForm\" >\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Present Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.present_fl\" tabindex=\"14\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk Lot</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.block_lot\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd/Vill</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.sub_village\" tabindex=\"6\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.city_town\" tabindex=\"9\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip Code</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.zipcode\" tabindex=\"12\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permanent Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.permanent_fl\" tabindex=\"15\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\t\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" colspan=\"1\">Remarks</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.remarks\" tabindex=\"18\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Upload Sketch</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Upload</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Attach</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd_Address()\" disabled.bind=\"_disableBtnAdd\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validateAddress()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearAddressData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Address</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Present</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permanent</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Sketch</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.address\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.full_address}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.present_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.permanent_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td >\r\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"\" hidden.bind=\"item.sketch_path!=0\">Link</a>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnEdit_Address(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnRemoveAddress(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\r\n\t\t\t\t<tr colspan=\"3\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<br />\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; margin-left: 10px; margin-right: 0px; margin-top: 10px; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Contact</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"2\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 100px; vertical-align: middle;\" class=\"text-left\">Contact</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"float:left;\">\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px;\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_type\" >\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CONTACT_TYPE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Area Code\" value.bind=\"obj_personnel.CONTACT.modelContact.area_cd\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px; \" type=\"text\" placeholder=\"Phone No.\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Ext.\" value.bind=\"obj_personnel.CONTACT.modelContact.local_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value.bind=\"obj_personnel.CONTACT.statusContact\" class=\"btn btn-xs customButton\" click.trigger=\"validateContact()\" style=\"width: 45px;\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"Clear\" class=\"btn btn-xs customButton\" click.trigger=\"clearContactData()\" style=\"width: 60px;\" />\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 240px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Contact Type</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Area Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Phone No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Ext.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!--<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"\" />-->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.contact\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_type_text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.area_cd}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.local_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Email</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.email_addr\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Email</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.email\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Website</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.url\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Website</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.website\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/main_educational.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"background: white; height: 500px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Educational Achievement</h5>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; width: 100%;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Level</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LEVEL\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr> \t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year Start</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year End</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">School</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 100%;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.SCHOOLS\" value.bind=\"item.school_cd\">${item.school_name}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Degree / Major</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Awards / Achievement</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Completed</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" tabindex=\"15\" disabled.bind=\"_disableForm\" checked.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd()\" disabled.bind=\"_disableBtnAdd\" >Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" disabled.bind=\"_disableBtnSave\" >Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 280px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Level</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">School</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Degree/Major</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Awards</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Completed</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.EDUCATIONAL_ACHIEVEMENT.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.level_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.school_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.course}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.honor_awards}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.start_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.end_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.completed_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/miscellaneous.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Hello from Miscellaneous.</h3>\t\r\n\t<div style=\"background:orange; width:100px; height:100px;\">\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_character_ref.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./relative_parent\"></require>\r\n\t<require from=\"./relative_siblings\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#relative_parent\" aria-controls=\"relative_parent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Parent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_siblings\" aria-controls=\"relative_siblings\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Siblings</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_spouse\" aria-controls=\"relative_spouse\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Spouse</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_children\" aria-controls=\"relative_children\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Children</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_in_case\" aria-controls=\"relative_in_case\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">In Case of Emergency</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#char_ref\" aria-controls=\"char_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Character reference</a></li>\t\t\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"relative_parent\"  style=\"width:980px;height:550px; background:#00308F; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_parent></relative_parent>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_siblings\"  style=\"width:980px;height:550px; background:#72A0C1; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_siblings></relative_siblings>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_spouse\"  style=\"width:980px;height:550px; background:#AF002A; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_children\"  style=\"width:980px;height:550px; background:#F2F0E6; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_in_case\"  style=\"width:980px;height:550px; background:#F0F8FF; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"char_ref\"  style=\"width:980px;height:550px; background:#84DE02; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_parent.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"background: white; height: 500px; width: 913px; margin: 5px auto; overflow-y: scroll; \">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Mother</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Father</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\t\t\t\t\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_siblings.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"background: white; height: 500px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Siblings</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Dependent/Deceased</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of x\">\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppfcs/budget/guest.html', ['module'], function(module) { module.exports = "<template>\r\n            <require from=\"converters/filtercustom\"></require>\r\n            <require from=\"converters/signals\"></require>\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:70%;\" ref=\"tblData\">\r\n                <thead>\r\n                    <tr><td class=\"colorCell\">PAY MODE</td>\r\n                        <td class=\"colorCell\">BUDGET</td>\r\n                        <td class=\"colorCell\">PAY MODE FACTOR</td>\r\n                        <td class=\"colorCell\">REMARKS</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of _cache_budget.GUEST | filtercustom:'visible':true:_signal\">\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:auto !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,$index)\"  focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/></td>\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:auto !important;\"/></td>\r\n                      <td>  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:auto !important;\"/></td>\r\n                      <td> <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea></td>\r\n                </tr>\r\n                </tbody>\r\n            </table>  \r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableAdd\" click.delegate=\"fnAddGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Add Guest</button>\r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableRemove\"click.delegate=\"fnRemoveGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Remove Guest</button>\r\n              <button class=\"btn btn-xs customButton\" click.delegate=\"saveGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button>\r\n</template>"; });
 define('text!ppfcs/budget/main-header.html', ['module'], function(module) { module.exports = "<template>\r\n    <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n    <!-- <require from=\"modals/confirm_dialog\"></require> -->\r\n\r\n    <require from=\"converters/datepattern\"></require>\r\n   \r\n     <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n            <tbody >\r\n                <tr>\r\n                    <td style=\"vertical-align: top;\">\r\n                        <table>\r\n                             <tr>\r\n                                <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Budget ID</td>\r\n                                <td>\r\n                                 <input value.bind=\"_cache_budget.HEADER.BDGT_TMPL_ID\" style=\"width: 80px;\" keyup.delegate=\"inputChanged($event,_cache_budget.HEADER.BDGT_TMPL_ID)\" readonly.bind=\"_disableBudgetId\"/>\r\n                                 <!-- <modalcontainer to.bind=\"modalBudget\"></modalcontainer> -->\r\n                                 <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"budgetDisabled\" click.trigger=\"fnDialogBudget()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                             </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td style=\"width: 120px;\">Program Name/CC</td>\r\n                                <td style=\"width: auto;\">\r\n                                    <input readonly=\"readonly\" value.bind=\"_cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE\"style=\"width: 250px;\"/>*\r\n                                    <!-- <modalcontainer to.bind=\"modalProgram\"></modalcontainer> -->\r\n                                    <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"programDisabled\" click.trigger=\"fnDialogProgram()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program IO/CC#</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.CHARGE_CD\" readonly=\"readonly\" /></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program Genre</td>\r\n                                <td>\r\n                                    <select value.bind=\"_cache_budget.HEADER.PROGRAM_GENRE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _PROGRAM_GENRE_MSTR\" value.bind=\"item.PROGRAM_GENRE_CD\">\r\n                                            ${item.PROGRAM_GENRE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Telecast Mode</td>\r\n                                <td>\r\n                                      <select value.bind=\"_cache_budget.HEADER.TELECAST_MODE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _TELECAST_MODE_MSTR\" value.bind=\"item.TELECAST_MODE_CD\">\r\n                                            ${item.TELECAST_MODE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Episode Type</td>\r\n                                <td>\r\n                                       <select value.bind=\"_cache_budget.HEADER.EPISODE_TYPE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _EPISODE_TYPE_MSTR\" value.bind=\"item.EPISODE_TYPE_CD\">\r\n                                            ${item.EPISODE_TYPE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                    </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>No. of Episodes</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.EPISODES\" class=\"col-md-3 text-right\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\"/>*</td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>No. of Taping days</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.TAPING_DAYS\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" class=\"col-md-3 text-right\"/>*</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n                        <table style=\"padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;\">\r\n                            <tr>\r\n                                <td class=\"text-center\" colspan=2><strong>Template Validity</strong></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Start Date</td>\r\n                                <td>\r\n                                    <input id=\"refFrom\"  readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_FROM\" blur.trigger=\"checkDate('refFrom')\"/>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>End Date</td>\r\n                                <td>\r\n                                    <!-- trigger does not accept '', set the string id w/out '' -->\r\n                                   <input id=\"refTo\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_TO\" blur.trigger=\"checkDate('refTo')\"/>*</td>\r\n                            </tr>\r\n                             <tr><td colspan=2 style=\"height:20px;\"></td></tr>\r\n                            <tr>\r\n                                <td>TV Station</td>\r\n                                <td>\r\n                                   <select disabled.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.STATION_ID\">\r\n                                        <option repeat.for=\"item of _STATIONS\" value.bind=\"item\">\r\n                                            ${item}\r\n                                        </option>\r\n                                    </select>(For <strong>RNG</strong>*)\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Status</td>\r\n                                <td>\r\n                                     <select value.bind=\"_cache_budget.HEADER.APPR_STAT_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _STATUS\" value.bind=\"item.REF_CD\">\r\n                                            ${item.REF_DESC}\r\n                                        </option>\r\n                                    </select>*\r\n                                     <!-- value.bind=\"options: EPISODE_MODE_LIST, EPISODE_MODE_SELECTED, optionsText: 'text'\" -->\r\n                                </td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>Remarks</td>\r\n                                <td rowspan=3>\r\n                                    <textarea readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.REMARKS\" style=\"width:200px!important;\" >\r\n                                    </textarea>\r\n                                </td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n\r\n                </tr>\r\n\r\n            </tbody>\r\n        </table>\r\n        <br/>\r\n        <br/>\r\n        <div style=\"margin-left:350px;\"><h5>( <strong>Note</strong> : * is required )</h2></div>\r\n        <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n        <div style=\"margin-left:100px;\">\r\n            <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('create')\" disabled.bind=\"_disableCreateBudget\" if.bind=\"!_disableCreateBudget\">CREATE BUDGET</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('cancel')\" disabled.bind=\"_disableCancelBudget\">CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.STATUS!='APPROVED'\" style=\"width:150px;\" click.delegate=\"fnBudget('refresh')\" disabled.bind=\"_disableRefreshBudget\">REFRESH</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-EXPIRED'\" style=\"width:150px;\" click.delegate=\"fnBudget('save')\" if.bind=\"!_disableSaveBudget\" disabled.bind=\"_disableSaveBudget\">SAVE BUDGET</button>\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('print')\" disabled.bind=\"_disablePrintBudget\" disabled.bind=\"!_disablePrintBudget\">PRINT BUDGET</button>\r\n        <button if.bind=\"_cache_budget.HEADER.APPR_STAT_CD=='APP-EXPIRED' || _cache_budget.HEADER.APPR_STAT_CD=='APP-CLOSED'\" class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('copy')\" disabled.bind=\"_disableCopyBudget\">COPY TEMPLATE</button>\r\n        <button if.bind=\"_cache_budget.STATUS=='APPROVED'\"  class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('close')\" disabled.bind=\"_disablePrintBudget\">SET AS CLOSED</button>\r\n         <!-- <confirm_dialog to.bind=\"modalConfirm\"></confirm_dialog> -->\r\n        </div>\r\n              <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n\r\n        \r\n \r\n</template>"; });
 define('text!ppfcs/budget/mainview.html', ['module'], function(module) { module.exports = " \r\n\r\n <template>\r\n\r\n <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n <require from=\"ppfcs/budget/main-header\"></require>\r\n <require from=\"ppfcs/budget/personnel\"></require>\r\n <require from=\"ppfcs/budget/guest\"></require>\r\n <require from=\"ppfcs/budget/summary\"></require>\r\n    <br/>\r\n      \r\n <!--stylemainstayft:20px;margin-right:20px;margin-bottom:10px;margin-top:10px;\"-->\r\n     <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 686px;\">\r\n          <!-- Nav tabs -->\r\n          <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n              <li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(0)\">Program Budget</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#regular\" aria-controls=\"regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(1)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\" >Regular</a>\r\n              </li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#semi_regular\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(2)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Semi-Regular</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#staff\" aria-controls=\"staff\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(3)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Staff</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#guest\" aria-controls=\"guest\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(4)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Guest</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#summary\" aria-controls=\"summary\" role=\"tab\" data-toggle=\"tab\"click.trigger=\"clickTab(5)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Budget Summary</a></li>\r\n          </ul>\r\n\r\n          <!-- Tab panes -->\r\n          <div class=\"tab-content\">\r\n              <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1024px;height:620px;\"><br/><main-header></main-header>\r\n                <br/>\r\n                <br/>\r\n                <br/>\r\n          <!--<div style=\"margin-left:40%;\">\r\n             <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n                   <input type=\"button\" click.trigger=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\"> \r\n          </div>-->\r\n\r\n              <div style=\"margin-left:25%;\">\r\n                <br/>\r\n                <br/>\r\n              <table class= \"table-bordered\">\r\n                <tr>\r\n                    <td>\r\n                        CREATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.CREATED_BY}\r\n                    </td>\r\n                    <td>\r\n                        LAST UPDATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.LAST_UPDATED_BY}\r\n                    </td>\r\n                    <!--<td>\r\n                        LOGGED AS:\r\n                    </td>\r\n                    <td>\r\n                        <strong>${_cache_budget.USER.USER_ID}</strong> \r\n                    </td>-->\r\n                    </tr>\r\n              </table>\r\n              </div>\r\n\r\n              </div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.REGULAR\" to-person-model.bind=\"{USE:'REGULAR'}\" ></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"semi_regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.SEMI_REGULAR\" to-person-model.bind=\"{USE:'SEMI_REGULAR'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"staff\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.STAFF\"to-person-model.bind=\"{USE:'STAFF'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"guest\"  style=\"width:1024px;\"><guest></guest></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"summary\" style=\"width:1024px;\">\r\n                <summary></summary>\r\n              </div>\r\n          </div>\r\n            \r\n      </div>\r\n      \r\n    \r\n   <!-- <div class=\"well\">\r\n        <div class=\"input-append date\" id=\"dp3\" data-date=\"12-02-2012\" data-date-format=\"dd-mm-yyyy\">\r\n        <input class=\"span2\" size=\"16\" type=\"text\" value=\"12-02-2012\" readonly=\"\">\r\n        <span class=\"add-on\"><i class=\"icon-calendar\"></i></span>\r\n        </div>\r\n    </div> -->\r\n\r\n\r\n </template>\r\n"; });
 define('text!ppfcs/budget/personnel.html', ['module'], function(module) { module.exports = "<template>\r\n  <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n  <require from=\"converters/number-format\"></require>\r\n  <require from=\"converters/filtercustom\"></require>\r\n  <require from=\"converters/signals\"></require>\r\n                <div style=\"overflow:scroll;height:600px !important; padding-left:10px;padding-top:10px;!important; \" scroll.trigger=\"scrollDiv()\" ref=\"divRegular\">\r\n                 <table class= \"table-hover table-condensed table-bordered table-striped\" style=\"position:absolute;z-index:1000;visibility:hidden;top:100px;\" ref=\"tblHeader\" scroll.trigger=\"scrollDiv()\" >\r\n                <thead>\r\n                    <tr>\r\n                      <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n              </table>\r\n              <table class= \"table-hover table-condensed table-bordered table-striped\" onload=\"myFunction()\"  ref=\"tblData\">\r\n                <thead>\r\n                    <tr>\r\n                        <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\"\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody repeat.for=\"item of _Personnel | filtercustom:'visible':true:_signal \">\r\n                    <tr>\r\n                      <td style=\"width:41px !important;\"> \r\n                        <input disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"text-center\" value.one-way=\"$index+1\" style=\"width:40px !important;color:gray;border:0px;\" click.trigger=\"$parent.focusTrigger($index)\"/>\r\n                        </td>\r\n                      <td style=\"width:5px !important;\">\r\n                        <button class=\"btn btn-xs \" click.trigger=\"$parent.collapse_expand(item)\">${item.ce_value}</button></td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"item.GLOBAL_ID\">${item.PERSONNEL_NAME}</td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"!item.GLOBAL_ID\"><input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.BLANK_PERSONNEL_NAME\"/></td>\r\n                      <td style=\"width:5px !important;\">\r\n                         <input readonly disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"jobclass\" value.bind=\"item.JOB_DESC\" style=\"width:120px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'JOB', $index, item.BDGT_TMPL_DTL_ID)\" focus.trigger=\"$parent.fnRegularFocus($index,'JOB')\" />\r\n                      </td>   \r\n                      <td style=\"width:100px !important;\">\r\n                         <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:90px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'TERM', $index)\" focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/>\r\n                      </td>\r\n                      <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                        <!-- ${item.CONFIDENTIAL_TMP}\r\n                        ${$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL} -->\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <!-- click.delegate=\"$parent.chkRemove(item)\" -->\r\n                      <td style=\"width:100px !important;\" class=\"text-center\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"type=\"checkbox\" checked.bind=\"item.REMOVE\" if.bind=\"item.BDGT_TMPL_DTL_ID && $parent.fnCheckExistingTalents(item.TALENTS,item)\"/>\r\n                          <button class=\"btn btn-xs\" click.trigger=\"$parent.removeRegular($index)\"  if.bind=\"!item.BDGT_TMPL_DTL_ID\">-</button>\r\n                      </td>\r\n                    </tr>\r\n                     <tr>\r\n                      <td colspan=9 style.bind=\"item.styleString\">\r\n                        <div>\r\n                         <table style=\"margin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                          <tr>\r\n                            <td>CATEGORY</td>\r\n                            <td>CONFIDENTIAL</td>\r\n                            <td>STAFF WORK</td>\r\n                            <td>REMARKS</td>\r\n                            <td>TALENT MANAGER</td>\r\n                            <!-- <td>TALENTS</td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\">IS POOL</td>\r\n                          </tr>\r\n                          <tr>\r\n                            <td>${item.CATEGORY_DESC}</td>\r\n                            <td class=\"text-center\">\r\n                               <!-- if.bind=\"$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL\" -->\r\n                               <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.CONFIDENTIAL_TMP\" />\r\n                            </td>\r\n                            <td>\r\n                              <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.STAFF_WORK_TMP\"/>\r\n                            </td>\r\n                            <td>\r\n                              <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea>\r\n                            </td>\r\n                            <td> \r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"!item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.showTalentMngr(item)\" >+</button>\r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.removeTalentMngr(item)\">-</button>\r\n                            </td>\r\n                           <!--  <td>\r\n                                 <table class=\"table-hover table-condensed table-bordered table-striped\">\r\n                                    <thead>\r\n                                      <tr>\r\n                                        <td>NAME</td> \r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.showTalents(item)\" >+</button>\r\n                                            \r\n                                        </td>\r\n                                      </tr>\r\n                                    </thead>\r\n                                    <tbody>\r\n                                      <tr repeat.for=\"itemTalent of item.TALENTS\">\r\n                                        <td>${itemTalent.PERSONNEL_NAME}</td>\r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.$parent.removeTalent($parent,itemTalent,$index)\">-</button></td>\r\n                                      </tr>\r\n                                    </tbody>\r\n                                 </table>\r\n                            </td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\"> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.POOL_RECORD_TMP\"/></td>\r\n                          </tr>\r\n                        </table>\r\n                        </div>\r\n                         <div if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" style=\"margin-left:20%;margin-top:5px;\">\r\n                              <table style=\"margin-topin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                              <tr>\r\n                              <td class=\"colorCell\">Talent Manager</td>\r\n                              <td class=\"colorCell\">Pay Factor</td>\r\n                              <td class=\"colorCell\">Contract</td>\r\n                              <td class=\"colorCell\">Rate</td>\r\n                              <td class=\"colorCell\">Remarks</td>\r\n                              </tr>\r\n                              <tr>\r\n                                   <td> ${item.TALENT_MANAGER.PERSONNEL_NAME}</td>\r\n                               <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input   disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"value.bind=\"item.TALENT_MANAGER.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                    <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.REMARKS\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                              </tr>\r\n\r\n                              </table>\r\n                          </div>  \r\n                      </td>\r\n                    </tr>\r\n               </tbody>\r\n            </table>\r\n            </div>\r\n           \r\n            <!-- ${_Personnel.length} -->\r\n            \r\n                \r\n               <div style=\"position:absolute;top:20px;left:0px;\">\r\n                <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrTalents\" ></modalcontainer>\r\n                <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrManager\" ></modalcontainer>\r\n                <modalcontainer to.bind=\"modalJob\"></modalcontainer> -->\r\n         <!--        <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrTalentsDisabled\" click.trigger=\"fnIndivMstrTalents()\" value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrManagerDisabled\"  click.trigger=\"fnIndivMstrManager()\"  value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isJobDisabled\"  click.trigger=\"fnModalJob()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/> -->\r\n\r\n               </div>   \r\n               <table>\r\n                <tr>\r\n                  <td>\r\n                    <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstr\"> --></modalcontainer>\r\n                     <input type=\"button\" class=\"btn btn-xs customButton\"  disabled.bind=\"isIndivMstrDisabled\"  click.trigger=\"fnIndivMstrManager()\" value=\"Search Personnel\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                  </td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"fnBlankPersonnelRegular()\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Blank Personnel</button></td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"savePersonnel(0)\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button></td>\r\n               \r\n               \r\n                <td if.bind=\"toPersonModel.USE=='REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                <td if.bind=\"toPersonModel.USE=='SEMI_REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Semi-Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_SEMI_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n               <td if.bind=\"toPersonModel.USE=='STAFF'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Staff) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_STAFF\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                </tr>\r\n                </table>\r\n\r\n</template>\r\n"; });
 define('text!ppfcs/budget/summary.html', ['module'], function(module) { module.exports = "<template>\r\n\t\t\t<table class= \"table-hover table-condensed table-bordered table-striped\" style=\"margin-left:50px;margin-top:40px;margin-botton:20px;\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"width:150px;\">\r\n\t\t\t\t\t\t\t<strong>CLASSIFICATION</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"width:150px;text-align:center;\">\r\n\t\t\t\t\t\t\t<strong>TOTAL PROGRAM</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tMAINSTAY\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_MAINSTAY}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tSTAFF\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_STAFF}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tGUEST\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_GUEST}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t<strong>TOTAL</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;border-top-width:3px;\">\r\n\t\t\t\t\t\t\t<strong>${_INPUT_AMT_TOTAL}</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\t\t\t\t\t\r\n\t\t\t</table>\r\n            <br/>\r\n</template>"; });
+define('text!ppid/forms/awards_training.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t\r\n\t\t\t<li role=\"presentation\" class=\"active\"><a href=\"#e_a_s_t_awards\" aria-controls=\"e_a_s_t_awards\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Awards</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t_seminar_training\" aria-controls=\"e_a_s_t_seminar_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"e_a_s_t_awards\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t_seminar_training\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/company_info.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\t\r\n\t<require from=\"./company_info_main\"></require>\r\n\t<require from=\"./company_info_work_exp\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#company_specific\" aria-controls=\"company_specific\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(0)\" >Company Specific</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#company_work_exp\" aria-controls=\"company_work_exp\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(1)\" >Work Experience</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_char_ref\" aria-controls=\"company_char_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(2)\">Character reference</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#company_medical_rec\" aria-controls=\"company_medical_rec\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(3)\" >Medical Record</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#company_endorsement\" aria-controls=\"company_endorsement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(4)\" >Endorsement</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#company_branding\" aria-controls=\"company_branding\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(5)\" >Image Branding / Target Market</a></li>\r\n\t\t</ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"company_specific\"  style=\"height:550px; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<company_info_main></company_info_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_endorsement\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_branding\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_medical_rec\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div> \r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_work_exp\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\t\t\t\t\r\n\t\t\t\t<company_info_work_exp></company_info_work_exp>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_char_ref\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\t\t\t\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\t\r\n\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/company_info_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<style type=\"text/css\">\r\n\t\t.custom-file-input {\r\n\t\t  visibility: hidden;\r\n\t\t  width: 0;\r\n\t\t  position: relative;\r\n\t\t}\r\n\r\n\t\t.custom-file-input::before {\r\n\t\t  content: 'Select Memo';\r\n\t\t  display: inline-block;\r\n\t\t  /*background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);*/\r\n\t\t  border: 1px solid #999;\r\n\t\t  border-radius: 3px;\r\n\t\t  padding: 3px 5px;\r\n\t\t  background: #0078ae url(images/ui-bg_glass_45_0078ae_1x400.png) 50% 50% repeat-x !important;\r\n\t\t  outline: none;\r\n\t\t  white-space: nowrap;\r\n\t\t  -webkit-user-select: none;\r\n\t\t  cursor: pointer;\r\n\t\t  text-shadow: 1px 1px #fff;\r\n\t\t  font-weight: 700;\r\n\r\n\t\t  /*font-size: 7pt;*/\r\n\t\t  visibility: visible;\r\n\t\t  position: absolute;\r\n\t\t}\r\n\r\n\t\t.custom-file-input:hover::before {\r\n\t\t  border-color: black;\r\n\t\t}\r\n\r\n\t\t.custom-file-input:active::before {\r\n\t\t  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);\r\n}\r\n\t</style>\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">ID #</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.id_no\" disabled.bind=\"_disableIDNo\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"1\" id=\"_start_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Kapamilya Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"kapamilya_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">is Exclusive?</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" tabindex=\"1\" checked.bind=\"obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl\">\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_companyChanged()\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.company_id\" >\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COMPANY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"_end_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Membership Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"membership_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.membership_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd\" disabled.bind=\"_disableStatus\" change.delegate=\"dd_statusChanged()\">\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.STATUS\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"_hideInactiveField\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Reason for Cessation</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd\" change.delegate=\"dd_cessationStatusChanged()\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CESSATION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"_hideInactiveField || _hideCessationDate\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Cessation date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"cessation_end_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"_hideInactiveField\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.remarks\" > </textarea>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"_hideSuspendField\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Suspension Start Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"suspended_start_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"_hideSuspendField\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Suspension End Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"suspended_end_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"margin-left:20px; margin-right: 20px;\">\r\n\t\t\t\t\t\t<b>Note: The Start Date refers to the commencement date of the FIRST contract executed by Talent with Company while the End Date refers to the expiration date of the LAST contract executed by Talent with Company. Unless expressly stated, the dates do not imply or indicate continuous tenure or engagement during the period between the Start Date and End Date.</b>\r\n\t\t\t\t\t</div>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\" style=\"vertical-align: left;\">\r\n\t\t\t\t\t<table style=\"width: 500px;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Division</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" change.delegate=\"dd_divisionChanged()\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.division_id\">\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.DIVISION\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location(RNG only)</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" disabled.bind=\"_disableLocations\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.location_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"--NONE--\">--NONE--</option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS_RNG\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Category</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.category_id\">\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CATEGORY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Job</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.job_id\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.JOB\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Payroll Group</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PAYROLL_GROUP\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Professional Type</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROFESSIONAL_TYPE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t\t\t\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t\t\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#contracts\" aria-controls=\"contracts\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Contracts</a></li>\r\n\t\t\t\t\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#accreditation\" aria-controls=\"accreditation\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Accreditation</a></li>\r\n\t\t\t\t\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#bank_info\" aria-controls=\"bank_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Bank Information</a></li>\r\n        \t\t\t\t</ul>\r\n        \t\t\t\t<div class='tab-content'>\r\n        \t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"contracts\"  style=\"width:850px;height:100px; margin-left:auto; margin-right:auto;\">\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t\t<table style=\"width: 100%;\" class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Project Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"> </td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of contracts\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"contracts == null || contracts.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</div>\r\n\r\n\t\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"accreditation\"  style=\"width:850px;height:250px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t\t\t\t\t<!-- <br/> -->\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Job Group</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" /> --> \r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" disabled.bind=\"_disableTabsInput || accreditation_status.length==0\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id\" change.delegate=\"dd_jobGroupChange()\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.JOB_GROUP\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"a_start_dt\" disabled.bind=\"_disableTabsInput || accreditation_status.length==0\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.a_start_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Memo</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"file\" name=\"memo\" class=\"custom-file-input\" >\r\n\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Job</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" disabled.bind=\"_disableTabsInput || accreditation_status.length==0\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.a_job_id\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of accreditation_joblist\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"a_end_dt\" disabled.bind=\"_disableTabsInput || accreditation_status.length==0\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.a_end_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width: 100%;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput\" >Attach</button>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width: 100%;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput\" >Attach Memo</button>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px;\" class=\"text-left\">Competency Level</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput || accreditation_status.length==0\" keypress.trigger=\"Digit($event)\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.a_competency\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput || accreditation_status.length>0\" click.delegate=\"btnAdd_accreditation()\">Add</button>&nbsp;\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput || accreditation_status.length==0\" click.delegate=\"validateAccreditation()\">Save</button>&nbsp;\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput\" click.delegate=\"clearAccreditationField()\" >Clear</button>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 120px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<table style=\"width: 100%;\" class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Job group</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Job</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Level</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Division</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Home</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Entry</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Memo</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.COMPANY_SPECIFIC.model.accreditation_list\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.job_grp_text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.job_text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.competency}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.eff_start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.eff_end_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.division_text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" tabindex=\"1\" checked.bind=\"item.home_fl=='1'\" disabled>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" tabindex=\"1\" checked.bind=\"item.entry_fl=='1'\" disabled>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.accreditation_memo}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" tabindex=\"18\" disabled.bind=\"_disableTabsInput || accreditation_status.length>0\" click.delegate=\"btnEdit_accreditation(item)\">-</button>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" tabindex=\"18\" disabled.bind=\"_disableTabsInput || accreditation_status.length>0\" click.delegate=\"btnRemove_accreditation(item)\">X</button>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.COMPANY_SPECIFIC.model.accreditation_list == null || obj_personnel.COMPANY_SPECIFIC.model.accreditation_list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"11\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</div>\r\n\r\n\t\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"bank_info\"  style=\"width:850px;height:100px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t\t\t\t\t<!-- <br/> -->\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bank Information</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" disabled.bind=\"_disableTabsInput\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id\" change.delegate=\"dd_bankChanged()\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.BANK\" value.bind=\"item.id\">${item.bank_cd}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Account Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" readonly value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<table style=\"width: 500px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bank Branch</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" readonly value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Account Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" keypress.trigger=\"Digit($event)\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</div>\r\n        \t\t\t\t</div>\r\n        \t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/company_info_work_exp.html', ['module'], function(module) { module.exports = "<template>\t\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Work Experience</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.employer\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">From</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"startDt\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.start_dt\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Salary</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.salary\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">To</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"endDt\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.end_dt\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Position</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.position_cd\" tabindex=\"6\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.POSITION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Present</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" type=\"checkbox\" checked.bind=\"obj_personnel.WORK_EXPERIENCE.model.present_fl\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Free Lance</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" type=\"checkbox\" checked.bind=\"obj_personnel.WORK_EXPERIENCE.model.freelance_fl\" tabindex=\"7\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Reason for leaving</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none; width: 100%;\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving\" tabindex=\"8\" disabled.bind=\"_disableForm\" ></textarea>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  disabled.bind=\"_disableBtnAdd\" click.delegate=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.delegate=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"clearField()\" >Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 220px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Position</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Salary</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">is Present</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Free Lancer</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Reason for leaving</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.WORK_EXPERIENCE.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.employer}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.end_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.position}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.salary}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" checked.bind=\"item.present_fl==1\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" checked.bind=\"item.freelance_fl==1\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.reason_for_leaving}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.delegate=\"btnEdit(item)\" disabled.bind=\"_disableBtnEdit\" >-</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.delegate=\"btnRemove(item)\" disabled.bind=\"_disableBtnRemove\" >X</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.WORK_EXPERIENCE.list == null || obj_personnel.WORK_EXPERIENCE.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/gov_info.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./gov_info_main\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" style=\"\" class=\"active\"><a href=\"#gov_info_main\" aria-controls=\"gov_info_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(0)\">Government Information</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_exam_passed\" aria-controls=\"gov_exam_passed\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Government Exam Passed</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_criminal_rec\" aria-controls=\"gov_criminal_rec\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Criminal / Civil / Labor and administrative case</a></li>\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"gov_info_main\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_main></gov_info_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_exam_passed\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_criminal_rec\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/gov_info_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 500px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table style=\"width: 100%\">\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Tax Information</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax ID Number(TIN)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled value.bind=\"obj_personnel.GOVERNMENT_INFO.tin\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Exemption</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.tax_exempt_cd\" tabindex=\"1\"  >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.TAX_EXEMPT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Type</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.input_tax_cd\" tabindex=\"2\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.INPUT_TAX\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" id=\"affidavit_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_TaxAffidavit()\" tabindex=\"5\"  />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 120px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.tax_affidavit\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_TaxAffidavit(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.tax_affidavit == null || obj_personnel.GOVERNMENT_INFO.tax_affidavit.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Government permits</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t \t<table>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd\" disabled.bind=\"_disableForm\" tabindex=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PERMIT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"6\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"7\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"8\" id=\"expiry_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"9\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"\" tabindex=\"10\" />&nbsp;&nbsp; -->\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Permit()\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t \t\t\t\t<div style=\"height:120px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t \t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td class=\"colorCell\">Edit</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.permits\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.expiry_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.poi}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td>-</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Permit(item)\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.permits == null || obj_personnel.GOVERNMENT_INFO.permits.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t \t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t \t\t\t\t</div>\r\n\t\t\t\t\t\t\t \t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Other Government Info</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Classification</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_stat_cd\" tabindex=\"11\" disabled.bind=\"_disableOtherGovernmentInfo\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.VAT_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Registration Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"12\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_reg_dt\" id=\"vat_reg_dt\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">SSS Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"13\" value.bind=\"obj_personnel.GOVERNMENT_INFO.sss_no\" id=\"_sss\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_sss', '__-_______-_')\" placeholder=\"00-0000000-00\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">PAG-IBIG Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"14\" value.bind=\"obj_personnel.GOVERNMENT_INFO.pagibig_no\" id=\"_pagibig\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_pagibig', '____-____-____')\" placeholder=\"0000-0000-0000\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Philhealth</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"15\" value.bind=\"obj_personnel.GOVERNMENT_INFO.philhealth_no\" id=\"_philhealth\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_philhealth', '__-_________-_')\" placeholder=\"00-000000000-0\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">National ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"16\" value.bind=\"obj_personnel.GOVERNMENT_INFO.national_id\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Voter's ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"17\" value.bind=\"obj_personnel.GOVERNMENT_INFO.voters_id\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"!_disableOtherGovernmentInfo\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>\r\n\t\t\t\t\t\t\t\t\t\t\t\tNOTE:FORM WAS DISABLED, CALL HR ADMIN [ROMEL PALCES LOC. 4594 OR TRISH CRUZ LOC. 4356] IF YOU WISH TO CHANGE YOUR INFO.\r\n\t\t\t\t\t\t\t\t\t\t\t</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" tabindex=\"18\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./main_contact\"></require>\r\n\t<require from=\"./main_educational\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center;\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main_main\" aria-controls=\"main_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(0)\">Employee Personal Info</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_contact\" aria-controls=\"main_contact\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(1)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Contact</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_educ_achievement\" aria-controls=\"main_educ_achievement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(2)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Educational Achievement</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_char_interest\" aria-controls=\"main_char_interest\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(3)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Characteristic/Interest</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_skills_talent\" aria-controls=\"main_skills_talent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(4)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Skills/Talent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_lang_dialect\" aria-controls=\"main_lang_dialect\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(5)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Language/Dialect</a></li>\r\n\t\t\t\r\n\t\t</ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main_main\"  style=\"height:550px; margin-left:auto; margin-right:auto;\" >\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t\t<table style=\"margin-left: 25px;\">\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_cd\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Surname*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.last_name\" disabled.bind=\"_disableForm\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr style=\"height:35px;\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gender*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<label repeat.for=\"g of gender\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"_gender\" value.bind=\"g\" checked.bind=\"selectedGender\" disabled.bind=\"_disableForm\" tabindex=\"6\" />${g}\r\n\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<span style=\"margin: 20px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"M\" checked.bind=\"selectedGender\" />Male \r\n\t\t\t\t\t\t\t\t\t\t\t</span>\r\n\t\t\t\t\t\t\t\t\t\t\t<span>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"F\" checked.bind=\"selectedGender\" />Female\r\n\t\t\t\t\t\t\t\t\t\t\t</span>-->\r\n\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth place</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.birth_place\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Civil Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.civil_status\" disabled.bind=\"_disableForm\" tabindex=\"12\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CIVIL_STATUS\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"15\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_citizenship\" class='ddCitizenship' disabled.bind=\"_disableForm\" tabindex=\"18\" id=\"citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CITIZENSHIP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Citizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllCitizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"citi of obj_personnel.HEADER.citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeCitizenship(citi)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n\t\t\t\t\t\t\t\t<table style=\"padding: 0px; margin: 0px;\">\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Global ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\"  value.bind=\"obj_personnel.HEADER.global_indiv_id\" readonly />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.given_name\" disabled.bind=\"_disableForm\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Alias/NickName</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.alias\" disabled.bind=\"_disableForm\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"birthDate\" value.bind=\"obj_personnel.HEADER.birth_dt\" disabled.bind=\"_disableForm\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Religion</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.religion_cd\" disabled.bind=\"_disableForm\" tabindex=\"13\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELIGION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">If Alien, ACR No.</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.acr_no\" disabled.bind=\"_disableForm\" tabindex=\"16\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Group Name(s)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_group\" class=\"ddGroup\" disabled.bind=\"_disableForm\" tabindex=\"19\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.GROUP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Group()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr></tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>-->\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width: 300px;\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllGroup()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"grp of obj_personnel.HEADER.group\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeGroup(grp)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table style=\"margin: 0px; padding: 0px;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">TIN*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.tin\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"2\" id=\"_tin\" keypress.trigger=\"DigitOnly($event)\" keyup.trigger=\"mask('_tin', '___-___-___-___')\" />\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Middle Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.middle_name\" disabled.bind=\"_disableForm\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle; padding: 0px;\" class=\"text-left\">Mother's Maiden Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.mother_maiden_name\" disabled.bind=\"_disableForm\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  readonly value.bind=\"obj_personnel.HEADER.age\" disabled.bind=\"_disableForm\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.location_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"14\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">STATUS</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.status_cd\" disabled.bind=\"_disableForm\" tabindex=\"17\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"status of obj_personnel.STATUS\" value.bind=\"status.value\">${status.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\" class=\"text-center\"><strong>Suspension Date</strong></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionFrom\" value.bind=\"obj_personnel.HEADER.suspension_start\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionTo\" value.bind=\"obj_personnel.HEADER.suspension_end\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<!-- -   <img if.bind=\"cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=abslogo_BIG.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/>  -->\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"width: 150px; height: 150px; border: dashed 2px black;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<img src.bind=\"primary_img\" style=\"height: 100%; width: 100%;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"btnUpload()\">Add/Edit Photo</button>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<h5>\r\n\t\t\t\t\t\t( <strong>Note</strong> : * is required )\r\n\t\t\t\t\t</h5>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSearchPersonnel\" click.trigger=\"fnPersonnel('EDIT')\">EDIT PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableCreatePersonnel\" click.trigger=\"fnPersonnel('CREATE')\" >CREATE PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableClearData\" click.trigger=\"fnPersonnel('CLEAR')\" >CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<!--<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableResetData\" click.trigger=\"fnPersonnel('RESET')\">RESET/REFRESH</button>&nbsp;&nbsp;-->\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"fnPersonnel('SAVE')\">SAVE PERSONNEL</button>&nbsp;&nbsp;\r\n\r\n\t\t\t\t</div>\r\n\r\n\t\t\t\t<br/>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${obj_personnel.HEADER.created_by +' '+ obj_personnel.HEADER.created_dt}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${obj_personnel.HEADER.last_updated_by +' '+ obj_personnel.HEADER.last_updated_dt }</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!-- <td>\r\n\t\t\t\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<strong>${obj_personnel.USER.USER_ID}</strong> \r\n\t\t\t\t\t\t\t</td> -->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_contact\"  style=\"height:550px; margin-left:auto; margin-right:auto;  overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_contact></main_contact>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_educ_achievement\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_educational></main_educational>\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_char_interest\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_skills_talent\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_lang_dialect\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\r\n\r\n\r\n\t\t</div>\r\n\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/main_contact.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div >\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Address</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.unit_no\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.bldg_name\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.barangay\" tabindex=\"7\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.state_province\" tabindex=\"10\" disabled.bind=\"_disableForm\" change.delegate=\"dd_provinceChanged()\">\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\t\t\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.state_province\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.country_cd\" tabindex=\"13\" disabled.bind=\"_disableForm\">\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.country_cd\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.house_no\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street/Phase</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.street_name\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Distict</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.district\" tabindex=\"8\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.region\" change.delegate=\"dd_regionChanged()\" tabindex=\"11\" disabled.bind=\"_disableForm\" >\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\" >${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\" disabled.bind=\"obj_personnel.CONTACT.modelAddress.country_cd!='PH' && obj_personnel.CONTACT.modelAddress.country_cd.length>0\">${item.text}</option> -->\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\" hidden.bind=\"item.group=='US'\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\" >${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\" disabled.bind=\"obj_personnel.CONTACT.modelAddress.country_cd!='US' && obj_personnel.CONTACT.modelAddress.country_cd.length>0\" >${item.text}</option> -->\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Present Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.present_fl\" tabindex=\"14\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk Lot</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.block_lot\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd/Vill</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.sub_village\" tabindex=\"6\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.city_town\" tabindex=\"9\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip Code</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.zipcode\" tabindex=\"12\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permanent Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.permanent_fl\" tabindex=\"15\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\t\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" colspan=\"1\">Remarks</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.remarks\" tabindex=\"18\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Upload Sketch</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Upload</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Attach</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd_Address()\" disabled.bind=\"_disableBtnAdd\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validateAddress()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearAddressData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Address</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Present</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permanent</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Sketch</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.address\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.full_address}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.present_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.permanent_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td >\r\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"\" hidden.bind=\"item.sketch_path!=0\">Link</a>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnEdit_Address(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnRemoveAddress(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.address == null || obj_personnel.CONTACT.address.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"7\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\r\n\t\t\t\t<tr colspan=\"3\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<br />\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; margin-left: 10px; margin-right: 0px; margin-top: 10px; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Contact</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"2\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 100px; vertical-align: middle;\" class=\"text-left\">Contact</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"float:left;\">\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px;\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_type\" >\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CONTACT_TYPE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Area Code\" value.bind=\"obj_personnel.CONTACT.modelContact.area_cd\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px; \" type=\"text\" placeholder=\"Phone No.\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Ext.\" value.bind=\"obj_personnel.CONTACT.modelContact.local_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value.bind=\"obj_personnel.CONTACT.statusContact\" class=\"btn btn-xs customButton\" click.trigger=\"validateContact()\" style=\"width: 45px;\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"Clear\" class=\"btn btn-xs customButton\" click.trigger=\"clearContactData()\" style=\"width: 60px;\" />\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 240px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Contact Type</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Area Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Phone No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Ext.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!--<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"\" />-->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.contact\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_type_text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.area_cd}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.local_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.contact == null || obj_personnel.CONTACT.contact.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Email</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.email_addr\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Email</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.email\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.email == null || obj_personnel.CONTACT.email.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Website</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.url\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Website</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.website\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.website == null || obj_personnel.CONTACT.website.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/main_educational.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\" height: 500px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Educational Achievement</h5>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; width: 100%;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Level</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LEVEL\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr> \t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year Start</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year End</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">School</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 100%;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.SCHOOLS\" value.bind=\"item.school_cd\">${item.school_name}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Degree / Major</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Awards / Achievement</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Completed</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" tabindex=\"15\" disabled.bind=\"_disableForm\" checked.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd()\" disabled.bind=\"_disableBtnAdd\" >Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" disabled.bind=\"_disableBtnSave\" >Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 280px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Level</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">School</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Degree/Major</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Awards</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Completed</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.EDUCATIONAL_ACHIEVEMENT.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.level_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.school_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.course}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.honor_awards}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.start_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.end_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.completed_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.list == null || obj_personnel.EDUCATIONAL_ACHIEVEMENT.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/miscellaneous.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Hello from Miscellaneous.</h3>\t\r\n\t<div style=\"background:orange; width:100px; height:100px;\">\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./relative_parent\"></require>\r\n\t<require from=\"./relative_siblings\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#relative_parent\" aria-controls=\"relative_parent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(0)\">Parent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_siblings\" aria-controls=\"relative_siblings\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(1)\" >Siblings</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_spouse\" aria-controls=\"relative_spouse\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(2)\" >Spouse</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_children\" aria-controls=\"relative_children\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(3)\" >Children</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_in_case\" aria-controls=\"relative_in_case\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(4)\" >In Case of Emergency</a></li>\r\n\t\t\t\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"relative_parent\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll; \">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_parent></relative_parent>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_siblings\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_siblings></relative_siblings>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_spouse\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_children\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_in_case\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative_parent.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 900px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Mother</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.last_name\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.mother.birth_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.unit_no\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.bldg_name\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.barangay\" tabindex=\"13\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.state_province\" tabindex=\"16\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.mother.country_cd\" tabindex=\"19\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.given_name\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.occupation\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.house_no\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.street_name\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.district\" tabindex=\"14\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.region\" tabindex=\"17\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_dependent\" change.delegate=\"checkChange(true, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_deceased\" change.delegate=\"checkChange(true, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.middle_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.employer\" tabindex=\"6\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.block_lot\" tabindex=\"9\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.sub_village\" tabindex=\"12\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.city_town\" tabindex=\"15\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.zipcode\" tabindex=\"18\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.mother.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.mother.deceased_dt\" tabindex=\"21\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Father</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.last_name\" tabindex=\"22\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.father.birth_dt\" tabindex=\"25\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.unit_no\" tabindex=\"28\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.bldg_name\" tabindex=\"31\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.barangay\" tabindex=\"34\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.state_province\" tabindex=\"37\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.father.country_cd\" tabindex=\"40\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.given_name\" tabindex=\"23\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.occupation\" tabindex=\"26\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.house_no\" tabindex=\"29\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.street_name\" tabindex=\"32\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.district\" tabindex=\"35\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.region\" tabindex=\"38\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <label repeat.for=\"s of status\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"fstatus\" value.bind=\"s\" checked.bind=\"obj_personnel.RELATIVE.parents.father.status\" change.delegate=\"checkChange(false, s)\" />${s}\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_dependent\" change.delegate=\"checkChange(false, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_deceased\" change.delegate=\"checkChange(false, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.middle_name\" tabindex=\"24\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.employer\" tabindex=\"27\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.block_lot\" tabindex=\"30\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.sub_village\" tabindex=\"33\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.city_town\" tabindex=\"36\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.zipcode\" tabindex=\"39\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.father.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.father.deceased_dt\" tabindex=\"42\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\t\t\t\t\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative_siblings.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"background: white; height: 500px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Siblings</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Dependent/Deceased</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of x\">\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"x == null || x.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/modals/DialogBox.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body style=\"border-radius: 0px;\" class=\"divBackground\">\r\n\t\t\t<div style=\"white-space: pre;\">${message}</div>\r\n\t\t</ux-dialog-body>\r\n\t\t<ux-dialog-footer>\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.ok()\">Yes</button>&nbsp;&nbsp;\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.cancel()\">No</button>&nbsp;&nbsp;\r\n\t\t</ux-dialog-footer>\r\n\t</ux-dialog>\r\n</template>"; });
 define('text!ppid/modals/photo_list.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header>class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body>\r\n\t\t\t<div>\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</ux-dialog-body>\r\n\t</ux-dialog>\r\n</template>"; });
 define('text!ppid/modals/ppid_search.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SEARCH PERSONNEL(S)</b></span></ux-dialog-header>\r\n\t\t\r\n\t\t<ux-dialog-body style=\"background:#E3E3E3;\" class=\".divBackground\">\r\n\t\t\t<require from=\"converters/take\"></require>\r\n\t\t\t<require from=\"converters/sorttext\"></require>\r\n\t\t\t<require from=\"tools/gridpaging\"></require>\t\t\t\r\n\t\t\t<div style=\"height:350px;overflow: auto;\">\r\n\t\t\t\t<table class=\"table table-hover table-condensed table-bordered\">\r\n\t\t\t\t\t<thead class=\"table-default\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GLOBAL ID</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">TIN</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GROUP</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">LAST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">FIRST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">NICKNAME / ALIAS</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">PROJECT NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">COUNTRY</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr ref=\"_rppid_queries\">\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bglobal_indiv_id\" searchable=\"_bglobal_indiv_id\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_btin\" searchable=\"_stin\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bgroup\" searchable=\"_sgroup\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_blast_name\" searchable=\"_slast_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bfirst_name\" searchable=\"_sfirst_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bnickname\" searchable=\"_snickname\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bproject_name\" searchable=\"_sproject_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bcountry\" searchable=\"_scountry\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</thead>\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedPersonnel(item)\">\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GLOBAL_INDIV_ID}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.TIN}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GROUP}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.LAST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.FIRST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.NICK_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.PROJECT_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.COUNTRY}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"10\"></gridpaging>\r\n\t\t</ux-dialog-body>\r\n\t\t<!--<ux-dialog-footer>\t\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"Submit()\">Search</button>\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"controller.cancel()\">Close</button>\r\n\t\t</ux-dialog-footer>-->\r\n\t</ux-dialog>\r\n</template>"; });

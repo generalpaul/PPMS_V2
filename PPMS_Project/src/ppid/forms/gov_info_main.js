@@ -6,11 +6,13 @@ import breeze from 'breeze-client';
 import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
+import settings from 'settings';
 
 @inject(obj_personnel, toastr, DialogService)
 export class gov_info_main{
 	obj_personnel = null;
 	alreadyLoaded = false;
+	_disableOtherGovernmentInfo = true;
 	constructor(obj_personnel, toastr, DialogService){
 
 		$("#affidavit_dt").datepicker();
@@ -31,13 +33,18 @@ export class gov_info_main{
 					this.clearTaxAffidavitField();
 				}
 			}
+
+			
+			if(this.obj_personnel.USER.COMPANY_ID == 1){
+				this._disableOtherGovernmentInfo = false;
+			}
 		});
 
 		this.obj_personnel.OBSERVERS.govinfo_main_clicked.push((global_id)=>{
 			this.load_TaxInformation(global_id);
 			this.load_TaxAffidavit(global_id);
 			this.load_Permit(global_id);
-			this.clearTaxAffidavitField();
+			this.clearTaxAffidavitField();			
 		});
 
 		this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
@@ -62,6 +69,14 @@ export class gov_info_main{
 		return ('0'+month).slice(-2)+'/'+('0'+day).slice(-2)+'/'+("000"+year).slice(-4);
 	}
 
+	convertToGMT8(date){
+		if(date==undefined || date == null || date.length==0)
+			return null;
+		var tempDt = moment(date).add(8, 'hours');
+		return new Date(tempDt);
+	}
+
+
 	validate_input(input, type){
 		switch(type){
 			case "PAGIBIG": 
@@ -81,6 +96,7 @@ export class gov_info_main{
 
 	load_TaxInformation(global_id){		
 
+		settings.isNavigating = true;
 		var query = EntityQuery().from("GLOBAL_INDIV_MSTR")
 					.where("GLOBAL_INDIV_ID", "==", global_id);
 		EntityManager().executeQuery(query).then((querySuccess)=>{
@@ -91,8 +107,10 @@ export class gov_info_main{
 			this.obj_personnel.GOVERNMENT_INFO.national_id = querySuccess.results[0].NATIONAL_ID;
 			this.obj_personnel.GOVERNMENT_INFO.voters_id = querySuccess.results[0].VOTERS_ID;
 			toastr.clear();
+			settings.isNavigating = false;
 
 		}, (errorQuery)=>{
+			settings.isNavigating = false;
 			toastr.error(errorQuery, "Error in loading Government information.");
 		});
 
@@ -104,12 +122,16 @@ export class gov_info_main{
 			this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = this.formatDate(querySuccess.results[0].VAT_REG_DT);
 			this.obj_personnel.GOVERNMENT_INFO.vat_stat_cd = querySuccess.results[0].VAT_STAT_CD;
 			toastr.success("","Tax Information has been loaded.");
+			settings.isNavigating = false;
 		}, (errorQuery)=>{
+			settings.isNavigating = false;
 			toastr.error(errorQuery, "Error in loading Government information.");
 		});
 	}
 
 	load_TaxAffidavit(global_id){
+
+		settings.isNavigating = true;
 		var query = EntityQuery().from("TAX_AFFIDAVIT_TRX")
 					.where("GLOBAL_ID", "==", global_id);
 		EntityManager().executeQuery(query).then((querySuccess)=>{
@@ -122,13 +144,17 @@ export class gov_info_main{
 					affidavit_dt: this.formatDate(result.AFFIDAVIT_DT)
 				});
 			});
-			this.obj_personnel.GOVERNMENT_INFO.tax_affidavit = tmpList;			
+			this.obj_personnel.GOVERNMENT_INFO.tax_affidavit = tmpList;
+			settings.isNavigating = false;			
 		}, (errorQuery)=>{
+			settings.isNavigating = false;
 			toastr.error(errorQuery, "Error in loading tax affidavit");
 		});
 	}
 
 	load_Permit(global_id){
+
+		settings.isNavigating = true;
 		var query = EntityQuery().from("PERMIT_TRX")
 					.where("GLOBAL_ID", "==", global_id);
 
@@ -157,12 +183,15 @@ export class gov_info_main{
 				});
 			});
 			this.obj_personnel.GOVERNMENT_INFO.permits = tmpList;
+			settings.isNavigating = false;
 		}, (errorQuery)=>{
-
+			settings.isNavigating = false;
+			toastr.error(errorQuery, "Error in loading permits.");
 		});
 	}
 
 	clearTaxAffidavitField(){
+		settings.isNavigating = false;
 		this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no = "";
 		this.obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt = "";
 		//$("#affidavit_dt").val("");
@@ -197,6 +226,7 @@ export class gov_info_main{
 		this.DialogService.open({ viewModel: DialogBox, model: { title:"Confirm remove.", message:"Are you sure you want to remove the tax affidavit?" } })
   			.whenClosed(response=>{
   				if(!response.wasCancelled){
+  					settings.isNavigating = true;
 	  				//alert("Confirmed delete.");
   					var query = EntityQuery().from('TAX_AFFIDAVIT_TRX').where('TAX_AFFIDAVIT_ID', '==', item.tax_affidavit_id);
   					EntityManager().executeQuery(query).then((success)=>{
@@ -207,6 +237,7 @@ export class gov_info_main{
   							toastr.success("","The tax affidavit was successfully removed.");
   							this.load_TaxAffidavit(this.obj_personnel.global_indiv_id);
   						},(error)=>{
+  							settings.isNavigating = false;
   							toastr.clear();
   							toastr.error("", "Error in removing tax affidavit.");
   						});
@@ -217,6 +248,7 @@ export class gov_info_main{
 
 	insertTaxAffidavit(){
 
+		settings.isNavigating = true;
 		var dateToday = null;
 		dateToday = new moment(new Date()).add(8, 'hours');
 		dateToday = new Date(dateToday);
@@ -246,16 +278,22 @@ export class gov_info_main{
 				this.load_TaxAffidavit(this.obj_personnel.global_indiv_id);
 				this.clearTaxAffidavitField();
 			}, (errorSave)=>{
-				toastr.error(errorQuery, "Error in loading Tax affidavit.");
+				settings.isNavigating = false;
+				if(entity!=null){
+					entity.entityAspect.setDeleted();
+				}
+				toastr.error(errorQuery, "Error in saving Tax affidavit.");
 			});
 
 
 		}, (errorQuery)=>{
-			toastr.error(errorQuery, "Error in loading Tax affidavit.");
+			settings.isNavigating = false;
+			toastr.error(errorQuery, "Error in querying Tax affidavit id.");
 		});
 	}
 
 	clearPermitField(){
+		settings.isNavigating = false;
 		this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd="";
 		this.obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no="";
 		this.obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt="";
@@ -305,6 +343,7 @@ export class gov_info_main{
   			.whenClosed(response=>{
   				if(!response.wasCancelled){
 	  				//alert("Confirmed delete.");
+	  				settings.isNavigating = true;
   					var query = EntityQuery().from('PERMIT_TRX').where('PERMIT_ID', '==', item.permit_id);
   					EntityManager().executeQuery(query).then((success)=>{
   						
@@ -314,6 +353,7 @@ export class gov_info_main{
   							toastr.success("","The permit was successfully removed.");
   							this.load_Permit(this.obj_personnel.global_indiv_id);
   						},(error)=>{
+  							settings.isNavigating = false;
   							toastr.clear();
   							toastr.error("", "Error in removing permit.");
   						});
@@ -324,6 +364,7 @@ export class gov_info_main{
 
 	insertPermit(){
 
+		settings.isNavigating = true;
 		var dateToday = null;
 		dateToday = new moment(new Date()).add(8, 'hours');
 		dateToday = new Date(dateToday);
@@ -355,6 +396,10 @@ export class gov_info_main{
 				this.load_Permit(this.obj_personnel.global_indiv_id);
 				this.clearPermitField();
 			}, (errorSave)=>{
+				settings.isNavigating = false;
+				if(entity != null){
+					entity.entityAspect.setDeleted();
+				}
 				toastr.clear();
 				toastr.error("", errorSave);
 			});
@@ -363,30 +408,34 @@ export class gov_info_main{
 	
 	validate(){
 
+		this.obj_personnel.GOVERNMENT_INFO.pagibig_no = $("#_pagibig").val();
+		this.obj_personnel.GOVERNMENT_INFO.philhealth_no = $("#_philhealth").val();
+		this.obj_personnel.GOVERNMENT_INFO.sss_no = $("#_sss").val();
 		var strValidation="";
 
 		if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no.length>0){
-			if(!this.validate_input(this.obj_personnel.GOVERNMENT_INFO.pagibig_no, "PAGIBIG") && this.obj_personnel.GOVERNMENT_INFO.pagibig_no.length>=0){
+			if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.pagibig_no, "PAGIBIG")){
 				strValidation+="Invalid Pag-ibig No.<br/>";
 			}
 		}else{
-			this.obj_personnel.GOVERNMENT_INFO.pagibig_no = "0000-0000-0000";
+			// this.obj_personnel.GOVERNMENT_INFO.pagibig_no = "0000-0000-0000";
 		}
 
 		if(this.obj_personnel.GOVERNMENT_INFO.sss_no.length>0){
-			if(!this.validate_input(this.obj_personnel.GOVERNMENT_INFO.sss_no, "SSS")){
+			if(this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_" &&  !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.sss_no, "SSS")){
 				strValidation+="Invalid SSS No.<br/>";
+				console.log(this.obj_personnel.GOVERNMENT_INFO.sss_no);
 			}
 		}else{
-			this.obj_personnel.GOVERNMENT_INFO.sss_no = "00-0000000-0";
+			// this.obj_personnel.GOVERNMENT_INFO.sss_no = "00-0000000-0";
 		}
 
 		if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no.length>0){
-			if(!this.validate_input(this.obj_personnel.GOVERNMENT_INFO.philhealth_no, "PHILHEALTH")){
+			if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.philhealth_no, "PHILHEALTH")){
 				strValidation+="Invalid Philhealth No.<br/>";
 			}
 		}else{
-			this.obj_personnel.GOVERNMENT_INFO.philhealth_no = "00-000000000-0";
+			// this.obj_personnel.GOVERNMENT_INFO.philhealth_no = "00-000000000-0";
 		}
 
 		this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = $("#vat_reg_dt").val();
@@ -401,13 +450,38 @@ export class gov_info_main{
 	}
 
 	update(){
+
+		settings.isNavigating = true;
+		var philhealth = null;
+		var pagibig = null;
+		var sss =null;
+		if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_")
+		{
+			philhealth=this.obj_personnel.GOVERNMENT_INFO.philhealth_no;
+		}
+
+		if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____")
+		{
+			pagibig=this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
+		}
+
+		if(this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_")
+		{
+			sss=this.obj_personnel.GOVERNMENT_INFO.sss_no;
+		}
+
+
+
 		var query = EntityQuery().from("GLOBAL_INDIV_MSTR")
 					.where("GLOBAL_INDIV_ID", "==", this.obj_personnel.global_indiv_id);
 		EntityManager().executeQuery(query).then((querySuccess1)=>{
 			querySuccess1.results[0].TAX_EXEMPT_CD = this.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd;
-			querySuccess1.results[0].SSS_NO = this.obj_personnel.GOVERNMENT_INFO.sss_no;
-			querySuccess1.results[0].PAGIBIG_NO = this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
-			querySuccess1.results[0].PHILHEALTH_NO = this.obj_personnel.GOVERNMENT_INFO.philhealth_no;
+			// querySuccess1.results[0].SSS_NO = this.obj_personnel.GOVERNMENT_INFO.sss_no;
+			// querySuccess1.results[0].PAGIBIG_NO = this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
+			// querySuccess1.results[0].PHILHEALTH_NO = this.obj_personnel.GOVERNMENT_INFO.philhealth_no;			
+			querySuccess1.results[0].SSS_NO = sss;
+			querySuccess1.results[0].PAGIBIG_NO = pagibig;
+			querySuccess1.results[0].PHILHEALTH_NO = philhealth;
 			querySuccess1.results[0].NATIONAL_ID = this.obj_personnel.GOVERNMENT_INFO.national_id;
 			querySuccess1.results[0].VOTERS_ID = this.obj_personnel.GOVERNMENT_INFO.voters_id;
 			EntityManager().saveChanges().then((save1)=>{
@@ -416,13 +490,15 @@ export class gov_info_main{
 					  .where("GLOBAL_ID", "==", this.obj_personnel.global_indiv_id);
 				EntityManager().executeQuery(query).then((querySuccess2)=>{
 					querySuccess2.results[0].INPUT_TAX_CD = this.obj_personnel.GOVERNMENT_INFO.input_tax_cd;
-					querySuccess2.results[0].VAT_REG_DT = this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt;
+					querySuccess2.results[0].VAT_REG_DT = this.convertToGMT8(this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt);
 					querySuccess2.results[0].VAT_STAT_CD = this.obj_personnel.GOVERNMENT_INFO.vat_stat_cd;
 
 					EntityManager().saveChanges().then((save2)=>{
 						toastr.clear();
 						toastr.success("", "Record saved.");
+						settings.isNavigating = false;
 					}, (error2)=>{
+						settings.isNavigating = false;
 						toastr.clear();
 						toastr.error("", error2);
 					});
@@ -430,11 +506,14 @@ export class gov_info_main{
 				});
 
 			}, (error1)=>{
+				settings.isNavigating = false;
 				toastr.clear();
 				toastr.error("", error1);
 			});
 		}, (queryError1)=>{
-
+			settings.isNavigating = false;
+			toastr.clear();
+			toastr.error(queryError1, "Error in querying other government info.");
 		});
 	}
 

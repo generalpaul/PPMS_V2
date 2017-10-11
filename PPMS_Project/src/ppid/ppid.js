@@ -6,6 +6,7 @@ import {DialogService} from 'aurelia-dialog';
 import {ppid_search} from "./modals/ppid_search";
 import {EntityManager,EntityQuery} from '../entity-manager-factory'; 
 import {getLookups} from '../masterfiles';
+import settings from 'settings';
 
 @inject(DialogService, obj_personnel)
 export class ppid
@@ -22,9 +23,12 @@ export class ppid
 		this.obj_personnel.OBSERVERS.tab_changed.length=0;
 		this.obj_personnel.OBSERVERS.maintab_contact_clicked.length=0;
 		this.obj_personnel.OBSERVERS.maintab_education_clicked.length=0;
+		this.obj_personnel.OBSERVERS.relative_parents_clicked.length=0;
 		this.obj_personnel.OBSERVERS.govinfo_main_clicked.length=0;
 		this.obj_personnel.OBSERVERS.company_main_clicked.length=0;
+		this.obj_personnel.OBSERVERS.company_work_exp_clicked.length=0;
 		this.obj_personnel.OBSERVERS.clear_ppid.length=0;
+		this.obj_personnel.global_indiv_id = "";
 		this.obj_personnel.HEADER = {
     		citizenship:[],
     		group:[]
@@ -36,6 +40,8 @@ export class ppid
 
 	LoadDropdown()
 	{
+
+        settings.isNavigating = true;
 		// var _query = EntityQuery().from('GLOBAL_GRP_MSTR')
 		// 		.orderBy('GROUP_NAME')
 		// 		.select('GLOBAL_GRP_ID, GROUP_NAME');
@@ -346,6 +352,25 @@ export class ppid
 			toastr.error(failed,"Error in loading Bank dropdown");
 		});
 
+		_query = EntityQuery().from("PROVINCE_MSTR")
+				.orderBy("PROVINCE_DESC");
+		EntityManager().executeQuery(_query).then((success)=>{
+			var tmp=[];
+			_.each(success.results, (r)=>{
+				tmp.push({
+					text: r.PROVINCE_DESC,
+					value: r.PROVINCE_CD,
+					group: r.REGION_CD
+				});
+			});
+			this.obj_personnel.PROVINCE = tmp;
+		}, (error)=>{
+			toastr.error(error, "Error in loading Province dropdown.");
+		});
+
+
+        settings.isNavigating = false;
+
 	}
 
 	OrderByText(a, b){
@@ -374,7 +399,7 @@ export class ppid
 		}).whenClosed(response=>{
 			if(!response.wasCancelled)
 			{
-				console.log(response.output);
+				// console.log(response.output);
 				//var arr = response.output.split('|');
 				//var global_id = arr[0];
 				//var tin = arr[1];
@@ -387,7 +412,7 @@ export class ppid
 				//alert("Global_id:"+global_id+"\nTin:"+tin+"\nGroup:"+group+"\nLast Name:"+last_name+"\nFirst Name:"+first_name+"\nNick Name:"+nick_name+"\nProject Name:"+project_name+"\nCountry:"+country);
 			}else
 			{
-				console.log('reponse was cancelled.');
+				// console.log('reponse was cancelled.');
 			}
 		});
 	}

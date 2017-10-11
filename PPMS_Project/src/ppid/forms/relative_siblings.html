@@ -105,6 +105,11 @@
 									<td>${item}</td>
 									<td>${item}</td>
 									<td>${item}</td>									
+								</tr>								
+								<tr if.bind="x == null || x.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
 								</tr>
 							</tbody>
 						</table>

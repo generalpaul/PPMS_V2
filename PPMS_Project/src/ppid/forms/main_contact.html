@@ -33,9 +33,9 @@
 							<tr>
 								<td style="width: 120px; vertical-align: middle;" class="text-left">Province/State</td>
 								<td>
-									<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.CONTACT.modelAddress.state_province" tabindex="10" disabled.bind="_disableForm">
+									<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.CONTACT.modelAddress.state_province" tabindex="10" disabled.bind="_disableForm" change.delegate="dd_provinceChanged()">
 										<option></option>
-										<option repeat.for="item of obj_personnel.LOCATIONS" value.bind="item.LOCATION_CD">${item.LOCATION_DESC}</option>
+										<option repeat.for="item of obj_personnel.PROVINCE" value.bind="item.value">${item.text}</option>
 									</select>		
 									<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text" value.bind="obj_personnel.CONTACT.address.state_province" /> -->
 								</td>
@@ -78,10 +78,12 @@
 									<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.CONTACT.modelAddress.region" change.delegate="dd_regionChanged()" tabindex="11" disabled.bind="_disableForm" >												
 										<option value=""></option>
 										<optgroup label="Philippines">
-											<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='PH'" value.bind="item.value">${item.text}</option>
+											<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='PH'" value.bind="item.value" >${item.text}</option>
+											<!-- <option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='PH'" value.bind="item.value" disabled.bind="obj_personnel.CONTACT.modelAddress.country_cd!='PH' && obj_personnel.CONTACT.modelAddress.country_cd.length>0">${item.text}</option> -->
 										</optgroup>
-										<optgroup label="United States of America">
-											<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='US'" value.bind="item.value">${item.text}</option>
+										<optgroup label="United States of America" hidden.bind="item.group=='US'">
+											<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='US'" value.bind="item.value" >${item.text}</option>
+											<!-- <option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='US'" value.bind="item.value" disabled.bind="obj_personnel.CONTACT.modelAddress.country_cd!='US' && obj_personnel.CONTACT.modelAddress.country_cd.length>0" >${item.text}</option> -->
 										</optgroup>
 									</select>
 								</td>
@@ -195,6 +197,11 @@
 											<input type="button" value="x" class="btn btn-xs customButton" disabled.bind="_disableAddressTable" click.trigger="btnRemoveAddress(item)" />
 										</td>
 									</tr>
+									<tr if.bind="obj_personnel.CONTACT.address == null || obj_personnel.CONTACT.address.length==0">
+										<td colspan="7">
+											<b>No current entry.</b>
+										</td>
+									</tr>
 								</tbody>									
 							</table>
 						</div>
@@ -259,6 +266,11 @@
 														<input type="button" value="X" class="btn btn-xs customButton" click.trigger="btnRemove_Contact(item)" disabled.bind="_disableContactTable" />
 													</td>
 												</tr>
+												<tr if.bind="obj_personnel.CONTACT.contact == null || obj_personnel.CONTACT.contact.length==0">
+													<td colspan="6">
+														<b>No current entry.</b>
+													</td>
+												</tr>
 											</tbody>
 										</table>
 									</div>
@@ -295,6 +307,11 @@
 													<td>
 														<input type="button" value="X" class="btn btn-xs customButton" click.trigger="btnRemove_EmailWeb(item.internet_id, true)" />
 													</td>
+												</tr>												
+												<tr if.bind="obj_personnel.CONTACT.email == null || obj_personnel.CONTACT.email.length==0">
+													<td colspan="3">
+														<b>No current entry.</b>
+													</td>
 												</tr>
 											</tbody>
 										</table>
@@ -328,10 +345,35 @@
 														<input type="button" value="X" class="btn btn-xs customButton" click.trigger="btnRemove_EmailWeb(item.internet_id, false)" />
 													</td>
 												</tr>
+												<tr if.bind="obj_personnel.CONTACT.website == null || obj_personnel.CONTACT.website.length==0">
+													<td colspan="3">
+														<b>No current entry.</b>
+													</td>
+												</tr>
 											</tbody>
 										</table>
 									</div>
 								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+							<tr>
+								<td>
+									CREATED BY:
+								</td>
+								<td>
+									<b>${lblCreatedBy}</b>
+								</td>
+								<td>
+									LAST UPDATED BY:
+								</td>
+								<td>
+									<b>${lblUpdatedBy}</b>
+								</td>							
 							</tr>
 						</table>
 					</td>
