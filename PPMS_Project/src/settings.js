@@ -18,11 +18,9 @@ export default {
 
     // serviceName: "http://absppms2:8072/odata", //odata url
     // serviceNameBase: "http://absppms2:8072", //base api url
-<<<<<<< HEAD
+
     serviceName: "http://absppms01.corp.abscbn.com:8085/odata",
     serviceNameBase: "http://absppms01.corp.abscbn.com:8085/",
-=======
->>>>>>> 17e50fa8139b5b021cfbcd0b6c4f5056877fc495
 
     // serviceName: "http://absppms2:8094/odata",
     // serviceNameBase: "http://absppms2:8094",
@@ -32,11 +30,9 @@ export default {
 
   pageSize: 100,
   STATIONS: ["", "CEBU", "DAVAO"],
-<<<<<<< HEAD
   actualCostWebUrl: "http://localhost:15253",
   //actualCostWebUrl: "http://absppms2:8084", //actual cost url
   actualCostServiceBase: "http://absppms2.corp.abscbn.com:8083", //actual cost service
-=======
   //actualCostWebUrl: "http://localhost:15253",
   // actualCostWebUrl: "http://absppms01:8099", //actual cost url
   // actualCostServiceBase: "http://absppms01:8083", //actual cost service
@@ -44,6 +40,5 @@ export default {
   actualCostWebUrl: "http://absppms2:8084", //actual cost url
   actualCostServiceBase: "http://absppms2:8083", //actual cost service
 
->>>>>>> 17e50fa8139b5b021cfbcd0b6c4f5056877fc495
   isNavigating: false,
  };

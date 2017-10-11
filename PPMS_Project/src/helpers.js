@@ -1,11 +1,8 @@
-<<<<<<< HEAD
   export function DateToday(){    
       var dateToday = null;      
       dateToday = new Date();
       return dateToday;
   }
-=======
->>>>>>> 17e50fa8139b5b021cfbcd0b6c4f5056877fc495
 
 //source: https://stackoverflow.com/questions/12578507/how-to-implement-an-input-with-a-mask
   export function isDigit(event){
