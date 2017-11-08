@@ -25,22 +25,24 @@ export class obj_personnel
 	CHARACTERISTIC=[];
 	SKILLS=[];
 	LANGUAGE_DIALECT=[];
-	MEDICAL_RECORD=[];
+	MEDICAL_RECORD={
+		model:{},
+		list:[]
+	};
 	RELATIVE={
 		parents:{
 			mother:{},
 			father:{}
+		},
+		siblings:{
+			model:{},
+			list:[]
+		},
+		spouse:{},
+		emergency_contact:{
+			model:{},
+			list:[]
 		}
-		// siblings:{
-		// 	model:{},
-		// 	list:[]
-		// },
-		// spouse:{},
-		// children:{
-		// 	model:{},
-		// 	list:[]
-		// }
-
 	};
 	WORK_EXPERIENCE={
 		model:{},
@@ -54,8 +56,20 @@ export class obj_personnel
 		tax_affidavit:[],
 		permits:[]
 	};
-	GOVERNMENT_EXAM=[];
-	CRIMINAL_RECORD=[];
+	GOVERNMENT_EXAM={
+		model:{},
+		list:[]
+	};
+	CRIMINAL_RECORD={
+		civil:{
+			model:{},
+			list:[]
+		},
+		administrative:{
+			model:{},
+			list:[]
+		}
+	};
 	COMPANY_SPECIFIC={
 		model:{
 			personnel_bank:{}
@@ -65,6 +79,10 @@ export class obj_personnel
 	ENDORSEMENT=[];
 	IMAGE_BRANDING=[];
 	QUESTION_ANSWER=[];
+	CHARACTER_REF={
+		model:{},
+		list:[]
+	};
     USER={};
 	OBSERVERS={
 		ppid_dialog:[],
@@ -74,10 +92,9 @@ export class obj_personnel
 		clear_login_modal:[],
 		maintab_contact_clicked:[],
 		maintab_education_clicked:[],		
-		company_main_clicked:[],
-		company_work_exp_clicked:[],
-		govinfo_main_clicked:[],
-		relative_parents_clicked:[]
+		company_tab_changed:[],
+		govinfo_tab_changed:[],
+		relative_tab_changed:[],
 
 	};
 
@@ -117,6 +134,8 @@ export class obj_personnel
 	PAYROLL_GROUP=[];
 	BANK=[];
 	PROVINCE=[];
+	RELATIONSHIP =[];
+	INACTIVE_REASON = [];
 
 
 	

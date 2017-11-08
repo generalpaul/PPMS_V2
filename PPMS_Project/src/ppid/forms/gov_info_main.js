@@ -10,9 +10,13 @@ import settings from 'settings';
 
 @inject(obj_personnel, toastr, DialogService)
 export class gov_info_main{
+
 	obj_personnel = null;
 	alreadyLoaded = false;
 	_disableOtherGovernmentInfo = true;
+	lblCreatedBy = null;
+	lblUpdatedBy = null;
+
 	constructor(obj_personnel, toastr, DialogService){
 
 		$("#affidavit_dt").datepicker();
@@ -21,7 +25,7 @@ export class gov_info_main{
 		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num,global_id)=>{
 			if(tab_num==3){
 				if(!this.alreadyLoaded){
-					this.alreadyLoaded = true;
+					this.alreadyLoaded = false;
 					$("#affidavit_dt").datepicker();
 					$("#expiry_dt").datepicker();
 					$("#vat_reg_dt").datepicker();
@@ -40,11 +44,13 @@ export class gov_info_main{
 			}
 		});
 
-		this.obj_personnel.OBSERVERS.govinfo_main_clicked.push((global_id)=>{
-			this.load_TaxInformation(global_id);
-			this.load_TaxAffidavit(global_id);
-			this.load_Permit(global_id);
-			this.clearTaxAffidavitField();			
+		this.obj_personnel.OBSERVERS.govinfo_tab_changed.push((tab_num, global_id)=>{
+			if(tab_num == 0){
+				this.load_TaxInformation(global_id);
+				this.load_TaxAffidavit(global_id);
+				this.load_Permit(global_id);
+				this.clearTaxAffidavitField();
+			}
 		});
 
 		this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
@@ -106,8 +112,25 @@ export class gov_info_main{
 			this.obj_personnel.GOVERNMENT_INFO.philhealth_no = querySuccess.results[0].PHILHEALTH_NO;
 			this.obj_personnel.GOVERNMENT_INFO.national_id = querySuccess.results[0].NATIONAL_ID;
 			this.obj_personnel.GOVERNMENT_INFO.voters_id = querySuccess.results[0].VOTERS_ID;
+			if(querySuccess.results[0].CREATED_BY != null){
+				var _user = querySuccess.results[0].CREATED_BY;
+				var _date = moment.utc(querySuccess.results[0].CREATED_DT).format("MM/DD/YYYY hh:mm A");
+				this.lblCreatedBy = _user + ' '+ _date;				
+			}else{
+				this.lblCreatedBy = "";
+			}
+
+			if(querySuccess.results[0].LAST_UPDATED_BY != null){
+				var _user = querySuccess.results[0].LAST_UPDATED_BY;
+				var _date = moment.utc(querySuccess.results[0].LAST_UPDATED_DT).format("MM/DD/YYYY hh:mm A");
+				this.lblUpdatedBy = _user+ ' ' + _date;
+			}else{
+				this.lblUpdatedBy = "";
+			}
+
 			toastr.clear();
 			settings.isNavigating = false;
+
 
 		}, (errorQuery)=>{
 			settings.isNavigating = false;
@@ -452,6 +475,11 @@ export class gov_info_main{
 	update(){
 
 		settings.isNavigating = true;
+
+		var dateToday = null;
+		dateToday = new moment(new Date()).add(8, 'hours');
+		dateToday = new Date(dateToday);
+
 		var philhealth = null;
 		var pagibig = null;
 		var sss =null;
@@ -484,6 +512,8 @@ export class gov_info_main{
 			querySuccess1.results[0].PHILHEALTH_NO = philhealth;
 			querySuccess1.results[0].NATIONAL_ID = this.obj_personnel.GOVERNMENT_INFO.national_id;
 			querySuccess1.results[0].VOTERS_ID = this.obj_personnel.GOVERNMENT_INFO.voters_id;
+			querySuccess1.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+			querySuccess1.results[0].LAST_UPDATED_DT = dateToday;
 			EntityManager().saveChanges().then((save1)=>{
 				
 				query=EntityQuery().from("GLOBAL_MSTR")
@@ -492,6 +522,8 @@ export class gov_info_main{
 					querySuccess2.results[0].INPUT_TAX_CD = this.obj_personnel.GOVERNMENT_INFO.input_tax_cd;
 					querySuccess2.results[0].VAT_REG_DT = this.convertToGMT8(this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt);
 					querySuccess2.results[0].VAT_STAT_CD = this.obj_personnel.GOVERNMENT_INFO.vat_stat_cd;
+					querySuccess2.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+					querySuccess2.results[0].LAST_UPDATED_DT = dateToday;
 
 					EntityManager().saveChanges().then((save2)=>{
 						toastr.clear();

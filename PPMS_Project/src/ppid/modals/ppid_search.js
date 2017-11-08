@@ -96,7 +96,7 @@ export class ppid_search
 			
 			var _query = EntityQuery().from('GLOBAL_INDIV_MSTR').where(breeze.Predicate.and(this.currPredicate))
 			//.expand('GLOBAL_GRP_MSTR')
-			.orderBy('GLOBAL_INDIV_ID desc')
+			.orderBy('GIVEN_NAME')
 			.select('GLOBAL_INDIV_ID,GIVEN_NAME,LAST_NAME,ALIAS');
 			EntityManager().executeQuery(_query).then(
 			(success)=>{
@@ -106,7 +106,7 @@ export class ppid_search
 					tmpVar.push({
 						GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
 						//TIN: all.GLOBAL_INDIV_ID,
-						GROUP: "Test group", 
+						// GROUP: "Test group", 
 						LAST_NAME: all.LAST_NAME,
 						FIRST_NAME: all.GIVEN_NAME,
 						NICK_NAME: all.ALIAS,

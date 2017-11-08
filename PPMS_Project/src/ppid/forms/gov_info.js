@@ -14,6 +14,15 @@ export class gov_info
 		this.dialogService = dialogService;
 		this.obj_personnel = obj_personnel;
 
+		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num, global_indiv_id)=>{
+			if(tab_num == 3){
+				$("#gov_tab0").addClass("active");
+				$("#gov_tab1").removeClass("active");
+				$("#gov_tab2").removeClass("active");
+				$("#gov_info_tabs").find(".active").removeClass("active");
+				$("#gov_info_main").addClass("active");
+			}
+		});
 	}	
 
 	clickTab_GovInfo(tab_num){
@@ -21,12 +30,16 @@ export class gov_info
 			return;
 		switch(tab_num){
 			case 0: 
-					this.obj_personnel.OBSERVERS.govinfo_main_clicked.forEach((delegate)=>{
-						toastr.clear();
-						toastr.info("", "Loading government info...");
-						delegate(this.obj_personnel.global_indiv_id);
-					});
+					toastr.clear();
+					toastr.info("", "Loading government info...");					
+					break;
+			case 1: 
+					toastr.clear();
+					toastr.info("", "Loading government exam passed...");					
 					break;
 		}
+		this.obj_personnel.OBSERVERS.govinfo_tab_changed.forEach((delegate)=>{
+			delegate(tab_num, this.obj_personnel.global_indiv_id);
+		});
 	}
 }

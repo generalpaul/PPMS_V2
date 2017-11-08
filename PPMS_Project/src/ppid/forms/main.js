@@ -7,7 +7,6 @@ import {EntityManager,EntityQuery} from '../../entity-manager-factory';
 import breeze from 'breeze-client';
 import {ppid_search} from "../modals/ppid_search";
 import moment from 'moment';
-import {formatDate} from "../../helpers";
 import {fnSerializeCode} from "../../helpers";
 import { cache_obj } from '../../cache_obj';
 import {input_mask} from "../../helpers";
@@ -90,7 +89,7 @@ export class main
 				this.obj_personnel.HEADER.religion_cd = result.RELIGION_CD;
 				if(moment(result.BIRTH_DT).isValid()){
 					var birthdt = moment.utc(result.BIRTH_DT).format("MM/DD/YYYY");
-					birthdt = new Date(birthdt);
+					// birthdt = new Date(birthdt);
 					if(birthdt.length==0){
 						// $("#birthDate").datepicker("setValue", new Date());
 					}else{
@@ -132,7 +131,7 @@ export class main
 				this.obj_personnel.HEADER.location_base_cd = result.LOCATION_BASE_CD;
 				this.obj_personnel.HEADER.status_cd = result.STATUS_CD;
 				this.obj_personnel.HEADER.created_by = result.CREATED_BY;
-				this.obj_personnel.HEADER.created_dt = moment.utc(result.CREATED_DT).format("MM/DD/YYY hh:mm A");
+				this.obj_personnel.HEADER.created_dt = moment.utc(result.CREATED_DT).format("MM/DD/YYYY hh:mm A");
 				this.obj_personnel.HEADER.last_updated_by = result.LAST_UPDATED_BY;
 				this.obj_personnel.HEADER.last_updated_dt = moment.utc(result.LAST_UPDATED_DT).format("MM/DD/YYYY hh:mm A");
 
@@ -148,11 +147,11 @@ export class main
 						if(success.results.length>0){
 							this.obj_personnel.HEADER.suspend_id = success.results[0].SUSPEND_ID;
 							// this.obj_personnel.HEADER.suspension_start = success.results[0].START_DT;							
-							var start_dt = formatDate(success.results[0].START_DT)
+							var start_dt = moment.utc(success.results[0].START_DT).format("MM/DD/YYYY");
 							this.obj_personnel.HEADER.suspension_start = start_dt;
 							$("#suspensionFrom").datepicker("setValue", new Date(start_dt));
 
-							var end_dt = formatDate(success.results[0].END_DT);
+							var end_dt = moment.utc(success.results[0].END_DT).format("MM/DD/YYYY");
 							this.obj_personnel.HEADER.suspension_end = end_dt;
 							$("#suspensionTo").datepicker("setValue", new Date(end_dt));
 							// this.obj_personnel.HEADER.suspension_end = success.results[0].END_DT;
@@ -307,9 +306,7 @@ export class main
 	fnPersonnel(call)
 	{
 
-		$("#birthDate").datepicker({
-			endDate: "now"
-		});
+		$("#birthDate").datepicker();
 		$("#suspensionFrom").datepicker();
 		$("#suspensionTo").datepicker();		
 		switch(call)
@@ -407,6 +404,12 @@ export class main
 					strValidation+="Date of birth cannot be greater than today.<br/>";
 				}
 			}
+		}else{
+			strValidation += "No birth date specified.<br/>";
+		}
+
+		if(this.obj_personnel.HEADER.religion_cd == undefined || this.obj_personnel.HEADER.religion_cd==null || this.obj_personnel.HEADER.religion_cd.length == 0){
+			strValidation += "No religion specified.<br/>";
 		}
 
 		if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
@@ -649,8 +652,8 @@ export class main
 				}else{
 					this.obj_personnel.HEADER.suspension_start = "";
 					this.obj_personnel.HEADER.suspension_end="";
-					$("#suspensionFrom").datepicker("setValue", new Date());
-					$("#suspensionTo").datepicker("setValue", new Date());
+					// $("#suspensionFrom").datepicker("setValue", new Date());
+					// $("#suspensionTo").datepicker("setValue", new Date());
 				}
 
 
@@ -931,8 +934,8 @@ export class main
 						}else{
 							this.obj_personnel.HEADER.suspension_start = "";
 							this.obj_personnel.HEADER.suspension_end="";
-							$("#suspensionFrom").datepicker("setValue", new Date());
-							$("#suspensionTo").datepicker("setValue", new Date());
+							// $("#suspensionFrom").datepicker("setValue", new Date());
+							// $("#suspensionTo").datepicker("setValue", new Date());
 						}
 
 

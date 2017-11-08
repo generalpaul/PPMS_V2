@@ -7,7 +7,7 @@ import breeze from 'breeze-client';
 import {ppid_search} from "../modals/ppid_search";
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
-import {formatDate, isDigit, DateToday} from "../../helpers";
+import {isDigit} from "../../helpers";
 import settings from 'settings';
 
 @inject(DialogService, obj_personnel, toastr)
@@ -21,20 +21,24 @@ export class company_info_work_exp{
 	_formStatus="";
 	obj_personnel = null;
 	alreadyLoaded = false;
+	lblCreatedBy = null;
+	lblUpdatedBy = null;
 	constructor(DialogService, obj_personnel, toastr){
 		this.obj_personnel = obj_personnel;
 		this.DialogService = DialogService;
 
-		this.obj_personnel.OBSERVERS.company_work_exp_clicked.push((global_indiv_id)=>{
-			if(!this.alreadyLoaded){
-				this.alreadyLoaded = false;
-				$("#startDt").datepicker();
-				$("#endDt").datepicker();
+		this.obj_personnel.OBSERVERS.company_tab_changed.push((tab_num, global_indiv_id)=>{
+			if(tab_num == 1){
+				if(!this.alreadyLoaded){
+					this.alreadyLoaded = false;
+					$("#startDt").datepicker();
+					$("#endDt").datepicker();
+				}
+				toastr.clear();
+				toastr.info("", "Loading work experience list...");
+				this.loadWorkExperience(global_indiv_id);
+				this.clearField();
 			}
-			toastr.clear();
-			toastr.info("", "Loading work experience list...");
-			this.loadWorkExperience(global_indiv_id);
-			this.clearField();
 		});
 	}
 
@@ -45,9 +49,10 @@ export class company_info_work_exp{
 		EntityManager().executeQuery(query).then((s1)=>{
 
 			var tmp = [];
+			var tmpLog = [];
 			_.each(s1.results, (r)=>{
-				var from = formatDate(r.START_DT);
-				var to = formatDate(r.END_DT);
+				var from = moment.utc(r.START_DT).format("MM/DD/YYYY");
+				var to = moment.utc(r.END_DT).format("MM/DD/YYYY");
 				var position = this.obj_personnel.POSITION.find((x)=>{
 					if(x.value == r.POSITION_CD)
 							return x;
@@ -65,9 +70,40 @@ export class company_info_work_exp{
 					freelance_fl: r.FREELANCE_FL,
 					reason_for_leaving: r.REASON_FOR_LEAVING
 				});
+
+				if(r.CREATED_BY != null){
+					tmpLog.push({
+						user: r.CREATED_BY,
+						date: new Date(r.CREATED_DT)
+					});
+				}
+
+				if(r.LAST_UPDATED_BY != null){
+					tmpLog.push({
+						user: r.LAST_UPDATED_BY,
+						date: new Date(r.LAST_UPDATED_DT)
+					});
+				}
 			});
 
 			this.obj_personnel.WORK_EXPERIENCE.list = tmp;
+
+			tmpLog.sort(this.OrderByDate);
+			var LastIndex = tmpLog.length-1;
+			if(tmpLog.length>0){
+
+				this.lblCreatedBy = tmpLog[0].user + ' ' + moment.utc(tmpLog[0].date).format("MM/DD/YYYY hh:mm A");
+				if(tmpLog.length>1){
+					this.lblUpdatedBy = tmpLog[LastIndex].user + ' ' + moment.utc(tmpLog[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+				}else{
+					this.lblUpdatedBy = "";
+				}
+
+			}else{
+				this.lblCreatedBy = "";
+				this.lblUpdatedBy = "";
+			}
+
 			settings.isNavigating = false;
 			toastr.clear();
 			toastr.success("", "Work experience list has been loaded...");
@@ -76,6 +112,14 @@ export class company_info_work_exp{
 			toastr.clear();
 			toastr.error(e1, "Error in loading work experience list.");
 		});
+	}
+
+	OrderByDate(a, b){
+		if(a.date > b.date)
+			return 1;
+		if(a.date < b.date)
+			return -1;
+		return 0;
 	}
 
 	clearField(){
@@ -145,6 +189,8 @@ export class company_info_work_exp{
 	validate(){
 
 		var strValidation = "";
+		var boolValidStart = false;
+		var boolValidEnd = false;
 		this.obj_personnel.WORK_EXPERIENCE.model.start_dt = $("#startDt").val();
 		this.obj_personnel.WORK_EXPERIENCE.model.end_dt = $("#endDt").val();
 
@@ -157,6 +203,9 @@ export class company_info_work_exp{
 		}else{
 			if(!moment(new Date(this.obj_personnel.WORK_EXPERIENCE.model.start_dt)).isValid()){
 				strValidation+="Invalid start date.<br/>";
+			}else{
+				// this.obj_personnel.WORK_EXPERIENCE.model.start_dt = new Date(moment(this.obj_personnel.WORK_EXPERIENCE.model.start_dt).add(8, "hours"));
+				boolValidStart = true;
 			}
 		}
 
@@ -165,6 +214,17 @@ export class company_info_work_exp{
 		}else{
 			if(!moment(new Date(this.obj_personnel.WORK_EXPERIENCE.model.end_dt)).isValid()){
 				strValidation+="Invalid end date.<br/>";
+			}else{
+				// this.obj_personnel.WORK_EXPERIENCE.model.end_dt = new Date(moment(this.obj_personnel.WORK_EXPERIENCE.model.end_dt).add(8, "hours"));
+				boolValidEnd = true;
+			}
+		}
+
+		if(boolValidStart && boolValidEnd){
+			var d1 = new Date(this.obj_personnel.WORK_EXPERIENCE.model.start_dt);
+			var d2 = new Date(this.obj_personnel.WORK_EXPERIENCE.model.end_dt);
+			if(d1>d2){
+				strValidation+="Start date cannot be greater than end date.<br/>";
 			}
 		}
 
@@ -190,7 +250,10 @@ export class company_info_work_exp{
 
 	saveWorkExp(global_indiv_id){
 
-		var dateToday = DateToday();
+		var dateToday = null;
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
+
 		settings.isNavigating = true;
 		var query = EntityQuery().from("WORK_EXPERIENCE_TRX")
 					.orderByDesc("WORK_EXPERIENCE_ID").take(1);
@@ -244,6 +307,11 @@ export class company_info_work_exp{
 	}
 
 	updateWorkExp(work_exp_id){
+
+		var dateToday = null;
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
+
 		var query = EntityQuery().from("WORK_EXPERIENCE_TRX")
 					.where("WORK_EXPERIENCE_ID", "==", work_exp_id);
 		EntityManager().executeQuery(query).then((s1)=>{
@@ -256,6 +324,8 @@ export class company_info_work_exp{
 			s1.results[0].POSITION_CD = this.obj_personnel.WORK_EXPERIENCE.model.position_cd;
 			s1.results[0].FREELANCE_FL = this.obj_personnel.WORK_EXPERIENCE.model.freelance_fl?1:0;
 			s1.results[0].REASON_FOR_LEAVING = this.obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving;
+			s1.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+			s1.results[0].LAST_UPDATED_DT = dateToday;
 
 			EntityManager().saveChanges().then((s2)=>{
 				toastr.success("", "Record saved.");

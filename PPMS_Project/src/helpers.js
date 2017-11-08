@@ -1,8 +1,10 @@
-  export function DateToday(){    
-      var dateToday = null;      
-      dateToday = new Date();
-      return dateToday;
-  }
+export function OrderByDate(a, b){  
+    if(a.date > b.date)
+      return 1;
+    if(a.date < b.date)
+      return -1;
+    return 0; 
+}
 
 //source: https://stackoverflow.com/questions/12578507/how-to-implement-an-input-with-a-mask
   export function isDigit(event){
@@ -46,15 +48,15 @@ export function input_mask(id, mask){
       document.getElementById(id).setSelectionRange(theLastPos, theLastPos);
   }
 
-export function formatDate(strDate){
-    if(strDate == null || strDate.length == 0)
-      return "";
-    var dt = new Date(strDate);
-    var month = dt.getMonth()+1;
-    var day = dt.getDate();
-    var year = dt.getFullYear();
-    return ('0'+month).slice(-2)+'/'+('0'+day).slice(-2)+'/'+("000"+year).slice(-4);
-}
+// export function formatDate(strDate){
+//     if(strDate == null || strDate.length == 0)
+//       return "";
+//     var dt = new Date(strDate);
+//     var month = dt.getMonth()+1;
+//     var day = dt.getDate();
+//     var year = dt.getFullYear();
+//     return ('0'+month).slice(-2)+'/'+('0'+day).slice(-2)+'/'+("000"+year).slice(-4);
+// }
 
 
 export function fnSerializeCode(value)

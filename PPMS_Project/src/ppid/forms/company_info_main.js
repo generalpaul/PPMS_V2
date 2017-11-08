@@ -7,7 +7,7 @@ import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
 import {getLookups} from '../../masterfiles';
-import {formatDate, isDigit, DateToday} from "../../helpers";
+import {isDigit} from "../../helpers";
 import settings from 'settings';
 
 
@@ -22,6 +22,9 @@ export class company_info_main{
 	_hideSuspendField=true;
 	_hideInactiveField=true;
 	_hideCessationDate=true;
+	_hideInactiveReason=true;
+	lblCreatedBy=null;
+	lblUpdatedBy=null;
 	alreadyLoaded = false;
 	accreditation_status="";
 	accreditation_joblist=[];
@@ -31,7 +34,7 @@ export class company_info_main{
 		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num, global_id)=>{
 			if(tab_num == 4){
 				if(!this.alreadyLoaded){
-					this.alreadyLoaded=true;
+					this.alreadyLoaded=false;
 					$("#_start_dt").datepicker();
 					$("#_end_dt").datepicker();
 					$("#kapamilya_dt").datepicker();
@@ -53,15 +56,19 @@ export class company_info_main{
 			}
 		});
 
-		this.obj_personnel.OBSERVERS.company_main_clicked.push((global_id)=>{
-			toastr.clear();
-			toastr.info("", "Loading company info...");
-			this.loadGlobalCompany(global_id);
+		this.obj_personnel.OBSERVERS.company_tab_changed.push((tab_num, global_id)=>{
+			if(tab_num==0){
+				toastr.clear();
+				toastr.info("", "Loading company info...");
+				this.loadGlobalCompany(global_id);
+			}
 		});
 
 		this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
 			this.obj_personnel.COMPANY_SPECIFIC = {
-				model:{},
+				model:{					
+					personnel_bank:{}
+				},
 				list:[]
 			}
 			this.alreadyLoaded = false;
@@ -101,7 +108,8 @@ export class company_info_main{
 					job_id: r.JOB_ID,
 					payroll_grp_id: r.PAYROLL_GRP_ID,
 					professional_type_cd: r.PROFESSIONAL_TYPE_CD,
-					cessation_end_dt: r.CESSATION_END_DATE
+					cessation_end_dt: r.CESSATION_END_DATE,
+					inactive_reason_cd: r.INACTIVE_REASON_CD
 					// accreditation: accreditation
 					// suspend_id: suspend.length==0?0: suspend[0].suspend_id,
 					// suspended_start_dt: suspend.length==0?"":suspend[0].start_dt,
@@ -137,8 +145,8 @@ export class company_info_main{
 				var job_group = this.obj_personnel.JOB_GROUP.find((x)=>{ return x.id==r.JOB_GRP_ID; });
 				var job = this.obj_personnel.JOB.find((x)=> { return x.value==r.JOB_ID; });
 				var division = this.obj_personnel.DIVISION.find((x)=>{ return x.id==r.DIVISION_ID; });
-				var _eff_start_dt = formatDate(r.EFF_START_DT);
-				var _eff_end_dt = formatDate(r.EFF_END_DT);
+				var _eff_start_dt = moment.utc(r.EFF_START_DT).format("MM/DD/YYYY");
+				var _eff_end_dt = moment.utc(r.EFF_END_DT).format("MM/DD/YYYY");
 
 				accreditation.push({
 					accreditation_id: r.ACCREDITATION_ID,
@@ -192,14 +200,14 @@ export class company_info_main{
 
 				this.obj_personnel.COMPANY_SPECIFIC.model.suspend_id = suspend[0].suspend_id;
 
-				var suspended_start_dt = formatDate(suspend[0].start_dt);					
+				var suspended_start_dt = moment.utc(suspend[0].start_dt).format("MM/DD/YYYY");
 				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = suspended_start_dt;
 				if(suspended_start_dt.length>0)
 				{
 					$("#suspended_start_dt").datepicker("setValue", suspended_start_dt);
 				}
 
-				var suspended_end_dt = formatDate(suspend[0].end_dt);
+				var suspended_end_dt = moment.utc(suspend[0].end_dt).format("MM/DD/YYYY");
 				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = suspended_end_dt;
 				if(suspended_start_dt.length>0)
 				{						
@@ -244,6 +252,74 @@ export class company_info_main{
 			settings.isNavigating = false;
 			toastr.error(e1, "Error in querying personnel bank info.");
 		});
+	}
+
+	loadLog(global_company_id){
+		var tmpList = [];
+		var query = EntityQuery().from("GLOBAL_COMPANY_MSTR")
+					.where("GLOBAL_COMPANY_ID", "==", global_company_id);
+		EntityManager().executeQuery(query).then((s1)=>{
+
+			if(s1.results.length>0){
+				if(s1.results[0].CREATED_BY != null){
+					var user = s1.results[0].CREATED_BY;
+					var date = new Date(s1.results[0].CREATED_DT);
+					this.lblCreatedBy = user + ' ' + moment.utc(date).format("MM/DD/YYYY hh:mm A");					
+				}
+
+				if(s1.results[0].LAST_UPDATED_BY != null){
+					var user = s1.results[0].LAST_UPDATED_BY;
+					var date = new Date(s1.results[0].LAST_UPDATED_DT);
+					this.lblUpdatedBy = user + ' ' + moment.utc(date).format("MM/DD/YYYY hh:mm A");
+				}else{
+					this.lblUpdatedBy = "";
+				}
+
+			}
+
+			// _.each(s1.results, (r)=>{
+			// 	if(r.CREATED_BY != null){
+			// 		tmpList.push({
+			// 			user: r.CREATED_BY,
+			// 			date: new Date(r.CREATED_DT)
+			// 		});
+			// 	}
+
+			// 	if(r.LAST_UPDATED_BY != null){
+			// 		tmpList.push({
+			// 			useR: r.LAST_UPDATED_BY,
+			// 			date: new Date(r.LAST_UPDATED_DT)
+			// 		});
+			// 	}
+			// });
+
+			// tmpList.sort(this.OrderByDate);
+			// var LastIndex = tmpList.length-1;
+			// if(tmpList.length>0){
+
+			// 	this.lblCreatedBy = tmpList[0].user + ' ' +moment.utc(tmpList[0].date).format("MM/DD/YYYY hh:mm A");
+			// 	if(tmpList.length>1){
+			// 		this.lblUpdatedBy = tmpList[LastIndex].user + ' ' + moment.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+			// 	}else{
+			// 		this.lblUpdatedBy = "";
+			// 	}
+
+			// }else{
+			// 	this.lblCreatedBy = "";
+			// 	this.lblUpdatedBy = "";
+			// }
+
+
+		});
+
+	} 
+
+	OrderByDate(a, b){
+		if(a.date > b.date)
+			return 1;
+		if(a.date < b.date)
+			return -1;
+		return 0;		
 	}
 
 	loadJobDropdown(){
@@ -332,43 +408,62 @@ export class company_info_main{
 				this._disableTabsInput = false;
 				this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = global_company.global_company_id;
 				this.obj_personnel.COMPANY_SPECIFIC.model.id_no = global_company.id_no;
-				var startDt = formatDate(global_company.start_dt);
-				if(startDt.length>0 && startDt != "01/01/0001"){
-					this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = startDt;
-					$("#_start_dt").datepicker("setValue", new Date(startDt));
+				console.log(global_company.start_dt);
+				if(moment(global_company.start_dt).isValid()){
+					var startDt = moment.utc(global_company.start_dt).format("MM/DD/YYYY");
+					if(startDt != "01/01/0001")
+					{
+						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = startDt;
+						$("#_start_dt").datepicker("setValue", new Date(startDt));
+					}else{
+						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
+					}
 				}else{
 					this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
-					// $("#_start_dt").datepicker("setValue", new Date());
 				}
-				var endDt = formatDate(global_company.end_dt);
 
-				if(endDt.length>0 && endDt != "01/01/0001"){
-					this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = endDt;
-					$("#_end_dt").datepicker("setValue", new Date(endDt));
+				if(moment(global_company.end_dt).isValid()){
+					var endDt = moment.utc(global_company.end_dt).format("MM/DD/YYYY");
+					if(endDt != "01/01/0001"){
+						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = endDt;
+						$("#_end_dt").datepicker("setValue", new Date(endDt));
+					}else{
+						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt="";
+					}
 				}else{
 					this.obj_personnel.COMPANY_SPECIFIC.model.end_dt="";
 				}
 
-				var kapamilya_dt = formatDate(global_company.kapamilya_dt);
-				if(kapamilya_dt.length >0 && kapamilya_dt != "01/01/0001"){
-					this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = kapamilya_dt;
-					$("#kapamilya_dt").datepicker("setValue", new Date(kapamilya_dt));
+				if(moment(global_company.kapamilya_dt).isValid()){
+					var kapamilya_dt = moment.utc(global_company.kapamilya_dt).format("MM/DD/YYYY");
+					if(kapamilya_dt != "01/01/0001"){
+						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = kapamilya_dt;
+						$("#kapamilya_dt").datepicker("setValue", new Date(kapamilya_dt));
+					}else{
+						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
+					}
 				}else{
 					this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
 				}
 
-				var membership_dt = formatDate(global_company.membership_dt);
-				if(membership_dt.length >0 && membership_dt != "01/01/0001"){
-					this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = membership_dt;
-					$("#membership_dt").datepicker("setValue", new Date(membership_dt));
+				if(moment(global_company.membership_dt).isValid()){
+					var membership_dt = moment.utc(global_company.membership_dt).format("MM/DD/YYYY");
+					if(membership_dt != "01/01/0001"){
+						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = membership_dt;
+						$("#membership_dt").datepicker("setValue", new Date(membership_dt));
+					}else{
+						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
+					}
 				}else{
 					this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
 				}
 
-				var cessation_dt = formatDate(global_company.cessation_end_dt);
-				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = cessation_dt;
-				if(cessation_dt.length>0){
+				if(moment(global_company.cessation_end_dt).isValid()){
+					var cessation_dt = moment.utc(global_company.cessation_end_dt).format("MM/DD/YYYY");
+					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = cessation_dt;
 					$("#cessation_end_dt").datepicker("setValue", new Date(cessation_dt));
+				}else{
+					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_dt = "";
 				}
 
 				this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = global_company.exclusive_fl=="1"?true:false;
@@ -391,6 +486,8 @@ export class company_info_main{
 				this.obj_personnel.COMPANY_SPECIFIC.model.job_id = global_company.job_id+"";
 				this.loadAccreditation(global_company.global_company_id);
 				this.loadPersonnelBank(global_company.global_company_id);
+				this.loadLog(global_company.global_company_id);
+				this.obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd = global_company.inactive_reason_cd;
 
 			}else{
 				this._disableStatus = true;
@@ -407,6 +504,8 @@ export class company_info_main{
 				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.remarks = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = false;
+				this.lblCreatedBy = "";
+				this.lblUpdatedBy = "";
 				if(this.obj_personnel.DIVISION.length>0)
 					this.obj_personnel.COMPANY_SPECIFIC.model.division_id = this.obj_personnel.DIVISION[0].id;
 				if(this.obj_personnel.CATEGORY.length>0)
@@ -432,6 +531,8 @@ export class company_info_main{
 					this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name = "";
 					this.obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.account_no = "";
 				}
+
+				this.obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd = "";
 
 			}
 
@@ -500,8 +601,13 @@ export class company_info_main{
 			case "RESIGNED":
 			case "END_CONTRACT":
 			case "TERMINATION": this._hideCessationDate = false;
+								this._hideInactiveReason = true;
+				break;
+			case "INACTIVE": this._hideInactiveReason = false;
+							 this._hideCessationDate = true;
 				break;
 			default: this._hideCessationDate = true;
+					 this._hideInactiveReason = true;
 				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = "";
 				break;
 		}
@@ -611,7 +717,7 @@ export class company_info_main{
 
 	convertToGMT8(date){
 		if(date==undefined || date == null || date.length==0)
-			return null;
+			return "";
 		var tempDt = moment(date).add(8, 'hours');
 		return new Date(tempDt);
 	}
@@ -624,7 +730,7 @@ export class company_info_main{
   		dateToday = new Date(dateToday);
 
   		var lstart_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.start_dt);
-  		var lend_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.end_dt); 
+  		var lend_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.end_dt);
   		var lkapmilya_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt);
   		var lmembership_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt);
   		var lcessation_end_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt);
@@ -667,7 +773,7 @@ export class company_info_main{
 					KAPAMILYA_DT: lkapmilya_dt.length==0?null: lkapmilya_dt,
 					MEMBERSHIP_DT: lmembership_dt.length==0?null: lmembership_dt,
 					LOCATION_CD: this.obj_personnel.COMPANY_SPECIFIC.model.location_cd,
-					CESSATION_END_DATE: lcessation_end_dt.length==0? null: lcessation_end_dt,
+					CESSATION_END_DATE: lcessation_end_dt.length==0? null: lcessation_end_dt,					
 					CREATED_BY: this.obj_personnel.USER.USER_ID,
 					CREATED_DT: dateToday
 				};
@@ -741,6 +847,7 @@ export class company_info_main{
 				case "INACTV":
 					s.results[0].CESSATION_REASON_CD = this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd;
 					s.results[0].CESSATION_END_DATE = lcessation_end_dt.length==0?null: lcessation_end_dt;
+					s.results[0].INACTIVE_REASON_CD = this.obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd;
 					s.results[0].REMARKS = this.obj_personnel.COMPANY_SPECIFIC.model.remarks;
 					break;
 				case "SUSPEND": 
@@ -750,11 +857,13 @@ export class company_info_main{
 					s.results[0].REMARKS = null;
 					break;
 			}
+			s.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+			s.results[0].LAST_UPDATED_DT = dateToday;
 
 			EntityManager().saveChanges().then((s1)=>{
 
 				if(this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "SUSPEND"){
-					this.obj_personnel.COMPANY_SPECIFIC.model.suspend_id
+					// this.obj_personnel.COMPANY_SPECIFIC.model.suspend_id
 					// console.log(this.obj_personnel.COMPANY_SPECIFIC.model.suspend_id); 
 					var suspend_id = this.obj_personnel.COMPANY_SPECIFIC.model.suspend_id;
 					if(suspend_id == undefined || suspend_id == null || suspend_id==0){
@@ -800,7 +909,9 @@ export class company_info_main{
 	saveSuspend(company_id, start_dt, end_dt){
 
 		settings.isNavigating = true;
-		var dateToday = DateToday();
+		var dateToday = null
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
 
 		var query = EntityQuery().from("SUSPEND_TRX")
 								.orderByDesc("SUSPEND_ID").take(1);
@@ -841,7 +952,9 @@ export class company_info_main{
 	updateSuspend(suspend_id, start_dt, end_dt){
 
 		settings.isNavigating = true;
-		var dateToday = DateToday();
+		var dateToday = null
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
 		var query = EntityQuery().from("SUSPEND_TRX")
 				.where("SUSPEND_ID", "==", suspend_id);
 		EntityManager().executeQuery(query).then((s4)=>{
@@ -865,7 +978,9 @@ export class company_info_main{
 	savePersonnelBank(global_company_id, bank_id, acct_name, account_no ){
 
 		settings.isNavigating = true;
-		var dateToday = DateToday();
+		var dateToday = null
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
 		var query = EntityQuery().from("PERSONNEL_BANK_TRX")
 					.orderByDesc("PERSONNEL_BANK_ID").take(1);
 		EntityManager().executeQuery(query).then((q1)=>{
@@ -909,7 +1024,9 @@ export class company_info_main{
 	updatePersonnelBank(personnel_bank_id, bank_id, acct_name, account_no){
 
 		settings.isNavigating = true;
-		var dateToday = DateToday();
+		var dateToday = null
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
 		var query = EntityQuery().from("PERSONNEL_BANK_TRX")
 					.where("PERSONNEL_BANK_ID", "==", personnel_bank_id);
 		EntityManager().executeQuery(query).then((q1)=>{
@@ -990,9 +1107,9 @@ export class company_info_main{
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_id = item.accreditation_id;
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id = item.job_grp_id;
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_job_id = item.job_id;
-		var start_dt = formatDate(item.eff_start_dt);
+		var start_dt = moment.utc(item.eff_start_dt).format("MM/DD/YYYY");
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_start_dt = start_dt;
-		var end_dt = formatDate(item.eff_end_dt);
+		var end_dt = moment.utc(item.eff_end_dt).format("MM/DD/YYYY");
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_end_dt = end_dt;
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_competency = item.competency;
 	}
@@ -1148,7 +1265,9 @@ export class company_info_main{
 	updateAccreditation(accreditation_id){
 
 		settings.isNavigating = true;
-		var dateToday = DateToday();
+		var dateToday = null
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
 		var query = EntityQuery().from("ACCREDITATION_TRX")
 					.where("ACCREDITATION_ID", "==", accreditation_id);
 		EntityManager().executeQuery(query).then((s1)=>{

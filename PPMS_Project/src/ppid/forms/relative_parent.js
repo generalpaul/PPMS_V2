@@ -7,7 +7,6 @@ import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
 import settings from 'settings';
-import {formatDate, DateToday} from '../../helpers';
 
 @inject(obj_personnel, toastr, DialogService)
 export class relative_parent{
@@ -15,6 +14,9 @@ export class relative_parent{
 	alreadyLoaded = false;
 	status=["Dependent", "Deceased"];
 	selectedStatus = null;
+	lblCreatedBy = null;
+	lblUpdatedBy = null;
+
 
 	constructor(obj_personnel, toastr, DialogService){
 		this.obj_personnel = obj_personnel;
@@ -23,7 +25,7 @@ export class relative_parent{
 		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num, global_indiv_id)=>{
 			if(tab_num == 1){
 				if(!this.alreadyLoaded){
-					this.alreadyLoaded=true;
+					this.alreadyLoaded=false; //set to false to always load this tab.
 					$("#fBirthDate").datepicker();
 					$("#fDeceasedDate").datepicker();
 					$("#mBirthDate").datepicker();
@@ -35,28 +37,48 @@ export class relative_parent{
 			}
 		});
 
-		this.obj_personnel.OBSERVERS.relative_parents_clicked.push((global_indiv_id)=>{
-			this.loadParent(global_indiv_id);
+		this.obj_personnel.OBSERVERS.relative_tab_changed.push((tab_num, global_indiv_id)=>{
+			if(tab_num == 0){
+				this.loadParent(global_indiv_id);				
+			}
 		});
+
+		this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
+			this.obj_personnel.RELATIVE.parents.father={};
+			this.obj_personnel.RELATIVE.parents.mother={};
+			this.lblCreatedBy = "";
+			this.lblUpdatedBy = "";
+		});
+
+
 
 
 	}
 
 	loadParent(global_indiv_id){
+
 		settings.isNavigating = true;
-		var pred1 = breeze.Predicate.create("GLOBAL_INDIV_ID", "==", global_indiv_id);
+		var tmpLog = [];
+		var pred1 = breeze.Predicate.create("GLOBAL_INDIV_ID", "==", global_indiv_id);		
 		var pred2 = breeze.Predicate.create("RELATIVE_CD", "==", "FATHER");
 		var pred3 = breeze.Predicate.create("RELATIVE_CD", "==", "MOTHER");
+		var pred4 = breeze.Predicate.create("IN_CASE_OF_EMERGENCY_FL", "!=", "1");
 		var _pred1 = breeze.Predicate.or([pred2, pred3]);
-		var finalPred = breeze.Predicate.and([pred1, _pred1]);		
+		var finalPred = breeze.Predicate.and([pred1, _pred1, pred4]);		
 
 		var query = EntityQuery().from("RELATIVE_TRX")
 					.where(finalPred);
 		EntityManager().executeQuery(query).then((s1)=>{
 			
 			_.each(s1.results, (result)=>{
-				var birthDt = formatDate(result.BIRTH_DT);
-				var deceasedDt = formatDate(result.DECEASED_DT);
+				var birthDt = moment.utc(result.BIRTH_DT).format("MM/DD/YYYY");
+				if(moment(result.DECEASED_DT).isValid()){
+					var deceasedDt = moment.utc(result.DECEASED_DT).format("MM/DD/YYYY");
+					if(deceasedDt == "01/01/0001")
+					{
+						deceasedDt = "";
+					}
+				}
 				if(result.RELATIVE_CD == "FATHER"){
 					var father={
 						relative_id: result.RELATIVE_ID,
@@ -87,6 +109,8 @@ export class relative_parent{
 
 					this.obj_personnel.RELATIVE.parents.father = father;
 				}
+
+
 				if(result.RELATIVE_CD == "MOTHER"){
 					var mother={
 						relative_id: result.RELATIVE_ID,
@@ -105,7 +129,7 @@ export class relative_parent{
 						relative_cd: result.RELATIVE_CD
 					};
 					this.obj_personnel.RELATIVE.parents.mother = mother;
-					console.log(mother.dependent_fl);
+					// console.log(mother.dependent_fl);
 					if(mother.dependent_fl == 0){
 						this.obj_personnel.RELATIVE.parents.mother.status = "Dependent";
 						$("#mstatus_dependent").prop("checked", true);
@@ -122,7 +146,37 @@ export class relative_parent{
 				}
 
 				this.loadParentAddress(result.RELATIVE_ID, (result.RELATIVE_CD=="MOTHER"?true:false));
+
+				if(result.CREATED_BY != null){
+					tmpLog.push({
+						user: result.CREATED_BY,
+						date: new Date(result.CREATED_DT)
+					});
+				}
+
+				if(result.LAST_UPDATED_BY != null){
+					tmpLog.push({
+						user: result.LAST_UPDATED_BY,						
+						date: new Date(result.LAST_UPDATED_DT)
+					});
+				}
 			});
+
+			tmpLog.sort(this.OrderByDate);
+			var LastIndex = tmpLog.length-1;
+			if(tmpLog.length>0){
+
+				this.lblCreatedBy = tmpLog[0].user + ' ' + moment.utc(tmpLog[0].date).format("MM/DD/YYYY hh:mm A");
+				if(tmpLog.length>1){
+					this.lblUpdatedBy = tmpLog[LastIndex].user + ' ' + moment.utc(tmpLog[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+				}else{
+					this.lblUpdatedBy = "";
+				}
+
+			}else{
+				this.lblCreatedBy = "";
+				this.lblUpdatedBy = "";
+			}
 
 			toastr.clear();
 			toastr.success("", "Relative info has been loaded...");
@@ -180,6 +234,14 @@ export class relative_parent{
 			settings.isNavigating = false;
 			toastr.error(e1, "Error in parent's address.");
 		});
+	}
+
+	OrderByDate(a, b){		
+		if(a.date > b.date)
+			return 1;
+		if(a.date < b.date)
+			return -1;
+		return 0;	
 	}
 
 	checkChange(isMother, status){
@@ -321,6 +383,12 @@ export class relative_parent{
 			if(this.obj_personnel.RELATIVE.parents.mother.birth_dt.length>0){
 				if(!moment(new Date(this.obj_personnel.RELATIVE.parents.mother.birth_dt)).isValid()){
 					strValidation+="Invalid birth date.<br/>";
+				}else{
+					var d1 = new Date(this.obj_personnel.RELATIVE.parents.mother.birth_dt);
+					var d2 = new Date();
+					if(d1>d2){
+						strValidation+="[Mother] birth date cannot be greater than date today.<br/>";
+					}
 				}
 			}else{
 				strValidation+="[Mother] No Birth date specified. <br/>";
@@ -330,10 +398,17 @@ export class relative_parent{
 				if(this.obj_personnel.RELATIVE.parents.mother.deceased_dt.length>0){
 					if(!moment(new Date(this.obj_personnel.RELATIVE.parents.mother.deceased_dt)).isValid()){
 						strValidation+="[Mother] Invalid deceased date. <br/>";
+					}else{
+						var d1 = new Date(this.obj_personnel.RELATIVE.parents.mother.deceased_dt);
+						var d2 = new Date();
+						if(d1>d2){
+							strValidation += "[Mother] deceased date cannot be greater than date today.<br/>";
+						}
 					}
-				}else{
-					strValidation+="[Mother] No deceased date specified.<br/>";
 				}
+				// else{
+				// 	strValidation+="[Mother] No deceased date specified.<br/>";
+				// }
 			}
 
 			if(this.obj_personnel.RELATIVE.parents.mother.country_cd == undefined || this.obj_personnel.RELATIVE.parents.mother.country_cd.length==0){
@@ -365,10 +440,17 @@ export class relative_parent{
 						if(this.obj_personnel.RELATIVE.parents.mother.deceased_dt.length>0){
 							if(!moment(new Date(this.obj_personnel.RELATIVE.parents.mother.deceased_dt)).isValid()){
 								strValidation+="[Mother] Invalid deceased date.<br/>";
+							}else{
+								var d1 = new Date(this.obj_personnel.RELATIVE.parents.mother.deceased_dt);
+								var d2 = new Date();
+								if(d1>d2){
+									strValidation += "[Mother] deceased date cannot be greater than date today.<br/>";
+								}
 							}
-						}else{
-							strValidation+="[Mother] No deceased date specified.<br/>";
 						}
+						// else{
+						// 	strValidation+="[Mother] No deceased date specified.<br/>";
+						// }
 					}else if(this.obj_personnel.RELATIVE.parents.mother.dependent_fl == -1){
 						strValidation+="[Mother] No status specified.<br/>";
 					}
@@ -390,6 +472,12 @@ export class relative_parent{
 			if(this.obj_personnel.RELATIVE.parents.father.birth_dt.length>0){
 				if(!moment(new Date(this.obj_personnel.RELATIVE.parents.father.birth_dt)).isValid()){
 					strValidation+="[Father] Invalid birth date.<br/>";
+				}else{
+					var d1 = new Date(this.obj_personnel.RELATIVE.parents.father.birth_dt);
+					var d2 = new Date();
+					if(d1>d2){
+						strValidation+="[Father] Birth date cannot be greater than date today.<br/>";
+					}
 				}
 			}else{
 				strValidation+="[Father] No Birth date specified. <br/>";
@@ -399,10 +487,17 @@ export class relative_parent{
 				if(this.obj_personnel.RELATIVE.parents.father.deceased_dt.length>0){
 					if(!moment(new Date(this.obj_personnel.RELATIVE.parents.father.deceased_dt)).isValid()){
 						strValidation+="[Father] Invalid deceased date. <br/>";
+					}else{
+						var d1 = new Date(this.obj_personnel.RELATIVE.parents.father.deceased_dt);
+						var d2 = new Date();
+						if(d1>d2){
+							strValidation+="[Father] Deceased date cannot be greater than date today.";
+						}
 					}
-				}else{
-					strValidation+="[Father] No deceased date specified.<br/>";
 				}
+				// else{
+				// 	strValidation+="[Father] No deceased date specified.<br/>";
+				// }
 			}
 
 			if(this.obj_personnel.RELATIVE.parents.father.country_cd.length==0){
@@ -433,10 +528,17 @@ export class relative_parent{
 						if(this.obj_personnel.RELATIVE.parents.father.deceased_dt.length>0){
 							if(!moment(new Date(this.obj_personnel.RELATIVE.parents.father.deceased_dt)).isValid()){
 								strValidation+="[Father] Invalid deceased date.<br/>";
+							}else{
+								var d1 = new Date(this.obj_personnel.RELATIVE.parents.father.deceased_dt);
+								var d2 = new Date();
+								if(d1>d2){
+									strValidation+="[Father] Deceased date cannot be greater than date today.<br/>";
+								}
 							}
-						}else{
-							strValidation+="[Father] No deceased date specified.<br/>";
 						}
+						// else{
+						// 	strValidation+="[Father] No deceased date specified.<br/>";
+						// }
 					}else if(this.obj_personnel.RELATIVE.parents.father.dependent_fl == -1){
 						strValidation+="[Father] No status specified.<br/>";
 					}
@@ -484,7 +586,10 @@ export class relative_parent{
 	saveRelative(global_indiv_id, isMother){
 
 		settings.isNavigating = true;
-		var dateToday = DateToday();
+		var dateToday = null;
+		dateToday = moment(new Date()).add(8, "hours");
+		dateToday = new Date(dateToday);
+
 		var query = EntityQuery().from("RELATIVE_TRX")
 					.orderByDesc("RELATIVE_ID").take(1);
 		EntityManager().executeQuery(query).then((s1)=>{
@@ -641,7 +746,10 @@ export class relative_parent{
 
 
 	updateRelative(relative_id, isMother){
-		var dateToday = DateToday();
+		
+		var dateToday = null;
+		dateToday = new Date(moment(new Date()).add(8, "hours"));
+
 		settings.isNavigating = true;
 		var query = EntityQuery().from("RELATIVE_TRX")
 					.where("RELATIVE_ID", "==", relative_id);

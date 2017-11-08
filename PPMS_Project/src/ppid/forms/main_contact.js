@@ -7,7 +7,6 @@ import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
 import settings from 'settings';
-import {formatDate} from '../../helpers';
 
 @inject(obj_personnel, toastr, DialogService)
 export class main_contact 
@@ -376,7 +375,9 @@ export class main_contact
 					if(tmpList.length>0)
 					{
 						this.lblCreatedBy = tmpList[0].user+' '+moment.utc(tmpList[0].date).format("MM/DD/YYYY hh:mm A");
-						this.lblUpdatedBy = tmpList[LastIndex].user + ' ' + moment.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+						if(tmpList.length>1){
+							this.lblUpdatedBy = tmpList[LastIndex].user + ' ' + moment.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+						}
 					}else{
 						this.lblCreatedBy = "";
 						this.lblUpdatedBy = "";

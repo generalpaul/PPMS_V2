@@ -1,0 +1,113 @@
+<template>
+	<div style="height: 550px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">
+			<tr class="backroundTab">
+				<td colspan="3">
+					<div>
+						<h5 style="margin: 10px; text-align: left; color: white;">Medical Information</h5>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<table style="width: 100%;">
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Endorsed by*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.MEDICAL_RECORD.model.endorsed_by" tabindex="1" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>							
+							<td style="width: 120px; vertical-align: top; padding-top: 4px;" class="text-left">Results / Remarks</td>
+							<td>
+								<textarea style="overflow-y: scroll; resize: none; width: 100%;" value.bind="obj_personnel.MEDICAL_RECORD.model.result_remarks" tabindex="3" disabled.bind="_disableForm" ></textarea>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td colspan="1" style="vertical-align: top;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Date*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="med_exam_dt" value.bind="obj_personnel.MEDICAL_RECORD.model.medical_exam_dt" tabindex="2" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Fit to work*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2;" type="checkbox" id="fit_to_work_fl" tabindex="4" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnAdd" click.trigger="btnAdd()">Add</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnSave" click.trigger="validate()">Save</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="clearField()">Clear/Reset</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div style="height: 250px; overflow-y: scroll;">
+						<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+							<thead style="display: table-header-group;">
+								<tr>
+									<td class="colorCell">Endorsed By</td>
+									<td class="colorCell">Medical Exam Date</td>
+									<td class="colorCell">Fit to Work</td>
+									<td class="colorCell">Remarks</td>								
+									<td class="colorCell"></td>
+									<td class="colorCell"></td>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr repeat.for="item of obj_personnel.MEDICAL_RECORD.list">
+									<td>${item.endorsed_by}</td>
+									<td>${item.medical_exam_dt}</td>
+									<td>
+										<input type="checkbox" disabled checked.bind="item.fit_to_work_fl=='1'" />
+									</td>
+									<td>${item.result_remarks}</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnEdit(item)" disabled.bind="_disableTable" >-</button>
+									</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnRemove(item)" disabled.bind="_disableTable">X</button>
+									</td>
+								</tr>								
+								<tr if.bind="obj_personnel.MEDICAL_RECORD.list == null || obj_personnel.MEDICAL_RECORD.list.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>			
+			<tr>
+				<td colspan="3">
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${lblCreatedBy}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${lblUpdatedBy}</b>
+							</td>							
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</template>

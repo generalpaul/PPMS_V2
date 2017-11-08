@@ -23,10 +23,9 @@ export class ppid
 		this.obj_personnel.OBSERVERS.tab_changed.length=0;
 		this.obj_personnel.OBSERVERS.maintab_contact_clicked.length=0;
 		this.obj_personnel.OBSERVERS.maintab_education_clicked.length=0;
-		this.obj_personnel.OBSERVERS.relative_parents_clicked.length=0;
-		this.obj_personnel.OBSERVERS.govinfo_main_clicked.length=0;
-		this.obj_personnel.OBSERVERS.company_main_clicked.length=0;
-		this.obj_personnel.OBSERVERS.company_work_exp_clicked.length=0;
+		this.obj_personnel.OBSERVERS.relative_tab_changed.length=0;
+		this.obj_personnel.OBSERVERS.govinfo_tab_changed.length=0;
+		this.obj_personnel.OBSERVERS.company_tab_changed.length=0;
 		this.obj_personnel.OBSERVERS.clear_ppid.length=0;
 		this.obj_personnel.global_indiv_id = "";
 		this.obj_personnel.HEADER = {
@@ -94,6 +93,7 @@ export class ppid
 			this.obj_personnel.PROFESSIONAL_TYPE.length=0;
 			this.obj_personnel.CESSATION.length=0;
 			this.obj_personnel.TARGET_MARKET.length=0;
+			this.obj_personnel.INACTIVE_REASON.length=0;
 
 			getLookups().REFERENCE_CD_MSTR.forEach((item)=>{
 				switch(item.REF_GRP_CD){
@@ -197,6 +197,10 @@ export class ppid
 													text: item.REF_DESC
 												});
 												break;
+					case "INACTIVE_REASON": 	this.obj_personnel.INACTIVE_REASON.push({
+													value: item.REF_CD,
+													text: item.REF_DESC
+												});
 
 				}
 			});
@@ -249,6 +253,7 @@ export class ppid
 			this.obj_personnel.CESSATION.sort(this.OrderByText);
 			this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
 			this.obj_personnel.COMPANY.sort(this.OrderByText);
+			this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
 			
 		}
 
@@ -368,6 +373,26 @@ export class ppid
 			toastr.error(error, "Error in loading Province dropdown.");
 		});
 
+		_query = EntityQuery().from("RELATIVE_MSTR")
+				.orderBy("RELATIVE_DESC");
+		EntityManager().executeQuery(_query).then((s)=>{
+			var tmp = [];
+
+			_.each(s.results, (res)=>{
+
+				var relationship = {
+					value: res.RELATIVE_CD,
+					text: res.RELATIVE_DESC,
+					group: res.RELATIONSHIP_CD
+				};
+				// console.log(relationship);
+				tmp.push(relationship);
+				
+			});
+			this.obj_personnel.RELATIONSHIP = tmp;
+			// console.log("hello world!");
+			// console.log(tmp);
+		});
 
         settings.isNavigating = false;
 

@@ -105,7 +105,9 @@ export class main_educational{
 			var LastIndex = tmpList.length-1;
 			if(tmpList.length>0){
 				this.lblCreatedBy = tmpList[0].user + ' ' + moment.utc(tmpList[0].date).format("MM/DD/YYYY hh:mm A");
-				this.lblUpdatedBy = tmpList[LastIndex].user + ' ' + moment.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+				if(tmpList.length>1){
+					this.lblUpdatedBy = tmpList[LastIndex].user + ' ' + moment.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+				}
 			}else{
 				this.lblCreatedBy = "";
 				this.lblUpdatedBy = "";

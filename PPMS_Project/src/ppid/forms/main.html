@@ -138,13 +138,13 @@
 										</td>
 									</tr>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Birth date</td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Birth date*</td>
 										<td>
 											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="birthDate" value.bind="obj_personnel.HEADER.birth_dt" disabled.bind="_disableForm" tabindex="10" />
 										</td>
 									</tr>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Religion</td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Religion*</td>
 										<td>
 											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.religion_cd" disabled.bind="_disableForm" tabindex="13">
 												<option></option>
@@ -327,7 +327,7 @@
 				<main_contact></main_contact>
 			</div>
 
-			<div role="tabpanel" class="tab-pane color1" id="main_educ_achievement"  style="height:550px; margin-left:auto; margin-right:auto;">
+			<div role="tabpanel" class="tab-pane color1" id="main_educ_achievement"  style="height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll; ">
 				<br/>
 				<main_educational></main_educational>
 			</div>

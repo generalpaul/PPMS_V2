@@ -1,39 +1,4 @@
-<template>
-	<style type="text/css">
-		.custom-file-input {
-		  visibility: hidden;
-		  width: 0;
-		  position: relative;
-		}
-
-		.custom-file-input::before {
-		  content: 'Select Memo';
-		  display: inline-block;
-		  /*background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);*/
-		  border: 1px solid #999;
-		  border-radius: 3px;
-		  padding: 3px 5px;
-		  background: #0078ae url(images/ui-bg_glass_45_0078ae_1x400.png) 50% 50% repeat-x !important;
-		  outline: none;
-		  white-space: nowrap;
-		  -webkit-user-select: none;
-		  cursor: pointer;
-		  text-shadow: 1px 1px #fff;
-		  font-weight: 700;
-
-		  /*font-size: 7pt;*/
-		  visibility: visible;
-		  position: absolute;
-		}
-
-		.custom-file-input:hover::before {
-		  border-color: black;
-		}
-
-		.custom-file-input:active::before {
-		  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
-}
-	</style>
+<template>	
 	<div style="height: 600px; width: 913px; margin: 5px auto;">
 		<table style="width: 100%;">
 			<tr style="vertical-align: top;">
@@ -109,6 +74,15 @@
 									<option repeat.for="item of obj_personnel.CESSATION" value.bind="item.value">${item.text}</option>
 								</select>
 							</td>
+						</tr>						
+						<tr hidden.bind="_hideInactiveReason">
+							<td style="width: 120px; vertical-align: middle;" class="text-left" >Reason for Inactivity</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd" >
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.INACTIVE_REASON" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
 						</tr>
 						<tr hidden.bind="_hideInactiveField || _hideCessationDate">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Cessation date</td>
@@ -119,7 +93,7 @@
 						<tr hidden.bind="_hideInactiveField">
 							<td style="width: 120px; vertical-align: top;" class="text-left">Remarks</td>
 							<td>
-								<textarea style="overflow-y: scroll; resize: none;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.remarks" > </textarea>
+								<textarea style="overflow-y: scroll; resize: vertical;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.remarks" > </textarea>
 								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
 							</td>
 						</tr>
@@ -422,6 +396,26 @@
 			<tr>
 				<td colspan="3">
 					<button class="btn btn-xs customButton" style="width:150px;" tabindex="18" click.trigger="validate()">Save</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${lblCreatedBy}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${lblUpdatedBy}</b>
+							</td>							
+						</tr>
+					</table>
 				</td>
 			</tr>
 		</table>
