@@ -14,7 +14,8 @@ export class App {
       { route: 'actual_cost', name: 'actual_cost', moduleId: 'ppfcs/actual_cost/actual_cost', nav: true, title:'Actual Cost' },
       { route: 'buh', name: 'buh', moduleId: 'buh', nav: true, title:'BUH' },
       { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information Database' },
-      { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title:'Utilization' }
+      { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title:'Utilization' },
+      { route: 'talent_search', name: 'talent_search', moduleId: 'ppid/talent_search/talent_search', nav: true, title:'Talent Search' }
     ]);
 
     this.router = router;
