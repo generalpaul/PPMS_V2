@@ -1,0 +1,389 @@
+<template>
+	<div style="height: 600px; width: 900px; margin: 5px auto;">
+		<table>
+			<tbody>
+				<tr>
+					<td>
+						<table style="width: 100%;">
+							<tr class="backroundTab">
+								<td colspan="3">
+									<div>
+										<h5 style="margin: 10px; text-align: left; color: white;">Mother</h5>
+									</div>
+								</td>
+							</tr>
+							<tr style="vertical-align: top;">
+								<td>
+									<table>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Last Name*</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.last_name" tabindex="1" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Birth date*</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="mBirthDate" disabled.bind="_disableForm" value.bind="obj_personnel.RELATIVE.parents.mother.birth_dt" tabindex="4" />
+												<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Unit No.</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.unit_no" tabindex="7" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Bldg name</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.bldg_name" tabindex="10" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Barangay</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.barangay" tabindex="13" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Province/State</td>
+											<td>
+												<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" change.delegate="dd_provinceChanged(true)" value.bind="obj_personnel.RELATIVE.parents.mother.state_province" tabindex="16" >
+													<option value=""></option>
+													<option repeat.for="item of obj_personnel.PROVINCE" value.bind="item.value">${item.text}</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Country*</td>
+											<td>
+												<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.RELATIVE.parents.mother.country_cd" tabindex="19" >
+													<option value=""></option>
+													<option repeat.for="item of obj_personnel.COUNTRY" value.bind="item.value">${item.text}</option>
+												</select>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td>
+									<table>								
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name*</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.given_name" tabindex="2" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Occupation</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.occupation" tabindex="5" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">House No.</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.house_no" tabindex="8" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Street / Phase</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.street_name" tabindex="11" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">District</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.district" tabindex="14" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Region</td>
+											<td>
+												<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" change.delegate="dd_regionChanged(true)" value.bind="obj_personnel.RELATIVE.parents.mother.region" tabindex="17" >
+													<option value=""></option>
+													<optgroup label="Philippines">
+														<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='PH'" value.bind="item.value">${item.text}</option>
+													</optgroup>
+													<optgroup label="United States of America">
+														<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='US'" value.bind="item.value">${item.text}</option>
+													</optgroup>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<!-- <td style="width: 120px; vertical-align: middle;" class="text-left">Status</td> -->
+											<td colspan="2">
+												<label style="margin-left: 10px; margin-right: 10px;">
+													<input type="checkbox" id="mstatus_dependent" change.delegate="checkChange(true, 'Dependent')" />Dependent
+												</label>												
+												<label style="margin-left: 10px; margin-right: 10px;">
+													<input type="checkbox" id="mstatus_deceased" change.delegate="checkChange(true, 'Deceased')" />Deceased
+												</label>
+												<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td>
+									<table>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Middle Name</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.middle_name" tabindex="3" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Employer</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.employer" tabindex="6" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Blk lot</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.block_lot" tabindex="9" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Subd / Village</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.sub_village" tabindex="12" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">City/Town</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.city_town" tabindex="15" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Zip code</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.mother.zipcode" tabindex="18" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Deceased Date</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="mDeceasedDate" disabled.bind="obj_personnel.RELATIVE.parents.mother.status!='Deceased'" value.bind="obj_personnel.RELATIVE.parents.mother.deceased_dt" tabindex="21" />
+												<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>						
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td><br/></td>
+				</tr>
+				<tr>
+					<td>
+						<table style="width: 100%;">
+							<tr class="backroundTab">
+								<td colspan="3">
+									<div>
+										<h5 style="margin: 10px; text-align: left; color: white;">Father</h5>
+									</div>
+								</td>
+							</tr>
+							<tr style="vertical-align: top;">
+								<td>
+									<table>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Last Name*</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.last_name" tabindex="22" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Birth date*</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="fBirthDate" disabled.bind="_disableForm" value.bind="obj_personnel.RELATIVE.parents.father.birth_dt" tabindex="25" />
+												<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Unit No.</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.unit_no" tabindex="28" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Bldg name</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.bldg_name" tabindex="31" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Barangay</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.barangay" tabindex="34" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Province/State</td>
+											<td>
+												<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" change.delegate="dd_provinceChanged(false)" value.bind="obj_personnel.RELATIVE.parents.father.state_province" tabindex="37" >
+													<option value=""></option>
+													<option repeat.for="item of obj_personnel.PROVINCE" value.bind="item.value">${item.text}</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Country*</td>
+											<td>												
+												<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.RELATIVE.parents.father.country_cd" tabindex="40" >
+													<option value=""></option>
+													<option repeat.for="item of obj_personnel.COUNTRY" value.bind="item.value">${item.text}</option>
+												</select>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td>
+									<table>								
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name*</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.given_name" tabindex="23" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Occupation</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.occupation" tabindex="26" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">House No.</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.house_no" tabindex="29" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Street / Phase</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.street_name" tabindex="32" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">District</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.district" tabindex="35" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Region</td>
+											<td>
+												<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" change.delegate="dd_regionChanged(false)" value.bind="obj_personnel.RELATIVE.parents.father.region" tabindex="38" >
+													<option value=""></option>
+													<optgroup label="Philippines">
+														<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='PH'" value.bind="item.value">${item.text}</option>
+													</optgroup>
+													<optgroup label="United States of America">
+														<option repeat.for="item of obj_personnel.REGION" if.bind="item.group=='US'" value.bind="item.value">${item.text}</option>
+													</optgroup>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<!-- <td style="width: 120px; vertical-align: middle;" class="text-left">Status</td> -->
+											<td colspan="2">
+												<!-- <label repeat.for="s of status" style="margin-left: 10px; margin-right: 10px;">
+													<input type="radio" name="fstatus" value.bind="s" checked.bind="obj_personnel.RELATIVE.parents.father.status" change.delegate="checkChange(false, s)" />${s}
+												</label> -->
+												<label style="margin-left: 10px; margin-right: 10px;">
+													<input type="checkbox" id="fstatus_dependent" change.delegate="checkChange(false, 'Dependent')" />Dependent
+												</label>												
+												<label style="margin-left: 10px; margin-right: 10px;">
+													<input type="checkbox" id="fstatus_deceased" change.delegate="checkChange(false, 'Deceased')" />Deceased
+												</label>
+												
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td>
+									<table>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Middle Name</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.middle_name" tabindex="24" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Employer</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.employer" tabindex="27" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Blk lot</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.block_lot" tabindex="30" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Subd / Village</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.sub_village" tabindex="33" />
+											</td>
+										</tr>
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">City/Town</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.city_town" tabindex="36" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Zip code</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.RELATIVE.parents.father.zipcode" tabindex="39" />
+											</td>
+										</tr>									
+										<tr>
+											<td style="width: 120px; vertical-align: middle;" class="text-left">Deceased Date</td>
+											<td>
+												<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="fDeceasedDate" disabled.bind="obj_personnel.RELATIVE.parents.father.status!='Deceased'" value.bind="obj_personnel.RELATIVE.parents.father.deceased_dt" tabindex="42" />
+												<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>						
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button class="btn btn-xs customButton" style="width:150px;" click.trigger="validate()">Save</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+							<tr>
+								<td>
+									CREATED BY:
+								</td>
+								<td>
+									<b>${lblCreatedBy}</b>
+								</td>
+								<td>
+									LAST UPDATED BY:
+								</td>
+								<td>
+									<b>${lblUpdatedBy}</b>
+								</td>							
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</tbody>				
+		</table>
+	</div>
+</template>

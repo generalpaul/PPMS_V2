@@ -1,200 +1,476 @@
 <template>
   <br/>
-  <div class="divBackground" style="margin-left:10%;width:1035px;height: 410px;">
-      <ul class="nav nav-tabs backroundTab" role="tablist" style="width:1024px;height:38px;">
-        <strong class="colorHeader" style="vertical-align:middle;position:relative;top:8px;">SEARCH</strong>
-      </ul>
+  <div class="divBackground" style="margin-left:10%;width:1035px;height: 430px;">
+      <div style="text-align:center;">
+        <ul class="nav nav-tabs backroundTab" role="tablist" style="width:1024px;height:30px;padding-top:6px;">
+          <strong class="colorHeader">SEARCH</strong>
+        </ul>
+      </div>
       <div class="col-md-6">
-        <strong>General Info</strong>
-        <table style="margin-left: 25px; " class="classIEnable">
-          <tbody >
-              <tr>
-                <td style="vertical-align: top;">
-                  <table>
-                       <tr>
-                          <td style="width: 120px; vertical-align: middle;" class="text-left">Name (Group, Individual)</td>
-                          <td>
-                           <input value.bind="_CACHE_TALENT._NAME" style="width: 260px;" />
-                         </td>
-                      </tr>
-                      <tr>
-                        <td>Age</td>
-                        <td>
-                            <input value.bind="_CACHE_TALENT._AGE" style="width: 90px;" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Citizenship</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._CITIZENSHIP" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._CITIZENSHIP_ARR" value.bind="item.ref">
+        <div style="backgroud-color: blue"> <strong >General Info</strong></div>
+        <div  style="overflow-x:scroll; overflow-y:scroll; height:350px; width:100%;">
+          <table class="classIEnable">
+            <tbody>
+                <tr style="vertical-align: top;">
+                  <td style="vertical-align: top;">
+                    <table>
+                        <tr>
+                           <td style="width:15%;" align="right">Name (Group, Individual)</td>
+                           <td style="width:20%">
+                             <select value.bind="_CACHE_TALENT._NAME_AND_OR" style="width:80px">
+                               <option value="2">LIKE ANY OF</option>
+                               <option value="0">OR</option>
+                             </select>
+                           </td>
+                           <td style="width: 30%">
+                             <input value.bind="_CACHE_TALENT._NAME" style="width:175px"/>
+                           </td>
+                           <td style="width:3%">
+                           </td>
+                           <td style="width:19%">
+                             <input type="radio" name="_CACHE_TALENT._NAME_RADIO_BUTTON" value=1 checked="true">AND
+                             <input type="radio" name="_CACHE_TALENT._NAME_RADIO_BUTTON" value=0>OR
+                           </td>
+                        </tr>
+                        <tr>
+                          <td style="width:15%;" align="right">Age</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._AGE_AND_OR"  style="width:80px">
+                              <option value="0">OR</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <input value.bind="_CACHE_TALENT._AGE" style="width:175px"/>
+                          </td>
+                          <td style="width:3%">
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._AGE_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._AGE_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Citizenship</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._CITIZENSHIP_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                              <option value="1">AND</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._CITIZENSHIP_POP" value.bind="_CACHE_TALENT._CITIZENSHIP" style="width:175px;" if.bind="_CACHE_TALENT._CITIZENSHIP_POP">
+                              <option repeat.for="item of _CACHE_TALENT._CITIZENSHIP_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Religion</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._RELIGION" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._RELIGION_ARR" value.bind="item.ref">
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._CITIZENSHIP_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._CITIZENSHIP_POP" click.trigger="onClick(1, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._CITIZENSHIP_POP" click.trigger="onClick(1, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._CITIZENSHIP_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._CITIZENSHIP_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Religion</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._RELIGION_AND_OR"  style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._RELIGION_POP" value.bind="_CACHE_TALENT._RELIGION" style="width:175px;" if.bind="_CACHE_TALENT._RELIGION_POP">
+                              <option repeat.for="item of _CACHE_TALENT._RELIGION_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Civil Status</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._CIVIL_STATUS" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._CIVIL_STATUS_ARR" value.bind="item.ref">
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._RELIGION_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._RELIGION_POP" click.trigger="onClick(2, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._RELIGION_POP" click.trigger="onClick(2, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._RELIGION_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._RELIGION_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Civil Status</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._CIVIL_STATUS_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._CIVIL_STATUS_POP" value.bind="_CACHE_TALENT._CIVIL_STATUS" style="width:175px;" if.bind="_CACHE_TALENT._CIVIL_STATUS_POP">
+                              <option repeat.for="item of _CACHE_TALENT._CIVIL_STATUS_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Gender</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._GENDER" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._GENDER_ARR" value.bind="item.ref">
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._CIVIL_STATUS_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._CIVIL_STATUS_POP" click.trigger="onClick(3, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._CIVIL_STATUS_POP" click.trigger="onClick(3, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._CIVIL_STATUS_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._CIVIL_STATUS_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Gender</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._GENDER_AND_OR"  style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._GENDER_POP" value.bind="_CACHE_TALENT._GENDER" style="width:175px;height:35px;" if.bind="_CACHE_TALENT._GENDER_POP">
+                              <option repeat.for="item of _CACHE_TALENT._GENDER_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Country</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._COUNTRY" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._COUNTRY_ARR" value.bind="item.ref">
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._GENDER_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._GENDER_POP" click.trigger="onClick(4, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._GENDER_POP" click.trigger="onClick(4, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._GENDER_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._GENDER_RADIO_BUTTON" value=0>OR
+                          </td>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Country</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._COUNTRY_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._COUNTRY_POP" value.bind="_CACHE_TALENT._COUNTRY" style="width:175px;height:50px;" if.bind="_CACHE_TALENT._COUNTRY_POP">
+                              <option repeat.for="item of _CACHE_TALENT._COUNTRY_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Location</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._LOCATION" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._LOCATION_ARR" value.bind="item.ref">
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._COUNTRY_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._COUNTRY_POP" click.trigger="onClick(5, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._COUNTRY_POP" click.trigger="onClick(5, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._COUNTRY_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._COUNTRY_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Location</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._LOCATION_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._LOCATION_POP" value.bind="_CACHE_TALENT._LOCATION" style="width:175px;" if.bind="_CACHE_TALENT._LOCATION_POP">
+                              <option repeat.for="item of _CACHE_TALENT._LOCATION_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Talent Supplier</td>
-                        <td>
-                            <input value.bind="_CACHE_TALENT._TALENT_SUPPLIER" style="width: 260px;" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Talent Handler</td>
-                        <td>
-                            <input value.bind="_CACHE_TALENT._TALENT_HANDLER" style="width: 260px;" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Interest</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._INTEREST" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._INTEREST_ARR" value.bind="item.ref">
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._LOCATION_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._LOCATION_POP" click.trigger="onClick(6, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._LOCATION_POP" click.trigger="onClick(6, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._LOCATION_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._LOCATION_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:15%;" align="right">Talent Supplier</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._TALENT_SUPPLIER_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                              <option value="1">AND</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <input value.bind="_CACHE_TALENT._TALENT_SUPPLIER" style="width: 175px;" />
+                          </td>
+                          <td style="3%">
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._TALENT_SUPPLIER_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._TALENT_SUPPLIER_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="width:15%;" align="right">Talent Handler</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._TALENT_HANDLER_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                              <option value="1">AND</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <input value.bind="_CACHE_TALENT._TALENT_HANDLER" style="width: 175px;" />
+                          </td>
+                          <td style="width:3%">
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._TALENT_HANDLER_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._TALENT_HANDLER_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Interest</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._INTEREST_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                              <option value="1">AND</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._INTEREST_POP" value.bind="_CACHE_TALENT._INTEREST" style="width:175px;" if.bind="_CACHE_TALENT._INTEREST_POP">
+                              <option repeat.for="item of _CACHE_TALENT._INTEREST_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Skill Talent</td>
-                        <td>
-                          <select value.bind="_CACHE_TALENT._SKILL_TALENT" style="width:260px;">
-                            <option repeat.for="item of _CACHE_TALENT._SKILL_TALENT_ARR" value.bind="item.ref">
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._INTEREST_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._INTEREST_POP" click.trigger="onClick(7, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._INTEREST_POP" click.trigger="onClick(7, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._INTEREST_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._INTEREST_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                        <tr valign="top">
+                          <td style="width:15%;" align="right">Skill Talent</td>
+                          <td style="width:20%">
+                            <select value.bind="_CACHE_TALENT._SKILL_TALENT_AND_OR" style="width:80px">
+                              <option value="2">LIKE ANY OF</option>
+                              <option value="0">OR</option>
+                              <option value="1">AND</option>
+                            </select>
+                          </td>
+                          <td style="width: 30%">
+                            <select multiple.bind="_CACHE_TALENT._SKILL_TALENT_POP" value.bind="_CACHE_TALENT._SKILL_TALENT" style="width:175px;" if.bind="_CACHE_TALENT._SKILL_TALENT_POP">
+                              <option repeat.for="item of _CACHE_TALENT._SKILL_TALENT_ARR" value.bind="item.ref">
                                 ${item.desc}
-                            </option>
-                        </select>
-                        </td>
-                      </tr>
-                    </table>
-                </td>
-              </tr>
-          </tbody>
-        </table>
+                              </option>
+                            </select>
+                            <input style="width:175px" if.bind="!_CACHE_TALENT._SKILL_TALENT_POP" disabled>
+                          </td>
+                          <td style="width:3%">
+                            <div if.bind="!_CACHE_TALENT._SKILL_TALENT_POP" click.trigger="onClick(8, true)"><img src="/styles/images/expand.jpg"></div>
+                            <div if.bind="_CACHE_TALENT._SKILL_TALENT_POP" click.trigger="onClick(8, false)"><img src="/styles/images/collapse.jpg"></div>
+                          </td>
+                          <td style="width:19%">
+                            <input type="radio" name="_CACHE_TALENT._SKILL_TALENT_RADIO_BUTTON" value=1 checked="true">AND
+                            <input type="radio" name="_CACHE_TALENT._SKILL_TALENT_RADIO_BUTTON" value=0>OR
+                          </td>
+                        </tr>
+                      </table>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="col-md-6">
         <strong>Characteristics</strong>
-        <table style="margin-left: 25px; " class="classIEnable">
-          <tbody>
-              <tr>
-                <td style="vertical-align: top;">
-                  <table>
-                    <tr>
-                      <td>Height</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._HEIGHT" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Weight</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._WEIGHT" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Built</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._BUILT" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Eye Color</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._EYE_COLOR" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Hair Color</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._HAIR_COLOR" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Skintone</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._SKINTONE" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Vital Statistics</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._VITAL_STATISTICS" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Specific Characteristics Keyword</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._SPECIFIC_CHAR" style="width: 260px;" />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Talent Type</td>
-                      <td>
-                          <input value.bind="_CACHE_TALENT._TALENT_TYPE" style="width: 260px;" />
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-          </tbody>
-        </table>
+        <div  style="overflow-x:scroll; overflow-y:scroll; height:350px; width:100%;">
+          <table class="classIEnable">
+            <tbody>
+                <tr>
+                  <td style="vertical-align: top;">
+                    <table>
+                      <tr>
+                        <td style="width:15%;" align="right">Height</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._HEIGHT_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._HEIGHT" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._HEIGHT_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._HEIGHT_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Weight</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._WEIGHT_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._WEIGHT" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._WEIGHT_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._WEIGHT_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Built</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._BUILT_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._BUILT" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._BUILT_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._BUILT_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Eye Color</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._EYE_COLOR_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._EYE_COLOR" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._EYE_COLOR_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._EYE_COLOR_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Hair Color</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._HAIR_COLOR_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._HAIR_COLOR" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._HAIR_COLOR_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._HAIR_COLOR_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Skintone</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._SKINTONE_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._SKINTONE" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._SKINTONE_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._SKINTONE_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Vital Statistics</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._VITAL_STATISTICS_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._VITAL_STATISTICS" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._VITAL_STATISTICS_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._VITAL_STATISTICS_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Specific Characteristics Keyword</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._SPECIFIC_CHAR_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._SPECIFIC_CHAR" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._SPECIFIC_CHAR_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._SPECIFIC_CHAR_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width:15%;" align="right">Talent Type</td>
+                        <td style="width:20%">
+                          <select value.bind="_CACHE_TALENT._TALENT_TYPE_AND_OR" style="width:80px">
+                            <option value="2">LIKE ANY OF</option>
+                            <option value="0">OR</option>
+                          </select>
+                        </td>
+                        <td style="width: 30%">
+                          <input value.bind="_CACHE_TALENT._TALENT_TYPE" style="width: 175px;" />
+                        </td>
+                        <td style="width:19%">
+                          <input type="radio" name="_CACHE_TALENT._TALENT_TYPE_RADIO_BUTTON" value=1 checked="true">AND
+                          <input type="radio" name="_CACHE_TALENT._TALENT_TYPE_RADIO_BUTTON" value=0>OR
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <input type="button" class="btn btn-xs customButton" click.trigger="search_on()" value="SEARCH" style="padding-left:15px;padding-right:15px;"/>
+      <div class="row"><br /></div>
+      <div style="left-margin:10px;">
+        <p ><strong>* separate multiple search values with comma</strong></p>
+      </div>
   </div>
   <div class="row"><br/></div>
-  <div class="divBackground" style="margin-left:10%;width:1035px;height: 450px;" if.bind="_CACHE_TALENT._HAS_FIRED">
-    <ul class="nav nav-tabs backroundTab" role="tablist" style="width:1024px;height:38px;">
-      <strong class="colorHeader" style="vertical-align:middle;position:relative;top:8px;">Search Results</strong>
-    </ul>
+  <div style="text-align:center">
+    <input type="button" class="btn btn-xs customButton" click.trigger="search_on()" value="SEARCH"/>
+  </div>
+  <div class="row"><br/></div>
+  <div class="divBackground" style="margin-left:10%;width:1035px;height: 450px;" if.bind="_CACHE_TALENT._HAS_FIRED && _CACHE_TALENT.QUERY_VAL.length>0">
+    <div style="text-align:center;">
+      <ul class="nav nav-tabs backroundTab" role="tablist" style="width:1024px;height:30px;padding-top:6px;">
+        <strong class="colorHeader">Search Results</strong>
+      </ul>
+    </div>
     <div class="row">
       <div class="tab-content" style="overflow:scroll;width:97%; height:400px;margin-left:2%;">
           <div role="tabpanel" class="tab-pane active color1" id="main"><br/>
@@ -235,7 +511,7 @@
                   </thead>
                   <tbody>
                       <tr repeat.for="item of _CACHE_TALENT.QUERY_VAL">
-                          <td valign="middle"><a href="#">Select</a></td>
+                          <td valign="middle"><a href="#" click.trigger="talent_select(item.PT_INDIV_ID, item.SOURCE)">Select</a></td>
                           <td valign="middle"><div style="height:50px; width:50px;"><img src="${item.PIC}" alt="${item.LAST_NAME}" height="50" width="50"> </div></td>
                           <td valign="middle"><a enabled="false">View Video</a></td>
                           <td valign="middle">
@@ -265,10 +541,22 @@
         </div>
     </div>
   </div>
+  <div class="divBackground" style="margin-left:10%;width:1035px;height: 75px;" if.bind="_CACHE_TALENT._HAS_FIRED && _CACHE_TALENT.QUERY_VAL.length==0">
+    <div style="text-align:center;">
+      <ul class="nav nav-tabs backroundTab" role="tablist" style="width:1024px;height:30px;padding-top:6px;">
+        <strong class="colorHeader">Search Results</strong>
+      </ul>
+    </div>
+    <div class="row">
+      <div class="tab-content" style="width:97%; height:50px;margin-left:2%; padding-top: 6px;">
+        <div style="text-align:center">Search returned no entry</div>
+      </div>
+    </div>
+  </div>
   <div class="row" if.bind="_CACHE_TALENT._HAS_FIRED">
     <br />
   </div>
-  <div class="divBackground" style="margin-left:10%;width:1035px;height: 38px;">
+  <div class="divBackground" style="margin-left:10%;width:1035px;height: 38px;text-align:center;">
     <button class="btn btn-xs customButton">ADD NEW TALENT SUPPLIERS</button>&nbsp;&nbsp;
     <button class="btn btn-xs customButton">MAKE NEW SEARCH</button>&nbsp;&nbsp;
     <button class="btn btn-xs customButton">PRINT</button>&nbsp;&nbsp;

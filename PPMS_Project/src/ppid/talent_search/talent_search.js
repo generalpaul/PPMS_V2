@@ -23,6 +23,15 @@ export class talent_search {
 
   initialize()
   {
+    this._CACHE_TALENT._CITIZENSHIP_ARR = [];
+    this._CACHE_TALENT._RELIGION_ARR = [];
+    this._CACHE_TALENT._CIVIL_STATUS_ARR = [];
+    this._CACHE_TALENT._COUNTRY_ARR = [];
+    this._CACHE_TALENT._LOCATION_ARR = [];
+    this._CACHE_TALENT._INTEREST_ARR = [];
+    this._CACHE_TALENT._SKILL_TALENT_ARR = [];
+
+
     EntityManager().executeQuery(EntityQuery().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'CITIZENSHIP_CD').orderBy('REF_DESC')).then((found) => {
       found.results.forEach((all)=>{
         this._CACHE_TALENT._CITIZENSHIP_ARR.push({ref:all.REF_CD, desc: all.REF_DESC});
@@ -316,7 +325,14 @@ export class talent_search {
         arrayVal = arrayVal.filter(out=>out.BIRTH_DT>=bdStart && out.BIRTH_DT<=bdEnd);
       }
 
-      if (this._CACHE_TALENT._CITIZENSHIP!==undefined && this._CACHE_TALENT._CITIZENSHIP!=''){
+      if (this._CACHE_TALENT._CITIZENSHIP!==undefined && this._CACHE_TALENT._CITIZENSHIP!='' && this._CACHE_TALENT._CITIZENSHIP_POP){
+        if ($.isArray(this._CACHE_TALENT._CITIZENSHIP)){
+          console.log("ARRAY");
+        }
+        else {
+          console.log("TEXT");
+        }
+        console.log(this._CACHE_TALENT._CITIZENSHIP.length, this._CACHE_TALENT._CITIZENSHIP);
         var arrayVal2=[];
         this._CACHE_TALENT.CITIZESHIP_MSTR.filter(out=>out.CITIZENSHIP_CD==this._CACHE_TALENT._CITIZENSHIP).forEach(out=>{
           arrayVal2.push(out.PT_INDIV_ID);
@@ -324,33 +340,33 @@ export class talent_search {
         arrayVal = arrayVal.filter((out)=>arrayVal2.indexOf(out.PT_INDIV_ID)>-1);
       }
 
-      if (this._CACHE_TALENT._RELIGION!==undefined && this._CACHE_TALENT._RELIGION!=''){
+      if (this._CACHE_TALENT._RELIGION!==undefined && this._CACHE_TALENT._RELIGION!='' &&  this._CACHE_TALENT._RELIGION_POP){
         var religion = this._CACHE_TALENT._RELIGION;
         arrayVal = arrayVal.filter(out=>out.RELIGION_CD==religion);
       }
 
-      if (this._CACHE_TALENT._CIVIL_STATUS!==undefined && this._CACHE_TALENT._CIVIL_STATUS!=''){
+      if (this._CACHE_TALENT._CIVIL_STATUS!==undefined && this._CACHE_TALENT._CIVIL_STATUS!='' && this._CACHE_TALENT._CIVIL_STATUS_POP){
         var civil_status = this._CACHE_TALENT._CIVIL_STATUS;
         arrayVal = arrayVal.filter(out=>out.CIVIL_STATUS==civil_status);
       }
 
-      if (this._CACHE_TALENT._GENDER!==undefined && this._CACHE_TALENT._GENDER!=''){
+      if (this._CACHE_TALENT._GENDER!==undefined && this._CACHE_TALENT._GENDER!='' && this._CACHE_TALENT._GENDER_POP){
         var gender = this._CACHE_TALENT._GENDER;
         arrayVal = arrayVal.filter(out=>out.GENDER==gender);
       }
 
-      if (this._CACHE_TALENT._COUNTRY!==undefined && this._CACHE_TALENT._COUNTRY!=''){
+      if (this._CACHE_TALENT._COUNTRY!==undefined && this._CACHE_TALENT._COUNTRY!='' && this._CACHE_TALENT._COUNTRY_POP){
         var country = this._CACHE_TALENT._COUNTRY;
         arrayVal = arrayVal.filter(out=>out.COUNTRY_CD==country);
       }
 
 
-      if (this._CACHE_TALENT._LOCATION!==undefined && this._CACHE_TALENT._LOCATION!=''){
+      if (this._CACHE_TALENT._LOCATION!==undefined && this._CACHE_TALENT._LOCATION!='' && this._CACHE_TALENT._LOCATION_POP){
         var location = this._CACHE_TALENT._LOCATION;
         arrayVal = arrayVal.filter(out=>out.LOCATION==location);
       }
 
-      if (this._CACHE_TALENT._INTEREST!==undefined && this._CACHE_TALENT._INTEREST!=''){
+      if (this._CACHE_TALENT._INTEREST!==undefined && this._CACHE_TALENT._INTEREST!='' && this._CACHE_TALENT._INTEREST_POP){
         var arrayVal2=[];
         this._CACHE_TALENT.INTEREST_MSTR.filter(out=>out.INTEREST_CD==this._CACHE_TALENT._INTEREST).forEach(out=>{
           arrayVal2.push(out.PARTTIME_ID);
@@ -358,7 +374,7 @@ export class talent_search {
         arrayVal = arrayVal.filter((out)=>arrayVal2.indexOf(out.PT_INDIV_ID)>-1);
       }
 
-      if (this._CACHE_TALENT._SKILL_TALENT!==undefined && this._CACHE_TALENT._SKILL_TALENT!=''){
+      if (this._CACHE_TALENT._SKILL_TALENT!==undefined && this._CACHE_TALENT._SKILL_TALENT!='' && this._CACHE_TALENT._SKILL_TALENT_POP){
         var arrayVal2=[];
         this._CACHE_TALENT.SKILL_TALENT_MSTR.filter(out=>out.SKILL_TALENT_CD==this._CACHE_TALENT._SKILL_TALENT).forEach(out=>{
           arrayVal2.push(out.PARTTIME_ID);
@@ -444,5 +460,42 @@ export class talent_search {
       this._CACHE_TALENT._HAS_FIRED = true;
 
     }); // Promise end
+
+    console.log(this._CACHE_TALENT);
+  }
+
+  talent_select(id, source){
+    alert(id+"\n"+source);
+  }
+
+  onClick(variable, value){
+    switch(variable){
+      case 1:
+        this._CACHE_TALENT._CITIZENSHIP_POP=value;
+        break;
+      case 2:
+        this._CACHE_TALENT._RELIGION_POP=value;
+        break;
+      case 3:
+        this._CACHE_TALENT._CIVIL_STATUS_POP=value;
+        break;
+      case 4:
+        this._CACHE_TALENT._GENDER_POP=value;
+        break;
+      case 5:
+        this._CACHE_TALENT._COUNTRY_POP=value;
+        break;
+      case 6:
+        this._CACHE_TALENT._LOCATION_POP=value;
+        break;
+      case 7:
+        this._CACHE_TALENT._INTEREST_POP=value;
+        break;
+      case 8:
+        this._CACHE_TALENT._SKILL_TALENT_POP=value;
+        break;
+      default:
+        break;
+    }
   }
 }

@@ -1,0 +1,12 @@
+<template>
+	<ux-dialog>
+		<ux-dialog-header class="colorHeader"><span style="position:relative;top:-8px;"><b>${title}</b></span></ux-dialog-header>
+		<ux-dialog-body style="border-radius: 0px;" class="divBackground">
+			<div style="white-space: pre;">${message}</div>
+		</ux-dialog-body>
+		<ux-dialog-footer>
+			<button class="btn btn-xs customButton" style="width:150px;"  click.trigger="controller.ok()">Yes</button>&nbsp;&nbsp;
+			<button class="btn btn-xs customButton" style="width:150px;"  click.trigger="controller.cancel()">No</button>&nbsp;&nbsp;
+		</ux-dialog-footer>
+	</ux-dialog>
+</template>

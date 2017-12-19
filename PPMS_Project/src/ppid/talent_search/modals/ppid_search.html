@@ -1,0 +1,87 @@
+<template>
+	<ux-dialog>
+		<ux-dialog-header class="colorHeader"><span style="position:relative;top:-8px;"><b>SEARCH PERSONNEL(S)</b></span></ux-dialog-header>
+		
+		<ux-dialog-body style="background:#E3E3E3;" class=".divBackground">
+			<require from="converters/take"></require>
+			<require from="converters/sorttext"></require>
+			<require from="tools/gridpaging"></require>			
+			<div style="height:350px;overflow: auto;">
+				<table class="table table-hover table-condensed table-bordered">
+					<thead class="table-default">
+						<tr>
+							<td class="colorCell2">GLOBAL ID</td>
+							<!--<td class="colorCell2">TIN</td>
+							<td class="colorCell2">GROUP</td>-->
+							<td class="colorCell2">LAST NAME</td>
+							<td class="colorCell2">FIRST NAME</td>
+							<td class="colorCell2">NICKNAME / ALIAS</td>
+							<!--<td class="colorCell2">PROJECT NAME</td>
+							<td class="colorCell2">COUNTRY</td>-->
+						</tr>
+						<tr ref="_rppid_queries">
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bglobal_indiv_id" searchable="_bglobal_indiv_id"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>							
+							<!--<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_btin" searchable="_stin"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bgroup" searchable="_sgroup"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>-->
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_blast_name" searchable="_slast_name"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bfirst_name" searchable="_sfirst_name"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>							
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bnickname" searchable="_snickname"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>
+							<!--<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bproject_name" searchable="_sproject_name"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bcountry" searchable="_scountry"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>-->
+						</tr>
+					</thead>
+					<tbody>
+						<tr repeat.for="item of varFilterArray | take:20:pageindex" click.delegate="$parent.selectedPersonnel(item)">
+							<td>
+								${item.GLOBAL_INDIV_ID}
+							</td>
+							<!--<td>
+								${item.TIN}
+							</td>
+							<td>
+								${item.GROUP}
+							</td>-->
+							<td>
+								${item.LAST_NAME}
+							</td>
+							<td>
+								${item.FIRST_NAME}
+							</td>
+							<td>
+								${item.NICK_NAME}
+							</td>
+							<!--<td>
+								${item.PROJECT_NAME}
+							</td>
+							<td>
+								${item.COUNTRY}
+							</td>-->
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex"  divby.bind="10"></gridpaging>
+		</ux-dialog-body>
+		<!--<ux-dialog-footer>	
+			<button class="btn btn-xs customButton" click.trigger="Submit()">Search</button>
+			<button class="btn btn-xs customButton" click.trigger="controller.cancel()">Close</button>
+		</ux-dialog-footer>-->
+	</ux-dialog>
+</template>
