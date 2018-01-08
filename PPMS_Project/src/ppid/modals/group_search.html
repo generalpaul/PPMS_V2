@@ -1,0 +1,48 @@
+<template>
+	<ux-dialog>
+		<ux-dialog-header class="colorHeader"><span style="position:relative;top:-8px;"><b>SEARCH GROUP(S)</b></span></ux-dialog-header>
+		<ux-dialog-body>
+			<require from="converters/take"></require>
+			<require from="converters/sorttext"></require>
+			<require from="tools/gridpaging"></require>	
+			<div style="height:350px;overflow: auto;">
+				<table class="table table-hover table-condensed table-bordered">
+					<thead class="table-default">
+						<tr>
+							<td class="colorCell2">GLOBAL ID</td>
+							<td class="colorCell2">GROUP NAME</td>
+							<!-- <td class="colorCell2">ESTABLISHED DATE</td> -->
+							<!-- <td class="colorCell2">STATUS</td> -->
+						</tr>
+						<tr ref="_rppid_queries">
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bglobal_grp_id" searchable="_bglobal_grp_id"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bgroup_name" searchable="_sgroup_name"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>		
+							<!-- <td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bestablish_dt" searchable="_bestablish_dt"  keyup.delegate="fnKeyup($event,'')"/>
+							</td> -->
+							<!-- <td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bstatus_cd" searchable="_sstatus_cd"  keyup.delegate="fnKeyup($event,'')"/>
+							</td> -->
+						</tr>
+					</thead>
+					<tbody>
+						<tr repeat.for="item of varFilterArray | take:20:pageindex" click.delegate="$parent.selectedGroup(item)">
+							<td>
+								${item.GLOBAL_GRP_ID}
+							</td>
+							<td>
+								${item.GROUP_NAME}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+			<gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex"  divby.bind="10"></gridpaging>
+		</ux-dialog-body>
+	</ux-dialog>
+</template>

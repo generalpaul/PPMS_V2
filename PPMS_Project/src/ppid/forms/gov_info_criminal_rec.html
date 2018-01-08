@@ -1,0 +1,284 @@
+<template>
+	<div style="height: 550px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">
+			<tr class="backroundTab">
+				<td colspan="3">
+					<div>
+						<h5 style="margin: 10px; text-align: left; color: white;">Civil and Labor/Criminal Case</h5>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="vertical-align: top;">
+					<table>						
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Case Number*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableFormCivil" value.bind="obj_personnel.CRIMINAL_RECORD.civil.model.case_no" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Start Date*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="4" disabled.bind="_disableFormCivil" id="civil_start_dt" value.bind="obj_personnel.CRIMINAL_RECORD.civil.model.start_dt" />
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td style="vertical-align: top;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Status Code*</td>
+							<td>
+								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="2" disabled.bind="_disableFormCivil" /> -->
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="2" disabled.bind="_disableFormCivil" value.bind="obj_personnel.CRIMINAL_RECORD.civil.model.case_stat_cd">
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.CASE_STAT" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: top; padding-top: 4px;" class="text-left">Case Description*</td>
+							<td>
+								<textarea style="overflow-y: scroll; resize: vertical;" tabindex="5" disabled.bind="_disableFormCivil" value.bind="obj_personnel.CRIMINAL_RECORD.civil.model.case_desc"></textarea>
+							</td>
+						</tr>
+					</table>
+				</td>				
+				<td style="vertical-align: top;">
+					<table>
+						<tr style="height: 35px;">
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Civil</td>
+							<td>
+								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="2" disabled.bind="_disableFormCivil" /> -->
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="checkbox" tabindex="3" disabled.bind="_disableFormCivil" id="criminal_fl" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: top; padding-top: 4px;" class="text-left">Remarks</td>
+							<td>
+								<textarea style="overflow-y: scroll; resize: vertical;" tabindex="6" disabled.bind="_disableFormCivil" value.bind="obj_personnel.CRIMINAL_RECORD.civil.model.remarks" ></textarea>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>				
+				<td colspan="3">
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnAddCivil" click.trigger="btnAddCivil()">Add</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnSaveCivil" click.trigger="validateCivil()">Save</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="clearFieldCivil()">Clear/Reset</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div style="height: 100px; overflow-y: scroll;">
+						<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+							<thead style="display: table-header-group;">
+								<tr>
+									<td class="colorCell">Case Number</td>
+									<td class="colorCell">Status</td>
+									<td class="colorCell">Civil/Criminal</td>
+									<td class="colorCell">Case Description</td>								
+									<td class="colorCell">Start Date</td>
+									<td class="colorCell">Remarks</td>
+									<td class="colorCell"></td>
+									<td class="colorCell"></td>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr repeat.for="item of obj_personnel.CRIMINAL_RECORD.civil.list">
+									<td>${item.case_no}</td>
+									<td>${item.case_stat_cd}</td>
+									<td>${item.criminal_fl=="1"?"Criminal":"Civil"}</td>
+									<td>${item.case_desc}</td>
+									<td>${item.start_dt}</td>
+									<td>${item.remarks}</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnEditCivil(item)" disabled.bind="_disableTableCivil" >-</button>
+									</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnRemoveCivil(item)" disabled.bind="_disableTableCivil">X</button>
+									</td>
+								</tr>								
+								<tr if.bind="obj_personnel.CRIMINAL_RECORD.civil.list == null || obj_personnel.CRIMINAL_RECORD.civil.list.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>
+			<tr>				
+				<td colspan="3">
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${lblCreatedByCivil}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${lblUpdatedByCivil}</b>
+							</td>							
+						</tr>
+					</table>
+					<br/>					
+				</td>
+			</tr>		
+			<tr class="backroundTab">
+				<td colspan="3">
+					<div>
+						<h5 style="margin: 10px; text-align: left; color: white;">Administrative Case</h5>
+					</div>
+				</td>
+			</tr>
+			<!-- <tr>
+				<td colspan="3">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Company*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" disabled.bind="_disableFormAdministrative" />
+							</td>
+						</tr>						
+					</table>
+				</td>
+			</tr> -->
+			<tr>
+				<td style="vertical-align: top;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Company*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="1" disabled.bind="_disableFormAdministrative" value.bind="obj_personnel.CRIMINAL_RECORD.administrative.model.global_company_id" >
+									<option value=""></option>
+									<option repeat.for="item of ddCompany" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Start Date*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="4" disabled.bind="_disableFormAdministrative" id="admin_eff_start_dt" value.bind="obj_personnel.CRIMINAL_RECORD.administrative.model.eff_start_dt" />
+							</td>
+						</tr>						
+					</table>
+				</td>				
+				<td style="vertical-align: top;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Violation*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="2" disabled.bind="_disableFormAdministrative" value.bind="obj_personnel.CRIMINAL_RECORD.administrative.model.violation_cd" >
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.VIOLATION" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">End Date*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="5" disabled.bind="_disableFormAdministrative" id="admin_eff_end_dt" value.bind="obj_personnel.CRIMINAL_RECORD.administrative.model.eff_end_dt" />
+							</td>
+						</tr>						
+					</table>
+				</td>				
+				<td style="vertical-align: top;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Status*</td>
+							<td>
+								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="3" disabled.bind="_disableFormAdministrative" /> -->
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="3" disabled.bind="_disableFormAdministrative" value.bind="obj_personnel.CRIMINAL_RECORD.administrative.model.case_stat_cd" >
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.CASE_STAT" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: top;" class="text-left">Remarks</td>
+							<td>
+								<textarea style="overflow-y: scroll; resize: vertical;" tabindex="6" disabled.bind="_disableFormAdministrative" value.bind="obj_personnel.CRIMINAL_RECORD.administrative.model.remarks" ></textarea>
+							</td>
+						</tr>						
+					</table>
+				</td>
+			</tr>
+			<tr>				
+				<td colspan="3">
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnAddAdministrative" click.trigger="btnAddAdministrative()">Add</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnSaveAdministrative" click.trigger="validateAdministrative()">Save</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="clearFieldAdministrative()">Clear/Reset</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div style="height: 100px; overflow-y: scroll;">
+						<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+							<thead style="display: table-header-group;">
+								<tr>
+									<td class="colorCell">Violation Code</td>
+									<td class="colorCell">Status</td>
+									<td class="colorCell">Start Date</td>
+									<td class="colorCell">End Date</td>								
+									<td class="colorCell">Remarks</td>
+									<td class="colorCell">Company</td>
+									<td class="colorCell"></td>
+									<td class="colorCell"></td>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr repeat.for="item of obj_personnel.CRIMINAL_RECORD.administrative.list">
+									<td>${item.violation_cd}</td>
+									<td>${item.case_stat_cd}</td>
+									<td>${item.eff_start_dt}</td>
+									<td>${item.eff_end_dt}</td>
+									<td>${item.remarks}</td>
+									<td>${item.company_nm}</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnEditAdministrative(item)" disabled.bind="_disableTableAdministrative" >-</button>
+									</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btmRemoveAdministrative(item)" disabled.bind="_disableTableAdministrative">X</button>
+									</td>
+								</tr>								
+								<tr if.bind="obj_personnel.CRIMINAL_RECORD.administrative.list == null || obj_personnel.CRIMINAL_RECORD.administrative.list.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${lblCreatedByAdministrative}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${lblUpdatedByAdministrative}</b>
+							</td>							
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</template>

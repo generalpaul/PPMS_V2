@@ -1,0 +1,170 @@
+<template>	
+	<div style="height: 600px; width: 913px; margin: 5px auto;">
+		<table>
+			<tbody>
+				<tr colspan="3" style="border: 1px solid #4d9cd5; width: 100%;" class="backroundTab">
+					<td colspan="3">
+						<div>
+							<h5 style="margin: 10px; text-align: left; color: white;">Work Experience</h5>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<table style="width: 100%;">
+							<tr>
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Employer*</td>
+								<td colspan="5">
+									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.WORK_EXPERIENCE.model.employer" tabindex="1" disabled.bind="_disableForm" />
+								</td>
+							</tr>							
+						</table>
+					</td>
+				</tr>					
+				<tr>
+					<td>
+						<table>
+							<tr>								
+								<td style="width: 120px; vertical-align: middle;" class="text-left">From*</td>
+								<td>
+									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="startDt" value.bind="obj_personnel.WORK_EXPERIENCE.model.start_dt" tabindex="2" disabled.bind="_disableForm" />
+								</td>
+							</tr>							
+							<tr>								
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Salary</td>
+								<td>
+									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.WORK_EXPERIENCE.model.salary" tabindex="5" disabled.bind="_disableForm" />
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table>
+							<tr>								
+								<td style="width: 120px; vertical-align: middle;" class="text-left">To*</td>
+								<td>
+									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="endDt" value.bind="obj_personnel.WORK_EXPERIENCE.model.end_dt" tabindex="3" disabled.bind="_disableForm" />
+								</td>
+							</tr>							
+							<tr>								
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Position*</td>
+								<td>
+									<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.WORK_EXPERIENCE.model.position_cd" tabindex="6" disabled.bind="_disableForm" >
+										<option value=""></option>
+										<option repeat.for="item of obj_personnel.POSITION" value.bind="item.value">${item.text}</option>
+									</select>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table>
+							<tr>								
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Present</td>
+								<td>
+									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;" type="checkbox" checked.bind="obj_personnel.WORK_EXPERIENCE.model.present_fl" tabindex="4" disabled.bind="_disableForm" />
+								</td>
+							</tr>							
+							<tr>								
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Free Lance</td>
+								<td>
+									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;" type="checkbox" checked.bind="obj_personnel.WORK_EXPERIENCE.model.freelance_fl" tabindex="7" disabled.bind="_disableForm" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<table style="width: 100%;">
+							<tr>
+								<td style="width: 120px; vertical-align: top;" class="text-left">Reason for leaving*</td>
+								<td colspan="5">
+									<textarea style="overflow-y: scroll; resize: none; width: 100%;" value.bind="obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving" tabindex="8" disabled.bind="_disableForm" ></textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div>
+							<button class="btn btn-xs customButton" style="width:150px;"  disabled.bind="_disableBtnAdd" click.delegate="btnAdd()">Add</button>&nbsp;&nbsp;
+							<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnSave" click.delegate="validate()">Save</button>&nbsp;&nbsp;
+							<button class="btn btn-xs customButton" style="width:150px;" click.delegate="clearField()" >Clear/Reset</button>&nbsp;&nbsp;
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div style="height: 220px; overflow-y: scroll;">
+							<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+								<thead style="display: table-header-group;">
+									<tr>
+										<td class="colorCell">Employer</td>
+										<td class="colorCell">From</td>
+										<td class="colorCell">To</td>
+										<td class="colorCell">Position</td>
+										<td class="colorCell">Salary</td>										
+										<td class="colorCell">is Present</td>
+										<td class="colorCell">Free Lancer</td>
+										<td class="colorCell">Reason for leaving</td>
+										<td class="colorCell"></td>
+										<td class="colorCell"></td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr repeat.for="item of obj_personnel.WORK_EXPERIENCE.list">
+										<td>${item.employer}</td>
+										<td>${item.start_dt}</td>
+										<td>${item.end_dt}</td>
+										<td>${item.position}</td>
+										<td>${item.salary}</td>
+										<td>
+											<input type="checkbox" checked.bind="item.present_fl==1" disabled />
+										</td>
+										<td>
+											<input type="checkbox" checked.bind="item.freelance_fl==1" disabled />
+										</td>
+										<td>${item.reason_for_leaving}</td>
+										<td>
+											<button class="btn btn-xs customButton" click.delegate="btnEdit(item)" disabled.bind="_disableBtnEdit" >-</button>
+										</td>
+										<td>
+											<button class="btn btn-xs customButton" click.delegate="btnRemove(item)" disabled.bind="_disableBtnRemove" >X</button>
+										</td>
+									</tr>
+									<tr if.bind="obj_personnel.WORK_EXPERIENCE.list == null || obj_personnel.WORK_EXPERIENCE.list.length==0">
+										<td colspan="9">
+											<b>No current entry.</b>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+							<tr>
+								<td>
+									CREATED BY:
+								</td>
+								<td>
+									<b>${lblCreatedBy}</b>
+								</td>
+								<td>
+									LAST UPDATED BY:
+								</td>
+								<td>
+									<b>${lblUpdatedBy}</b>
+								</td>							
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</template>

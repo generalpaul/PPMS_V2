@@ -7,11 +7,11 @@ import {EntityManager,EntityQuery} from '../../entity-manager-factory';
 import breeze from 'breeze-client';
 import {ppid_search} from "../modals/ppid_search";
 import moment from 'moment';
-import {formatDate} from "../../helpers";
 import {fnSerializeCode} from "../../helpers";
 import { cache_obj } from '../../cache_obj';
-// import {input_mask} from "../../helpers";
-// import {isDigit} from "../../helpers";
+import {input_mask} from "../../helpers";
+import {isDigit} from "../../helpers";
+import settings from 'settings';
 
 @inject(DialogService, obj_personnel, toastr, cache_obj)
 export class main
@@ -32,6 +32,7 @@ export class main
 	selected_group="";	
 	obj_personnel=null;
 	cache_obj=null;
+	_404_img = "/images/404.png";
 	primary_img="/styles/images/abslogo_BIG.png";
 	constructor(dialogService, obj_personnel, toastr, cache_obj)
 	{
@@ -72,7 +73,7 @@ export class main
 
 	loadData(global_id)
 	{
-
+		settings.isNavigating = true;
 		//toastr.success('Retrieving data...', 'Loading...');
 		this.obj_personnel.global_indiv_id=global_id;
 		var _query = EntityQuery().from('GLOBAL_INDIV_MSTR')
@@ -86,18 +87,21 @@ export class main
 				this.obj_personnel.HEADER.last_name = result.LAST_NAME;
 				this.obj_personnel.HEADER.middle_name = result.MIDDLE_NAME;
 				this.obj_personnel.HEADER.religion_cd = result.RELIGION_CD;
-				var birthdt = formatDate(result.BIRTH_DT)
-				if(birthdt.length==0){
-					// $("#birthDate").datepicker("setValue", new Date());
-				}else{
-					$("#birthDate").datepicker("setValue", new Date(birthdt));
+				if(moment(result.BIRTH_DT).isValid()){
+					var birthdt = moment.utc(result.BIRTH_DT).format("MM/DD/YYYY");
+					// birthdt = new Date(birthdt);
+					if(birthdt.length==0){
+						// $("#birthDate").datepicker("setValue", new Date());
+					}else{
+						$("#birthDate").datepicker("setValue", new Date(birthdt));
+					}
+					this.obj_personnel.HEADER.birth_dt = birthdt;
 				}
-				this.obj_personnel.HEADER.birth_dt = birthdt;
 				this.obj_personnel.HEADER.age = this.getAge(result.BIRTH_DT);
 				this.obj_personnel.HEADER.civil_status = result.CIVIL_STATUS;
 				this.obj_personnel.HEADER.mother_maiden_name = result.MOTHER_MAIDEN_NAME;
 				this.obj_personnel.HEADER.alias = result.ALIAS;
-				this.obj_personnel.HEADER.birth_place = result.BIRTH_PLACE;
+				this.obj_personnel.HEADER.birth_place = result.BIRTH_PLACE; 
 				this.obj_personnel.HEADER.gender = result.GENDER;				
 				switch(result.GENDER)
 				{
@@ -110,6 +114,7 @@ export class main
 			});
 			toastr.clear();
 			toastr.success("", "Success");
+			settings.isNavigating = false;
 		},(failed)=>{
 			toastr.error(failed,"Error in retrieving data[1].");
 		});
@@ -126,7 +131,9 @@ export class main
 				this.obj_personnel.HEADER.location_base_cd = result.LOCATION_BASE_CD;
 				this.obj_personnel.HEADER.status_cd = result.STATUS_CD;
 				this.obj_personnel.HEADER.created_by = result.CREATED_BY;
+				this.obj_personnel.HEADER.created_dt = moment.utc(result.CREATED_DT).format("MM/DD/YYYY hh:mm A");
 				this.obj_personnel.HEADER.last_updated_by = result.LAST_UPDATED_BY;
+				this.obj_personnel.HEADER.last_updated_dt = moment.utc(result.LAST_UPDATED_DT).format("MM/DD/YYYY hh:mm A");
 
 				if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
 					var _pred1 = breeze.Predicate.create("GLOBAL_ID","==", global_id);
@@ -140,11 +147,11 @@ export class main
 						if(success.results.length>0){
 							this.obj_personnel.HEADER.suspend_id = success.results[0].SUSPEND_ID;
 							// this.obj_personnel.HEADER.suspension_start = success.results[0].START_DT;							
-							var start_dt = formatDate(success.results[0].START_DT)
+							var start_dt = moment.utc(success.results[0].START_DT).format("MM/DD/YYYY");
 							this.obj_personnel.HEADER.suspension_start = start_dt;
 							$("#suspensionFrom").datepicker("setValue", new Date(start_dt));
 
-							var end_dt = formatDate(success.results[0].END_DT);
+							var end_dt = moment.utc(success.results[0].END_DT).format("MM/DD/YYYY");
 							this.obj_personnel.HEADER.suspension_end = end_dt;
 							$("#suspensionTo").datepicker("setValue", new Date(end_dt));
 							// this.obj_personnel.HEADER.suspension_end = success.results[0].END_DT;
@@ -155,8 +162,8 @@ export class main
 				}else{
 					this.obj_personnel.HEADER.suspension_start = "";
 					this.obj_personnel.HEADER.suspension_end="";
-					$("#suspensionFrom").datepicker("setValue", new Date());
-					$("#suspensionTo").datepicker("setValue", new Date());
+					// $("#suspensionFrom").datepicker("setValue", new Date());
+					// $("#suspensionTo").datepicker("setValue", new Date());
 				}
 			});
 
@@ -216,25 +223,6 @@ export class main
 		},(failed)=>{
 			toastr.error(failed, 'Error in Retrieving Group list.');
 		});
-
-
-
-	}
-
-	checkDate(id)
-	{
-		$("#"+id).datepicker();
-		// setTimeout(() => {
-		// 	var dateValue = $("#"+id).val();
-		// 	if(dateValue.trim().length!=0 && !Date.parse(dateValue))
-		// 	{
-		//    		toastr.error("Invalid date ", "Date Change..");  
-		//  		}
-		//  		else
-		//  		{
-		//    		$("#"+id).datepicker("setValue", new Date($("#"+id).val()));
-		//  		}
-		//  	},500);    
 	}
 
 	btnAdd_Citizenship(){
@@ -318,7 +306,6 @@ export class main
 	fnPersonnel(call)
 	{
 
-		console.log(moment("01/01/0001").isValid());
 		$("#birthDate").datepicker();
 		$("#suspensionFrom").datepicker();
 		$("#suspensionTo").datepicker();		
@@ -366,6 +353,7 @@ export class main
 
 	validateHeader(passed_status){
 
+		console.log(this.obj_personnel.HEADER.tin);
 		var strValidation="";
 		if(this.obj_personnel.HEADER.country_cd == undefined || this.obj_personnel.HEADER.country_cd == null || this.obj_personnel.HEADER.country_cd.length==0){
 			strValidation+="No Country specified.<br/>";
@@ -406,10 +394,23 @@ export class main
 			strValidation+="No Gender specified.<br/>";
 		}
 
-		if(this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.trim().length > 0)
+		if(this.obj_personnel.HEADER.birth_dt != undefined && this.obj_personnel.HEADER.birth_dt != null && this.obj_personnel.HEADER.birth_dt.trim().length > 0){
 			if(!moment(this.obj_personnel.HEADER.birth_dt).isValid()){
 				strValidation+="Invalid date of birth.<br/>";
+			}else{
+				var bdt = new Date(this.obj_personnel.HEADER.birth_dt);
+				var today = new Date();
+				if(today<bdt){
+					strValidation+="Date of birth cannot be greater than today.<br/>";
+				}
 			}
+		}else{
+			strValidation += "No birth date specified.<br/>";
+		}
+
+		if(this.obj_personnel.HEADER.religion_cd == undefined || this.obj_personnel.HEADER.religion_cd==null || this.obj_personnel.HEADER.religion_cd.length == 0){
+			strValidation += "No religion specified.<br/>";
+		}
 
 		if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
 
@@ -448,7 +449,7 @@ export class main
 		if(strValidation.length>0)
 		{
 			toastr.clear();
-			toastr.error(strValidation, 'Personnel Template');  			
+			toastr.error(strValidation, 'Personnel info');  			
 			return;
 		}else{
 			var mother_maiden_nm = this.obj_personnel.HEADER.mother_maiden_name;
@@ -469,7 +470,21 @@ export class main
 		}
 
 		if(passed_status.includes("INSERT")){
-			this.saveHeader();
+			var query = EntityQuery().from("GLOBAL_MSTR")
+						.where("GLOBAL_ID", "==", this.obj_personnel.HEADER.tin+this.obj_personnel.HEADER.country_cd);
+			EntityManager().executeQuery(query).then((s1)=>{
+
+				if(s1.results.length>0){
+					toastr.clear();
+					toastr.error("Tin already exist.", "Personnel info");
+				}else{
+					this.saveHeader();
+				}
+
+			}, (e1)=>{
+				toastr.error(e1,"Personnel info");
+			});
+
 		}
 		else if(passed_status.includes('UPDATE')){
 			this.updateHeader();
@@ -477,6 +492,7 @@ export class main
 	}
 
 	saveHeader(){
+		settings.isNavigating = true;
 		toastr.clear();
 		var varInsert=null;  		
 		var bdate = null;
@@ -506,6 +522,8 @@ export class main
 			INDIV_FL:1
 		});
 
+		// console.log(varInsert_2);
+
 		EntityManager().addEntity(varInsert_2);
 		EntityManager().saveChanges().then((success)=>{
 
@@ -532,9 +550,11 @@ export class main
 			EntityManager().addEntity(varInsert);
 			EntityManager().saveChanges().then((success_2)=>{
 
-				this.obj_personnel.HEADER.global_indiv_id = this.obj_personnel.HEADER.tin+this.obj_personnel.HEADER.country_cd;  				
+				this.obj_personnel.HEADER.global_indiv_id = this.obj_personnel.HEADER.tin+this.obj_personnel.HEADER.country_cd;				
+				this.obj_personnel.global_indiv_id = this.obj_personnel.HEADER.global_indiv_id;
 				this.obj_personnel.editing_status = 'EDIT';
 				toastr.success(success_2, "Record saved.");
+				settings.isNavigating = false;
 
 				var getMax = EntityQuery().from('CITIZENSHIP_TRX').orderByDesc('CITIZENSHIP_ID').take(1);
 
@@ -632,8 +652,8 @@ export class main
 				}else{
 					this.obj_personnel.HEADER.suspension_start = "";
 					this.obj_personnel.HEADER.suspension_end="";
-					$("#suspensionFrom").datepicker("setValue", new Date());
-					$("#suspensionTo").datepicker("setValue", new Date());
+					// $("#suspensionFrom").datepicker("setValue", new Date());
+					// $("#suspensionTo").datepicker("setValue", new Date());
 				}
 
 
@@ -674,6 +694,7 @@ export class main
 	}
 
 	updateHeader(){
+		settings.isNavigating = true;
 		toastr.clear();
 		var dateToday = null;
 		var bdate = null;
@@ -731,6 +752,7 @@ export class main
 
 					EntityManager().saveChanges().then((success_2)=>{
 						toastr.success('','Record updated.');
+						settings.isNavigating = false;
 
 						//update citizenship list						
 
@@ -857,12 +879,22 @@ export class main
 
 						//Update/Insert suspend_trx
 						if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
+							var suspend_start = null;							
+							var suspend_end = null;
+							if(moment(this.obj_personnel.HEADER.suspension_start).isValid()){
+								suspend_start = new Date(moment(this.obj_personnel.HEADER.suspension_start).add(8, "hours"));
+							}
+							if(moment(this.obj_personnel.HEADER.suspension_end).isValid()){
+								suspend_end = new Date(moment(this.obj_personnel.HEADER.suspension_end).add(8, "hours"));
+							}
+							
+
 							if(this.obj_personnel.HEADER.suspend_id != undefined && this.obj_personnel.HEADER.suspend_id != null && this.obj_personnel.HEADER.suspend_id.toString().length>0){
 								var getSuspend = EntityQuery().from("SUSPEND_TRX")
 												.where("SUSPEND_ID", "==", this.obj_personnel.HEADER.suspend_id);
 								EntityManager().executeQuery(getSuspend).then((success_getSuspend)=>{
-									success_getSuspend.results[0].START_DT = this.obj_personnel.HEADER.suspension_start;
-									success_getSuspend.results[0].END_DT = this.obj_personnel.HEADER.suspension_end;
+									success_getSuspend.results[0].START_DT = suspend_start;
+									success_getSuspend.results[0].END_DT = suspend_end;
 									success_getSuspend.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
 									success_getSuspend.results[0].LAST_UPDATED_DT = dateToday;
 									EntityManager().saveChanges().then((save_success)=>{
@@ -884,8 +916,8 @@ export class main
 										SUSPEND_ID: maxId+"",
 										GLOBAL_ID: this.obj_personnel.HEADER.tin+this.obj_personnel.HEADER.country_cd,
 										SUSPEND_LEVEL: 1,
-										START_DT: this.obj_personnel.HEADER.suspension_start,
-										END_DT: this.obj_personnel.HEADER.suspension_end,
+										START_DT: suspend_start,
+										END_DT: suspend_end,
 										COMPANY_ID: 0, 
 										CREATED_BY: this.obj_personnel.USER.USER_ID,
 										CREATED_DT: dateToday
@@ -902,8 +934,8 @@ export class main
 						}else{
 							this.obj_personnel.HEADER.suspension_start = "";
 							this.obj_personnel.HEADER.suspension_end="";
-							$("#suspensionFrom").datepicker("setValue", new Date());
-							$("#suspensionTo").datepicker("setValue", new Date());
+							// $("#suspensionFrom").datepicker("setValue", new Date());
+							// $("#suspensionTo").datepicker("setValue", new Date());
 						}
 
 
@@ -939,7 +971,7 @@ export class main
 	}
 
 	clickTab_main(index)
-	{		
+	{
 		if(this.obj_personnel.global_indiv_id.length===0)
 			return;
 		switch(index){
@@ -964,20 +996,22 @@ export class main
 				break;
 			case 3: //load Characteristic/Interest.
 				toastr.clear();
-				toastr.info("Loading Characteristic/Interest...", "Success");
+				toastr.info("Loading Characteristic/Interest...", "");				
 				break;
 			case 4: //load Skills/Talent.
 				toastr.clear();
-				toastr.info("Loading Skills/Talent...", "Success");
+				toastr.info("Loading Skills/Talent...", "");
+				this.obj_personnel.OBSERVERS.maintab_skills_clicked.forEach((delegate)=>{
+					delegate(this.obj_personnel.global_indiv_id);
+				});
 				break;
 			case 5: //load Language/Dialect.
 				toastr.clear();
-				toastr.info("Loading Language/Dialect...", "Success");
-				break;
-			case 6: //load Medical Record.
-				toastr.clear();
-				toastr.info("Loading Medical Record...", "Success");
-				break;
+				toastr.info("Loading Language/Dialect...", "");
+				this.obj_personnel.OBSERVERS.maintab_language_clicked.forEach((delegate)=>{
+					delegate(this.obj_personnel.global_indiv_id);
+				});
+				break;			
 		}
 	}
 
@@ -1009,4 +1043,12 @@ export class main
 	// date_mask(id, mask){
 	// 	input_mask(id, mask);
 	// }
+
+	DigitOnly(event){
+		return isDigit(event);
+	}
+
+	mask(id, mask){
+		input_mask(id, mask);		
+	}
 }

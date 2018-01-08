@@ -6,6 +6,7 @@ import breeze from 'breeze-client';
 import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
+import settings from 'settings';
 
 @inject(obj_personnel, toastr, DialogService)
 export class main_contact 
@@ -15,6 +16,8 @@ export class main_contact
 	_disableBtnSave=true;
 	_disableAddressTable=false;
 	_disableContactTable=false;
+	lblCreatedBy="";
+	lblUpdatedBy="";
 	obj_personnel=null;
 	constructor(obj_personnel, toastr, DialogService)
 	{
@@ -26,6 +29,9 @@ export class main_contact
 			this.loadMain_EmailWeb(val);
 			this.clearAddressData();
 			this.clearContactData();
+			// this.loadLog(val);
+			this.loadLog_V2(val);
+
 		});
 
 		this.obj_personnel.OBSERVERS.clear_ppid.push((val)=>{
@@ -48,6 +54,7 @@ export class main_contact
 
 	loadMain_Address(global_id)
 	{
+		settings.isNavigating = true;
 		var query = EntityQuery().from('ADDR_TRX').where('GLOBAL_ID','==',global_id);		
 		EntityManager().executeQuery(query).then((success)=>{
 			var tmp = [];
@@ -122,13 +129,15 @@ export class main_contact
  			});
 			
 			this.obj_personnel.CONTACT.address = tmp;
-			toastr.clear();			
-			toastr.success("", "Success");
+			settings.isNavigating = false;
+			toastr.clear();
+			toastr.success("", "Contact info has been loaded.");
 		});
 	}
 
 	loadMain_Contact(global_id){
 
+		settings.isNavigating = true;
 		var query = EntityQuery().from('CONTACT_INFO_TRX')
 					.where('GLOBAL_ID', '==', global_id);
 		EntityManager().executeQuery(query).then((success)=>{
@@ -150,12 +159,16 @@ export class main_contact
 				tmp.push(contact);
 			});
 			this.obj_personnel.CONTACT.contact = tmp;
+			settings.isNavigating = false;
 
+		}, (error)=>{
+			toastr.error(error, "Error in loading contact details.");
 		});
 	}
 
 	loadMain_EmailWeb(global_id){
 
+		settings.isNavigating = true;
 		var query = EntityQuery().from("INTERNET_TRX")
 					.where("GLOBAL_ID", "==", global_id);
 		EntityManager().executeQuery(query).then((querySuccess)=>{
@@ -183,29 +196,236 @@ export class main_contact
 			this.obj_personnel.CONTACT.website=tmpWeb;
 
 		}, (queryError)=>{
-			console.log(queryError);
+			settings.isNavigating = false;
+			toastr.error(queryError, "Error in loading email data.");
+			// console.log(queryError);
 		});
 
 	}
 
+	loadLog(global_id){
+		var createdBy = null;
+		var dtCreated = null;
+		var updatedBy = null;
+		var dtUpdated = null;
+		var query = EntityQuery().from("ADDR_TRX")
+					.where("GLOBAL_ID", "==", global_id)
+					.orderBy("CREATED_DT").take(1);
+		EntityManager().executeQuery(query).then((s1)=>{
+			if(s1.results.length==1){
+				dtCreated = new Date(s1.results[0].CREATED_DT);
+				createdBy = s1.results[0].CREATED_BY;
+			} 
+
+			// console.log(createdBy+":"+dtCreated);
+			query = EntityQuery().from("CONTACT_INFO_TRX")
+					.where("GLOBAL_ID","==", global_id)
+					.orderBy("CREATED_DT").take(1);
+			EntityManager().executeQuery(query).then((s2)=>{
+				if(s2.results.length==1){					
+					var tmpDt = new Date(s2.results[0].CREATED_DT);
+					if(dtCreated == null || dtCreated>tmpDt){
+						dtCreated = tmpDt;
+						createdBy = s2.results[0].CREATED_BY;
+					}
+				}
+
+				query = EntityQuery().from("INTERNET_TRX")
+						.where("GLOBAL_ID","==", global_id)
+						.orderBy("CREATED_DT").take(1);
+				EntityManager().executeQuery(query).then((s3)=>{
+					if(s3.results.length==1){
+						var tmpDt = new Date(s3.results[0].CREATED_DT);
+						if(dtCreated == null || dtCreated>tmpDt){
+							dtCreated = tmpDt;
+							createdBy = s3.results[0].CREATED_BY;
+						}
+					}
+					if(createdBy != null)
+					{
+						this.lblCreatedBy = createdBy+' '+moment.utc(dtCreated).format("MM/DD/YYYY hh:mm A");
+					}else{
+						this.lblCreatedBy = "";
+					}
+				});
+			});
+		});
+
+		var query2 = EntityQuery().from("ADDR_TRX")
+					 .where("GLOBAL_ID", "==", global_id)
+					 .orderByDesc("LAST_UPDATED_DT").take(1);
+		EntityManager().executeQuery(query2).then((ss1)=>{
+			if(ss1.results.length==1){
+				if(ss1.results[0].LAST_UPDATED_BY != null){
+					updatedBy = ss1.results[0].LAST_UPDATED_BY;
+					dtUpdated = new Date(ss1.results[0].LAST_UPDATED_DT);
+				}
+			}
+			query2 = EntityQuery().from("CONTACT_INFO_TRX")
+					.where("GLOBAL_ID", "==", global_id)
+					.orderByDesc("LAST_UPDATED_DT").take(1);
+			EntityManager().executeQuery(query2).then((ss2)=>{
+				if(ss2.results.length==1){
+					if(ss2.results[0].LAST_UPDATED_BY != null){						
+						var tmpDt = new Date(ss2.results[0].LAST_UPDATED_DT);
+						if(dtUpdated == null || dtUpdated<tmpDt){
+							updatedBy = ss2.results[0].LAST_UPDATED_BY;
+							dtUpdated = tmpDt;
+						}
+					}
+				}
+
+				query2 = EntityQuery().from("INTERNET_TRX")
+						.where("GLOBAL_ID", "==", global_id)
+						.orderByDesc("LAST_UPDATED_DT").take(1);
+				EntityManager().executeQuery(query2).then((ss3)=>{
+					if(ss3.results.length==1){
+						if(ss3.results[0].LAST_UPDATED_BY != null){
+							var tmpDt = new Date(ss3.results[0].LAST_UPDATED_DT);
+							if(dtUpdated==null || dtUpdated<tmpDt){
+								updatedBy = ss3.results[0].LAST_UPDATED_BY;
+								dtUpdated = tmpDt;
+							}
+						}
+					}
+					if(updatedBy != null){
+						this.lblUpdatedBy = updatedBy+' '+moment.utc(dtUpdated).format("MM/DD/YYYY hh:mm A");
+					}else{
+						this.lblUpdatedBy = "";
+					}
+				});
+			});
+		});		
+	}
+
+	loadLog_V2(global_id){
+		var tmpList=[];
+		var query = EntityQuery().from("ADDR_TRX")
+					.where("GLOBAL_ID", "==", global_id);
+		EntityManager().executeQuery(query).then((s1)=>{
+			_.each(s1.results, (r)=>{
+				if(r.CREATED_BY != null){
+					var _user = r.CREATED_BY;
+					var _date = new Date(r.CREATED_DT);
+					tmpList.push({
+						user: _user,
+						date: _date
+					});
+				}
+
+				if(r.LAST_UPDATED_BY != null){
+					var _user = r.LAST_UPDATED_BY;
+					var _date = new Date(r.LAST_UPDATED_DT);
+					tmpList.push({
+						user: _user,
+						date: _date
+					});
+				}				
+			});
+
+			query = EntityQuery().from("CONTACT_INFO_TRX")
+					.where("GLOBAL_ID", "==", global_id);
+			EntityManager().executeQuery(query).then((s2)=>{
+				_.each(s2.results, (r2)=>{
+					if(r2.CREATED_BY != null){
+						var _user = r2.CREATED_BY;
+						var _date = new Date(r2.CREATED_DT);
+						tmpList.push({
+							user: _user,
+							date: _date
+						});
+					}
+
+					if(r2.LAST_UPDATED_BY != null){
+						var _user = r2.LAST_UPDATED_BY;
+						var _date = new Date(r2.LAST_UPDATED_DT);
+						tmpList.push({
+							user: _user,
+							date: _date
+						});
+					}
+				});
+
+				query = EntityQuery().from("INTERNET_TRX")
+						.where("GLOBAL_ID", "==", global_id);
+				EntityManager().executeQuery(query).then((s3)=>{
+
+					_.each(s3.results, (r3)=>{
+						if(r3.CREATED_BY != null){
+							var _user = r3.CREATED_BY;
+							var _date = new Date(r3.CREATED_DT);
+							tmpList.push({
+								user: _user,
+								date: _date
+							});
+						}
+
+						if(r3.LAST_UPDATED_BY != null){
+							var _user = r3.LAST_UPDATED_BY;
+							var _date = new Date(r3.LAST_UPDATED_DT);
+							tmpList.push({
+								user: _user,
+								date: _date
+							});
+						}
+					});
+
+					tmpList.sort(this.OrderByDate);
+					var LastIndex = tmpList.length-1;
+					if(tmpList.length>0)
+					{
+						this.lblCreatedBy = tmpList[0].user+' '+moment.utc(tmpList[0].date).format("MM/DD/YYYY hh:mm A");
+						if(tmpList.length>1){
+							this.lblUpdatedBy = tmpList[LastIndex].user + ' ' + moment.utc(tmpList[LastIndex].date).format("MM/DD/YYYY hh:mm A");
+						}
+					}else{
+						this.lblCreatedBy = "";
+						this.lblUpdatedBy = "";
+					}
+
+				});
+
+			});
+
+		});
+
+	}
+
+	OrderByDate(a, b){
+		if(a.date > b.date)
+			return 1;
+		if(a.date < b.date)
+			return -1;
+		return 0;
+	}
+
+
 	clearAddressData(){
+
+		settings.isNavigating = false;
 		this.obj_personnel.CONTACT.modelAddress={};
 		this.obj_personnel.CONTACT.status="";
 		this._disableBtnAdd = false;
 		this._disableBtnSave = true;
 		this._disableForm = true;
 		this._disableAddressTable = false;
+
 	}
 
 	clearContactData(){
+
+		settings.isNavigating = false;
 		this._disableContactTable = false;
 		this.obj_personnel.CONTACT.statusContact="Add";
 		this.obj_personnel.CONTACT.modelContact={};
+
 	}
 
-	clearEmailWebData()
-	{
+	clearEmailWebData(){
+
+		settings.isNavigating = false;
 		this.obj_personnel.CONTACT.modelInternet={};
+
 	}
 
 	//Source: https://stackoverflow.com/questions/13952686/how-to-make-html-input-tag-only-accept-numerical-values
@@ -214,6 +434,22 @@ export class main_contact
     	if (charCode > 31 && (charCode < 48 || charCode > 57))
 	        return false;
     	return true;
+	}
+
+	dd_provinceChanged(){
+		var prov = this.obj_personnel.CONTACT.modelAddress.state_province;
+		if(prov != undefined && prov != null && prov.length!=0){
+			var selectedProv = this.obj_personnel.PROVINCE.find((p)=>{
+				if(p.value == prov){
+					return p;
+				}
+			});
+
+			if(selectedProv != null){
+				this.obj_personnel.CONTACT.modelAddress.region = selectedProv.group;				
+				this.dd_regionChanged();
+			}
+		}
 	}
 
 	dd_regionChanged(){
@@ -257,11 +493,11 @@ export class main_contact
   	}
 
   	btnRemoveAddress(item){
-  		
   		this.DialogService.open({ viewModel: DialogBox, model: { title:"Confirm remove.", message:"Are you sure you want to remove the address?" } })
   			.whenClosed(response=>{
   				if(!response.wasCancelled){
 	  				//alert("Confirmed delete.");
+	  				settings.isNavigating = true;
   					var query = EntityQuery().from('ADDR_TRX').where('ADDR_ID', '==', item.addr_id);
   					EntityManager().executeQuery(query).then((success)=>{
   						
@@ -270,9 +506,12 @@ export class main_contact
   						EntityManager().saveChanges().then((saveSuccess)=>{
   							toastr.success("","The address was successfully removed.");
   							this.loadMain_Address(this.obj_personnel.global_indiv_id);
+  							// this.loadLog(this.obj_personnel.global_indiv_id);
+  							this.loadLog_V2(this.obj_personnel.global_indiv_id);
   						},(error)=>{
   							toastr.clear();
   							toastr.error("", "Error in removing address.");
+  							settings.isNavigating = false;
   						});
   					});
   				}
@@ -301,6 +540,8 @@ export class main_contact
   	}
 
   	insertAddress(){
+
+  		settings.isNavigating = true;
   		var dateToday = null;    
   		dateToday = new moment(new Date()).add(8, 'hours');
   		dateToday = new Date(dateToday);
@@ -312,7 +553,7 @@ export class main_contact
   			if(success.results.length>0){
   				Max = success.results[0].ADDR_ID+1;
   			}
-  			console.log(Max);
+  			// console.log(Max);
         //Upload Image first before save to DB record.
 
         	var _address = {
@@ -323,7 +564,7 @@ export class main_contact
 	        	CITY_TOWN: this.obj_personnel.CONTACT.modelAddress.city_town,
 	        	COUNTRY_CD: this.obj_personnel.CONTACT.modelAddress.country_cd,
 	        	DISTRICT: this.obj_personnel.CONTACT.modelAddress.district,
-	        	GLOBAL_ID: this.obj_personnel.HEADER.global_indiv_id,
+	        	GLOBAL_ID: this.obj_personnel.global_indiv_id,
 	        	HOUSE_NO: this.obj_personnel.CONTACT.modelAddress.house_no,
 	            //HOUSE_OWNERSHIP: this.obj_personnel.CONTACT.modelAddress.house_ownership,
 	            MAILING_FL: 0,
@@ -333,7 +574,7 @@ export class main_contact
 	            // POSTAL_BOX: this.obj_personnel.CONTACT.modelAddress.postal_box,
 	            PRESENT_FL: this.obj_personnel.CONTACT.modelAddress.present_fl?1:0,
 	            // PRESENT_FL: 0,
-	            // REGION: this.obj_personnel.CONTACT.modelAddress.region,
+	            REGION: this.obj_personnel.CONTACT.modelAddress.region,
 	            REMARKS: this.obj_personnel.CONTACT.modelAddress.remarks,
 	            // RESIDENTIAL_TYPE: this.obj_personnel.CONTACT.modelAddress.residential_type,
 	            // SKETCH_PATH: this.obj_personnel.CONTACT.modelAddress.sketch_path,
@@ -353,8 +594,13 @@ export class main_contact
         		toastr.clear();
 	        	toastr.success("", "Record saved.");
 	        	this.loadMain_Address(this.obj_personnel.global_indiv_id);
+	        	// this.loadLog(this.obj_personnel.global_indiv_id);
+	        	this.loadLog_V2(this.obj_personnel.global_indiv_id);
 	        	this.clearAddressData();
 	        }, (error)=>{
+	        	if(address != null){
+	        		address.entityAspect.setDeleted();
+	        	}
 	        	EntityManager().getEntities().forEach(function(entity) {
 	        		var errors = entity.entityAspect.getValidationErrors();
 	        		if (errors.length > 0)
@@ -362,13 +608,16 @@ export class main_contact
 	        	});
 	        	toastr.clear();
 	        	toastr.error(error, "Error in saving address.");
-	        	console.log(error);
+
+	        	settings.isNavigating = false;
+	        	// console.log(error);
 	        });
     	});
   	}
 
   	updateAddress(){
 
+  		settings.isNavigating = true;
   		var dateToday = null;    
   		dateToday = new moment(new Date()).add(8, 'hours');
   		dateToday = new Date(dateToday);
@@ -398,7 +647,10 @@ export class main_contact
   				toastr.success("","Record updated sucessfully.");
   				this.loadMain_Address(this.obj_personnel.global_indiv_id);
   				this.clearAddressData();
+  				// this.loadLog(this.obj_personnel.global_indiv_id);
+  				this.loadLog_V2(this.obj_personnel.global_indiv_id);
   			},(error)=>{
+  				settings.isNavigating = false;
   				toastr.clear();
   				console.log(error);
   				toastr.error(error, 'Error in updating address.');
@@ -422,6 +674,7 @@ export class main_contact
   		this.DialogService.open({ viewModel: DialogBox, model: { title:"Confirm remove.", message:"Are you sure you want to remove the contact?" } })
   			.whenClosed(response=>{
   				if(!response.wasCancelled){
+  					settings.isNavigating = true;
   					var query = EntityQuery().from("CONTACT_INFO_TRX")
   								.where("CONTACT_NO_ID", "==", contact.contact_no_id);
   					EntityManager().executeQuery(query).then((querySuccess)=>{
@@ -436,7 +689,10 @@ export class main_contact
   							toastr.success("","The contact was successfully removed.");
   							this.loadMain_Contact(this.obj_personnel.global_indiv_id);
   							this.clearContactData();
+  							// this.loadLog(this.obj_personnel.global_indiv_id);
+  							this.loadLog_V2(this.obj_personnel.global_indiv_id);
   						},(removeError)=>{
+  							settings.isNavigating = false;
   							toastr.clear();
   							toastr.error(removeError, "Error in removing contact.");
   						});
@@ -476,6 +732,7 @@ export class main_contact
   	
   	insertContact(){
 
+  		settings.isNavigating = true;
   		var dateToday = null;    
   		dateToday = new moment(new Date()).add(8, 'hours');
   		dateToday = new Date(dateToday);
@@ -504,7 +761,13 @@ export class main_contact
 				toastr.success("", "Contact successfully added.");
 				this.loadMain_Contact(this.obj_personnel.global_indiv_id);
 				this.clearContactData();
+				// this.loadLog(this.obj_personnel.global_indiv_id);
+				this.loadLog_V2(this.obj_personnel.global_indiv_id);
   			}, (error)=>{
+  				settings.isNavigating = false;
+  				if(Contact != null){
+  					Contact.entityAspect.setDeleted();
+  				}
   				toastr.clear();
   				toastr.error(error, "Error in adding contact.");
   			});
@@ -513,6 +776,8 @@ export class main_contact
   	}
 
   	updateContact(){
+
+  		settings.isNavigating = true;
   		var dateToday = null;    
   		dateToday = new moment(new Date()).add(8, 'hours');
   		dateToday = new Date(dateToday);
@@ -538,7 +803,10 @@ export class main_contact
   				toastr.success("", "The contact was successfully updated.");
 				this.loadMain_Contact(this.obj_personnel.global_indiv_id);
 				this.clearContactData();
-  			}, (errorSave)=>{
+				// this.loadLog(this.obj_personnel.global_indiv_id);
+				this.loadLog_V2(this.obj_personnel.global_indiv_id);
+  			}, (errorSave)=>{  				
+  				settings.isNavigating = false;
   				toastr.clear();
   				toastr.error(errorSave, "Error in updating contact.");
   				console.log(errorSave);
@@ -559,18 +827,31 @@ export class main_contact
 	btnAdd_EmailWeb(isEmail){
 
 		if(isEmail){
+			if(this.obj_personnel.CONTACT.modelInternet.email_addr==undefined || this.obj_personnel.CONTACT.modelInternet.email_addr.length==0){
+				toastr.clear();
+				toastr.error("", "No email specified.");
+				return;
+			}
+
 			if(this.validateEmail(this.obj_personnel.CONTACT.modelInternet.email_addr)){
 				//alert('email is valid.');
 				this.insertEmailWeb(isEmail);
 			}else{
 				//alert('email is not valid.');
+				toastr.error("Invalid email.");
 			}
 		}else{
+			if(this.obj_personnel.CONTACT.modelInternet.url==undefined || this.obj_personnel.CONTACT.modelInternet.url.length==0){
+				toastr.clear();
+				toastr.error("", "No URL specified.");
+				return;
+			}
 			// if(this.validateWeb(this.obj_personnel.CONTACT.modelInternet.url)){
 			// 	alert('url is valid');
 				this.insertEmailWeb(isEmail);
 			// }else{
 			// 	alert('url is invalid.');
+			// 	toastr.error("Invalid URL.");
 			// }
 		}
 	}
@@ -580,6 +861,7 @@ export class main_contact
 		this.DialogService.open({ viewModel: DialogBox, model: { title:"Confirm remove.", message:"Are you sure you want to remove the "+(isEmail?"Email address":"website url")+"?" } })
   			.whenClosed(response=>{
   				if(!response.wasCancelled){
+  					settings.isNavigating = true;
   					var query = EntityQuery().from("INTERNET_TRX")
   								.where("INTERNET_ID", "==", internet_id);
   					EntityManager().executeQuery(query).then((querySuccess)=>{
@@ -595,6 +877,7 @@ export class main_contact
   							this.loadMain_EmailWeb(this.obj_personnel.global_indiv_id);
   							this.clearEmailWebData();
   						},(removeError)=>{
+  							settings.isNavigating = false;
   							toastr.clear();
   							toastr.error(removeError, "Error in removing "+(isEmail?"Email address":"website url")+" .");
   						});
@@ -610,6 +893,7 @@ export class main_contact
 		this.DialogService.open({ viewModel: DialogBox, model: { title:"Confirm remove all.", message:"Are you sure you want to remove all the "+(isEmail?"Email address":"website url")+"?" } })
   			.whenClosed(response=>{
   				if(!response.wasCancelled){
+  					settings.isNavigating = true;
   					var pred1 = breeze.Predicate.create("GLOBAL_ID", "==", this.obj_personnel.global_indiv_id);
   					var pred2 = breeze.Predicate.create("EMAIL_FL", "==", isEmail?1:0);
   					var finalPred = breeze.Predicate.and([pred1, pred2]);
@@ -631,6 +915,7 @@ export class main_contact
   							this.loadMain_EmailWeb(this.obj_personnel.global_indiv_id);
   							this.clearEmailWebData();
   						},(removeError)=>{
+  							settings.isNavigating = false;
   							toastr.clear();
   							toastr.error(removeError, "Error in removing "+(isEmail?"Email address":"website url")+" .");
   						});
@@ -642,6 +927,8 @@ export class main_contact
 	}
 
 	insertEmailWeb(isEmail){
+
+		settings.isNavigating = true;
 		var dateToday = null;    
   		dateToday = new moment(new Date()).add(8, 'hours');
   		dateToday = new Date(dateToday);
@@ -668,7 +955,15 @@ export class main_contact
 				toastr.success("", "The "+(isEmail?"Email":"Website")+ " successfully added.");
 				this.loadMain_EmailWeb(this.obj_personnel.global_indiv_id);
 				this.clearEmailWebData();
+				// this.loadLog(this.obj_personnel.global_indiv_id);
+				this.loadLog_V2(this.obj_personnel.global_indiv_id);
 			}, (errorSave)=>{
+
+				settings.isNavigating = false;
+				if(entity != null){
+					entity.entityAspect.setDeleted();
+				}
+
 				toastr.clear();
 				toastr.success(errorSave, "Error in saving "+(isEmail?"Email.":"Website."));
 			});

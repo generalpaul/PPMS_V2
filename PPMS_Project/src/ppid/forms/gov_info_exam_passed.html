@@ -1,0 +1,114 @@
+<template>
+	<div style="height: 550px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">
+			<tr class="backroundTab">
+				<td colspan="3">
+					<div>
+						<h5 style="margin: 10px; text-align: left; color: white;">Government Exam Passed</h5>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<table style="width: 100%;">
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Exam*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.GOVERNMENT_EXAM.model.exam_cd" disabled.bind="_disableForm" tabindex="1">
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.EXAM" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>							
+							<td style="width: 120px; vertical-align: top; padding-top: 4px;" class="text-left">Remarks</td>
+							<td>
+								<textarea style="overflow-y: scroll; resize: none; width: 100%;" value.bind="obj_personnel.GOVERNMENT_EXAM.model.remarks" tabindex="3" disabled.bind="_disableForm" ></textarea>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td colspan="1" style="vertical-align: top;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Rating/Grade (%)*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.GOVERNMENT_EXAM.model.rating_grade" tabindex="2" disabled.bind="_disableForm" keypress.trigger="DigitOnly($event)" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Date*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="exam_dt" value.bind="obj_personnel.GOVERNMENT_EXAM.model.exam_dt" tabindex="4" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnAdd" click.trigger="btnAdd()">Add</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnSave" click.trigger="validate()">Save</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="clearField()">Clear/Reset</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div style="height: 250px; overflow-y: scroll;">
+						<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+							<thead style="display: table-header-group;">
+								<tr>
+									<td class="colorCell">Exam Name</td>
+									<td class="colorCell">Rating/Grade (%)</td>
+									<td class="colorCell">Date Taken</td>
+									<td class="colorCell">Remarks</td>								
+									<td class="colorCell"></td>
+									<td class="colorCell"></td>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr repeat.for="item of obj_personnel.GOVERNMENT_EXAM.list">
+									<td>${item.exam_nm}</td>
+									<td>${item.rating_grade}</td>
+									<td>${item.exam_dt}</td>
+									<td>${item.remarks}</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnEdit(item)" disabled.bind="_disableTable" >-</button>
+									</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnRemove(item)" disabled.bind="_disableTable">X</button>
+									</td>
+								</tr>								
+								<tr if.bind="obj_personnel.GOVERNMENT_EXAM.list == null || obj_personnel.GOVERNMENT_EXAM.list.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${lblCreatedBy}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${lblUpdatedBy}</b>
+							</td>							
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</template>

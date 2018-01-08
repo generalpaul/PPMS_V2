@@ -13,8 +13,10 @@ export class App {
       { route: 'group_individual', name: 'group_individual', moduleId: 'group_individual', nav: true, title:'Talent Groups' },
       { route: 'actual_cost', name: 'actual_cost', moduleId: 'ppfcs/actual_cost/actual_cost', nav: true, title:'Actual Cost' },
       { route: 'buh', name: 'buh', moduleId: 'buh', nav: true, title:'BUH' },
-      { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information Database' },
-      { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title:'Utilization' }
+      { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information' },
+      { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title:'Utilization' },
+      { route: 'talent_search', name: 'talent_search', moduleId: 'ppid/talent_search/talent_search', nav: true, title:'Talent Search' },
+      { route: 'ppid_group', name: 'ppid_group', moduleId: 'ppid/ppid_group', nav: true, title: 'PPID GROUP'}
     ]);
 
     this.router = router;

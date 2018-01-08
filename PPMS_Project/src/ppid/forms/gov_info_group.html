@@ -1,0 +1,32 @@
+<template>
+	<require from="converters/datepattern"></require>
+	<require from="./gov_info_group_main"></require>
+	<!-- <require from="./gov_info_exam_passed"></require> -->
+	<require from="./gov_info_criminal_rec"></require>
+	<div style="margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center" class="text-center divBackground" >
+		<ul class="nav nav-tabs backroundTab" role="tablist" style="width:100%;height:38px;">
+			<li role="presentation" class="active" id="gov_tab0" ><a href="#gov_info_main" aria-controls="gov_info_main" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_GovInfo(0)">Government Information</a></li>
+			<!-- <li role="presentation" id="gov_tab1" ><a href="#gov_exam_passed" aria-controls="gov_exam_passed" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_GovInfo(1)" >Government Exam Passed</a></li> -->
+			<li role="presentation" id="gov_tab2"><a href="#gov_criminal_rec" aria-controls="gov_criminal_rec" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_GovInfo(2)" >Criminal / Civil / Labor and administrative case</a></li>
+        </ul>
+		
+		<div class='tab-content' id="gov_info_tabs">
+			<div role="tabpanel" class="tab-pane active color1" id="gov_info_main"  style="height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;">
+				<br/>
+				<gov_info_group_main></gov_info_group_main>
+			</div>
+			
+			<!-- <div role="tabpanel" class="tab-pane color1" id="gov_exam_passed"  style="height:550px; margin-left:auto; margin-right:auto;">
+				<br/>
+				<gov_info_exam_passed></gov_info_exam_passed>				
+			</div> -->
+			
+			<div role="tabpanel" class="tab-pane color1" id="gov_criminal_rec"  style="height:550px; margin-left:auto; margin-right:auto; overflow: scroll;">
+				<br/>
+				<gov_info_criminal_rec></gov_info_criminal_rec>
+				<!-- <img src.bind="_404_img" style="width: 100%; height: 100%;"> -->
+			</div>
+		</div>
+		
+	</div>
+</template>

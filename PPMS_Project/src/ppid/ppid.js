@@ -6,6 +6,7 @@ import {DialogService} from 'aurelia-dialog';
 import {ppid_search} from "./modals/ppid_search";
 import {EntityManager,EntityQuery} from '../entity-manager-factory'; 
 import {getLookups} from '../masterfiles';
+import settings from 'settings';
 
 @inject(DialogService, obj_personnel)
 export class ppid
@@ -22,9 +23,14 @@ export class ppid
 		this.obj_personnel.OBSERVERS.tab_changed.length=0;
 		this.obj_personnel.OBSERVERS.maintab_contact_clicked.length=0;
 		this.obj_personnel.OBSERVERS.maintab_education_clicked.length=0;
-		this.obj_personnel.OBSERVERS.govinfo_main_clicked.length=0;
-		this.obj_personnel.OBSERVERS.company_main_clicked.length=0;
+		this.obj_personnel.OBSERVERS.maintab_skills_clicked.length=0;
+		this.obj_personnel.OBSERVERS.maintab_language_clicked.length=0;
+		this.obj_personnel.OBSERVERS.relative_tab_changed.length=0;
+		this.obj_personnel.OBSERVERS.govinfo_tab_changed.length=0;
+		this.obj_personnel.OBSERVERS.company_tab_changed.length=0;
+		this.obj_personnel.OBSERVERS.award_training_tab_changed.length=0;
 		this.obj_personnel.OBSERVERS.clear_ppid.length=0;
+		this.obj_personnel.global_indiv_id = "";
 		this.obj_personnel.HEADER = {
     		citizenship:[],
     		group:[]
@@ -36,6 +42,8 @@ export class ppid
 
 	LoadDropdown()
 	{
+
+        settings.isNavigating = true;
 		// var _query = EntityQuery().from('GLOBAL_GRP_MSTR')
 		// 		.orderBy('GROUP_NAME')
 		// 		.select('GLOBAL_GRP_ID, GROUP_NAME');
@@ -76,7 +84,7 @@ export class ppid
 			this.obj_personnel.LANGUAGE.length=0;
 			this.obj_personnel.STATUS.length=0;
 			this.obj_personnel.POSITION.length=0;
-			this.obj_personnel.AWARD.length=0;
+			this.obj_personnel.AWARD_HEAD.length=0;
 			this.obj_personnel.TRAINING.length=0;
 			this.obj_personnel.TAX_EXEMPT.length=0;
 			this.obj_personnel.INPUT_TAX.length=0;
@@ -88,6 +96,8 @@ export class ppid
 			this.obj_personnel.PROFESSIONAL_TYPE.length=0;
 			this.obj_personnel.CESSATION.length=0;
 			this.obj_personnel.TARGET_MARKET.length=0;
+			this.obj_personnel.INACTIVE_REASON.length=0;
+			this.obj_personnel.RATING.length=0;
 
 			getLookups().REFERENCE_CD_MSTR.forEach((item)=>{
 				switch(item.REF_GRP_CD){
@@ -131,7 +141,7 @@ export class ppid
 											text: item.REF_DESC
 										});
 										break;
-					case "AWARD_CD": 	this.obj_personnel.AWARD.push({
+					case "AWARD_CD": 	this.obj_personnel.AWARD_HEAD.push({
 											value: item.REF_CD,
 											text: item.REF_DESC
 										});
@@ -191,7 +201,15 @@ export class ppid
 													text: item.REF_DESC
 												});
 												break;
-
+					case "INACTIVE_REASON": 	this.obj_personnel.INACTIVE_REASON.push({
+													value: item.REF_CD,
+													text: item.REF_DESC
+												});
+												break;
+					case "RATING_CD": 	this.obj_personnel.RATING.push({
+											value: item.REF_CD,
+											text: item.REF_DESC
+										});
 				}
 			});
 
@@ -232,7 +250,7 @@ export class ppid
 			this.obj_personnel.LANGUAGE.sort(this.OrderByText);
 			this.obj_personnel.STATUS.sort(this.OrderByText);
 			this.obj_personnel.POSITION.sort(this.OrderByText);
-			this.obj_personnel.AWARD.sort(this.OrderByText);
+			this.obj_personnel.AWARD_HEAD.sort(this.OrderByText);
 			this.obj_personnel.TRAINING.sort(this.OrderByText);
 			this.obj_personnel.PERMIT.sort(this.OrderByText);
 			this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
@@ -243,7 +261,8 @@ export class ppid
 			this.obj_personnel.CESSATION.sort(this.OrderByText);
 			this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
 			this.obj_personnel.COMPANY.sort(this.OrderByText);
-			
+			this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
+			settings.isNavigating = false;
 		}
 
 		var _query = EntityQuery().from('COUNTRY_MSTR')
@@ -346,6 +365,83 @@ export class ppid
 			toastr.error(failed,"Error in loading Bank dropdown");
 		});
 
+		_query = EntityQuery().from("PROVINCE_MSTR")
+				.orderBy("PROVINCE_DESC");
+		EntityManager().executeQuery(_query).then((success)=>{
+			var tmp=[];
+			_.each(success.results, (r)=>{
+				tmp.push({
+					text: r.PROVINCE_DESC,
+					value: r.PROVINCE_CD,
+					group: r.REGION_CD
+				});
+			});
+			this.obj_personnel.PROVINCE = tmp;
+		}, (error)=>{
+			toastr.error(error, "Error in loading Province dropdown.");
+		});
+
+		_query = EntityQuery().from("RELATIVE_MSTR")
+				.orderBy("RELATIVE_DESC");
+		EntityManager().executeQuery(_query).then((s)=>{
+			var tmp = [];
+
+			_.each(s.results, (res)=>{
+
+				var relationship = {
+					value: res.RELATIVE_CD,
+					text: res.RELATIVE_DESC,
+					group: res.RELATIONSHIP_CD
+				};
+				tmp.push(relationship);
+				
+			});
+			this.obj_personnel.RELATIONSHIP = tmp;
+		});
+
+		_query = EntityQuery().from("AWARD_BODY_MSTR")
+				 .orderBy("SPONSOR_NAME");
+		EntityManager().executeQuery(_query).then((s)=>{
+			var tmp=[];
+			_.each(s.results, (res)=>{
+				var award_body = {
+					value: res.AWARD_BODY_CD,
+					text: res.SPONSOR_NAME
+				};
+				tmp.push(award_body);
+			});
+			this.obj_personnel.AWARD_BODY = tmp;
+		});
+
+		_query = EntityQuery().from("SKILL_TALENT_MSTR")
+				 .orderBy("SKILL_TALENT_DESC");
+		EntityManager().executeQuery(_query).then((s)=>{
+			var tmp=[];
+			_.each(s.results, (res)=>{
+				var skill_talent = {
+					value: res.SKILL_TALENT_CD,
+					text: res.SKILL_TALENT_DESC,
+					group: res.SKILL_TALENT_TYPE_CD
+				};
+				tmp.push(skill_talent);
+			});	
+			this.obj_personnel.SKILL_TALENT = tmp;
+		});
+
+		_query = EntityQuery().from("RATING_MSTR")
+				 .orderBy("RATING_DESC");
+		EntityManager().executeQuery(_query).then((s)=>{
+			var tmp=[];
+			_.each(s.results, (res)=>{
+				var rating_mstr = {
+					value: res.RATING_CD,
+					text: res.RATING_DESC
+				};
+				tmp.push(rating_mstr);
+			});	
+			this.obj_personnel.LANGUAGE_RATING = tmp;
+		});
+
 	}
 
 	OrderByText(a, b){
@@ -374,7 +470,7 @@ export class ppid
 		}).whenClosed(response=>{
 			if(!response.wasCancelled)
 			{
-				console.log(response.output);
+				// console.log(response.output);
 				//var arr = response.output.split('|');
 				//var global_id = arr[0];
 				//var tin = arr[1];
@@ -387,7 +483,7 @@ export class ppid
 				//alert("Global_id:"+global_id+"\nTin:"+tin+"\nGroup:"+group+"\nLast Name:"+last_name+"\nFirst Name:"+first_name+"\nNick Name:"+nick_name+"\nProject Name:"+project_name+"\nCountry:"+country);
 			}else
 			{
-				console.log('reponse was cancelled.');
+				// console.log('reponse was cancelled.');
 			}
 		});
 	}

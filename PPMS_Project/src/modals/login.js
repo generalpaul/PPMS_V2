@@ -66,7 +66,12 @@ export class login {
         	this._user_content.push({});
 
             found.results.forEach((all) => {
+            this._user_content.push(all);
               
+			// if(all.ROLE_CD==null || all.ROLE_CD==undefined)
+			// {
+			// 	this._user_content.push(all);
+			// }
 			//if(all.ROLE_CD==null || all.ROLE_CD==undefined)
 			//{
                var found = this._user_content.find((all2=>all2.USER_ID==all.USER_ID));
@@ -174,6 +179,7 @@ export class login {
 
 	tryLogin() 
     {
+
         //$.ajax({
         //    type: "POST",
         //    url: "http://localhost:30313/home/Check_User",
@@ -410,5 +416,21 @@ export class login {
             
         }
     }
+
+    // validateDate(){
+    //     var StartDt = new Date($("#startDt").val());
+    //     var EndDt = new Date($("#EndDt").val());
+    //     var dateToday = new Date();
+    //     if(StartDt < dateToday ){
+    //         toastr.clear();
+    //         toastr.error("Start date cannot be less than date today.");
+    //     }
+
+    //     if(StartDt>EndDt){
+    //         toastr.clear();
+    //         toastr.error("End date cannot be greater than date today");
+    //     }
+
+    // }
 
 }

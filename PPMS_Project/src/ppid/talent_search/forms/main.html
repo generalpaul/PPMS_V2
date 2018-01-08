@@ -1,0 +1,358 @@
+<template>
+	<require from="converters/datepattern"></require>
+	<require from="./main_contact"></require>
+	<require from="./main_educational"></require>
+	<div style="margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center;" class="text-center divBackground" >
+		<ul class="nav nav-tabs backroundTab" role="tablist" style="width:100%;height:38px;">
+			<li role="presentation" class="active" ><a href="#main_main" aria-controls="main_main" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(0)">Employee Personal Info</a></li>
+			<li role="presentation" ><a href="#main_contact" aria-controls="main_contact" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(1)" disabled.bind="obj_personnel.global_indiv_id.length==0">Contact</a></li>
+			<li role="presentation" ><a href="#main_educ_achievement" aria-controls="main_educ_achievement" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(2)" disabled.bind="obj_personnel.global_indiv_id.length==0">Educational Achievement</a></li>
+			<li role="presentation" style=""><a href="#main_char_interest" aria-controls="main_char_interest" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(3)" disabled.bind="obj_personnel.global_indiv_id.length==0" >Characteristic/Interest</a></li>
+			<li role="presentation" style=""><a href="#main_skills_talent" aria-controls="main_skills_talent" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(4)" disabled.bind="obj_personnel.global_indiv_id.length==0" >Skills/Talent</a></li>
+			<li role="presentation" style=""><a href="#main_lang_dialect" aria-controls="main_lang_dialect" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(5)" disabled.bind="obj_personnel.global_indiv_id.length==0" >Language/Dialect</a></li>
+			
+		</ul>
+		
+		<div class='tab-content'>
+			<div role="tabpanel" class="tab-pane active color1" id="main_main"  style="height:550px; margin-left:auto; margin-right:auto;" >
+				<br/>
+
+				<table style="margin-left: 25px;">
+					<tbody>
+						<tr>
+							<td style="vertical-align: top;">
+								<table>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Country*</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.country_cd" disabled.bind="obj_personnel.editing_status=='EDIT' || _disableForm" tabindex="1">
+												<option value=""></option>
+												<option repeat.for="item of obj_personnel.COUNTRY" value.bind="item.value">${item.text}</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left" >Surname*</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.last_name" disabled.bind="_disableForm" tabindex="3" />
+										</td>
+									</tr>
+									<tr style="height:35px;">
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Gender*</td>
+										<td>
+											<label repeat.for="g of gender" style="margin-left: 10px; margin-right: 10px;">
+												<input type="radio" name="_gender" value.bind="g" checked.bind="selectedGender" disabled.bind="_disableForm" tabindex="6" />${g}
+											</label>
+											<!--<span style="margin: 20px;">
+												<input type="radio" name="gender" value.bind="M" checked.bind="selectedGender" />Male 
+											</span>
+											<span>
+												<input type="radio" name="gender" value.bind="F" checked.bind="selectedGender" />Female
+											</span>-->
+
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Birth place</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.birth_place" disabled.bind="_disableForm" tabindex="9">
+												<option></option>
+												<option repeat.for="item of obj_personnel.LOCATIONS" value.bind="item.LOCATION_CD">${item.LOCATION_DESC}</option>
+											</select>											
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Civil Status</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.civil_status" disabled.bind="_disableForm" tabindex="12">
+												<option></option>
+												<option repeat.for="item of obj_personnel.CIVIL_STATUS" value.bind="item.value">${item.text}</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Country Base</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.country_base_cd" disabled.bind="_disableForm" tabindex="15">
+												<option></option>
+												<option repeat.for="item of obj_personnel.COUNTRY" value.bind="item.value">${item.text}</option>
+											</select>								
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Citizenship</td>
+										<td>											
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;" value.bind="selected_citizenship" class='ddCitizenship' disabled.bind="_disableForm" tabindex="18" id="citizenship">
+												<option value=""></option>
+												<option repeat.for="item of obj_personnel.CITIZENSHIP" value.bind="item.value">${item.text}</option>
+											</select>
+											<input type="button" value="+" class="btn btn-xs customButton" click.trigger="btnAdd_Citizenship()" disabled.bind="_disableForm" />
+										</td>
+									</tr>									
+									<tr>
+										<td colspan="2">											
+											<div style="height: 150px; overflow-y: scroll;">
+												<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+													<thead>
+														<tr>
+															<td class="colorCell">Citizenship Code</td>
+															<td class="colorCell">Citizenship</td>
+															<td class="colorCell">
+																<input type="button" value="x" class="btn btn-xs customButton" click.trigger="removeAllCitizenship()" disabled.bind="_disableForm" />
+															</td>
+														</tr>
+													</thead>
+													<tbody>
+														<tr repeat.for="citi of obj_personnel.HEADER.citizenship">
+															<td>${citi.value}</td>
+															<td>${citi.text}</td>
+															<td>
+																<input type="button" value="x" class="btn btn-xs customButton" click.trigger="removeCitizenship(citi)" />
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td style="vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;">
+								<table style="padding: 0px; margin: 0px;">								
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left" >Global ID</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;"  value.bind="obj_personnel.HEADER.global_indiv_id" readonly />
+										</td>
+									</tr>									
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name*</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.given_name" disabled.bind="_disableForm" tabindex="4" />
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Alias/NickName</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.alias" disabled.bind="_disableForm" tabindex="7" />
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Birth date*</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="birthDate" value.bind="obj_personnel.HEADER.birth_dt" disabled.bind="_disableForm" tabindex="10" />
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Religion*</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.religion_cd" disabled.bind="_disableForm" tabindex="13">
+												<option></option>
+												<option repeat.for="item of obj_personnel.RELIGION" value.bind="item.value">${item.text}</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">If Alien, ACR No.</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.acr_no" disabled.bind="_disableForm" tabindex="16" />
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Group Name(s)</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;" value.bind="selected_group" class="ddGroup" disabled.bind="_disableForm" tabindex="19">
+												<option value=""></option>
+												<option repeat.for="item of obj_personnel.GROUP" value.bind="item.value">${item.text}</option>
+											</select>
+											<input type="button" value="+" class="btn btn-xs customButton" click.trigger="btnAdd_Group()" disabled.bind="_disableForm" />
+											<!--<table>
+												<tr></tr>
+											</table>-->
+										</td>									
+									</tr>									
+									<tr>
+										<td colspan="2">
+											<div style="height: 150px; overflow-y: scroll;">
+												<table class="table table-hover table-condensed table-bordered table-striped" style="width: 300px;" ref="tblData">
+													<thead style="display: table-header-group;">
+														<tr>
+															<td class="colorCell">Group Code</td>
+															<td class="colorCell">Group Name</td>
+															<td class="colorCell">
+																<input type="button" value="x" class="btn btn-xs customButton" click.trigger="removeAllGroup()" disabled.bind="_disableForm" />
+															</td>
+														</tr>
+													</thead>
+													<tbody>
+														<tr repeat.for="grp of obj_personnel.HEADER.group">
+															<td>${grp.value}</td>
+															<td>${grp.text}</td>
+															<td>
+																<input type="button" value="x" class="btn btn-xs customButton" click.trigger="removeGroup(grp)" />
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td style="vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;" >
+								<table style="margin: 0px; padding: 0px;">												
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">TIN*</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.tin" disabled.bind="obj_personnel.editing_status=='EDIT' || _disableForm" tabindex="2" id="_tin" keypress.trigger="DigitOnly($event)" keyup.trigger="mask('_tin', '___-___-___-___')" />											
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left" >Middle Name*</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.middle_name" disabled.bind="_disableForm" tabindex="5" />
+										</td>
+									</tr>								
+									<tr>
+										<td style="width: 120px; vertical-align: middle; padding: 0px;" class="text-left">Mother's Maiden Name</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.mother_maiden_name" disabled.bind="_disableForm" tabindex="8" />
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Age</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  readonly value.bind="obj_personnel.HEADER.age" disabled.bind="_disableForm" tabindex="11" />
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Location Base</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.location_base_cd" disabled.bind="_disableForm" tabindex="14">
+												<option></option>
+												<option repeat.for="item of obj_personnel.LOCATIONS" value.bind="item.LOCATION_CD">${item.LOCATION_DESC}</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">STATUS</td>
+										<td>
+											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.status_cd" disabled.bind="_disableForm" tabindex="17">
+												<option repeat.for="status of obj_personnel.STATUS" value.bind="status.value">${status.text}</option>
+											</select>
+										</td>
+									</tr>
+									<tr hidden.bind="obj_personnel.HEADER.status_cd!='SUSPEND'">
+										<td colspan="2" class="text-center"><strong>Suspension Date</strong></td>
+									</tr>
+									<tr hidden.bind="obj_personnel.HEADER.status_cd!='SUSPEND'">
+										<td style="width: 120px; vertical-align: middle;" class="text-left">From</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionFrom" value.bind="obj_personnel.HEADER.suspension_start"/>
+										</td>
+									</tr>									
+									<tr hidden.bind="obj_personnel.HEADER.status_cd!='SUSPEND'">
+										<td style="width: 120px; vertical-align: middle;" class="text-left">To</td>
+										<td>
+											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionTo" value.bind="obj_personnel.HEADER.suspension_end"/>
+										</td>
+									</tr>	
+								</table>
+							</td>
+							<td style="vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;" >
+								<table>
+									<tr>
+										<td>
+										<!-- -   <img if.bind="cache_obj.USER.USER_ID!==undefined" src="/ViewFile/GetFile?fileName=abslogo_BIG.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}"/>  -->
+											<div style="width: 150px; height: 150px; border: dashed 2px black;">
+												<img src.bind="primary_img" style="height: 100%; width: 100%;">												
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div>
+												<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableSavePersonnel" click.trigger="btnUpload()">Add/Edit Photo</button>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div>
+					<h5>
+						( <strong>Note</strong> : * is required )
+					</h5>
+				</div>
+				<div>
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableSearchPersonnel" click.trigger="fnPersonnel('EDIT')">EDIT PERSONNEL</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableCreatePersonnel" click.trigger="fnPersonnel('CREATE')" >CREATE PERSONNEL</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableClearData" click.trigger="fnPersonnel('CLEAR')" >CLEAR/CANCEL</button>&nbsp;&nbsp;
+					<!--<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableResetData" click.trigger="fnPersonnel('RESET')">RESET/REFRESH</button>&nbsp;&nbsp;-->
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableSavePersonnel" click.trigger="fnPersonnel('SAVE')">SAVE PERSONNEL</button>&nbsp;&nbsp;
+
+				</div>
+
+				<br/>
+				<div>
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${obj_personnel.HEADER.created_by +' '+ obj_personnel.HEADER.created_dt}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${obj_personnel.HEADER.last_updated_by +' '+ obj_personnel.HEADER.last_updated_dt }</b>
+							</td>
+							<!-- <td>
+								LOGGED AS:
+							</td>
+							<td>
+								<strong>${obj_personnel.USER.USER_ID}</strong> 
+							</td> -->
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<div role="tabpanel" class="tab-pane color1" id="main_contact"  style="height:550px; margin-left:auto; margin-right:auto;  overflow-y: scroll;">
+				<br/>
+				<main_contact></main_contact>
+			</div>
+
+			<div role="tabpanel" class="tab-pane color1" id="main_educ_achievement"  style="height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll; ">
+				<br/>
+				<main_educational></main_educational>
+			</div>
+
+
+			<div role="tabpanel" class="tab-pane color1" id="main_char_interest"  style="width:980px;height:550px; margin-left:auto; margin-right:auto;">
+				<br/>
+				<img src.bind="_404_img" style="width: 100%; height: 100%;">
+			</div>
+
+
+			<div role="tabpanel" class="tab-pane color1" id="main_skills_talent"  style="width:980px;height:550px; margin-left:auto; margin-right:auto;">
+				<br/>
+				<img src.bind="_404_img" style="width: 100%; height: 100%;">
+			</div>
+
+
+			<div role="tabpanel" class="tab-pane color1" id="main_lang_dialect"  style="width:980px;height:550px; margin-left:auto; margin-right:auto;">
+				<br/>
+				<img src.bind="_404_img" style="width: 100%; height: 100%;">
+			</div>
+
+
+
+		</div>
+
+	</div>
+</template>

@@ -6,6 +6,10 @@ export class obj_personnel
     	citizenship:[],
     	group:[]
     };
+    GROUP_INFO = {
+    	model:{},
+    	members:[]
+    };
 	CONTACT={
 		status:"",
 		modelAddress:{},
@@ -23,12 +27,41 @@ export class obj_personnel
 		list:[]
 	};
 	CHARACTERISTIC=[];
-	SKILLS=[];
-	LANGUAGE_DIALECT=[];
-	MEDICAL_RECORD=[];
-	RELATIVE=[];
-	WORK_EXPERIENCE=[];
-	AWARDS=[];
+	SKILLS={
+		model:{},
+		list:[]
+	};
+	LANGUAGE_DIALECT={
+		model:{},
+		list:[]
+	};
+	MEDICAL_RECORD={
+		model:{},
+		list:[]
+	};
+	RELATIVE={
+		parents:{
+			mother:{},
+			father:{}
+		},
+		siblings:{
+			model:{},
+			list:[]
+		},
+		spouse:{},
+		emergency_contact:{
+			model:{},
+			list:[]
+		}
+	};
+	WORK_EXPERIENCE={
+		model:{},
+		list:[]
+	};
+	AWARD={
+		model:{},
+		list:[]
+	};
 	SEMINARS=[];
 	GOVERNMENT_INFO={
 		modelTaxAffidavit:{},
@@ -36,26 +69,49 @@ export class obj_personnel
 		tax_affidavit:[],
 		permits:[]
 	};
-	GOVERNMENT_EXAM=[];
-	CRIMINAL_RECORD=[];
-	COMPANY_SPECIFIC={
+	GOVERNMENT_EXAM={
 		model:{},
+		list:[]
+	};
+	CRIMINAL_RECORD={
+		civil:{
+			model:{},
+			list:[]
+		},
+		administrative:{
+			model:{},
+			list:[]
+		}
+	};
+	COMPANY_SPECIFIC={
+		model:{
+			personnel_bank:{}
+		},
 		list:[]
 	};
 	ENDORSEMENT=[];
 	IMAGE_BRANDING=[];
 	QUESTION_ANSWER=[];
+	CHARACTER_REF={
+		model:{},
+		list:[]
+	};
     USER={};
 	OBSERVERS={
 		ppid_dialog:[],
+		group_dialog:[],
 		tab_changed:[],
 		clear_ppid:[],
 		clear_log:[],
 		clear_login_modal:[],
 		maintab_contact_clicked:[],
 		maintab_education_clicked:[],
-		govinfo_main_clicked:[],
-		company_main_clicked:[]
+		maintab_skills_clicked:[],	
+		maintab_language_clicked:[],
+		company_tab_changed:[],
+		govinfo_tab_changed:[],
+		relative_tab_changed:[],
+		award_training_tab_changed:[]
 
 	};
 
@@ -74,7 +130,8 @@ export class obj_personnel
 	SCHOOLS=[];
 	LANGUAGE=[];
 	POSITION=[];
-	AWARD=[];
+	AWARD_HEAD=[];
+	AWARD_BODY=[];
 	TRAINING=[];
 	TAX_EXEMPT=[];
 	INPUT_TAX=[];
@@ -90,10 +147,16 @@ export class obj_personnel
 	DIVISION=[];
 	LOCATIONS_RNG=[];
 	CATEGORY=[];
-	JOB_CATEGORY=[];
+	JOB_GROUP=[];
 	JOB=[];
 	PAYROLL_GROUP=[];
 	BANK=[];
+	PROVINCE=[];
+	RELATIONSHIP =[];
+	INACTIVE_REASON = [];
+	SKILL_TALENT=[];
+	RATING=[];
+	LANGUAGE_RATING=[];
 
 
 	

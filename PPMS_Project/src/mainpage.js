@@ -27,25 +27,36 @@ export class mainpage {
     buhAccess = false;
     headerVisible = false;
     _application = [];
-    _application_desc = [{ ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' },
+    _application_desc = [
+        { ref: "PPI MAINTENANCE", desc: "PROGRAM PERSONNEL INFORMATION"},        
         { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
         { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
+<<<<<<< HEAD
         { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FEE CAPTURE SYSTEM' },
         { ref: 'UTILIZATION', desc: 'UTILIZATION'}
+=======
+        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
+        { ref: 'UTILIZATION', desc: 'UTILIZATION'},
+        // { ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' },
+        // { ref: "PPID_GROUP", desc: 'PROGRAM PERSONNEL INFORMATION DATABASE GROUP'}
+        
+>>>>>>> facb58e4ec09b242187aca72115571ef50624a37
     ];
-    _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+    _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', "PROGRAM PERSONNEL INFORMATION DATABASE", "PROGRAM PERSONNEL INFORMATION GROUP"];    
     _ppfcs_modules = [];
+    _ppi_modules=[];
 
-//    { APPLICATION_DESC: 'SPECIAL PROVISION MASTERLIST' },
-//{ APPLICATION_DESC: 'MAINTAINED FEE ADJUSTMENT' },
-//{ APPLICATION_DESC: 'BUDGET TEMPLATE PER JOB' },
-//{ APPLICATION_DESC: 'ADDTL FEE MAINTENANCE' },
-//{ APPLICATION_DESC: 'ALLOWED TAPING DAYS' },
-//{ APPLICATION_DESC: 'DOWNLOAD IPS FILE' }
+    //    { APPLICATION_DESC: 'SPECIAL PROVISION MASTERLIST' },
+    //{ APPLICATION_DESC: 'MAINTAINED FEE ADJUSTMENT' },
+    //{ APPLICATION_DESC: 'BUDGET TEMPLATE PER JOB' },
+    //{ APPLICATION_DESC: 'ADDTL FEE MAINTENANCE' },
+    //{ APPLICATION_DESC: 'ALLOWED TAPING DAYS' },
+    //{ APPLICATION_DESC: 'DOWNLOAD IPS FILE' }
 
     _roles = [];
     _application_on = true;
+    _ppi_off = true;
     constructor(toastr, cache_obj, dialogService, Router) { //multiObserver
 
         this._cache_obj = cache_obj;
@@ -68,32 +79,40 @@ export class mainpage {
 
                 if (_.isEmpty(this._cache_obj._ACCESS))
                 {
-                  $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
-                      "USER_ID": this._cache_obj.USER.USER_ID,
-                      "HASH": this._cache_obj.USER.HASH
-                  }).done((response) => {
+                    $.post(settings.serviceNameBase + "/UserAccess/User_Access", {
+                        "USER_ID": this._cache_obj.USER.USER_ID,
+                        "HASH": this._cache_obj.USER.HASH
+                    }).done((response) => {
 
-                      this._cache_obj._ACCESS = response;
+                        // console.log(response);
+                        this._cache_obj._ACCESS = response;                      
 
-                      
+                        this._application = this._cache_obj._ACCESS.APPLICATION;
+                        for (var i = 0; i < this._application.length; i++) {
+                            for (var j = 0; j < this._application_desc.length; j++) {
+                                if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {
+                                    this._application[i].APPLICATION_DESC = this._application_desc[j].desc;
+                                }
+                            }
+                            if (this._remove.includes(this._application[i].APPLICATION_DESC))
+                            { 
+                                switch(this._application[i].APPLICATION_DESC){
+                                    case "PROGRAM BUDGET TEMPLATE":
+                                    case "ACTUALS COST PROCESSING":
+                                        this._ppfcs_modules.push(this._application[i]);
+                                        break;
+                                    case "PROGRAM PERSONNEL INFORMATION DATABASE":
+                                    case "PROGRAM PERSONNEL INFORMATION GROUP":
+                                        this._ppi_modules.push(this._application[i]);
+                                        break;
+                                }
+                               // this._ppfcs_modules.push(this._application[i]);
+                            }
+                        }
+                        console.log(this._ppi_modules);
 
-                      this._application = this._cache_obj._ACCESS.APPLICATION;
-
-                      for (var i = 0; i < this._application.length; i++) {
-                          for (var j = 0; j < this._application_desc.length; j++) {
-                              if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {
-                                  this._application[i].APPLICATION_DESC = this._application_desc[j].desc;
-                              }
-                          }
-
-                          if (this._remove.includes(this._application[i].APPLICATION_DESC))
-                          {
-                              this._ppfcs_modules.push(this._application[i]);
-                          }
-                      }
-
-                      this.fnCheckAccess();
-                  });
+                        this.fnCheckAccess();
+                    });
                 }
                 else
                 {
@@ -107,9 +126,20 @@ export class mainpage {
                         }
 
                         if (this._remove.includes(this._application[i].APPLICATION_DESC)) {
-                            this._ppfcs_modules.push(this._application[i]);
+                            // this._ppfcs_modules.push(this._application[i]);
+                            switch(this._application[i].APPLICATION_DESC){
+                                    case "PROGRAM BUDGET TEMPLATE":
+                                    case "ACTUALS COST PROCESSING":
+                                        this._ppfcs_modules.push(this._application[i]);
+                                        break;
+                                    case "PROGRAM PERSONNEL INFORMATION DATABASE":
+                                    case "PROGRAM PERSONNEL INFORMATION GROUP":
+                                        this._ppi_modules.push(this._application[i]);
+                                        break;
+                                }
                         }
                     }
+
 
 
                     this.fnCheckAccess();
@@ -183,6 +213,10 @@ export class mainpage {
             this._roles= this._cache_obj._ACCESS.ROLES.filter((all) => all.APPLICATION_ID == item.APPLICATION_ID);
             this._application_on = false;
         }
+        else if(item.APPLICATION_DESC == "PROGRAM PERSONNEL INFORMATION"){
+            this._roles = this._cache_obj._ACCESS.ROLES.filter((all)=> all.APPLICATION_ID == item.APPLICATION_ID);
+            this._ppi_off = false;
+        }
         else
         {
             // console.log(item.APPLICATION_URL.replace('.ASPX', ''));
@@ -192,20 +226,29 @@ export class mainpage {
 
     }
 
-    rolesClick(item) {
+    rolesClick(item, group) {
         //console.log(item.APPLICATION_URL);
-        if (item.APPLICATION_URL == "PROGRAMBUDGETTEMPLATE.ASPX")
-        {
-            this.router.navigateToRoute('mainview');
-        }
-        else if (item.APPLICATION_URL == "ACTUALSCOSTPROCESSING.ASPX") {
-            this.router.navigateToRoute('actual_cost');
+        if(group == "PPFCS"){
+            if (item.APPLICATION_URL == "PROGRAMBUDGETTEMPLATE.ASPX")
+            {
+                this.router.navigateToRoute('mainview');
+            }
+            else if (item.APPLICATION_URL == "ACTUALSCOSTPROCESSING.ASPX") {
+                this.router.navigateToRoute('actual_cost');
+            }
+        }else if(group == "PPI"){
+            if(item.APPLICATION_URL == "PPID.ASPX"){
+                this.router.navigateToRoute("ppid");
+            }else if(item.APPLICATION_URL == "PPID_GROUP.ASPX"){
+                this.router.navigateToRoute("ppid_group");
+            }
         }
     }
 
     applicationOn()
     {
         this._application_on = true;
+        this._ppi_off = true;
     }
 
     fnCheckAccess()
@@ -213,15 +256,20 @@ export class mainpage {
          
         if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
         
-        var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', 'PROGRAM PERSONNEL INFORMATION DATABASE'];
+        var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', 'PROGRAM PERSONNEL INFORMATION'];
 
         var varFound = this._cache_obj._ACCESS.APPLICATION.filter(all => filterMenu.includes(all.APPLICATION_DESC));
         if (varFound.length == 1)
         {
             if (varFound[0].APPLICATION_DESC == 'PROGRAM BUDGET TEMPLATE')
                 this.router.navigateToRoute('mainview');
+<<<<<<< HEAD
             else if (varFound[0].APPLICATION_DESC == 'PROGRAM PERSONNEL INFORMATION DATABASE')
                 this.router.navigateToRoute('ppid');
+=======
+            else if (varFound[0].APPLICATION_DESC == 'PROGRAM PERSONNEL INFORMATION')
+                this.router.navigateToRoute('mainpage');
+>>>>>>> facb58e4ec09b242187aca72115571ef50624a37
             else
                 this.router.navigateToRoute('actual_cost');
         }
