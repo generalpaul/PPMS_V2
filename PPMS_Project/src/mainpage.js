@@ -32,16 +32,10 @@ export class mainpage {
         { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
         { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
-<<<<<<< HEAD
         { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FEE CAPTURE SYSTEM' },
         { ref: 'UTILIZATION', desc: 'UTILIZATION'}
-=======
-        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
-        { ref: 'UTILIZATION', desc: 'UTILIZATION'},
         // { ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' },
         // { ref: "PPID_GROUP", desc: 'PROGRAM PERSONNEL INFORMATION DATABASE GROUP'}
-        
->>>>>>> facb58e4ec09b242187aca72115571ef50624a37
     ];
     _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', "PROGRAM PERSONNEL INFORMATION DATABASE", "PROGRAM PERSONNEL INFORMATION GROUP"];    
     _ppfcs_modules = [];
@@ -263,13 +257,10 @@ export class mainpage {
         {
             if (varFound[0].APPLICATION_DESC == 'PROGRAM BUDGET TEMPLATE')
                 this.router.navigateToRoute('mainview');
-<<<<<<< HEAD
             else if (varFound[0].APPLICATION_DESC == 'PROGRAM PERSONNEL INFORMATION DATABASE')
                 this.router.navigateToRoute('ppid');
-=======
             else if (varFound[0].APPLICATION_DESC == 'PROGRAM PERSONNEL INFORMATION')
                 this.router.navigateToRoute('mainpage');
->>>>>>> facb58e4ec09b242187aca72115571ef50624a37
             else
                 this.router.navigateToRoute('actual_cost');
         }

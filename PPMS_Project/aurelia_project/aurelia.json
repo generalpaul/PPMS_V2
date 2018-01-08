@@ -135,11 +135,7 @@
             "path": "../node_modules/aurelia-dialog/dist/amd",
             "main": "aurelia-dialog"
           },
-<<<<<<< HEAD
            {
-=======
-          {
->>>>>>> facb58e4ec09b242187aca72115571ef50624a37
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
@@ -148,15 +144,6 @@
             "name": "aurelia-templating-router",
             "path": "../node_modules/aurelia-templating-router/dist/amd",
             "main": "aurelia-templating-router"
-<<<<<<< HEAD
-=======
-          },
-          {
-            "name": "aurelia-testing",
-            "path": "../node_modules/aurelia-testing/dist/amd",
-            "main": "aurelia-testing",
-            "env": "dev"
->>>>>>> facb58e4ec09b242187aca72115571ef50624a37
           }
         ]
       },
@@ -195,7 +182,6 @@
             "path": "../node_modules/breeze-client",
             "main": "breeze.debug"
           },
-<<<<<<< HEAD
           "text",
          
           {
@@ -204,9 +190,6 @@
             "main": "aurelia-testing",
             "env": "dev"
           }
-=======
-          "text"
->>>>>>> facb58e4ec09b242187aca72115571ef50624a37
         ]
       }
 
