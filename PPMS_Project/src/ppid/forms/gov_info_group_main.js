@@ -9,13 +9,14 @@ import moment from 'moment';
 import settings from 'settings';
 
 @inject(obj_personnel, toastr, DialogService)
-export class gov_info_main{
-
+export class gov_info_group_main{
+	
 	obj_personnel = null;
 	alreadyLoaded = false;
 	_disableOtherGovernmentInfo = true;
 	lblCreatedBy = null;
 	lblUpdatedBy = null;
+
 
 	constructor(obj_personnel, toastr, DialogService){
 
@@ -65,6 +66,7 @@ export class gov_info_main{
 
 	}
 
+
 	formatDate(strDate){
 		if(strDate == null || strDate.length == 0)
 			return "";
@@ -103,42 +105,43 @@ export class gov_info_main{
 	load_TaxInformation(global_id){		
 
 		settings.isNavigating = true;
-		var query = EntityQuery().from("GLOBAL_INDIV_MSTR")
-					.where("GLOBAL_INDIV_ID", "==", global_id);
-		EntityManager().executeQuery(query).then((querySuccess)=>{
+		this.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd = "--";
+		// var query = EntityQuery().from("GLOBAL_INDIV_MSTR")
+		// 			.where("GLOBAL_INDIV_ID", "==", global_id);
+		// EntityManager().executeQuery(query).then((querySuccess)=>{
 			
-			this.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd = querySuccess.results[0].TAX_EXEMPT_CD;
-			this.obj_personnel.GOVERNMENT_INFO.sss_no = querySuccess.results[0].SSS_NO;
-			this.obj_personnel.GOVERNMENT_INFO.pagibig_no = querySuccess.results[0].PAGIBIG_NO;
-			this.obj_personnel.GOVERNMENT_INFO.philhealth_no = querySuccess.results[0].PHILHEALTH_NO;
-			this.obj_personnel.GOVERNMENT_INFO.national_id = querySuccess.results[0].NATIONAL_ID;
-			this.obj_personnel.GOVERNMENT_INFO.voters_id = querySuccess.results[0].VOTERS_ID;
-			if(querySuccess.results[0].CREATED_BY != null){
-				var _user = querySuccess.results[0].CREATED_BY;
-				var _date = moment.utc(querySuccess.results[0].CREATED_DT).format("MM/DD/YYYY hh:mm A");
-				this.lblCreatedBy = _user + ' '+ _date;				
-			}else{
-				this.lblCreatedBy = "";
-			}
+		// 	this.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd = querySuccess.results[0].TAX_EXEMPT_CD;
+		// 	this.obj_personnel.GOVERNMENT_INFO.sss_no = querySuccess.results[0].SSS_NO;
+		// 	this.obj_personnel.GOVERNMENT_INFO.pagibig_no = querySuccess.results[0].PAGIBIG_NO;
+		// 	this.obj_personnel.GOVERNMENT_INFO.philhealth_no = querySuccess.results[0].PHILHEALTH_NO;
+		// 	this.obj_personnel.GOVERNMENT_INFO.national_id = querySuccess.results[0].NATIONAL_ID;
+		// 	this.obj_personnel.GOVERNMENT_INFO.voters_id = querySuccess.results[0].VOTERS_ID;
+		// 	if(querySuccess.results[0].CREATED_BY != null){
+		// 		var _user = querySuccess.results[0].CREATED_BY;
+		// 		var _date = moment.utc(querySuccess.results[0].CREATED_DT).format("MM/DD/YYYY hh:mm A");
+		// 		this.lblCreatedBy = _user + ' '+ _date;				
+		// 	}else{
+		// 		this.lblCreatedBy = "";
+		// 	}
 
-			if(querySuccess.results[0].LAST_UPDATED_BY != null){
-				var _user = querySuccess.results[0].LAST_UPDATED_BY;
-				var _date = moment.utc(querySuccess.results[0].LAST_UPDATED_DT).format("MM/DD/YYYY hh:mm A");
-				this.lblUpdatedBy = _user+ ' ' + _date;
-			}else{
-				this.lblUpdatedBy = "";
-			}
+		// 	if(querySuccess.results[0].LAST_UPDATED_BY != null){
+		// 		var _user = querySuccess.results[0].LAST_UPDATED_BY;
+		// 		var _date = moment.utc(querySuccess.results[0].LAST_UPDATED_DT).format("MM/DD/YYYY hh:mm A");
+		// 		this.lblUpdatedBy = _user+ ' ' + _date;
+		// 	}else{
+		// 		this.lblUpdatedBy = "";
+		// 	}
 
-			toastr.clear();
-			settings.isNavigating = false;
+		// 	toastr.clear();
+		// 	settings.isNavigating = false;
 
 
-		}, (errorQuery)=>{
-			settings.isNavigating = false;
-			toastr.error(errorQuery, "Error in loading Government information.");
-		});
+		// }, (errorQuery)=>{
+		// 	settings.isNavigating = false;
+		// 	toastr.error(errorQuery, "Error in loading Government information.");
+		// });
 
-		query = EntityQuery().from("GLOBAL_MSTR")
+		var query = EntityQuery().from("GLOBAL_MSTR")
 				.where("GLOBAL_ID","==", global_id);
 		EntityManager().executeQuery(query).then((querySuccess)=>{
 			this.obj_personnel.GOVERNMENT_INFO.input_tax_cd = querySuccess.results[0].INPUT_TAX_CD;
@@ -437,32 +440,32 @@ export class gov_info_main{
 		this.obj_personnel.GOVERNMENT_INFO.sss_no = $("#_sss").val();
 		var strValidation="";
 
-		if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no.length>0){
-			if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.pagibig_no, "PAGIBIG")){
-				strValidation+="Invalid Pag-ibig No.<br/>";
-			}
-		}else{
-			// this.obj_personnel.GOVERNMENT_INFO.pagibig_no = "0000-0000-0000";
-		}
+		// if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no.length>0){
+		// 	if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.pagibig_no, "PAGIBIG")){
+		// 		strValidation+="Invalid Pag-ibig No.<br/>";
+		// 	}
+		// }else{
+		// 	// this.obj_personnel.GOVERNMENT_INFO.pagibig_no = "0000-0000-0000";
+		// }
 
-		if(this.obj_personnel.GOVERNMENT_INFO.sss_no.length>0){
-			if(this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_" &&  !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.sss_no, "SSS")){
-				strValidation+="Invalid SSS No.<br/>";
-				console.log(this.obj_personnel.GOVERNMENT_INFO.sss_no);
-			}
-		}else{
-			// this.obj_personnel.GOVERNMENT_INFO.sss_no = "00-0000000-0";
-		}
+		// if(this.obj_personnel.GOVERNMENT_INFO.sss_no.length>0){
+		// 	if(this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_" &&  !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.sss_no, "SSS")){
+		// 		strValidation+="Invalid SSS No.<br/>";
+		// 		console.log(this.obj_personnel.GOVERNMENT_INFO.sss_no);
+		// 	}
+		// }else{
+		// 	// this.obj_personnel.GOVERNMENT_INFO.sss_no = "00-0000000-0";
+		// }
 
-		if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no.length>0){
-			if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.philhealth_no, "PHILHEALTH")){
-				strValidation+="Invalid Philhealth No.<br/>";
-			}
-		}else{
-			// this.obj_personnel.GOVERNMENT_INFO.philhealth_no = "00-000000000-0";
-		}
+		// if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no.length>0){
+		// 	if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_" && !this.validate_input(this.obj_personnel.GOVERNMENT_INFO.philhealth_no, "PHILHEALTH")){
+		// 		strValidation+="Invalid Philhealth No.<br/>";
+		// 	}
+		// }else{
+		// 	// this.obj_personnel.GOVERNMENT_INFO.philhealth_no = "00-000000000-0";
+		// }
 
-		this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = $("#vat_reg_dt").val();
+		// this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = $("#vat_reg_dt").val();
 
 		if(strValidation.length>0){
 			toastr.clear();			
@@ -484,70 +487,90 @@ export class gov_info_main{
 		var philhealth = null;
 		var pagibig = null;
 		var sss =null;
-		if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_")
-		{
-			philhealth=this.obj_personnel.GOVERNMENT_INFO.philhealth_no;
-		}
+		// if(this.obj_personnel.GOVERNMENT_INFO.philhealth_no != "__-_________-_")
+		// {
+		// 	philhealth=this.obj_personnel.GOVERNMENT_INFO.philhealth_no;
+		// }
 
-		if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____")
-		{
-			pagibig=this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
-		}
+		// if(this.obj_personnel.GOVERNMENT_INFO.pagibig_no != "____-____-____")
+		// {
+		// 	pagibig=this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
+		// }
 
-		if(this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_")
-		{
-			sss=this.obj_personnel.GOVERNMENT_INFO.sss_no;
-		}
+		// if(this.obj_personnel.GOVERNMENT_INFO.sss_no != "__-_______-_")
+		// {
+		// 	sss=this.obj_personnel.GOVERNMENT_INFO.sss_no;
+		// }
 
+		var query=EntityQuery().from("GLOBAL_MSTR")
+					.where("GLOBAL_ID", "==", this.obj_personnel.global_indiv_id);
+		EntityManager().executeQuery(query).then((querySuccess2)=>{
+			querySuccess2.results[0].INPUT_TAX_CD = this.obj_personnel.GOVERNMENT_INFO.input_tax_cd;
+			querySuccess2.results[0].VAT_REG_DT = this.convertToGMT8(this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt);
+			querySuccess2.results[0].VAT_STAT_CD = this.obj_personnel.GOVERNMENT_INFO.vat_stat_cd;
+			querySuccess2.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+			querySuccess2.results[0].LAST_UPDATED_DT = dateToday;
 
-
-		var query = EntityQuery().from("GLOBAL_INDIV_MSTR")
-					.where("GLOBAL_INDIV_ID", "==", this.obj_personnel.global_indiv_id);
-		EntityManager().executeQuery(query).then((querySuccess1)=>{
-			querySuccess1.results[0].TAX_EXEMPT_CD = this.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd;
-			// querySuccess1.results[0].SSS_NO = this.obj_personnel.GOVERNMENT_INFO.sss_no;
-			// querySuccess1.results[0].PAGIBIG_NO = this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
-			// querySuccess1.results[0].PHILHEALTH_NO = this.obj_personnel.GOVERNMENT_INFO.philhealth_no;			
-			querySuccess1.results[0].SSS_NO = sss;
-			querySuccess1.results[0].PAGIBIG_NO = pagibig;
-			querySuccess1.results[0].PHILHEALTH_NO = philhealth;
-			querySuccess1.results[0].NATIONAL_ID = this.obj_personnel.GOVERNMENT_INFO.national_id;
-			querySuccess1.results[0].VOTERS_ID = this.obj_personnel.GOVERNMENT_INFO.voters_id;
-			querySuccess1.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
-			querySuccess1.results[0].LAST_UPDATED_DT = dateToday;
-			EntityManager().saveChanges().then((save1)=>{
-				
-				query=EntityQuery().from("GLOBAL_MSTR")
-					  .where("GLOBAL_ID", "==", this.obj_personnel.global_indiv_id);
-				EntityManager().executeQuery(query).then((querySuccess2)=>{
-					querySuccess2.results[0].INPUT_TAX_CD = this.obj_personnel.GOVERNMENT_INFO.input_tax_cd;
-					querySuccess2.results[0].VAT_REG_DT = this.convertToGMT8(this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt);
-					querySuccess2.results[0].VAT_STAT_CD = this.obj_personnel.GOVERNMENT_INFO.vat_stat_cd;
-					querySuccess2.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
-					querySuccess2.results[0].LAST_UPDATED_DT = dateToday;
-
-					EntityManager().saveChanges().then((save2)=>{
-						toastr.clear();
-						toastr.success("", "Record saved.");
-						settings.isNavigating = false;
-					}, (error2)=>{
-						settings.isNavigating = false;
-						toastr.clear();
-						toastr.error("", error2);
-					});
-
-				});
-
-			}, (error1)=>{
+			EntityManager().saveChanges().then((save2)=>{
+				toastr.clear();
+				toastr.success("", "Record saved.");
+				settings.isNavigating = false;
+			}, (error2)=>{
 				settings.isNavigating = false;
 				toastr.clear();
-				toastr.error("", error1);
+				toastr.error("", error2);
 			});
-		}, (queryError1)=>{
-			settings.isNavigating = false;
-			toastr.clear();
-			toastr.error(queryError1, "Error in querying other government info.");
+
 		});
+
+
+		// var query = EntityQuery().from("GLOBAL_INDIV_MSTR")
+		// 			.where("GLOBAL_INDIV_ID", "==", this.obj_personnel.global_indiv_id);
+		// EntityManager().executeQuery(query).then((querySuccess1)=>{
+		// 	querySuccess1.results[0].TAX_EXEMPT_CD = this.obj_personnel.GOVERNMENT_INFO.tax_exempt_cd;
+		// 	// querySuccess1.results[0].SSS_NO = this.obj_personnel.GOVERNMENT_INFO.sss_no;
+		// 	// querySuccess1.results[0].PAGIBIG_NO = this.obj_personnel.GOVERNMENT_INFO.pagibig_no;
+		// 	// querySuccess1.results[0].PHILHEALTH_NO = this.obj_personnel.GOVERNMENT_INFO.philhealth_no;			
+		// 	querySuccess1.results[0].SSS_NO = sss;
+		// 	querySuccess1.results[0].PAGIBIG_NO = pagibig;
+		// 	querySuccess1.results[0].PHILHEALTH_NO = philhealth;
+		// 	querySuccess1.results[0].NATIONAL_ID = this.obj_personnel.GOVERNMENT_INFO.national_id;
+		// 	querySuccess1.results[0].VOTERS_ID = this.obj_personnel.GOVERNMENT_INFO.voters_id;
+		// 	querySuccess1.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+		// 	querySuccess1.results[0].LAST_UPDATED_DT = dateToday;
+		// 	EntityManager().saveChanges().then((save1)=>{
+				
+		// 		query=EntityQuery().from("GLOBAL_MSTR")
+		// 			  .where("GLOBAL_ID", "==", this.obj_personnel.global_indiv_id);
+		// 		EntityManager().executeQuery(query).then((querySuccess2)=>{
+		// 			querySuccess2.results[0].INPUT_TAX_CD = this.obj_personnel.GOVERNMENT_INFO.input_tax_cd;
+		// 			querySuccess2.results[0].VAT_REG_DT = this.convertToGMT8(this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt);
+		// 			querySuccess2.results[0].VAT_STAT_CD = this.obj_personnel.GOVERNMENT_INFO.vat_stat_cd;
+		// 			querySuccess2.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+		// 			querySuccess2.results[0].LAST_UPDATED_DT = dateToday;
+
+		// 			EntityManager().saveChanges().then((save2)=>{
+		// 				toastr.clear();
+		// 				toastr.success("", "Record saved.");
+		// 				settings.isNavigating = false;
+		// 			}, (error2)=>{
+		// 				settings.isNavigating = false;
+		// 				toastr.clear();
+		// 				toastr.error("", error2);
+		// 			});
+
+		// 		});
+
+		// 	}, (error1)=>{
+		// 		settings.isNavigating = false;
+		// 		toastr.clear();
+		// 		toastr.error("", error1);
+		// 	});
+		// }, (queryError1)=>{
+		// 	settings.isNavigating = false;
+		// 	toastr.clear();
+		// 	toastr.error(queryError1, "Error in querying other government info.");
+		// });
 	}
 
 	//source: https://stackoverflow.com/questions/12578507/how-to-implement-an-input-with-a-mask
@@ -591,7 +614,4 @@ export class gov_info_main{
   		document.getElementById(id).value = myOutPut;
   		document.getElementById(id).setSelectionRange(theLastPos, theLastPos);
 	}
-
-
-
 }

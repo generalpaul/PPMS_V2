@@ -522,7 +522,7 @@ export class main
 			INDIV_FL:1
 		});
 
-		console.log(varInsert_2);
+		// console.log(varInsert_2);
 
 		EntityManager().addEntity(varInsert_2);
 		EntityManager().saveChanges().then((success)=>{
@@ -996,15 +996,21 @@ export class main
 				break;
 			case 3: //load Characteristic/Interest.
 				toastr.clear();
-				// toastr.info("Loading Characteristic/Interest...", "Success");
+				toastr.info("Loading Characteristic/Interest...", "");				
 				break;
 			case 4: //load Skills/Talent.
 				toastr.clear();
-				// toastr.info("Loading Skills/Talent...", "Success");
+				toastr.info("Loading Skills/Talent...", "");
+				this.obj_personnel.OBSERVERS.maintab_skills_clicked.forEach((delegate)=>{
+					delegate(this.obj_personnel.global_indiv_id);
+				});
 				break;
 			case 5: //load Language/Dialect.
 				toastr.clear();
-				// toastr.info("Loading Language/Dialect...", "Success");
+				toastr.info("Loading Language/Dialect...", "");
+				this.obj_personnel.OBSERVERS.maintab_language_clicked.forEach((delegate)=>{
+					delegate(this.obj_personnel.global_indiv_id);
+				});
 				break;			
 		}
 	}

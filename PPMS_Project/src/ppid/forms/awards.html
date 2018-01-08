@@ -1,0 +1,125 @@
+<template>
+	<div style="height: 550px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">			
+			<tr class="backroundTab">
+				<td colspan="3">
+					<div>
+						<h5 style="margin: 10px; text-align: left; color: white;">Language / Dialect</h5>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="vertical-align: top;">
+					<table style="width:100%;">
+						<tr>							
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Award*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.AWARD.model.award_cd" disabled.bind="_disableForm" tabindex="1">
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.AWARD_HEAD" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Project Name*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" disabled.bind="_disableForm" tabindex="3" value.bind="obj_personnel.AWARD.model.project_name">
+							</td>							
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: top;" class="text-left">Remarks*</td>
+							<td>
+								<textarea style="overflow-y: scroll; resize: vertical; width: 100%;" disabled.bind="_disableForm" tabindex="5" value.bind="obj_personnel.AWARD.model.remarks" ></textarea>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td colspan="1" style="vertical-align: top;">
+					<table style="width: 100%;">
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Award Giving Body*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.AWARD.model.award_body_cd" disabled.bind="_disableForm" tabindex="2">
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.AWARD_BODY" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>						
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Date Received*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="4" id="award_receive_dt" disabled.bind="_disableForm" value.bind="obj_personnel.AWARD.model.receive_dt">
+							</td>							
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>						
+				<td colspan="3">
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnAdd" click.trigger="btnAdd()">Add</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnSave" click.trigger="validate()">Save</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="clearField()">Clear/Reset</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div style="height: 300px; overflow-y: scroll;">
+						<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+							<thead style="display: table-header-group;">
+								<tr>
+									<td class="colorCell">Award</td>
+									<td class="colorCell">Award Giving Body</td>
+									<td class="colorCell">Date Received</td>									
+									<td class="colorCell">Project Name</td>									
+									<td class="colorCell">Remarks</td>
+									<td class="colorCell"></td>
+									<td class="colorCell"></td>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr repeat.for="item of obj_personnel.AWARD.list">
+									<td>${item.award_cd}</td>
+									<td>${item.award_body_cd}</td>
+									<td>${item.receive_dt}</td>
+									<td>${item.project_name}</td>									
+									<td>${item.remarks}</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnEdit(item)" disabled.bind="_disableTable" >-</button>
+									</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnRemove(item)" disabled.bind="_disableTable">X</button>
+									</td>
+								</tr>								
+								<tr if.bind="obj_personnel.AWARD.list == null || obj_personnel.AWARD.list.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>			
+			<tr>
+				<td colspan="3">
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${lblCreatedBy}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${lblUpdatedBy}</b>
+							</td>							
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</template>

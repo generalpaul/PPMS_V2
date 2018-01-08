@@ -19,8 +19,11 @@ export default {
     // serviceName: "http://absppms2:8072/odata", //odata url
     // serviceNameBase: "http://absppms2:8072", //base api url
 
-    serviceName: "http://absppms01.corp.abscbn.com:8085/odata",
-    serviceNameBase: "http://absppms01.corp.abscbn.com:8085/",
+    // serviceName: "http://absppms01.corp.abscbn.com:8085/odata",
+    // serviceNameBase: "http://absppms01.corp.abscbn.com:8085/",
+
+    // serviceName: "http://10.0.50.48:8088/odata",
+    // serviceNameBase: "http://10.0.50.48:8088:8085/", 
 
     // serviceName: "http://absppms2:8094/odata",
     // serviceNameBase: "http://absppms2:8094",

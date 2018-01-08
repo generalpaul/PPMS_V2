@@ -16,18 +16,20 @@ export class company_info_main{
 	
 	obj_personnel = null;
 	_disableLocations = true;
-	_disableIDNo = false;
+	_disableIDNo = true;
 	_disableStatus=true;
 	_disableTabsInput = true;
 	_hideSuspendField=true;
 	_hideInactiveField=true;
 	_hideCessationDate=true;
 	_hideInactiveReason=true;
+	ddCompany=[];
 	lblCreatedBy=null;
 	lblUpdatedBy=null;
 	alreadyLoaded = false;
 	accreditation_status="";
 	accreditation_joblist=[];
+
 	constructor(obj_personnel, toastr, DialogService){
 		this.obj_personnel = obj_personnel;
 		this.DialogService = DialogService;
@@ -47,11 +49,8 @@ export class company_info_main{
 					toastr.clear();
 					toastr.info("", "Loading company info...");
 					// this.dd_companyChanged();
-					if(this.obj_personnel.COMPANY.length>0){
-						this.obj_personnel.COMPANY_SPECIFIC.model.company_id = this.obj_personnel.COMPANY[0].id;
-						
-					}
-					this.loadGlobalCompany(global_id);
+					this.loadCompany(this.obj_personnel.USER.USER_ID, global_id);					
+
 				}
 			}
 		});
@@ -60,7 +59,12 @@ export class company_info_main{
 			if(tab_num==0){
 				toastr.clear();
 				toastr.info("", "Loading company info...");
-				this.loadGlobalCompany(global_id);
+				if(this.ddCompany.length>0){
+					this.loadGlobalCompany(global_id);
+				}else{
+					toastr.clear();
+					toastr.info("", "You don't have any access.");
+				}
 			}
 		});
 
@@ -312,7 +316,33 @@ export class company_info_main{
 
 		});
 
-	} 
+	}
+
+	loadCompany(user_id, global_id){
+		var query = EntityQuery().from("COMPANY_USER_TRX")
+					.where("USER_ID", "==", user_id);
+		EntityManager().executeQuery(query).then((s1)=>{
+
+			var tmp=[];
+			_.each(s1.results, (r)=>{
+
+				var company = this.obj_personnel.COMPANY.find((x)=>{
+					return x.id == r.COMPANY_ID;
+				});
+
+				tmp.push(company);
+			});
+			this.ddCompany = tmp;
+			if(this.ddCompany.length>0){
+				this.obj_personnel.COMPANY_SPECIFIC.model.company_id = this.ddCompany[0].id;
+				this.loadGlobalCompany(global_id);
+			}else{
+				toastr.clear();
+				toastr.info("", "You don't have any access.");
+			}
+
+		});
+	}
 
 	OrderByDate(a, b){
 		if(a.date > b.date)
@@ -576,6 +606,7 @@ export class company_info_main{
 			$("#suspended_start_dt").val("");
 			this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt="";
 			$("#suspended_end_dt").val("");
+			this.dd_cessationStatusChanged();
 		}else if(stat=="INACTV"){
 			this._hideInactiveField = false;
 			this._hideSuspendField = true;
@@ -623,7 +654,7 @@ export class company_info_main{
 		// 	strValidation+= "No start date specified. <br/>";
 		// }
 
-		if(this.obj_personnel.COMPANY_SPECIFIC.model.id_no == undefined || this.obj_personnel.COMPANY_SPECIFIC.model.id_no == null || this.obj_personnel.COMPANY_SPECIFIC.model.id_no.length==0){
+		if(this.obj_personnel.COMPANY_SPECIFIC.model.id_no == undefined || this.obj_personnel.COMPANY_SPECIFIC.model.id_no == null || $.trim(this.obj_personnel.COMPANY_SPECIFIC.model.id_no).length==0){
 			strValidation+="No id number specified. <br/>";
 		}		
 

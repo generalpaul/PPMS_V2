@@ -564,7 +564,7 @@ export class main_contact
 	        	CITY_TOWN: this.obj_personnel.CONTACT.modelAddress.city_town,
 	        	COUNTRY_CD: this.obj_personnel.CONTACT.modelAddress.country_cd,
 	        	DISTRICT: this.obj_personnel.CONTACT.modelAddress.district,
-	        	GLOBAL_ID: this.obj_personnel.HEADER.global_indiv_id,
+	        	GLOBAL_ID: this.obj_personnel.global_indiv_id,
 	        	HOUSE_NO: this.obj_personnel.CONTACT.modelAddress.house_no,
 	            //HOUSE_OWNERSHIP: this.obj_personnel.CONTACT.modelAddress.house_ownership,
 	            MAILING_FL: 0,

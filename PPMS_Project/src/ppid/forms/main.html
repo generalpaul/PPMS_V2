@@ -2,6 +2,8 @@
 	<require from="converters/datepattern"></require>
 	<require from="./main_contact"></require>
 	<require from="./main_educational"></require>
+	<require from="./main_skills"></require>
+	<require from="./main_language"></require>
 	<div style="margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center;" class="text-center divBackground" >
 		<ul class="nav nav-tabs backroundTab" role="tablist" style="width:100%;height:38px;">
 			<li role="presentation" class="active" ><a href="#main_main" aria-controls="main_main" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(0)">Employee Personal Info</a></li>
@@ -9,8 +11,7 @@
 			<li role="presentation" ><a href="#main_educ_achievement" aria-controls="main_educ_achievement" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(2)" disabled.bind="obj_personnel.global_indiv_id.length==0">Educational Achievement</a></li>
 			<li role="presentation" style=""><a href="#main_char_interest" aria-controls="main_char_interest" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(3)" disabled.bind="obj_personnel.global_indiv_id.length==0" >Characteristic/Interest</a></li>
 			<li role="presentation" style=""><a href="#main_skills_talent" aria-controls="main_skills_talent" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(4)" disabled.bind="obj_personnel.global_indiv_id.length==0" >Skills/Talent</a></li>
-			<li role="presentation" style=""><a href="#main_lang_dialect" aria-controls="main_lang_dialect" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(5)" disabled.bind="obj_personnel.global_indiv_id.length==0" >Language/Dialect</a></li>
-			
+			<li role="presentation" style=""><a href="#main_lang_dialect" aria-controls="main_lang_dialect" role="tab" data-toggle="tab" style="margin-top:6px;" click.trigger="clickTab_main(5)" disabled.bind="obj_personnel.global_indiv_id.length==0" >Language/Dialect</a></li>			
 		</ul>
 		
 		<div class='tab-content'>
@@ -341,13 +342,15 @@
 
 			<div role="tabpanel" class="tab-pane color1" id="main_skills_talent"  style="width:980px;height:550px; margin-left:auto; margin-right:auto;">
 				<br/>
-				<img src.bind="_404_img" style="width: 100%; height: 100%;">
+				<main_skills></main_skills>
+				<!-- <img src.bind="_404_img" style="width: 100%; height: 100%;"> -->
 			</div>
 
 
 			<div role="tabpanel" class="tab-pane color1" id="main_lang_dialect"  style="width:980px;height:550px; margin-left:auto; margin-right:auto;">
 				<br/>
-				<img src.bind="_404_img" style="width: 100%; height: 100%;">
+				<main_language></main_language>
+				<!-- <img src.bind="_404_img" style="width: 100%; height: 100%;"> -->
 			</div>
 
 

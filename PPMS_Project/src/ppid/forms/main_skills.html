@@ -1,0 +1,101 @@
+<template>
+	<div style="height: 550px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">			
+			<tr class="backroundTab">
+				<td colspan="3">
+					<div>
+						<h5 style="margin: 10px; text-align: left; color: white;">Skills / Talent</h5>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<table style="width: 100%;">
+						<tr>							
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Skill / Talent*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.SKILLS.model.skill_talent_cd" disabled.bind="_disableForm" tabindex="1">
+									<!-- <option value=""></option> -->
+									<option repeat.for="item of obj_personnel.SKILL_TALENT" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td colspan="1">
+					<table style="width: 100%;">
+						<tr>							
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Rating*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.SKILLS.model.rating_cd" disabled.bind="_disableForm" tabindex="1">
+									<!-- <option value=""></option> -->
+									<option repeat.for="item of obj_personnel.RATING" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>				
+				<td colspan="3">
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnAdd" click.trigger="btnAdd()">Add</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableBtnSave" click.trigger="validate()">Save</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="clearField()">Clear/Reset</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div style="height: 300px; overflow-y: scroll;">
+						<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+							<thead style="display: table-header-group;">
+								<tr>
+									<td class="colorCell">Exam Name</td>
+									<td class="colorCell">Rating/Grade (%)</td>							
+									<td class="colorCell"></td>
+									<td class="colorCell"></td>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr repeat.for="item of obj_personnel.SKILLS.list">
+									<td>${item.skill_talent_nm}</td>
+									<td>${item.rating_nm}</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnEdit(item)" disabled.bind="_disableTable" >-</button>
+									</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnRemove(item)" disabled.bind="_disableTable">X</button>
+									</td>
+								</tr>								
+								<tr if.bind="obj_personnel.SKILLS.list == null || obj_personnel.SKILLS.list.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>			
+			<tr>
+				<td colspan="3">
+					<table class= "table-bordered" style=" width: 500px; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								CREATED BY:
+							</td>
+							<td>
+								<b>${lblCreatedBy}</b>
+							</td>
+							<td>
+								LAST UPDATED BY:
+							</td>
+							<td>
+								<b>${lblUpdatedBy}</b>
+							</td>							
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</template>

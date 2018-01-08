@@ -1,0 +1,153 @@
+<template>
+	<div style="height: 550px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">
+			<tr>
+				<td style="vertical-align: top;">
+					<table style="width: 100%;">
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Country*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" disabled.bind="_disableForm" value.bind="obj_personnel.GROUP_INFO.model.country_cd" tabindex="1" >
+									<option value=""></option>
+									<option repeat.for="item of obj_personnel.COUNTRY" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Group Name*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" disabled.bind="_disableForm" value.bind="obj_personnel.GROUP_INFO.model.group_name" tabindex="3" />
+							</td>
+						</tr>
+						<tr>							
+							<td style="width: 120px; vertical-align: top; padding-top: 4px;" class="text-left">Country Base</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" disabled.bind="_disableForm" value.bind="obj_personnel.GROUP_INFO.model.country_base_cd" tabindex="6" >
+									<option></option>
+									<option repeat.for="item of obj_personnel.COUNTRY" value.bind="item.value">${item.text}</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td style="vertical-align: top;">
+					<table style="width: 100%;">
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">TIN*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" disabled.bind="_disableForm" value.bind="obj_personnel.GROUP_INFO.model.tin" id="_tin" keypress.trigger="DigitOnly($event)" keyup.trigger="mask('_tin', '___-___-___-___')" tabindex="2" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Founding Date*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="fDate" disabled.bind="_disableForm" value.bind="obj_personnel.GROUP_INFO.model.establish_dt" tabindex="4" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Location Base</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" disabled.bind="_disableForm" value.bind="obj_personnel.GROUP_INFO.model.location_base_cd" tabindex="7" >
+									<option></option>
+									<option repeat.for="item of obj_personnel.LOCATIONS" value.bind="item.LOCATION_CD">${item.LOCATION_DESC}</option>
+								</select>
+							</td>
+						</tr>
+					</table>					
+				</td>
+				<td style="vertical-align: top;">
+					<table style="width: 100%;">
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">GLOBAL ID*</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" disabled value.bind="obj_personnel.GROUP_INFO.model.global_id" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Status*</td>
+							<td>
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" disabled.bind="_disableForm" value.bind="obj_personnel.GROUP_INFO.model.status_cd" tabindex="8" >
+										<option repeat.for="status of obj_personnel.STATUS" value.bind="status.value">${status.text}</option>
+								</select>
+							</td>
+						</tr>
+						<tr hidden.bind="obj_personnel.GROUP_INFO.model.status_cd!='SUSPEND'">
+							<td colspan="2" class="text-center"><strong>Suspension Date</strong></td>
+						</tr>
+						<tr hidden.bind="obj_personnel.GROUP_INFO.model.status_cd!='SUSPEND'">
+							<td style="width: 120px; vertical-align: middle;" class="text-left">From</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionFrom" value.bind="obj_personnel.GROUP_INFO.model.suspension_start"/>
+							</td>
+						</tr>									
+						<tr hidden.bind="obj_personnel.GROUP_INFO.model.status_cd!='SUSPEND'">
+							<td style="width: 120px; vertical-align: middle;" class="text-left">To</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="suspensionTo" value.bind="obj_personnel.GROUP_INFO.model.suspension_end"/>
+							</td>
+						</tr>	
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableSearch" click.trigger="fnGroup('EDIT')">EDIT GROUP</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableCreate" click.trigger="fnGroup('CREATE')" >CREATE GROUP</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableClear" click.trigger="fnGroup('CLEAR')" >CLEAR/CANCEL</button>&nbsp;&nbsp;
+					<!--<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableResetData" click.trigger="fnPersonnel('RESET')">RESET/REFRESH</button>&nbsp;&nbsp;-->
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableSave" click.trigger="fnGroup('SAVE')">${_lblBtnSave} GROUP</button>&nbsp;&nbsp;					
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<br/>
+				</td>
+			</tr>
+			<tr class="backroundTab">
+				<td colspan="3">
+					<div>
+						<h5 style="margin: 10px; text-align: left; color: white;">Members</h5>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<br/>
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableAddMember" click.trigger="btnAddNewMember()">ADD NEW MEMBER</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableCreatePersonnel" click.trigger="btnAddNewPersonnel()" >ADD NEW PERSONNEL</button>&nbsp;&nbsp;					
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					<div style="height: 230px; overflow-y: scroll;">
+						<table class="table table-hover table-condensed table-bordered table-striped" ref="tblData">
+							<thead style="display: table-header-group;">
+								<tr>
+									<td class="colorCell">Member's Name</td>
+									<td class="colorCell"></td>
+									<td class="colorCell"></td>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr repeat.for="item of obj_personnel.GROUP_INFO.members">
+									<td>${item.fullname}</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnEdit(item)" disabled.bind="_disableTable" >View Profile</button>
+									</td>
+									<td>
+										<button class="btn btn-xs customButton" click.trigger="btnRemoveMember(item)" disabled.bind="_disableTable">X</button>
+									</td>
+								</tr>								
+								<tr if.bind="obj_personnel.GROUP_INFO.members == null || obj_personnel.GROUP_INFO.members.length==0">
+									<td colspan="9">
+										<b>No current entry.</b>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>
+			</tr>
+		</table>
+</template>

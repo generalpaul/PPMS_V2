@@ -18,11 +18,22 @@
                     <a href="#" class="list-group-item" click.delegate="navigateTo('group_individual')" if.bind="talentgroupAccess"><h3 style="margin:0px;color: #31708f;">TALENT GROUP</h3></a>
                     <a href="#" class="list-group-item" click.delegate="navigateTo('buh')"  if.bind="buhAccess"><h3 style="margin:0px;color: #31708f;">BUH</h3></a>-->
 
-          <a href="#" class="list-group-item" repeat.for="item of _application" click.trigger="applicationClick(item)" if.bind="!_remove.includes(item.APPLICATION_DESC) && _application_on"><h3 style="margin:0px;color: #31708f;">${item.APPLICATION_DESC}</h3></a>
+          <a href="#" class="list-group-item" repeat.for="item of _application" click.trigger="applicationClick(item)" if.bind="!_remove.includes(item.APPLICATION_DESC) && (_application_on && _ppi_off)">
+            <h3 style="margin:0px;color: #31708f;">${item.APPLICATION_DESC}</h3>
+          </a>
 
-          <a href="#" class="list-group-item" repeat.for="item of _ppfcs_modules" click.trigger="rolesClick(item)" if.bind="!_application_on"><h3 style="margin:0px;color: #31708f;">${item.APPLICATION_DESC.toUpperCase()}</h3></a>
+          <a href="#" class="list-group-item" repeat.for="item of _ppfcs_modules" click.trigger="rolesClick(item, 'PPFCS')" if.bind="!_application_on">
+            <h3 style="margin:0px;color: #31708f;">${item.APPLICATION_DESC.toUpperCase()}</h3>
+          </a>
+
+          <a href="#" class="list-group-item" repeat.for="item of _ppi_modules" click.trigger="rolesClick(item, 'PPI')" if.bind="!_ppi_off">
+            <h3 style="margin:0px;color: #31708f;">${item.APPLICATION_DESC.toUpperCase()}</h3>
+          </a>
+
           <!--<a href="#" class="list-group-item" repeat.for="item of _roles" click.trigger="rolesClick(item)" if.bind="!_application_on"><h3 style="margin:0px;color: #31708f;">${item.MODULE_NAME.toUpperCase()}</h3></a>-->
-          <a href="#" class="list-group-item" if.bind="!_application_on" click.trigger="applicationOn()"><h3 style="margin:0px;color: #31708f;background-color:#d9edf7;">BACK..</h3></a>
+          <a href="#" class="list-group-item" if.bind="!_application_on || !_ppi_off" click.trigger="applicationOn()">
+            <h3 style="margin:0px;color: #31708f;background-color:#d9edf7;">BACK..</h3>
+          </a>
 
           <!--<a href="#" class="list-group-item">IPS</a>-->
 

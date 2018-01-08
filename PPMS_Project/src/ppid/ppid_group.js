@@ -1,25 +1,23 @@
-import {checkCookie,setCookie,removeCookie} from '.././helpers';
 import toastr from "toastr";
 import {inject} from 'aurelia-framework';
 import {obj_personnel} from './obj_personnel';
 import {DialogService} from 'aurelia-dialog';
 import {ppid_search} from "./modals/ppid_search";
+import {DialogBox} from "./modals/DialogBox";
 import {EntityManager,EntityQuery} from '../entity-manager-factory'; 
 import {getLookups} from '../masterfiles';
 import settings from 'settings';
 
-@inject(DialogService, obj_personnel)
-export class ppid
-{
+@inject(obj_personnel, toastr, DialogService)
+export class ppid_group{
+	
 	obj_personnel = null;
-	global_indiv_id="";
-	
-	
-	constructor(dialogService, obj_personnel){
-		this.dialogService=dialogService;
-		this.obj_personnel = obj_personnel;		
+	constructor(obj_personnel, toastr, DialogService){
+		this.obj_personnel = obj_personnel;
+		this.DialogService = DialogService;
 
 		this.obj_personnel.OBSERVERS.ppid_dialog.length=0;
+		this.obj_personnel.OBSERVERS.group_dialog.length=0;
 		this.obj_personnel.OBSERVERS.tab_changed.length=0;
 		this.obj_personnel.OBSERVERS.maintab_contact_clicked.length=0;
 		this.obj_personnel.OBSERVERS.maintab_education_clicked.length=0;
@@ -35,11 +33,15 @@ export class ppid
     		citizenship:[],
     		group:[]
     	};
-		this.LoadDropdown();
+    	this.obj_personnel.GROUP_INFO = {
+    		model:{},
+    		members:[]
+    	};
 
-		this.LoginPassed(this.obj_personnel.USER);
+		this.LoadDropdown();
 	}
 
+	
 	LoadDropdown()
 	{
 
@@ -451,50 +453,13 @@ export class ppid
 			return 1;
 		return 0;
 	}
-	
-	
-	changeTab(tabNumber)
-	{
+
+	changeTab(tabNumber){
 		if(this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length==0)
 			return;
 
 		this.obj_personnel.OBSERVERS.tab_changed.forEach((all)=>{
 			all(tabNumber, this.obj_personnel.global_indiv_id);
 		});
-	}	
-	
-	FindUsers()
-	{	
-		this.dialogService.open({
-			viewModel: ppid_search
-		}).whenClosed(response=>{
-			if(!response.wasCancelled)
-			{
-				// console.log(response.output);
-				//var arr = response.output.split('|');
-				//var global_id = arr[0];
-				//var tin = arr[1];
-				//var group = arr[2];
-				//var last_name = arr[3];
-				//var first_name = arr[4];
-				//var nick_name = arr[5];
-				//var project_name = arr[6];
-				//var country = arr[7];
-				//alert("Global_id:"+global_id+"\nTin:"+tin+"\nGroup:"+group+"\nLast Name:"+last_name+"\nFirst Name:"+first_name+"\nNick Name:"+nick_name+"\nProject Name:"+project_name+"\nCountry:"+country);
-			}else
-			{
-				// console.log('reponse was cancelled.');
-			}
-		});
-	}
-	
-	AddUsers()
-	{
-		alert('AddUsers function under maintenance.');
-	}
-
-	LoginPassed(user){
-		// console.log(user);
-		// this.obj_personnel.USER = user;
 	}
 }

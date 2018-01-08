@@ -5,8 +5,8 @@ import {DialogService} from 'aurelia-dialog';
 import {EntityManager,EntityQuery} from '../../entity-manager-factory';
 
 @inject(DialogService, obj_personnel, toastr)
-export class gov_info
-{
+export class gov_info_group{
+	
 	obj_personnel = null;
 	_activeTab=0;
 	_404_img = "/images/404.png";
@@ -23,7 +23,8 @@ export class gov_info
 				$("#gov_info_main").addClass("active");
 			}
 		});
-	}	
+
+	}
 
 	clickTab_GovInfo(tab_num){
 		if(this.obj_personnel.global_indiv_id.length===0)
