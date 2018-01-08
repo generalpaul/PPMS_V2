@@ -603,7 +603,7 @@ export class MainHeaderCustomElement {
         if(varUseReport!="")
         {
            // var popup = window.open("http://absppms:8080/ReportServer/Pages/ReportViewer.aspx?%2fPPID+Reports%2fBudget_Print&rs:Command=Render&Actual_Cost_id="+this._cache_budget.HEADER.BDGT_TMPL_ID+"&isConfidential="+this._cache_obj.ALLOW_PASS_CONFIDENTIAL+"", "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
-            var popup = window.open(settings.actualCostWebUrl+"/report/Budget_"+varUseReport+"_Report.aspx?BDID="+this._cache_obj.HEADER.BDGT_TMPL_ID+"&ConcealConfidentialBudgetAmt="+this._cache_obj.ALLOW_PASS_CONFIDENTIAL+"&USER_ACCOUNT="+this._user+"&COMPANY_ID="+this._COMPANY_ID, "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
+            var popup = window.open(settings.actualCostWebUrl+"/report/Budget_"+varUseReport+"_Report.aspx?BDID="+this._cache_budget.HEADER.BDGT_TMPL_ID+"&ConcealConfidentialBudgetAmt="+this._cache_obj.ALLOW_PASS_CONFIDENTIAL+"&USER_ACCOUNT="+this._user+"&COMPANY_ID="+this._COMPANY_ID, "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
            popup.moveTo(0, 0);
         }
         

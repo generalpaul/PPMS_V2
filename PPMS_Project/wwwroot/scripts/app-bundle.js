@@ -29,7 +29,7 @@ define('app',['exports', 'aurelia-framework', 'toastr', 'bootstrap'], function (
 
     App.prototype.configureRouter = function configureRouter(config, router) {
       config.title = 'PPMS';
-      config.map([{ route: ['', 'blankpage'], name: 'blankpage', moduleId: 'blankpage', nav: true, title: 'PPMS' }, { route: 'mainpage', name: 'mainpage', moduleId: 'mainpage', nav: true, title: 'Main Page' }, { route: 'mainview', name: 'mainview', moduleId: 'ppfcs/budget/mainview', nav: true, title: 'Budget Template' }, { route: 'group_individual', name: 'group_individual', moduleId: 'group_individual', nav: true, title: 'Talent Groups' }, { route: 'actual_cost', name: 'actual_cost', moduleId: 'ppfcs/actual_cost/actual_cost', nav: true, title: 'Actual Cost' }, { route: 'buh', name: 'buh', moduleId: 'buh', nav: true, title: 'BUH' }, { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information Database' }]);
+      config.map([{ route: ['', 'blankpage'], name: 'blankpage', moduleId: 'blankpage', nav: true, title: 'PPMS' }, { route: 'mainpage', name: 'mainpage', moduleId: 'mainpage', nav: true, title: 'Main Page' }, { route: 'mainview', name: 'mainview', moduleId: 'ppfcs/budget/mainview', nav: true, title: 'Budget Template' }, { route: 'group_individual', name: 'group_individual', moduleId: 'group_individual', nav: true, title: 'Talent Groups' }, { route: 'actual_cost', name: 'actual_cost', moduleId: 'ppfcs/actual_cost/actual_cost', nav: true, title: 'Actual Cost' }, { route: 'buh', name: 'buh', moduleId: 'buh', nav: true, title: 'BUH' }, { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information Database' }, { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title: 'Utilization' }]);
 
       this.router = router;
 
@@ -401,7 +401,8 @@ define('cache_obj',["exports"], function (exports) {
             loginPage: [],
             clear_budget_modal: [],
             budget_dialog: [],
-            pass_program: []
+            pass_program: [],
+            contract_dialog: []
 
         };
     };
@@ -1459,7 +1460,7 @@ define('mainpage',['exports', 'aurelia-framework', 'cache_obj', './entity-manage
             this.buhAccess = false;
             this.headerVisible = false;
             this._application = [];
-            this._application_desc = [{ ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' }, { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' }, { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' }, { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' }, { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' }];
+            this._application_desc = [{ ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' }, { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' }, { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' }, { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' }, { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FEE CAPTURE SYSTEM' }, { ref: 'UTILIZATION', desc: 'UTILIZATION' }];
             this._remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
             this._ppfcs_modules = [];
             this._roles = [];
@@ -1526,7 +1527,7 @@ define('mainpage',['exports', 'aurelia-framework', 'cache_obj', './entity-manage
         }
 
         mainpage.prototype.applicationClick = function applicationClick(item) {
-            if (item.APPLICATION_DESC == 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM') {
+            if (item.APPLICATION_DESC == 'PROGRAM PERSONNEL FEE CAPTURE SYSTEM') {
                 this._roles = this._cache_obj._ACCESS.ROLES.filter(function (all) {
                     return all.APPLICATION_ID == item.APPLICATION_ID;
                 });
@@ -1549,14 +1550,16 @@ define('mainpage',['exports', 'aurelia-framework', 'cache_obj', './entity-manage
         };
 
         mainpage.prototype.fnCheckAccess = function fnCheckAccess() {
+
             if (this._cache_obj._ACCESS.APPLICATION === undefined) return;
 
-            var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
+            var filterMenu = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', 'PROGRAM PERSONNEL INFORMATION DATABASE'];
+
             var varFound = this._cache_obj._ACCESS.APPLICATION.filter(function (all) {
                 return filterMenu.includes(all.APPLICATION_DESC);
             });
             if (varFound.length == 1) {
-                if (varFound == 'PROGRAM BUDGET TEMPLATE') this.router.navigateToRoute('mainview');else this.router.navigateToRoute('actual_cost');
+                if (varFound[0].APPLICATION_DESC == 'PROGRAM BUDGET TEMPLATE') this.router.navigateToRoute('mainview');else if (varFound[0].APPLICATION_DESC == 'PROGRAM PERSONNEL INFORMATION DATABASE') this.router.navigateToRoute('ppid');else this.router.navigateToRoute('actual_cost');
             } else {
                 this.budgetAccess = true;
                 this.talentgroupAccess = true;
@@ -1816,7 +1819,7 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
 
       if (all.ALIAS != "" && all.ALIAS != null) {
         varAlias = " (" + all.ALIAS;
-        varAliases.push(all.ALIAS);
+        varAliases.push(all.ALIAS.toUpperCase());
       }
 
       var varFoundAlias = varGlobalAlias.filter(function (item) {
@@ -1827,7 +1830,7 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
 
         if (varAlias == "") varAlias = " (" + alias.ALIAS_NAME;else if (varAlias == "(") varAlias = alias.ALIAS_NAME;else varAlias += "," + alias.ALIAS_NAME;
 
-        varAliases.push(alias.ALIAS_NAME);
+        varAliases.push(alias.ALIAS_NAME.toUpperCase());
       });
 
       if (varAlias != "") {
@@ -1835,7 +1838,7 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
       }
 
       varTmpObject.push({
-        PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim() + varAlias).toUpperCase(),
+        PERSONNEL_NAME: (all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim().toUpperCase(),
         GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
         PERSONNEL_INFO_SRC: 'INDIV',
         ALIASES: varAliases,
@@ -1851,7 +1854,7 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
       var varAliases = [];
       if (all.ALIAS != "" && all.ALIAS != null) {
         varAlias = " (" + all.ALIAS;
-        varAliases.push(all.ALIAS);
+        varAliases.push(all.ALIAS.toUpperCase());
       }
 
       var varFoundAlias = varGlobalAlias.filter(function (item) {
@@ -1861,7 +1864,7 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
       if (varFoundAlias.length > 0) varFoundAlias.forEach(function (alias) {
         if (varAlias == "") varAlias = " (" + alias.ALIAS_NAME;else if (varAlias == "(") varAlias = alias.ALIAS_NAME;else varAlias += "," + alias.ALIAS_NAME;
 
-        varAliases.push(alias.ALIAS_NAME);
+        varAliases.push(alias.ALIAS_NAME.toUpperCase());
       });
 
       if (varAlias != "") {
@@ -1869,10 +1872,13 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
       }
 
       varTmpObject.push({
-        PERSONNEL_NAME: ((all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim() + varAlias).toUpperCase(),
+        PERSONNEL_NAME: (all.LAST_NAME + ', ' + all.GIVEN_NAME + ' ' + all.MIDDLE_NAME).trim().toUpperCase(),
         GLOBAL_INDIV_ID: all.SUPPLIER_INDIV_GLOBAL_ID,
         PERSONNEL_INFO_SRC: 'TSUPPLIER',
-        ALIASES: varAliases
+        ALIASES: varAliases,
+        LAST_NAME: all.LAST_NAME,
+        GIVEN_NAME: all.GIVEN_NAME,
+        MIDDLE_NAME: all.GIVEN_NAME
       });
     });
 
@@ -1881,7 +1887,10 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
         PERSONNEL_NAME: all.COMPANY_NAME.toUpperCase(),
         GLOBAL_INDIV_ID: all.SUPPLIER_COMP_GLOBAL_ID,
         PERSONNEL_INFO_SRC: 'TCOMP',
-        ALIASES: []
+        ALIASES: [],
+        LAST_NAME: '',
+        GIVEN_NAME: '',
+        MIDDLE_NAME: ''
       });
     });
 
@@ -1890,7 +1899,10 @@ define('masterfiles',['exports', './entity-manager-factory', 'toastr', 'breeze-c
         PERSONNEL_NAME: all.GROUP_NAME.toUpperCase(),
         GLOBAL_INDIV_ID: all.GLOBAL_GRP_ID,
         PERSONNEL_INFO_SRC: 'GLGRP',
-        ALIASES: []
+        ALIASES: [],
+        LAST_NAME: '',
+        GIVEN_NAME: '',
+        MIDDLE_NAME: ''
       });
     });
 
@@ -2315,7 +2327,8 @@ define('nav-bar',['exports', 'aurelia-framework', 'cache_obj', 'aurelia-router',
                             Is_Branch: varSplitCookie[3],
                             EMPLOYEE_ID: varSplitCookie[4],
                             HASH: varSplitCookie[5],
-                            EMAIL_ADDRESS: varSplitCookie[6]
+                            EMAIL_ADDRESS: varSplitCookie[6],
+                            LEVEL_NO: varSplitCookie[7]
                         };
 
                         _this._cache_obj.USER = _user;
@@ -2362,7 +2375,8 @@ define('nav-bar',['exports', 'aurelia-framework', 'cache_obj', 'aurelia-router',
                     EMPLOYEE_ID: varSplitCookie[4],
                     HASH: varSplitCookie[5],
                     EMAIL_ADDRESS: varSplitCookie[6],
-                    ROLE_CD: varSplitCookie[7]
+                    ROLE_CD: varSplitCookie[7],
+                    LEVEL_NO: varSplitCookie[8]
                 };
 
                 this._cache_obj.USER = this._user;
@@ -2384,7 +2398,8 @@ define('nav-bar',['exports', 'aurelia-framework', 'cache_obj', 'aurelia-router',
 
             this._user = user;
 
-            (0, _helpers.setCookie)("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^" + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD, 30);
+            (0, _helpers.setCookie)("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^" + user.Is_Branch + "^" + user.EMPLOYEE_ID + "^" + user.HASH + "^" + user.EMAIL_ADDRESS + "^" + user.ROLE_CD + "^" + user.LEVEL_NO, 30);
+
             _settings2.default.isNavigating = false;
 
             _toastr2.default.clear();
@@ -2544,14 +2559,15 @@ define('settings',["exports"], function (exports) {
     });
     exports.default = {
 
-        serviceName: "http://absppms2:8072/odata",
-        serviceNameBase: "http://absppms2:8072",
+        serviceName: "http://localhost:30313/odata",
+        serviceNameBase: "http://localhost:30313",
 
         pageSize: 100,
         STATIONS: ["", "CEBU", "DAVAO"],
         actualCostWebUrl: "http://localhost:15253",
 
         actualCostServiceBase: "http://absppms2:8083",
+
         isNavigating: false
     };
 });
@@ -2699,244 +2715,6 @@ define('welcome',['exports', 'aurelia-framework', './entity-manager-factory', '.
 
     return UpperValueConverter;
   }();
-});
-define('converters/datepattern',['exports', 'moment'], function (exports, _moment) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.DatepatternValueConverter = undefined;
-
-    var _moment2 = _interopRequireDefault(_moment);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var DatepatternValueConverter = exports.DatepatternValueConverter = function () {
-        function DatepatternValueConverter() {
-            _classCallCheck(this, DatepatternValueConverter);
-        }
-
-        DatepatternValueConverter.prototype.toView = function toView(value) {
-            if (value === undefined || value == null) return (0, _moment2.default)(new Date(), 'MM-DD-YYYY').format('MM-DD-YYYY');else {
-                if ((0, _moment2.default)(value, 'MM-DD-YYYY', true).isValid()) {
-                    return (0, _moment2.default)(value, 'MM-DD-YYYY').format('MM-DD-YYYY');
-                } else return (0, _moment2.default)(new Date(), 'MM-DD-YYYY').format('MM-DD-YYYY');
-            }
-        };
-
-        return DatepatternValueConverter;
-    }();
-});
-define('converters/filtercustom',['exports'], function (exports) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var FiltercustomValueConverter = exports.FiltercustomValueConverter = function () {
-        function FiltercustomValueConverter() {
-            _classCallCheck(this, FiltercustomValueConverter);
-        }
-
-        FiltercustomValueConverter.prototype.toView = function toView(array, propertyName, value, signal) {
-            var varResult = [];
-            array.forEach(function (all) {
-
-                if (propertyName.indexOf(',') > 0) {
-                    var varCheck = propertyName.split(',').find(function (allFilter) {
-                        return all[allFilter] != value;
-                    });
-
-                    if (varCheck == undefined) {
-                        varResult.push(all);
-                    }
-                } else if (all[propertyName] == value) varResult.push(all);
-            });
-
-            array = varResult;
-            return array;
-        };
-
-        return FiltercustomValueConverter;
-    }();
-});
-define('converters/number-format',['exports', 'numeral'], function (exports, _numeral) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.NumberFormatValueConverter = undefined;
-
-  var _numeral2 = _interopRequireDefault(_numeral);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  var NumberFormatValueConverter = exports.NumberFormatValueConverter = function () {
-    function NumberFormatValueConverter() {
-      _classCallCheck(this, NumberFormatValueConverter);
-    }
-
-    NumberFormatValueConverter.prototype.toView = function toView(value, format) {
-      return (0, _numeral2.default)(value).format(format);
-    };
-
-    return NumberFormatValueConverter;
-  }();
-});
-define('converters/signals',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var SignalsValueConverter = exports.SignalsValueConverter = function () {
-        function SignalsValueConverter() {
-            _classCallCheck(this, SignalsValueConverter);
-        }
-
-        SignalsValueConverter.prototype.toView = function toView(value, signal) {
-            return value;
-        };
-
-        return SignalsValueConverter;
-    }();
-});
-define('converters/sort',['exports'], function (exports) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var SortValueConverter = exports.SortValueConverter = function () {
-        function SortValueConverter() {
-            _classCallCheck(this, SortValueConverter);
-        }
-
-        SortValueConverter.prototype.toView = function toView(array, propertyName, direction) {
-            var factor = direction === 'ascending' ? 1 : -1;
-            return array.slice(0).sort(function (a, b) {
-                return (a[propertyName] - b[propertyName]) * factor;
-            });
-        };
-
-        return SortValueConverter;
-    }();
-});
-define('converters/sorttext',["exports"], function (exports) {
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var SorttextValueConverter = exports.SorttextValueConverter = function () {
-		function SorttextValueConverter() {
-			_classCallCheck(this, SorttextValueConverter);
-		}
-
-		SorttextValueConverter.prototype.toView = function toView(array, propertyName, direction) {
-			if (direction == "ascending") {
-
-				return array.sort(function (a, b) {
-					if (a[propertyName] > b[propertyName]) {
-						return 1;
-					}
-					if (a[propertyName] < b[propertyName]) {
-						return -1;
-					}
-
-					return 0;
-				});
-			} else {
-				return array.sort(function (a, b) {
-					if (a[propertyName] > b[propertyName]) {
-						return -1;
-					}
-					if (a[propertyName] < b[propertyName]) {
-						return 1;
-					}
-
-					return 0;
-				});
-			}
-		};
-
-		return SorttextValueConverter;
-	}();
-});
-define('converters/take',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var TakeValueConverter = exports.TakeValueConverter = function () {
-        function TakeValueConverter() {
-            _classCallCheck(this, TakeValueConverter);
-        }
-
-        TakeValueConverter.prototype.toView = function toView(array, count, index) {
-            return array.slice(index * count, index * count + count);
-        };
-
-        return TakeValueConverter;
-    }();
 });
 define('modals/budget',['exports', '../masterfiles', 'multi-observer', 'aurelia-framework', '../helpers', 'underscore', 'jquery', '../entity-manager-factory', 'toastr', 'cache_obj', 'aurelia-dialog', 'breeze-client'], function (exports, _masterfiles, _multiObserver, _aureliaFramework, _helpers, _underscore, _jquery, _entityManagerFactory, _toastr, _cache_obj, _aureliaDialog, _breezeClient) {
 	'use strict';
@@ -3749,7 +3527,7 @@ define('modals/globalindivmstr',['exports', '../masterfiles', 'multi-observer', 
 
 			_toastr2.default.info("Personnel Data...", "Loading..");
 			this.varActiveFromCompanyMstr = _underscore2.default.filter((0, _masterfiles.getLookups)().GLOBAL_COMPANY_MSTR, function (all) {
-				return all.STATUS_CD != 'ACTV';
+				return all.STATUS_CD == 'ACTV' && all.COMPANY_ID == _this._cache_obj.USER.COMPANY_ID;
 			}).map(function (val) {
 				return val.GLOBAL_ID;
 			});
@@ -3765,6 +3543,20 @@ define('modals/globalindivmstr',['exports', '../masterfiles', 'multi-observer', 
 				_this.ClearSearch();
 			});
 		}
+
+		globalindivmstr.prototype.activate = function activate(model) {
+			var _this2 = this;
+
+			if (model.allPersonnel) this.varActiveFromCompanyMstr = _underscore2.default.filter((0, _masterfiles.getLookups)().GLOBAL_COMPANY_MSTR, function (all) {
+				return all.STATUS_CD == 'ACTV';
+			}).map(function (val) {
+				return val.GLOBAL_ID;
+			});else this.varActiveFromCompanyMstr = _underscore2.default.filter((0, _masterfiles.getLookups)().GLOBAL_COMPANY_MSTR, function (all) {
+				return all.STATUS_CD == 'ACTV' && all.COMPANY_ID == _this2._cache_obj.USER.COMPANY_ID;
+			}).map(function (val) {
+				return val.GLOBAL_ID;
+			});
+		};
 
 		globalindivmstr.prototype.attached = function attached() {};
 
@@ -3790,12 +3582,12 @@ define('modals/globalindivmstr',['exports', '../masterfiles', 'multi-observer', 
 		};
 
 		globalindivmstr.prototype.fnManualFilter = function fnManualFilter(tmpVar) {
-			var _this2 = this;
+			var _this3 = this;
 
 			var lstPredicates = [];
 			_underscore2.default.each(this._rGROUP_TITLE.querySelectorAll('input'), function (all) {
 
-				var varOb = _this2.observerLocator.getObserver(_this2, all.getAttribute('searchable').replace('_s', '_b'));
+				var varOb = _this3.observerLocator.getObserver(_this3, all.getAttribute('searchable').replace('_s', '_b'));
 
 				if (varOb.getValue() != undefined && varOb.getValue() != null && varOb.getValue() != "" && varOb.getValue() != "undefined") {
 
@@ -3813,7 +3605,7 @@ define('modals/globalindivmstr',['exports', '../masterfiles', 'multi-observer', 
 		};
 
 		globalindivmstr.prototype.onSpeculateProp = function onSpeculateProp(newValue, oldValue) {
-			var _this3 = this;
+			var _this4 = this;
 
 			if (this._rGROUP_TITLE === undefined || this._rGROUP_TITLE === null || this._rGROUP_TITLE === '') return;
 
@@ -3830,12 +3622,13 @@ define('modals/globalindivmstr',['exports', '../masterfiles', 'multi-observer', 
 
 				var varFound = _underscore2.default.filter(tmpVar, function (all) {
 
-					var result_p = _underscore2.default.find(_this3.varActiveFromCompanyMstr, function (all_p) {
+					var result_p = _underscore2.default.find(_this4.varActiveFromCompanyMstr, function (all_p) {
 						return all_p == all.GLOBAL_INDIV_ID;
 					});
 
-					return result_p == undefined;
+					return result_p != undefined;
 				});
+
 				tmpVar = varFound;
 			}
 
@@ -3906,6 +3699,7 @@ define('modals/indivmstr',['exports', '../masterfiles', 'multi-observer', 'aurel
 			this.varFilterArray = [];
 			this.varFilterArrayLength = 0;
 			this.controller = null;
+			this.varActiveFromCompanyMstr = [];
 
 
 			this.controller = controller;
@@ -3926,19 +3720,33 @@ define('modals/indivmstr',['exports', '../masterfiles', 'multi-observer', 'aurel
 			});
 		}
 
+		indivmstr.prototype.activate = function activate(model) {
+			var _this2 = this;
+
+			if (model.allPersonnel) this.varActiveFromCompanyMstr = _underscore2.default.filter((0, _masterfiles.getLookups)().GLOBAL_COMPANY_MSTR, function (all) {
+				return all.STATUS_CD == 'ACTV';
+			}).map(function (val) {
+				return val.GLOBAL_ID;
+			});else this.varActiveFromCompanyMstr = _underscore2.default.filter((0, _masterfiles.getLookups)().GLOBAL_COMPANY_MSTR, function (all) {
+				return all.STATUS_CD == 'ACTV' && all.COMPANY_ID == _this2._cache_obj.USER.COMPANY_ID;
+			}).map(function (val) {
+				return val.GLOBAL_ID;
+			});
+		};
+
 		indivmstr.prototype.selectedIndiv = function selectedIndiv(item) {
 
 			this.controller.ok(item);
 		};
 
 		indivmstr.prototype.fnManualFilter = function fnManualFilter(tmpVar) {
-			var _this2 = this;
+			var _this3 = this;
 
 			var lstPredicates = [];
 
 			_underscore2.default.each(this._rGROUP_TITLE.querySelectorAll('input'), function (all) {
 
-				var varOb = _this2.observerLocator.getObserver(_this2, all.getAttribute('searchable').replace('_s', '_b'));
+				var varOb = _this3.observerLocator.getObserver(_this3, all.getAttribute('searchable').replace('_s', '_b'));
 
 				if (varOb.getValue() != undefined && varOb.getValue() != null && varOb.getValue() != "" && varOb.getValue() != "undefined") {
 
@@ -3956,6 +3764,7 @@ define('modals/indivmstr',['exports', '../masterfiles', 'multi-observer', 'aurel
 		};
 
 		indivmstr.prototype.onSpeculateProp = function onSpeculateProp(newValue, oldValue) {
+			var _this4 = this;
 
 			if (this._rGROUP_TITLE === undefined || this._rGROUP_TITLE === null) return;
 			var tmpVar = this.fnManualFilter(this.varFilterArray);
@@ -3967,6 +3776,17 @@ define('modals/indivmstr',['exports', '../masterfiles', 'multi-observer', 'aurel
 				return;
 			} else {
 				tmpVar = this.fnManualFilter((0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS);
+
+				var varFound = _underscore2.default.filter(tmpVar, function (all) {
+
+					var result_p = _underscore2.default.find(_this4.varActiveFromCompanyMstr, function (all_p) {
+						return all_p == all.GLOBAL_INDIV_ID;
+					});
+
+					return result_p != undefined;
+				});
+
+				tmpVar = varFound;
 			}
 
 			this.varFilterArray = tmpVar;
@@ -4269,12 +4089,10 @@ define('modals/login',['exports', '../masterfiles', 'multi-observer', 'aurelia-f
                 _this._user_content.push({});
 
                 found.results.forEach(function (all) {
-
-                    if (all.ROLE_CD == null || all.ROLE_CD == undefined) {
-                        _this._user_content.push(all);
-                    } else if (all.ROLE_CD.includes('ACCESSALL') || all.ROLE_CD.includes('PPFCS')) {
-                        _this._user_content.push(all);
-                    }
+                    var found = _this._user_content.find(function (all2) {
+                        return all2.USER_ID == all.USER_ID;
+                    });
+                    if (found == undefined) _this._user_content.push(all);
                 });
             });
 
@@ -5014,6 +4832,736 @@ define('modals/talentmanagergroups',['exports', '../masterfiles', 'multi-observe
 		return talentmanagergroups;
 	}()) || _class);
 });
+define('converters/datepattern',['exports', 'moment'], function (exports, _moment) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.DatepatternValueConverter = undefined;
+
+    var _moment2 = _interopRequireDefault(_moment);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var DatepatternValueConverter = exports.DatepatternValueConverter = function () {
+        function DatepatternValueConverter() {
+            _classCallCheck(this, DatepatternValueConverter);
+        }
+
+        DatepatternValueConverter.prototype.toView = function toView(value) {
+            if (value === undefined || value == null) return (0, _moment2.default)(new Date(), 'MM-DD-YYYY').format('MM-DD-YYYY');else {
+                if ((0, _moment2.default)(value, 'MM-DD-YYYY', true).isValid()) {
+                    return (0, _moment2.default)(value, 'MM-DD-YYYY').format('MM-DD-YYYY');
+                } else return (0, _moment2.default)(new Date(), 'MM-DD-YYYY').format('MM-DD-YYYY');
+            }
+        };
+
+        return DatepatternValueConverter;
+    }();
+});
+define('converters/filtercustom',['exports'], function (exports) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var FiltercustomValueConverter = exports.FiltercustomValueConverter = function () {
+        function FiltercustomValueConverter() {
+            _classCallCheck(this, FiltercustomValueConverter);
+        }
+
+        FiltercustomValueConverter.prototype.toView = function toView(array, propertyName, value, signal) {
+            var varResult = [];
+            array.forEach(function (all) {
+
+                if (propertyName.indexOf(',') > 0) {
+                    var varCheck = propertyName.split(',').find(function (allFilter) {
+                        return all[allFilter] != value;
+                    });
+
+                    if (varCheck == undefined) {
+                        varResult.push(all);
+                    }
+                } else if (all[propertyName] == value) varResult.push(all);
+            });
+
+            array = varResult;
+            return array;
+        };
+
+        return FiltercustomValueConverter;
+    }();
+});
+define('converters/number-format',['exports', 'numeral'], function (exports, _numeral) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.NumberFormatValueConverter = undefined;
+
+  var _numeral2 = _interopRequireDefault(_numeral);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var NumberFormatValueConverter = exports.NumberFormatValueConverter = function () {
+    function NumberFormatValueConverter() {
+      _classCallCheck(this, NumberFormatValueConverter);
+    }
+
+    NumberFormatValueConverter.prototype.toView = function toView(value, format) {
+      return (0, _numeral2.default)(value).format(format);
+    };
+
+    return NumberFormatValueConverter;
+  }();
+});
+define('converters/signals',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var SignalsValueConverter = exports.SignalsValueConverter = function () {
+        function SignalsValueConverter() {
+            _classCallCheck(this, SignalsValueConverter);
+        }
+
+        SignalsValueConverter.prototype.toView = function toView(value, signal) {
+            return value;
+        };
+
+        return SignalsValueConverter;
+    }();
+});
+define('converters/sort',['exports'], function (exports) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var SortValueConverter = exports.SortValueConverter = function () {
+        function SortValueConverter() {
+            _classCallCheck(this, SortValueConverter);
+        }
+
+        SortValueConverter.prototype.toView = function toView(array, propertyName, direction) {
+            var factor = direction === 'ascending' ? 1 : -1;
+            return array.slice(0).sort(function (a, b) {
+                return (a[propertyName] - b[propertyName]) * factor;
+            });
+        };
+
+        return SortValueConverter;
+    }();
+});
+define('converters/sorttext',["exports"], function (exports) {
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var SorttextValueConverter = exports.SorttextValueConverter = function () {
+		function SorttextValueConverter() {
+			_classCallCheck(this, SorttextValueConverter);
+		}
+
+		SorttextValueConverter.prototype.toView = function toView(array, propertyName, direction) {
+			if (direction == "ascending") {
+
+				return array.sort(function (a, b) {
+					if (a[propertyName] > b[propertyName]) {
+						return 1;
+					}
+					if (a[propertyName] < b[propertyName]) {
+						return -1;
+					}
+
+					return 0;
+				});
+			} else {
+				return array.sort(function (a, b) {
+					if (a[propertyName] > b[propertyName]) {
+						return -1;
+					}
+					if (a[propertyName] < b[propertyName]) {
+						return 1;
+					}
+
+					return 0;
+				});
+			}
+		};
+
+		return SorttextValueConverter;
+	}();
+});
+define('converters/take',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var TakeValueConverter = exports.TakeValueConverter = function () {
+        function TakeValueConverter() {
+            _classCallCheck(this, TakeValueConverter);
+        }
+
+        TakeValueConverter.prototype.toView = function toView(array, count, index) {
+            return array.slice(index * count, index * count + count);
+        };
+
+        return TakeValueConverter;
+    }();
+});
+define('ppfcs/buh',['exports', '../entity-manager-factory', '../helpers', '../masterfiles', 'toastr', 'aurelia-framework', 'typeahead', 'underscore', '../modals/buh-program-dialog', 'aurelia-dialog', '../modals/login', '../modals/buh-search'], function (exports, _entityManagerFactory, _helpers, _masterfiles, _toastr, _aureliaFramework, _typeahead, _underscore, _buhProgramDialog, _aureliaDialog, _login, _buhSearch) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.buh = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _typeahead2 = _interopRequireDefault(_typeahead);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var buh = exports.buh = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService), _dec(_class = function () {
+		function buh(DialogService) {
+			_classCallCheck(this, buh);
+
+			this._objBUH = { PROGRAMS: [] };
+			this.dialogService = null;
+			this.loginDisabled = true;
+			this.logoutDisabled = false;
+			this.masterFilesLoaded = false;
+			this._disableCells = true;
+			this._disableAdd = false;
+			this._disableDelete = true;
+			this._disableSave = true;
+			this._disableSearch = false;
+			this._disableGrid = true;
+			this._status = "";
+			this._user = {};
+			this._programs = [];
+
+
+			this.dialogService = DialogService;
+
+			if (this.dialogService.controllers.length > 0) {
+				for (var i = this.dialogService.controllers.length - 1; i >= 0; i--) {
+					this.dialogService.controllers[i].close();
+				}
+			}
+		}
+
+		buh.prototype.addBUH = function addBUH() {
+			this.fnCRUD("add");
+		};
+
+		buh.prototype.fnCRUD = function fnCRUD(value) {
+			var _this = this;
+
+			this._disableCells = true;
+			this._disableSave = true;
+			this._disableDelete = true;
+			this._disableAdd = true;
+			this._disableGrid = true;
+			this._disableSearch = true;
+			switch (value) {
+				case "cancel":
+					{
+						this._disableSearch = false;
+						this._disableAdd = false;
+						this._objBUH = {
+							BUH_PERSONNEL_ID: 0,
+							OPTIONAL_GLOBAL_ID: "",
+							FIRST_NAME: "",
+							MIDDLE_NAME: "",
+							LAST_NAME: "",
+							EMAIL_ADDRESS: "", PROGRAMS: [] };
+						this._status = "";
+					}
+					break;
+				case "search":
+					{
+						this.searchExistingBuh();
+					}
+					break;
+				case "add":
+					{
+						this._status = "add";
+						this._disableCells = false;
+						this._disableSave = false;
+						this._objBUH = {
+							BUH_PERSONNEL_ID: "",
+							OPTIONAL_GLOBAL_ID: "",
+							FIRST_NAME: "",
+							MIDDLE_NAME: "",
+							LAST_NAME: "",
+							EMAIL_ADDRESS: "", PROGRAMS: [] };
+					}
+					break;
+				case "delete":
+					{
+
+						var varDelete = confirm("Delete BUH?");
+
+						if (varDelete) {
+
+							for (var i = this._objBUH.PROGRAMS.length - 1; i >= 0; i--) {
+								var found = this._programs.find(function (all) {
+									return all.PROGRAM_CD == _this._objBUH.PROGRAMS[i].PROGRAM_CD;
+								});
+								found.BUH_PERSONNEL_ID = 0;
+							}
+
+							var getBUHForEdit = (0, _entityManagerFactory.EntityQuery)().from('BUH_PERSONNEL').where("BUH_PERSONNEL_ID", "==", this._objBUH.BUH_PERSONNEL_ID);
+							(0, _entityManagerFactory.EntityManager)().executeQuery(getBUHForEdit).then(function (success) {
+								success.results[0].entityAspect.setDeleted();
+								(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+									_toastr2.default.success("Succesfully Saved", "Program");
+								}, function (fail) {
+
+									(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+										var errors = entity.entityAspect.getValidationErrors();
+										if (errors.length > 0) console.log(errors);
+									});
+									_toastr2.default.error("Error Occured", fail);
+								});
+
+								_this.fnCRUD("cancel");
+							});
+
+							return;
+						}
+						this._disableCells = false;
+						this._disableSave = false;
+						this._disableDelete = false;
+						this._disableAdd = false;
+						this._disableGrid = false;
+						this._disableSearch = false;
+					}
+					break;
+				case "save":
+					{
+						this.saveBUH();
+					}
+					break;
+			}
+		};
+
+		buh.prototype.saveBUH = function saveBUH() {
+			var _this2 = this;
+
+			if (this._status == "view") {
+				var getBUHForEdit = (0, _entityManagerFactory.EntityQuery)().from('BUH_PERSONNEL').where("BUH_PERSONNEL_ID", "==", this._objBUH.BUH_PERSONNEL_ID);
+				(0, _entityManagerFactory.EntityManager)().executeQuery(getBUHForEdit).then(function (success) {
+
+					success.results[0].OPTIONAL_GLOBAL_ID = _this2._objBUH.OPTIONAL_GLOBAL_ID.toUpperCase();
+					success.results[0].FIRST_NAME = _this2._objBUH.FIRST_NAME.toUpperCase();
+					success.results[0].MIDDLE_NAME = _this2._objBUH.MIDDLE_NAME.toUpperCase();
+					success.results[0].LAST_NAME = _this2._objBUH.LAST_NAME.toUpperCase();
+					success.results[0].EMAIL_ADDRESS = _this2._objBUH.EMAIL_ADDRESS.toUpperCase();
+
+					(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+						_toastr2.default.success("Succesfully Saved", "New Business Unit Head");
+
+						_this2._disableDelete = false;
+						_this2._disableGrid = false;
+						_this2._disableAdd = false;
+						_this2._disableSearch = false;
+						_this2._disableCells = false;
+						_this2._disableSave = false;
+					}, function (fail) {
+
+						if (varInsert != null) {
+							varInsert.entityAspect.setDeleted();
+						}
+
+						(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+							var errors = entity.entityAspect.getValidationErrors();
+							if (errors.length > 0) console.log(errors);
+						});
+						console.log(fail);
+						_toastr2.default.error("Error Occured", fail);
+					});
+				});
+				return;
+			}
+
+			var getMax = (0, _entityManagerFactory.EntityQuery)().from('BUH_PERSONNEL').orderByDesc('BUH_PERSONNEL_ID').take(1);
+			(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
+				var getMax = 1;
+
+				if (successMax.results.length > 0) getMax = successMax.results[0].BUH_PERSONNEL_ID + 1;
+
+				var varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BUH_PERSONNEL', {
+					BUH_PERSONNEL_ID: getMax,
+					OPTIONAL_GLOBAL_ID: _this2._objBUH.OPTIONAL_GLOBAL_ID.toUpperCase(),
+					FIRST_NAME: _this2._objBUH.FIRST_NAME.toUpperCase(),
+					MIDDLE_NAME: _this2._objBUH.MIDDLE_NAME.toUpperCase(),
+					LAST_NAME: _this2._objBUH.LAST_NAME.toUpperCase(),
+					EMAIL_ADDRESS: _this2._objBUH.EMAIL_ADDRESS.toUpperCase(),
+					CREATED_BY: "PAULV",
+					CREATED_DT: new Date(Date.now())
+				});
+
+				(0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+					_this2._objBUH.BUH_PERSONNEL_ID = getMax;
+
+					_toastr2.default.success("Succesfully Saved", "New Business Unit Head");
+
+					_this2._disableDelete = false;
+					_this2._disableGrid = false;
+					_this2._disableAdd = false;
+					_this2._disableSearch = false;
+					_this2._disableDelete = false;
+					_this2._disableCells = false;
+					_this2._disableSave = false;
+					_this2._status = "view";
+				}, function (fail) {
+
+					if (varInsert != null) {
+						varInsert.entityAspect.setDeleted();
+					}
+
+					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+						var errors = entity.entityAspect.getValidationErrors();
+						if (errors.length > 0) console.log(errors);
+					});
+					console.log(fail);
+					_toastr2.default.error("Error Occured", fail);
+				});
+			});
+		};
+
+		buh.prototype.deleteSelected = function deleteSelected(index) {
+			var _this3 = this;
+
+			var varDelete = confirm("Delete record?");
+			if (varDelete) {
+
+				var found = this._programs.find(function (all) {
+					return all.PROGRAM_CD == _this3._objBUH.PROGRAMS[index].PROGRAM_CD;
+				});
+				found.BUH_PERSONNEL_ID = 0;
+
+				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+					_toastr2.default.success("Succesfully Saved", "Program");
+				}, function (fail) {
+
+					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+						var errors = entity.entityAspect.getValidationErrors();
+						if (errors.length > 0) console.log(errors);
+					});
+					_toastr2.default.error("Error Occured", fail);
+				});
+
+				this._objBUH.PROGRAMS.splice(index, 1);
+			}
+		};
+
+		buh.prototype.searchExistingBuh = function searchExistingBuh() {
+			var _this4 = this;
+
+			this.dialogService.open({
+				viewModel: _buhSearch.buhSearch
+			}).whenClosed(function (response) {
+
+				if (!response.wasCancelled) {
+					_this4.searchBUH(response.output);
+					_this4._disableGrid = false;
+					_this4._disableDelete = false;
+					_this4._disableSave = false;
+					_this4._disableCells = false;
+				} else {
+					_this4._disableSearch = false;
+					_this4._disableAdd = false;
+				}
+			});
+		};
+
+		buh.prototype.searchBUH = function searchBUH(item) {
+			var _this5 = this;
+
+			this._status = "view";
+
+			this._objBUH.BUH_PERSONNEL_ID = item.BUH_PERSONNEL_ID;
+			this._objBUH.OPTIONAL_GLOBAL_ID = item.OPTIONAL_GLOBAL_ID;
+			this._objBUH.FIRST_NAME = item.FIRST_NAME;
+			this._objBUH.MIDDLE_NAME = item.MIDDLE_NAME;
+			this._objBUH.LAST_NAME = item.LAST_NAME;
+			this._objBUH.EMAIL_ADDRESS = item.EMAIL_ADDRESS;
+
+			this._disableAdd = false;
+			this._disableSearch = false;
+
+			this._objBUH.PROGRAMS = [];
+
+			var found = this._programs.filter(function (all) {
+				return all.BUH_PERSONNEL_ID == item.BUH_PERSONNEL_ID;
+			});
+
+			if (found !== undefined) found.forEach(function (foundItems) {
+				_this5._objBUH.PROGRAMS.push(foundItems);
+			});
+		};
+
+		buh.prototype.searchPrograms = function searchPrograms() {
+			var _this6 = this;
+
+			this.dialogService.open({
+				viewModel: _buhProgramDialog.buhProgramDialog
+			}).whenClosed(function (response) {
+
+				if (!response.wasCancelled) {
+
+					for (var a = response.output.length - 1; a >= 0; --a) {
+						var found = _this6._programs.find(function (all) {
+							return all.PROGRAM_CD == response.output[a].PROGRAM_CD;
+						});
+						console.log(found.BUH_PERSONNEL_ID);
+						if (found.BUH_PERSONNEL_ID == 0) {
+							_this6._objBUH.PROGRAMS.push(response.output[a]);
+							found.BUH_PERSONNEL_ID = _this6._objBUH.BUH_PERSONNEL_ID;
+						} else {
+							_toastr2.default.error("<strong>" + found.PROGRAM_TITLE + "</strong> cannot be added, it is assigned to other BUH Personnel.", "Problem occured");
+						}
+					}
+
+					(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+						_toastr2.default.success("Succesfully Saved", "Program");
+					}, function (fail) {
+
+						(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+							var errors = entity.entityAspect.getValidationErrors();
+							if (errors.length > 0) console.log(errors);
+						});
+						_toastr2.default.error("Error Occured", fail);
+					});
+				}
+			});
+		};
+
+		buh.prototype.fnInitMasterfiles = function fnInitMasterfiles(initType, output) {
+			var _this7 = this;
+
+			if (this.masterFilesLoaded == false) {
+				this._toastr = _toastr2.default;
+				_toastr2.default.info("Masterfiles...", "Loading please wait..", { timeOut: 15000 });
+				this.loginDisabled = true;
+				(0, _masterfiles.loadMasterfiles)().then(function () {
+					(0, _masterfiles.loadLookups)().then(function () {
+
+						_this7.masterFilesLoaded = true;
+
+						_this7.fnPassUserObject(initType, output);
+					});
+				});
+			} else {
+				this.fnPassUserObject(initType, output);
+			}
+		};
+
+		buh.prototype.fnLogin = function fnLogin() {
+			var _this8 = this;
+
+			this.dialogService.open({
+				viewModel: _login.login
+			}).whenClosed(function (response) {
+
+				if (!response.wasCancelled) {
+					_this8.fnInitMasterfiles(1, response.output);
+				} else {}
+			});
+		};
+
+		buh.prototype.fnPassUserObject = function fnPassUserObject(initType, output) {
+
+			if (initType == 1) {} else {
+				var varCookie = (0, _helpers.checkCookie)("PPMS_USER");
+				var varSplitCookie = varCookie.split('^');
+				this._user = {
+					USER_ID: varSplitCookie[0],
+					COMPANY_ID: varSplitCookie[1],
+					Is_HR: varSplitCookie[2],
+					Is_Branch: varSplitCookie[0]
+				};
+
+				this.loginDisabled = true;
+				this.logoutDisabled = false;
+				this.showingLogout = "visible";
+				_toastr2.default.clear();
+				_toastr2.default.success("Let's Start...", "Success");
+				this._disableAdd = false;
+				this._disableSearch = false;
+				return;
+			}
+
+			this.LoginPassed(output);
+		};
+
+		buh.prototype.LoginPassed = function LoginPassed(user) {
+
+			this._user = user;
+
+			(0, _helpers.setCookie)("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^" + user.Is_Branch, 30);
+			_toastr2.default.clear();
+			_toastr2.default.success("Let's Start...", "Success");
+
+			this.logoutDisabled = false;
+			this.loginDisabled = true;
+
+			this.showingLogout = "visible";
+			this._disableAdd = false;
+			this._disableSearch = false;
+		};
+
+		buh.prototype.logout = function logout() {
+			this.fnCRUD("cancel");
+			this._disableAdd = true;
+			this._disableSearch = true;
+			this.loginDisabled = false;
+			this.logoutDisabled = true;
+
+			this._user = {};
+			(0, _helpers.removeCookie)();
+			this.showingLogout = "hidden";
+			this.fnLogin();
+		};
+
+		return buh;
+	}()) || _class);
+});
+define('ppfcs/cache_budget',["exports"], function (exports) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var cache_budget = exports.cache_budget = function cache_budget() {
+        _classCallCheck(this, cache_budget);
+
+        this.HEADER = {};
+        this.REGULAR = [];
+        this.SEMI_REGULAR = [];
+        this.STAFF = [];
+        this.GUEST = [];
+        this.USER = {};
+        this.TOTAL = 0;
+        this.STATUS = "NONE";
+        this.IS_COPYING = false;
+        this._INPUT_AMT_REGULAR = 0;
+        this._INPUT_AMT_SEMI_REGULAR = 0;
+        this._INPUT_AMT_STAFF = 0;
+        this._INPUT_AMT_GUEST = 0;
+        this._INPUT_AMT_TOTAL = 0;
+        this.IS_COPYING = false;
+        this._LOADING_BUDGET = 0;
+        this.CALLER = { ACTION: null, ACTION_CALLER: null, VALUE1: null, VALUE2: null, VALUE3: null, VALUE4: null };
+        this.OBSERVERS = {
+            pass_group: [],
+            pass_indiv: [],
+            enable_approved: [],
+            copy_template_guest: [],
+            copy_template: [],
+            budget_refresh: [],
+            reset_all: [],
+            refreshPersonnelTab: [],
+            reset_summary: [],
+            budget_loaded: [],
+            disable_search_personnel: [],
+            pass_job: []
+        };
+    };
+});
 define('ppid/obj_personnel',["exports"], function (exports) {
 	"use strict";
 
@@ -5508,498 +6056,6 @@ define('ppid/ppid',['exports', '.././helpers', 'toastr', 'aurelia-framework', '.
 		return ppid;
 	}()) || _class);
 });
-define('ppfcs/buh',['exports', '../entity-manager-factory', '../helpers', '../masterfiles', 'toastr', 'aurelia-framework', 'typeahead', 'underscore', '../modals/buh-program-dialog', 'aurelia-dialog', '../modals/login', '../modals/buh-search'], function (exports, _entityManagerFactory, _helpers, _masterfiles, _toastr, _aureliaFramework, _typeahead, _underscore, _buhProgramDialog, _aureliaDialog, _login, _buhSearch) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.buh = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _typeahead2 = _interopRequireDefault(_typeahead);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var buh = exports.buh = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService), _dec(_class = function () {
-		function buh(DialogService) {
-			_classCallCheck(this, buh);
-
-			this._objBUH = { PROGRAMS: [] };
-			this.dialogService = null;
-			this.loginDisabled = true;
-			this.logoutDisabled = false;
-			this.masterFilesLoaded = false;
-			this._disableCells = true;
-			this._disableAdd = false;
-			this._disableDelete = true;
-			this._disableSave = true;
-			this._disableSearch = false;
-			this._disableGrid = true;
-			this._status = "";
-			this._user = {};
-			this._programs = [];
-
-
-			this.dialogService = DialogService;
-
-			if (this.dialogService.controllers.length > 0) {
-				for (var i = this.dialogService.controllers.length - 1; i >= 0; i--) {
-					this.dialogService.controllers[i].close();
-				}
-			}
-		}
-
-		buh.prototype.addBUH = function addBUH() {
-			this.fnCRUD("add");
-		};
-
-		buh.prototype.fnCRUD = function fnCRUD(value) {
-			var _this = this;
-
-			this._disableCells = true;
-			this._disableSave = true;
-			this._disableDelete = true;
-			this._disableAdd = true;
-			this._disableGrid = true;
-			this._disableSearch = true;
-			switch (value) {
-				case "cancel":
-					{
-						this._disableSearch = false;
-						this._disableAdd = false;
-						this._objBUH = {
-							BUH_PERSONNEL_ID: 0,
-							OPTIONAL_GLOBAL_ID: "",
-							FIRST_NAME: "",
-							MIDDLE_NAME: "",
-							LAST_NAME: "",
-							EMAIL_ADDRESS: "", PROGRAMS: [] };
-						this._status = "";
-					}
-					break;
-				case "search":
-					{
-						this.searchExistingBuh();
-					}
-					break;
-				case "add":
-					{
-						this._status = "add";
-						this._disableCells = false;
-						this._disableSave = false;
-						this._objBUH = {
-							BUH_PERSONNEL_ID: "",
-							OPTIONAL_GLOBAL_ID: "",
-							FIRST_NAME: "",
-							MIDDLE_NAME: "",
-							LAST_NAME: "",
-							EMAIL_ADDRESS: "", PROGRAMS: [] };
-					}
-					break;
-				case "delete":
-					{
-
-						var varDelete = confirm("Delete BUH?");
-
-						if (varDelete) {
-
-							for (var i = this._objBUH.PROGRAMS.length - 1; i >= 0; i--) {
-								var found = this._programs.find(function (all) {
-									return all.PROGRAM_CD == _this._objBUH.PROGRAMS[i].PROGRAM_CD;
-								});
-								found.BUH_PERSONNEL_ID = 0;
-							}
-
-							var getBUHForEdit = (0, _entityManagerFactory.EntityQuery)().from('BUH_PERSONNEL').where("BUH_PERSONNEL_ID", "==", this._objBUH.BUH_PERSONNEL_ID);
-							(0, _entityManagerFactory.EntityManager)().executeQuery(getBUHForEdit).then(function (success) {
-								success.results[0].entityAspect.setDeleted();
-								(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-									_toastr2.default.success("Succesfully Saved", "Program");
-								}, function (fail) {
-
-									(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-										var errors = entity.entityAspect.getValidationErrors();
-										if (errors.length > 0) console.log(errors);
-									});
-									_toastr2.default.error("Error Occured", fail);
-								});
-
-								_this.fnCRUD("cancel");
-							});
-
-							return;
-						}
-						this._disableCells = false;
-						this._disableSave = false;
-						this._disableDelete = false;
-						this._disableAdd = false;
-						this._disableGrid = false;
-						this._disableSearch = false;
-					}
-					break;
-				case "save":
-					{
-						this.saveBUH();
-					}
-					break;
-			}
-		};
-
-		buh.prototype.saveBUH = function saveBUH() {
-			var _this2 = this;
-
-			if (this._status == "view") {
-				var getBUHForEdit = (0, _entityManagerFactory.EntityQuery)().from('BUH_PERSONNEL').where("BUH_PERSONNEL_ID", "==", this._objBUH.BUH_PERSONNEL_ID);
-				(0, _entityManagerFactory.EntityManager)().executeQuery(getBUHForEdit).then(function (success) {
-
-					success.results[0].OPTIONAL_GLOBAL_ID = _this2._objBUH.OPTIONAL_GLOBAL_ID.toUpperCase();
-					success.results[0].FIRST_NAME = _this2._objBUH.FIRST_NAME.toUpperCase();
-					success.results[0].MIDDLE_NAME = _this2._objBUH.MIDDLE_NAME.toUpperCase();
-					success.results[0].LAST_NAME = _this2._objBUH.LAST_NAME.toUpperCase();
-					success.results[0].EMAIL_ADDRESS = _this2._objBUH.EMAIL_ADDRESS.toUpperCase();
-
-					(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-						_toastr2.default.success("Succesfully Saved", "New Business Unit Head");
-
-						_this2._disableDelete = false;
-						_this2._disableGrid = false;
-						_this2._disableAdd = false;
-						_this2._disableSearch = false;
-						_this2._disableCells = false;
-						_this2._disableSave = false;
-					}, function (fail) {
-
-						if (varInsert != null) {
-							varInsert.entityAspect.setDeleted();
-						}
-
-						(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-							var errors = entity.entityAspect.getValidationErrors();
-							if (errors.length > 0) console.log(errors);
-						});
-						console.log(fail);
-						_toastr2.default.error("Error Occured", fail);
-					});
-				});
-				return;
-			}
-
-			var getMax = (0, _entityManagerFactory.EntityQuery)().from('BUH_PERSONNEL').orderByDesc('BUH_PERSONNEL_ID').take(1);
-			(0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
-				var getMax = 1;
-
-				if (successMax.results.length > 0) getMax = successMax.results[0].BUH_PERSONNEL_ID + 1;
-
-				var varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BUH_PERSONNEL', {
-					BUH_PERSONNEL_ID: getMax,
-					OPTIONAL_GLOBAL_ID: _this2._objBUH.OPTIONAL_GLOBAL_ID.toUpperCase(),
-					FIRST_NAME: _this2._objBUH.FIRST_NAME.toUpperCase(),
-					MIDDLE_NAME: _this2._objBUH.MIDDLE_NAME.toUpperCase(),
-					LAST_NAME: _this2._objBUH.LAST_NAME.toUpperCase(),
-					EMAIL_ADDRESS: _this2._objBUH.EMAIL_ADDRESS.toUpperCase(),
-					CREATED_BY: "PAULV",
-					CREATED_DT: new Date(Date.now())
-				});
-
-				(0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
-
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-					_this2._objBUH.BUH_PERSONNEL_ID = getMax;
-
-					_toastr2.default.success("Succesfully Saved", "New Business Unit Head");
-
-					_this2._disableDelete = false;
-					_this2._disableGrid = false;
-					_this2._disableAdd = false;
-					_this2._disableSearch = false;
-					_this2._disableDelete = false;
-					_this2._disableCells = false;
-					_this2._disableSave = false;
-					_this2._status = "view";
-				}, function (fail) {
-
-					if (varInsert != null) {
-						varInsert.entityAspect.setDeleted();
-					}
-
-					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-						var errors = entity.entityAspect.getValidationErrors();
-						if (errors.length > 0) console.log(errors);
-					});
-					console.log(fail);
-					_toastr2.default.error("Error Occured", fail);
-				});
-			});
-		};
-
-		buh.prototype.deleteSelected = function deleteSelected(index) {
-			var _this3 = this;
-
-			var varDelete = confirm("Delete record?");
-			if (varDelete) {
-
-				var found = this._programs.find(function (all) {
-					return all.PROGRAM_CD == _this3._objBUH.PROGRAMS[index].PROGRAM_CD;
-				});
-				found.BUH_PERSONNEL_ID = 0;
-
-				(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-					_toastr2.default.success("Succesfully Saved", "Program");
-				}, function (fail) {
-
-					(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-						var errors = entity.entityAspect.getValidationErrors();
-						if (errors.length > 0) console.log(errors);
-					});
-					_toastr2.default.error("Error Occured", fail);
-				});
-
-				this._objBUH.PROGRAMS.splice(index, 1);
-			}
-		};
-
-		buh.prototype.searchExistingBuh = function searchExistingBuh() {
-			var _this4 = this;
-
-			this.dialogService.open({
-				viewModel: _buhSearch.buhSearch
-			}).whenClosed(function (response) {
-
-				if (!response.wasCancelled) {
-					_this4.searchBUH(response.output);
-					_this4._disableGrid = false;
-					_this4._disableDelete = false;
-					_this4._disableSave = false;
-					_this4._disableCells = false;
-				} else {
-					_this4._disableSearch = false;
-					_this4._disableAdd = false;
-				}
-			});
-		};
-
-		buh.prototype.searchBUH = function searchBUH(item) {
-			var _this5 = this;
-
-			this._status = "view";
-
-			this._objBUH.BUH_PERSONNEL_ID = item.BUH_PERSONNEL_ID;
-			this._objBUH.OPTIONAL_GLOBAL_ID = item.OPTIONAL_GLOBAL_ID;
-			this._objBUH.FIRST_NAME = item.FIRST_NAME;
-			this._objBUH.MIDDLE_NAME = item.MIDDLE_NAME;
-			this._objBUH.LAST_NAME = item.LAST_NAME;
-			this._objBUH.EMAIL_ADDRESS = item.EMAIL_ADDRESS;
-
-			this._disableAdd = false;
-			this._disableSearch = false;
-
-			this._objBUH.PROGRAMS = [];
-
-			var found = this._programs.filter(function (all) {
-				return all.BUH_PERSONNEL_ID == item.BUH_PERSONNEL_ID;
-			});
-
-			if (found !== undefined) found.forEach(function (foundItems) {
-				_this5._objBUH.PROGRAMS.push(foundItems);
-			});
-		};
-
-		buh.prototype.searchPrograms = function searchPrograms() {
-			var _this6 = this;
-
-			this.dialogService.open({
-				viewModel: _buhProgramDialog.buhProgramDialog
-			}).whenClosed(function (response) {
-
-				if (!response.wasCancelled) {
-
-					for (var a = response.output.length - 1; a >= 0; --a) {
-						var found = _this6._programs.find(function (all) {
-							return all.PROGRAM_CD == response.output[a].PROGRAM_CD;
-						});
-						console.log(found.BUH_PERSONNEL_ID);
-						if (found.BUH_PERSONNEL_ID == 0) {
-							_this6._objBUH.PROGRAMS.push(response.output[a]);
-							found.BUH_PERSONNEL_ID = _this6._objBUH.BUH_PERSONNEL_ID;
-						} else {
-							_toastr2.default.error("<strong>" + found.PROGRAM_TITLE + "</strong> cannot be added, it is assigned to other BUH Personnel.", "Problem occured");
-						}
-					}
-
-					(0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-						_toastr2.default.success("Succesfully Saved", "Program");
-					}, function (fail) {
-
-						(0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-							var errors = entity.entityAspect.getValidationErrors();
-							if (errors.length > 0) console.log(errors);
-						});
-						_toastr2.default.error("Error Occured", fail);
-					});
-				}
-			});
-		};
-
-		buh.prototype.fnInitMasterfiles = function fnInitMasterfiles(initType, output) {
-			var _this7 = this;
-
-			if (this.masterFilesLoaded == false) {
-				this._toastr = _toastr2.default;
-				_toastr2.default.info("Masterfiles...", "Loading please wait..", { timeOut: 15000 });
-				this.loginDisabled = true;
-				(0, _masterfiles.loadMasterfiles)().then(function () {
-					(0, _masterfiles.loadLookups)().then(function () {
-
-						_this7.masterFilesLoaded = true;
-
-						_this7.fnPassUserObject(initType, output);
-					});
-				});
-			} else {
-				this.fnPassUserObject(initType, output);
-			}
-		};
-
-		buh.prototype.fnLogin = function fnLogin() {
-			var _this8 = this;
-
-			this.dialogService.open({
-				viewModel: _login.login
-			}).whenClosed(function (response) {
-
-				if (!response.wasCancelled) {
-					_this8.fnInitMasterfiles(1, response.output);
-				} else {}
-			});
-		};
-
-		buh.prototype.fnPassUserObject = function fnPassUserObject(initType, output) {
-
-			if (initType == 1) {} else {
-				var varCookie = (0, _helpers.checkCookie)("PPMS_USER");
-				var varSplitCookie = varCookie.split('^');
-				this._user = {
-					USER_ID: varSplitCookie[0],
-					COMPANY_ID: varSplitCookie[1],
-					Is_HR: varSplitCookie[2],
-					Is_Branch: varSplitCookie[0]
-				};
-
-				this.loginDisabled = true;
-				this.logoutDisabled = false;
-				this.showingLogout = "visible";
-				_toastr2.default.clear();
-				_toastr2.default.success("Let's Start...", "Success");
-				this._disableAdd = false;
-				this._disableSearch = false;
-				return;
-			}
-
-			this.LoginPassed(output);
-		};
-
-		buh.prototype.LoginPassed = function LoginPassed(user) {
-
-			this._user = user;
-
-			(0, _helpers.setCookie)("PPMS_USER", user.USER_ID + "^" + user.COMPANY_ID + "^" + user.Is_HR + "^" + user.Is_Branch, 30);
-			_toastr2.default.clear();
-			_toastr2.default.success("Let's Start...", "Success");
-
-			this.logoutDisabled = false;
-			this.loginDisabled = true;
-
-			this.showingLogout = "visible";
-			this._disableAdd = false;
-			this._disableSearch = false;
-		};
-
-		buh.prototype.logout = function logout() {
-			this.fnCRUD("cancel");
-			this._disableAdd = true;
-			this._disableSearch = true;
-			this.loginDisabled = false;
-			this.logoutDisabled = true;
-
-			this._user = {};
-			(0, _helpers.removeCookie)();
-			this.showingLogout = "hidden";
-			this.fnLogin();
-		};
-
-		return buh;
-	}()) || _class);
-});
-define('ppfcs/cache_budget',["exports"], function (exports) {
-    "use strict";
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var cache_budget = exports.cache_budget = function cache_budget() {
-        _classCallCheck(this, cache_budget);
-
-        this.HEADER = {};
-        this.REGULAR = [];
-        this.SEMI_REGULAR = [];
-        this.STAFF = [];
-        this.GUEST = [];
-        this.USER = {};
-        this.TOTAL = 0;
-        this.STATUS = "NONE";
-        this.IS_COPYING = false;
-        this._INPUT_AMT_REGULAR = 0;
-        this._INPUT_AMT_SEMI_REGULAR = 0;
-        this._INPUT_AMT_STAFF = 0;
-        this._INPUT_AMT_GUEST = 0;
-        this._INPUT_AMT_TOTAL = 0;
-        this.IS_COPYING = false;
-        this._LOADING_BUDGET = 0;
-        this.CALLER = { ACTION: null, ACTION_CALLER: null, VALUE1: null, VALUE2: null, VALUE3: null, VALUE4: null };
-        this.OBSERVERS = {
-            pass_group: [],
-            pass_indiv: [],
-            enable_approved: [],
-            copy_template_guest: [],
-            copy_template: [],
-            budget_refresh: [],
-            reset_all: [],
-            refreshPersonnelTab: [],
-            reset_summary: [],
-            budget_loaded: [],
-            disable_search_personnel: [],
-            pass_job: []
-        };
-    };
-});
 define('tools/gridpaging',['exports', 'aurelia-framework', 'aurelia-binding', 'cache_obj'], function (exports, _aureliaFramework, _aureliaBinding, _cache_obj) {
 	'use strict';
 
@@ -6156,6 +6212,3813 @@ define('tools/gridpaging',['exports', 'aurelia-framework', 'aurelia-binding', 'c
 		enumerable: true,
 		initializer: null
 	})), _class2)) || _class);
+});
+define('ppfcs/actual_cost/actual_cost',['exports', 'aurelia-framework', 'cache_obj', 'settings'], function (exports, _aureliaFramework, _cache_obj, _settings) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.actual_cost = undefined;
+
+    var _settings2 = _interopRequireDefault(_settings);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _dec, _class;
+
+    var actual_cost = exports.actual_cost = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj), _dec(_class = function actual_cost(cache_obj) {
+        _classCallCheck(this, actual_cost);
+
+        this._cache_obj = cache_obj;
+    }) || _class);
+});
+define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'numeral', 'toastr', 'multi-observer', '../../modals/paymentterm', 'aurelia-dialog', 'cache_obj'], function (exports, _aureliaFramework, _cache_budget, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _numeral, _toastr, _multiObserver, _paymentterm, _aureliaDialog, _cache_obj) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.GuestCustomElement = undefined;
+
+  var _typeahead2 = _interopRequireDefault(_typeahead);
+
+  var _settings2 = _interopRequireDefault(_settings);
+
+  var _underscore2 = _interopRequireDefault(_underscore);
+
+  var _numeral2 = _interopRequireDefault(_numeral);
+
+  var _toastr2 = _interopRequireDefault(_toastr);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _initDefineProp(target, property, descriptor, context) {
+    if (!descriptor) return;
+    Object.defineProperty(target, property, {
+      enumerable: descriptor.enumerable,
+      configurable: descriptor.configurable,
+      writable: descriptor.writable,
+      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+    });
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+    var desc = {};
+    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+      desc[key] = descriptor[key];
+    });
+    desc.enumerable = !!desc.enumerable;
+    desc.configurable = !!desc.configurable;
+
+    if ('value' in desc || desc.initializer) {
+      desc.writable = true;
+    }
+
+    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+      return decorator(target, property, desc) || desc;
+    }, desc);
+
+    if (context && desc.initializer !== void 0) {
+      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+      desc.initializer = undefined;
+    }
+
+    if (desc.initializer === void 0) {
+      Object['define' + 'Property'](target, property, desc);
+      desc = null;
+    }
+
+    return desc;
+  }
+
+  function _initializerWarningHelper(descriptor, context) {
+    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+  }
+
+  var _dec, _class, _desc, _value, _class2, _descriptor;
+
+  var GuestCustomElement = exports.GuestCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
+    function GuestCustomElement(cache_obj, cache_budget, multiObserver, dialogService) {
+      var _this = this;
+
+      _classCallCheck(this, GuestCustomElement);
+
+      _initDefineProp(this, 'to', _descriptor, this);
+
+      this._cache_budget = null;
+      this._enableAdd = false;
+      this._enableRemove = false;
+      this.dialogService = null;
+      this._cache_obj = null;
+
+      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
+        return;
+      }
+
+      this._cache_budget = cache_budget;
+      this.dialogService = dialogService;
+      this._cache_obj = cache_obj;
+
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
+        _this.fnCheckBudget(val);
+      });
+
+      this._cache_budget.OBSERVERS.copy_template_guest.push(function () {
+        _this.fnCallCopy();
+      });
+
+      this._cache_budget.OBSERVERS.reset_all.push(function () {
+        _this.resetView();
+      });
+
+      this._PYMNTTERM = (0, _masterfiles.getLookups)().PAYMENT_TERM;
+    }
+
+    GuestCustomElement.prototype.fnModalPaymentTerm = function fnModalPaymentTerm() {
+      var _this2 = this;
+
+      this.dialogService.open({
+        viewModel: _paymentterm.paymentterm
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {
+          _this2.passTerm(response.output);
+        } else {}
+      });
+    };
+
+    GuestCustomElement.prototype.passTerm = function passTerm(term) {
+      this._cache_budget.GUEST[0].PAYMENT_TERM = term.REF_DESC;
+      this._cache_budget.GUEST[0].PYMNT_TERM_CD = term.REF_CD;
+    };
+
+    GuestCustomElement.prototype.fnCheckBudget = function fnCheckBudget(value) {
+      var _this3 = this;
+
+      var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_GUEST_DTL').where('BDGT_TMPL_ID', '==', value);
+      (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
+
+        _this3._cache_budget.GUEST = found.results;
+
+        var varRefCd = [];
+
+        _underscore2.default.each(_this3._cache_budget.GUEST, function (item) {
+
+          for (var i = 0; i <= _this3._PYMNTTERM.length - 1; ++i) {
+            if (_this3._PYMNTTERM[i].REF_CD == item.PYMNT_TERM_CD) {
+              item.PAYMENT_TERM = _this3._PYMNTTERM[i].REF_DESC;
+              break;
+            }
+          };
+
+          item.PAY_RATE_FACTOR_TMP = (0, _numeral2.default)(item.PAY_RATE_FACTOR).format('0,0.00');
+          item.INPUT_AMT_TMP = (0, _numeral2.default)(item.INPUT_AMT).format('0,0.00');
+          item.visible = true;
+        });
+
+        _this3._enableAdd = false;
+        _this3._enableRemove = false;
+
+        if (_this3._cache_budget.GUEST.length == 0) _this3._enableAdd = true;else _this3._enableRemove = true;
+
+        _this3._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+          all();
+        });
+
+        if (_this3._cache_budget.GUEST.length > 0) _toastr2.default.success("GUEST PERSONNEL", "Loading Successful.");
+      });
+    };
+
+    GuestCustomElement.prototype.fnCallCopy = function fnCallCopy() {
+      this.saveGuest();
+    };
+
+    GuestCustomElement.prototype.fnAddGuest = function fnAddGuest() {
+      if (this._cache_budget.GUEST.length > 0) {
+        this._cache_budget.GUEST[0].visible = true;
+      } else this._cache_budget.GUEST.push({ INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'), PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
+        INPUT_AMT: 0, PAY_RATE_FACTOR: 1, visible: true });
+
+      this._enableAdd = false;
+      this._enableRemove = true;
+      this._signal = (0, _entityManagerFactory.generateID)();
+    };
+
+    GuestCustomElement.prototype.resetView = function resetView() {
+      this._signal = (0, _entityManagerFactory.generateID)();
+    };
+
+    GuestCustomElement.prototype.fnRemoveGuest = function fnRemoveGuest() {
+      if (this._cache_budget.GUEST.length > 0) {
+        this._cache_budget.GUEST[0].visible = false;
+      }
+
+      this._enableAdd = true;
+      this._enableRemove = false;
+      this._signal = (0, _entityManagerFactory.generateID)();
+    };
+
+    GuestCustomElement.prototype.saveGuest = function saveGuest() {
+      var _this4 = this;
+
+      if (this._cache_budget.GUEST.length > 0) {
+        if (this._cache_budget.GUEST[0].PYMNT_TERM_CD == "" || this._cache_budget.GUEST[0] == undefined || this._cache_budget.GUEST[0] == null) {
+          _toastr2.default.error("<strong>Payment Term not defined</strong><br /><br />Saving cancelled.", "Problem occured");
+          return;
+        }
+      }
+
+      var getMax = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_GUEST_DTL').orderByDesc('BDGT_TMPL_GUEST_DTL_ID').take(1);
+      (0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
+        var getMax = 1;
+
+        if (successMax.results.length > 0) getMax = successMax.results[0].BDGT_TMPL_GUEST_DTL_ID + 1;
+
+        var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_GUEST_DTL').where('BDGT_TMPL_ID', '==', _this4._cache_budget.HEADER.BDGT_TMPL_ID);
+        (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
+
+          if (_this4._cache_budget.GUEST.length > 0) if (_this4._cache_budget.GUEST[0].visible) {
+
+            if (found.results.length > 0) {
+
+              found.results[0].BDGT_AMT = parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, ''));
+              found.results[0].PYMNT_TERM_CD = _this4._cache_budget.GUEST[0].PYMNT_TERM_CD;
+              found.results[0].INPUT_AMT = parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, ''));
+              found.results[0].PAY_RATE_FACTOR = parseFloat(_this4._cache_budget.GUEST[0].PAY_RATE_FACTOR_TMP.replace(/,/g, ''));
+              found.results[0].REMARKS = _this4._cache_budget.GUEST[0].REMARKS;
+
+              found.results[0].LAST_UPDATED_BY = _this4._cache_obj.USER.USER_ID;
+              found.results[0].LAST_UPDATED_DT = new Date();
+            } else {
+
+              var varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_GUEST_DTL', {
+                BDGT_TMPL_GUEST_DTL_ID: getMax,
+                PYMNT_TERM_CD: _this4._cache_budget.GUEST[0].PYMNT_TERM_CD,
+                INPUT_AMT: parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, '')),
+                BDGT_AMT: parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, '')),
+                PAY_RATE_FACTOR: parseFloat(_this4._cache_budget.GUEST[0].PAY_RATE_FACTOR_TMP.replace(/,/g, '')),
+                REMARKS: _this4._cache_budget.GUEST[0].REMARKS,
+                BDGT_TMPL_ID: _this4._cache_budget.HEADER.BDGT_TMPL_ID,
+                CREATED_BY: _this4._cache_obj.USER.USER_ID,
+                CREATED_DT: new Date(),
+                LAST_UPDATED_BY: _this4._cache_obj.USER.USER_ID,
+                LAST_UPDATED_DT: new Date()
+              });
+
+              (0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
+            }
+          } else {
+            if (found.results.length > 0) found.results[0].entityAspect.setDeleted();
+          }
+
+          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+            _this4.fnCheckBudget(_this4._cache_budget.HEADER.BDGT_TMPL_ID);
+            _toastr2.default.success("Succesfully Saved", "GUEST");
+          }, function (fail) {
+
+            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+              var errors = entity.entityAspect.getValidationErrors();
+              if (errors.length > 0) console.log(errors);
+            });
+            console.log(fail);
+            _toastr2.default.error("Error Occured", fail);
+          });
+        });
+      });
+    };
+
+    GuestCustomElement.prototype.fnRegularBlurEvt = function fnRegularBlurEvt(item, index) {};
+
+    GuestCustomElement.prototype.fnRegularFocus = function fnRegularFocus(index, prop) {
+
+      this.fnModalPaymentTerm();
+    };
+
+    GuestCustomElement.prototype.AmountBlur = function AmountBlur(item, property) {
+      var varConverted = (0, _numeral2.default)(item[property]).format('0,0.00');
+      item[property] = varConverted;
+    };
+
+    return GuestCustomElement;
+  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'to', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  })), _class2)) || _class);
+});
+define('ppfcs/budget/main-header',['exports', 'aurelia-framework', 'cache_obj', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'settings', 'modals/modal-wizard', 'toastr', 'moment', 'underscore', 'multi-observer', 'aurelia-dialog', '../../modals/program', '../../modals/budget', '../../modals/confirm_dialog', 'breeze-client'], function (exports, _aureliaFramework, _cache_obj, _cache_budget, _entityManagerFactory, _masterfiles, _settings, _modalWizard, _toastr, _moment, _underscore, _multiObserver, _aureliaDialog, _program, _budget, _confirm_dialog, _breezeClient) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.MainHeaderCustomElement = undefined;
+
+  var _settings2 = _interopRequireDefault(_settings);
+
+  var _toastr2 = _interopRequireDefault(_toastr);
+
+  var _moment2 = _interopRequireDefault(_moment);
+
+  var _underscore2 = _interopRequireDefault(_underscore);
+
+  var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _initDefineProp(target, property, descriptor, context) {
+    if (!descriptor) return;
+    Object.defineProperty(target, property, {
+      enumerable: descriptor.enumerable,
+      configurable: descriptor.configurable,
+      writable: descriptor.writable,
+      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+    });
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+    var desc = {};
+    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+      desc[key] = descriptor[key];
+    });
+    desc.enumerable = !!desc.enumerable;
+    desc.configurable = !!desc.configurable;
+
+    if ('value' in desc || desc.initializer) {
+      desc.writable = true;
+    }
+
+    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+      return decorator(target, property, desc) || desc;
+    }, desc);
+
+    if (context && desc.initializer !== void 0) {
+      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+      desc.initializer = undefined;
+    }
+
+    if (desc.initializer === void 0) {
+      Object['define' + 'Property'](target, property, desc);
+      desc = null;
+    }
+
+    return desc;
+  }
+
+  function _initializerWarningHelper(descriptor, context) {
+    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+  }
+
+  var _dec, _class, _desc, _value, _class2, _descriptor;
+
+  var MainHeaderCustomElement = exports.MainHeaderCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _modalWizard.ModalWizard, _toastr2.default, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
+    function MainHeaderCustomElement(cache_obj, cache_budget, ModalWizard, toastr, multiObserver, DialogService) {
+      var _this = this;
+
+      _classCallCheck(this, MainHeaderCustomElement);
+
+      _initDefineProp(this, 'to', _descriptor, this);
+
+      this._cache_obj = null;
+      this._PROGRAM_GENRE_MSTR = [];
+      this._TELECAST_MODE_MSTR = [];
+      this._EPISODE_TYPE_MSTR = [];
+      this._STATIONS = [];
+      this._disableCreateBudget = false;
+      this._disableCancelBudget = true;
+      this._disableRefreshBudget = true;
+      this._disableSaveBudget = true;
+      this._disableBudgetId = false;
+      this._disablePrintBudget = true;
+      this._disableCopyBudget = true;
+      this.dialogService = null;
+      this.programDisabled = true;
+      this.budgetDisabled = false;
+
+      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
+
+        return;
+      }
+
+      this.dialogService = DialogService;
+      this._cache_obj = cache_obj;
+      this._cache_budget = cache_budget;
+
+      this.LoginPassed(this._cache_obj.USER);
+
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
+        _this.CloseBudgetDialog(val);
+      });
+
+      this._cache_obj.OBSERVERS.pass_program.push(function (val) {
+        _this.PassedProgram(val);
+      });
+
+      this._cache_budget.OBSERVERS.budget_refresh.push(function () {
+        _this.fnBudgetRefreshHandle();
+      });
+
+      this._cache_budget.OBSERVERS.budget_loaded.push(function () {
+        if (_this._disableSaveBudget == true) {
+          _this._disableSaveBudget = false;
+          _this._disableCopyBudget = false;
+          _settings2.default.isNavigating = false;
+          toastr.success("Budget has been successfully loaded.", "Budget Template");
+        }
+      });
+
+      this._toastr = toastr;
+
+      this.fnClearHeader();
+
+      this._disableCreateBudget = false;
+      this._disableCancelBudget = true;
+      this._disableRefreshBudget = true;
+      this._disableSaveBudget = true;
+      this._disableBudgetId = false;
+      this._disablePrintBudget = true;
+      this._disableCopyBudget = true;
+      this._ModalWizard = ModalWizard;
+
+      setTimeout(function () {
+
+        $('.datepicker').datepicker();
+
+        $('#refFrom').datepicker({
+          format: "mm/dd/yyyy"
+        }).on("changeDate", function () {
+
+          if (new Date($('#refFrom').val()) > new Date($('#refTo').val())) {
+            toastr.error("Invalid date range.", "Date Change..");
+            $('#refTo').datepicker("setValue", new Date($('#refFrom').val()));
+            return;
+          }
+
+          _this._cache_budget.HEADER.BDGT_FROM = $('#refFrom').val();
+          if (_this._cache_budget.HEADER.BDGT_TO == "") {
+            _this._cache_budget.HEADER.BDGT_TO = _this._cache_budget.HEADER.BDGT_FROM;
+          }
+
+          $('#refFrom').datepicker('hide');
+        });
+
+        $('#refTo').datepicker({
+          format: "mm/dd/yyyy"
+        }).on("changeDate", function () {
+
+          if (new Date($('#refTo').val()) < new Date($('#refFrom').val())) {
+            toastr.error("Invalid date range.", "Date Change..");
+            $('#refFrom').datepicker("setValue", new Date($('#refTo').val()));
+            return;
+          }
+
+          _this._cache_budget.HEADER.BDGT_TO = $('#refTo').val();
+          $('#refTo').datepicker('hide');
+        });
+      }, 1000);
+
+      var varToday = new Date(Date.now());
+      var p1 = _breezeClient2.default.Predicate.create('BDGT_TO', '<=', new Date(varToday.getFullYear(), varToday.getMonth(), varToday.getDate()));
+      var p2 = _breezeClient2.default.Predicate.create('APPR_STAT_CD', '==', "APP-APPROVED");
+      var pred = _breezeClient2.default.Predicate.and([p1, p2]);
+
+      var checkExpired = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where(pred);
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery(checkExpired).then(function (success) {
+        success.results.forEach(function (all) {
+          all.APPR_STAT_CD = "APP-EXPIRED";
+          all.LAST_UPDATED_BY = "ADMIN";
+          all.LAST_UPDATED_DT = new Date(Date.now());
+        });
+
+        (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {}, function (fail) {
+          console.log(fail);
+        });
+      });
+    }
+
+    MainHeaderCustomElement.prototype.checkDate = function checkDate(id) {
+
+      setTimeout(function () {
+        if (!Date.parse($("#" + id).val())) {
+          _toastr2.default.error("Invalid starting date ", "Date Change..");
+        } else {
+          $("#" + id).datepicker("setValue", new Date($("#" + id).val()));
+        }
+      }, 1000);
+    };
+
+    MainHeaderCustomElement.prototype.validate = function validate() {};
+
+    MainHeaderCustomElement.prototype.inputChanged = function inputChanged(evt, value) {
+      var _this2 = this;
+
+      if (evt.keyCode == 13) {
+
+        this._cache_obj.OBSERVERS.budget_dialog.forEach(function (all) {
+          all(_this2._cache_budget.HEADER.BDGT_TMPL_ID);
+        });
+      }
+    };
+
+    MainHeaderCustomElement.prototype.LoginPassed = function LoginPassed(user) {
+
+      if (user.USER_ID == undefined) return;
+      this._user = user.USER_ID;
+      this._COMPANY_ID = user.COMPANY_ID;
+
+      this.budgetDisabled = false;
+
+      this.programDisabled = true;
+
+
+      this.fnClearBudget();
+
+      this._disableCreateBudget = false;
+      this._disableCancelBudget = true;
+      this._disableRefreshBudget = true;
+      this._disableSaveBudget = true;
+      this._disablePrintBudget = true;
+      this._disableCopyBudget = true;
+    };
+
+    MainHeaderCustomElement.prototype.LoggedOut = function LoggedOut() {
+
+      this._disableCreateBudget = true;
+      this._disableCancelBudget = true;
+      this._disableRefreshBudget = true;
+      this._disableSaveBudget = true;
+      this._disablePrintBudget = true;
+      this._disableCopyBudget = true;
+
+      this.budgetDisabled = false;
+
+
+      this.programDisabled = true;
+
+
+      this.fnClearHeader();
+    };
+
+    MainHeaderCustomElement.prototype.fnClearHeader = function fnClearHeader() {
+      this._cache_budget.HEADER = {
+        BDGT_TMPL_ID: "",
+
+        CHARGE_CD: "",
+        PROGRAM_GENRE_CD: "",
+        TELECAST_MODE_CD: "",
+        EPISODE_TYPE_CD: "",
+        EPISODES: "",
+        TAPING_DAYS: "",
+        BDGT_FROM: "",
+        BDGT_TO: "",
+        STATION_ID: "",
+        APPR_STAT_CD: "",
+        REMARKS: ""
+      };
+
+      while (this._cache_budget.REGULAR.length > 0) {
+        this._cache_budget.REGULAR.pop();
+      }
+      this._cache_budget.REGULAR = [];
+
+      while (this._cache_budget.SEMI_REGULAR.length > 0) {
+        this._cache_budget.SEMI_REGULAR.pop();
+      }
+      this._cache_budget.SEMI_REGULAR = [];
+
+      while (this._cache_budget.STAFF.length > 0) {
+        this._cache_budget.STAFF.pop();
+      }
+      this._cache_budget.STAFF = [];
+
+      while (this._cache_budget.GUEST.length > 0) {
+        this._cache_budget.GUEST.pop();
+      }
+
+      this._cache_budget.GUEST = [];
+
+      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+        all();
+      });
+
+      this._disableBudgetId = false;
+
+      this._cache_budget.OBSERVERS.reset_all.forEach(function (all) {
+        all();
+      });
+    };
+
+    MainHeaderCustomElement.prototype.fnClearBudget = function fnClearBudget() {
+      this.fnClearHeader();
+
+      this._PROGRAM_GENRE_MSTR = (0, _masterfiles.getLookups)().PROGRAM_GENRE_MSTR;
+      this._PROGRAM_GENRE_MSTR.unshift({});
+      this._TELECAST_MODE_MSTR = (0, _masterfiles.getLookups)().TELECAST_MODE_MSTR;
+      this._TELECAST_MODE_MSTR.unshift({});
+      this._EPISODE_TYPE_MSTR = (0, _masterfiles.getLookups)().EPISODE_TYPE_MSTR;
+      this._EPISODE_TYPE_MSTR.unshift({});
+      this._STATIONS = _settings2.default.STATIONS;
+
+      this._STATUS = [{}];
+    };
+
+    MainHeaderCustomElement.prototype.CloseBudgetDialog = function CloseBudgetDialog(value) {
+      var _this3 = this;
+
+      var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where('BDGT_TMPL_ID', '==', value).expand('PROGRAM_MSTR').select('BDGT_TMPL_ID, PROGRAM_MSTR, CHARGE_CD, PROGRAM_GENRE_CD,  TELECAST_MODE_CD,  EPISODE_TYPE_CD,   EPISODES,  TAPING_DAYS, BDGT_FROM, BDGT_TO, STATION_ID, APPR_STAT_CD, REMARKS, CREATED_BY, LAST_UPDATED_BY ');
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
+
+        _this3._STATUS = [{ REF_CD: "APP-DRAFT", REF_DESC: "APP-DRAFT" }, { REF_CD: "APP-APPROVED", REF_DESC: "APP-APPROVED" }];
+
+        if (found.results.length == 0) return;
+
+        _this3._cache_budget.HEADER = found.results[0];
+
+        _this3._cache_budget.HEADER.BDGT_FROM = (0, _moment2.default)(new Date(_this3._cache_budget.HEADER.BDGT_FROM)).format('MM-DD-YYYY');
+        _this3._cache_budget.HEADER.BDGT_TO = (0, _moment2.default)(new Date(_this3._cache_budget.HEADER.BDGT_TO)).format('MM-DD-YYYY');
+
+        _this3._disableBudgetId = true;
+
+        _this3._disableCreateBudget = true;
+        _this3._disableCancelBudget = false;
+        _this3._disableRefreshBudget = false;
+
+        _this3._cache_budget._LOADING_BUDGET = 1;
+        _this3._disableSaveBudget = true;
+
+        _this3._disablePrintBudget = false;
+        _this3._disableCopyBudget = true;
+
+        _this3.budgetDisabled = true;
+
+
+        if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-CLOSED") {
+          _this3._STATUS = [{ REF_CD: "APP-CLOSED", REF_DESC: "APP-CLOSED" }];
+          _this3._disableSaveBudget = true;
+        } else if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-EXPIRED") {
+          _this3._STATUS = [{ REF_CD: "APP-EXPIRED", REF_DESC: "APP-EXPIRED" }];
+          _this3._disableSaveBudget = true;
+          _this3._disablePrintBudget = true;
+        } else if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-DRAFT") {
+
+          _this3.programDisabled = false;
+
+
+          _this3._cache_budget.OBSERVERS.enable_approved.forEach(function (all) {
+            all(true);
+          });
+        } else {
+
+          _this3._cache_budget.OBSERVERS.enable_approved.forEach(function (all) {
+            all(false);
+          });
+        }
+
+        if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-APPROVED") {
+
+          _this3._cache_budget.STATUS = "APPROVED";
+          _this3._disableSaveBudget = true;
+
+          _this3.programDisabled = true;
+        } else _this3._cache_budget.STATUS = "VIEW";
+
+        _this3._cache_budget.OBSERVERS.disable_search_personnel.forEach(function (all) {
+          all(_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-DRAFT");
+        });
+      }, function (fail) {
+        console.log(fail);
+      });
+    };
+
+    MainHeaderCustomElement.prototype.PassedProgram = function PassedProgram(value) {
+      this._cache_budget.HEADER.PROGRAM_MSTR = value;
+      this._cache_budget.HEADER.CHARGE_CD = value.PROGRAM_CD;
+    };
+
+    MainHeaderCustomElement.prototype.fnBudgetRefreshHandle = function fnBudgetRefreshHandle() {
+      this.fnBudget("refresh");
+    };
+
+    MainHeaderCustomElement.prototype.fnBudget = function fnBudget(call) {
+      var _this4 = this;
+
+      switch (call) {
+        case "create":
+          {
+            this._disableCreateBudget = true;
+            this._disableCancelBudget = false;
+            this._disableRefreshBudget = true;
+            this._disableSaveBudget = false;
+            this._disableBudgetId = true;
+            this._disablePrintBudget = true;
+
+            this.budgetDisabled = true;
+            this.programDisabled = false;
+
+
+            this._cache_budget.STATUS = "CREATE";
+            this._STATUS = [{ REF_CD: "APP-DRAFT", REF_DESC: "APP-DRAFT" }];
+
+            this.fnDialogProgram();
+
+            break;
+          }
+        case "cancel":
+          {
+            this.fnClearHeader();
+            this._disableCreateBudget = false;
+            this._disableCancelBudget = false;
+            this._disableRefreshBudget = true;
+            this._disableSaveBudget = true;
+            this._disablePrintBudget = true;
+
+            this.budgetDisabled = false;
+            this.programDisabled = true;
+
+            this._cache_budget.STATUS = "NONE";
+            break;
+          }
+        case "refresh":
+          {
+
+            this._disableCreateBudget = true;
+            this._disableSaveBudget = false;
+            this._disableCancelBudget = false;
+            this._disableRefreshBudget = false;
+            this._disablePrintBudget = true;
+
+            this._cache_obj.OBSERVERS.budget_dialog.forEach(function (all) {
+              all(_this4._cache_budget.HEADER.BDGT_TMPL_ID);
+            });
+
+            this.budgetDisabled = true;
+            this.programDisabled = false;
+
+
+            break;
+          }
+        case "save":
+          {
+
+            this.fnSaveBudget("");
+
+            break;
+          }
+        case "print":
+          {
+
+            var varUseReport = "";
+            if (this._cache_budget.HEADER.APPR_STAT_CD == "APP-DRAFT") {
+              varUseReport = "Draft";
+            }
+            if (this._cache_budget.HEADER.APPR_STAT_CD == "APP-APPROVED") {
+              varUseReport = "Approved";
+            }
+
+            if (varUseReport != "") {
+              var popup = window.open(_settings2.default.actualCostWebUrl + "/report/Budget_" + varUseReport + "_Report.aspx?BDID=" + this._cache_budget.HEADER.BDGT_TMPL_ID + "&ConcealConfidentialBudgetAmt=" + this._cache_obj.ALLOW_PASS_CONFIDENTIAL + "&USER_ACCOUNT=" + this._user + "&COMPANY_ID=" + this._COMPANY_ID, "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
+              popup.moveTo(0, 0);
+            }
+
+            break;
+          }
+        case "copy":
+          {
+
+            this.dialogService.open({ viewModel: _confirm_dialog.confirm_dialog, model: 'Copy Template?' }).whenClosed(function (response) {
+              if (!response.wasCancelled) {
+
+                var varGetHeader = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where('BDGT_TMPL_ID', '==', _this4._cache_budget.HEADER.BDGT_TMPL_ID);
+
+                (0, _entityManagerFactory.EntityManager)().executeQuery(varGetHeader).then(function (found) {
+                  found.results[0].APPR_STAT_CD = "APP-CLOSED";
+                  (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+                    _this4._cache_budget.HEADER.BDGT_TMPL_ID = "";
+                    _this4._cache_budget.HEADER.APPR_STAT_CD = "APP-DRAFT";
+                    _this4._cache_budget.STATUS = "DRAFT";
+                    _this4._cache_budget.IS_COPYING = true;
+
+                    _this4.fnSaveBudget("");
+                  });
+                });
+              } else {}
+            });
+          }
+          break;
+        case "close":
+          {
+
+            this.dialogService.open({ viewModel: _confirm_dialog.confirm_dialog, model: 'Close Template?' }).whenClosed(function (response) {
+              if (!response.wasCancelled) {
+                _this4.fnSaveBudget('APP-CLOSED');
+              } else {}
+            });
+          }
+          break;
+
+      }
+    };
+
+    MainHeaderCustomElement.prototype.fnBudgetValidation_1 = function fnBudgetValidation_1() {
+      var _this5 = this;
+
+      return new Promise(function (resolve, reject) {
+
+        var varSubMin = new Date(_this5._cache_budget.HEADER.BDGT_FROM);
+        var varAddMin = new Date(_this5._cache_budget.HEADER.BDGT_TO);
+
+        console.log(new Date(varSubMin.getFullYear(), varSubMin.getMonth(), varSubMin.getDate() - 1));
+        console.log(new Date(varAddMin.getFullYear(), varAddMin.getMonth(), varAddMin.getDate() + 1));
+
+        var p1 = _breezeClient2.default.Predicate.create('BDGT_FROM', '>=', new Date(varSubMin.getFullYear(), varSubMin.getMonth(), varSubMin.getDate() - 1));
+        var p2 = _breezeClient2.default.Predicate.create('BDGT_TO', '<=', new Date(varAddMin.getFullYear(), varAddMin.getMonth(), varAddMin.getDate() + 1));
+        var p3 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '!=', _this5._cache_budget.HEADER.BDGT_TMPL_ID);
+        var p4 = _breezeClient2.default.Predicate.create('EPISODE_TYPE_CD', '==', _this5._cache_budget.HEADER.EPISODE_TYPE_CD);
+        var pred = _breezeClient2.default.Predicate.and([p1, p2, p3, p4]);
+
+        var strException = "";
+        var varFromMax = null;
+        var varToMax = null;
+        var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where(pred);
+        (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
+          if (found.results !== undefined) {
+            var countError = 0;
+            found.results.forEach(function (all) {
+              if (all.APPR_STAT_CD != null) if (all.APPR_STAT_CD.includes('EXPIRE') || all.APPR_STAT_CD.includes('CLOSE')) {
+                console.log(all);
+
+                if (varFromMax == null || varFromMax > all.BDGT_FROM) {
+                  varFromMax = all.BDGT_FROM;
+                }
+
+                if (varToMax == null || varToMax < all.BDGT_TO) {
+                  varToMax = all.BDGT_TO;
+                }
+
+                ++countError;
+              }
+            });
+
+            if (countError > 0) {
+              _toastr2.default.error("Budget can only be acceptable if date will be out of range of the last CLOSED/EXPIRED TEMPLATE");
+              _toastr2.default.error("Not in between " + varFromMax.getMonth() + "-" + varFromMax.getDate() + "-" + varFromMax.getFullYear() + " and " + varToMax.getMonth() + "-" + varToMax.getDate() + "-" + varToMax.getFullYear());
+              reject(false);
+            } else resolve(true);
+          } else resolve(true);
+        });
+      });
+    };
+
+    MainHeaderCustomElement.prototype.fnBudgetValidation_2 = function fnBudgetValidation_2() {
+      var _this6 = this;
+
+      return new Promise(function (resolve, reject) {
+
+        var varAddMin = new Date(_this6._cache_budget.HEADER.BDGT_TO);
+        var varSubMin = new Date(_this6._cache_budget.HEADER.BDGT_FROM);
+
+        var p3 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '!=', _this6._cache_budget.HEADER.BDGT_TMPL_ID);
+        var c1 = _breezeClient2.default.Predicate.create('BDGT_TMPL_HDR.PROGRAM_ID', '==', _this6._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID);
+
+        var pred2 = _breezeClient2.default.Predicate.and([c1, p3]);
+        var _queryCheckActual = (0, _entityManagerFactory.EntityQuery)().from('ACTUAL_COST_HDR').where(pred2).expand("BDGT_TMPL_HDR");
+        (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckActual).then(function (found) {
+
+          if (found.results !== undefined) {
+
+            var varPromises = [];
+            found.results.forEach(function (all) {
+
+              var newPromise = new Promise(function (resolve_2, reject_2) {
+
+                var varTmpFrom = new Date(all.ACTUAL_FROM.getFullYear(), all.ACTUAL_FROM.getMonth(), all.ACTUAL_FROM.getDate());
+                var varTmpTo = new Date(all.ACTUAL_TO.getFullYear(), all.ACTUAL_TO.getMonth(), all.ACTUAL_TO.getDate());
+
+                if (varTmpFrom <= new Date(_this6._cache_budget.HEADER.BDGT_FROM) && varTmpFrom >= new Date(_this6._cache_budget.HEADER.BDGT_TO) || varTmpTo <= new Date(_this6._cache_budget.HEADER.BDGT_FROM) && varTmpTo >= new Date(_this6._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this6._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this6._cache_budget.HEADER.BDGT_FROM) && varTmpTo <= new Date(_this6._cache_budget.HEADER.BDGT_TO)) {
+                  _toastr2.default.error("Please enter range beyond the created budget (AC:" + all.ACTUAL_COST_ID + ")");
+                  reject_2(false);
+                }
+
+                var _queryCheckVtr = (0, _entityManagerFactory.EntityQuery)().from('VTR_LIVE_DT_DTL').where('ACTUAL_COST_ID', '==', all.ACTUAL_COST_ID);
+                (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckVtr).then(function (foundVtr) {
+
+                  if (foundVtr.results === undefined) {
+                    resolve_2(true);
+                  }
+
+                  var varDataFromCompare = new Date(_this6._cache_budget.HEADER.BDGT_FROM);
+                  var varDataToCompare = new Date(_this6._cache_budget.HEADER.BDGT_FROM);
+
+                  var varMaxDate = null;
+                  foundVtr.results.forEach(function (allDate) {
+                    var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
+                    var varDateCompare = new Date(varVtr);
+
+                    if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
+                      if (varMaxDate == null) varMaxDate = varVtr;else if (varMaxDate < varVtr) varMaxDate = varVtr;
+                    }
+                  });
+
+                  if (varMaxDate == null) {
+                    resolve_2(true);
+                  } else {
+                    var new_date = (0, _moment2.default)(varMaxDate, "MM-DD-YYYY");
+                    new_date.add(1, 'days');
+                    new_date = (0, _moment2.default)(new Date(new_date)).format('MM-DD-YYYY');
+                    _toastr2.default.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." + " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
+
+                    reject_2(false);
+                  }
+                });
+              });
+
+              varPromises.push(newPromise);
+            });
+
+            Promise.all(varPromises).then(function (passed) {
+              resolve(true);
+            }, function (fail) {
+              reject(false);
+            });
+          } else resolve(true);
+        });
+      });
+    };
+
+    MainHeaderCustomElement.prototype.fnValidation_Approved = function fnValidation_Approved() {
+      var _this7 = this;
+
+      return new Promise(function (resolve, reject) {
+        var p3 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '!=', _this7._cache_budget.HEADER.BDGT_TMPL_ID);
+        var c1 = _breezeClient2.default.Predicate.create('BDGT_TMPL_HDR.PROGRAM_ID', '==', _this7._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID);
+        var c2 = _breezeClient2.default.Predicate.create('APPR_STAT_CD', '==', "APP-APPROVED");
+        var pred2 = _breezeClient2.default.Predicate.and([c1, c2, p3]);
+        var _queryCheckActual = (0, _entityManagerFactory.EntityQuery)().from('ACTUAL_COST_HDR').where(pred2).expand("BDGT_TMPL_HDR");
+        (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckActual).then(function (found) {
+
+          if (found.results !== undefined) {
+
+            var varPromises = [];
+            found.results.forEach(function (all) {
+
+              var newPromise = new Promise(function (resolve_2, reject_2) {
+
+                var varTmpFrom = new Date(all.ACTUAL_FROM.getFullYear(), all.ACTUAL_FROM.getMonth(), all.ACTUAL_FROM.getDate());
+                var varTmpTo = new Date(all.ACTUAL_TO.getFullYear(), all.ACTUAL_TO.getMonth(), all.ACTUAL_TO.getDate());
+
+                var _queryCheckVtr = (0, _entityManagerFactory.EntityQuery)().from('VTR_LIVE_DT_DTL').where('ACTUAL_COST_ID', '==', all.ACTUAL_COST_ID);
+                (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckVtr).then(function (foundVtr) {
+
+                  if (foundVtr.results === undefined) {
+                    resolve_2(true);
+                  }
+
+                  var varMaxDate = null;
+                  var varDataFromCompare = new Date(_this7._cache_budget.HEADER.BDGT_FROM);
+                  var varDataToCompare = new Date(_this7._cache_budget.HEADER.BDGT_FROM);
+
+                  foundVtr.results.forEach(function (allDate) {
+                    var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
+
+                    if (varTmpFrom <= new Date(_this7._cache_budget.HEADER.BDGT_FROM) && varTmpFrom >= new Date(_this7._cache_budget.HEADER.BDGT_TO) || varTmpTo <= new Date(_this7._cache_budget.HEADER.BDGT_FROM) && varTmpTo >= new Date(_this7._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this7._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this7._cache_budget.HEADER.BDGT_FROM) && varTmpTo <= new Date(_this7._cache_budget.HEADER.BDGT_TO)) {
+
+                      var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
+                      var varDateCompare = new Date(varVtr);
+
+                      if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
+                        if (varMaxDate == null) varMaxDate = varVtr;else if (varMaxDate < varVtr) varMaxDate = varVtr;
+                      }
+                    }
+                  });
+
+                  if (varMaxDate == null) {
+                    resolve_2(true);
+                  } else {
+                    var new_date = (0, _moment2.default)(varMaxDate, "MM-DD-YYYY");
+
+                    new_date.add(1, 'days');
+                    new_date = (0, _moment2.default)(new Date(new_date)).format('MM-DD-YYYY');
+                    _toastr2.default.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." + " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
+
+                    reject_2(false);
+                  }
+                });
+              });
+
+              varPromises.push(newPromise);
+            });
+
+            Promise.all(varPromises).then(function (passed) {
+              resolve(true);
+            }, function (fail) {
+              reject(false);
+            });
+          } else resolve(true);
+        });
+      });
+    };
+
+    MainHeaderCustomElement.prototype.fnSaveBudget = function fnSaveBudget(passed_status) {
+      var _this8 = this;
+
+      var strValidation = "";
+
+      if (this._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE == "") {
+        strValidation += "No Program specified. <br>";
+      }
+
+      if (!(0, _moment2.default)(this._cache_budget.HEADER.BDGT_FROM).isValid() || !(0, _moment2.default)(this._cache_budget.HEADER.BDGT_TO).isValid()) {
+        strValidation += "Invalid Template Start/End Date validity. <br>";
+      }
+
+      if (this._cache_budget.HEADER.PROGRAM_GENRE_CD == "") {
+        strValidation += "No Program Genre. <br>";
+      }
+
+      if (this._cache_budget.HEADER.EPISODE_TYPE_CD == "") {
+        strValidation += "No Episode Type. <br>";
+      }
+
+      if (this._cache_budget.HEADER.TELECAST_MODE_CD == "") {
+        strValidation += "No Telecast Mode. <br>";
+      }
+
+      if (!parseInt(this._cache_budget.HEADER.TAPING_DAYS) > 0) {
+        strValidation += "Invalid Taping Day(s).<br>";
+      }
+
+      if (!parseInt(this._cache_budget.HEADER.EPISODES) > 0) {
+        strValidation += "Invalid Episode(s).<br>";
+      }
+
+      if (strValidation != "") {
+        _toastr2.default.error("Exception occured. <br/><br/>" + strValidation, "Budget Template");
+        return;
+      }
+
+      if (this._cache_budget.TOTAL <= 0 && this._cache_budget.HEADER.APPR_STAT_CD.includes('APPROVED')) {
+        _toastr2.default.error("Cannot have Zero Total Budget.", "Budget Template");
+        return;
+      }
+
+      if (passed_status.includes('EXPIRE') || passed_status.includes('CLOSE')) {
+        Promise.all([this.fnBudgetValidation_2()]).then(function (passed) {
+          if (passed_status != '') _this8._cache_budget.HEADER.APPR_STAT_CD = passed_status;
+          _this8.fnExecuteSaveBudgetHeader();
+        }, function (fail) {
+          _toastr2.default.error("Saving Cancelled.", "Saving..");
+        });
+      } else if (this._cache_budget.HEADER.APPR_STAT_CD.includes('APPROVED')) {
+
+        this.fnValidation_Approved().then(function (passed) {
+
+          var varToday = new Date(Date.now());
+
+          if (new Date(varToday.getFullYear(), varToday.getMonth(), varToday.getDate()) >= new Date((0, _moment2.default)(_this8._cache_budget.HEADER.BDGT_TO).subtract(8, 'hours').format('MM-DD-YYYY'))) {
+            _this8._cache_budget.HEADER.APPR_STAT_CD = "APP-EXPIRED";
+          }
+
+          _this8.fnExecuteSaveBudgetHeader();
+        }, function (fail) {
+          _toastr2.default.error("Saving Cancelled.", "Saving..");
+        });
+      } else {
+        this.fnExecuteSaveBudgetHeader();
+      }
+
+      return;
+    };
+
+    MainHeaderCustomElement.prototype.fnExecuteSaveBudgetHeader = function fnExecuteSaveBudgetHeader() {
+      var _this9 = this;
+
+      var varInsert = null;
+
+      var varFrom = (0, _moment2.default)(new Date(this._cache_budget.HEADER.BDGT_FROM)).add(8, 'hours');
+      varFrom = new Date(varFrom);
+
+      var varTo = (0, _moment2.default)(new Date(this._cache_budget.HEADER.BDGT_TO)).add(8, 'hours');
+      varTo = new Date(varTo);
+
+      if (this._cache_budget.HEADER.REMARKS === undefined || this._cache_budget.HEADER.REMARKS === null) {
+        this._cache_budget.HEADER.REMARKS = "NONE";
+      } else if (this._cache_budget.HEADER.REMARKS.trim() == "") {
+        this._cache_budget.HEADER.REMARKS = "NONE";
+      }
+
+      if (this._cache_budget.HEADER.BDGT_TMPL_ID == "") {
+        var getMax = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').orderByDesc('BDGT_TMPL_ID').take(1);
+
+        if (this._cache_budget.HEADER.APPR_STAT_CD == null || this._cache_budget.HEADER.APPR_STAT_CD == undefined || this._cache_budget.HEADER.APPR_STAT_CD == 'undefined') {
+          this._cache_budget.HEADER.APPR_STAT_CD = this._STATUS[0].REF_CD;
+        }
+
+        (0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
+          var getMax = 1;
+
+          if (successMax.results.length > 0) getMax = successMax.results[0].BDGT_TMPL_ID + 1;
+
+          varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_HDR', {
+            BDGT_TMPL_ID: getMax,
+            COMPANY_ID: _this9._COMPANY_ID,
+            BDGT_FROM: varFrom,
+            BDGT_TO: varTo,
+
+            EPISODE_TYPE_CD: _this9._cache_budget.HEADER.EPISODE_TYPE_CD,
+            BDGT_VIEW_FCTR: 1,
+            TAPING_DAYS: _this9._cache_budget.HEADER.TAPING_DAYS,
+            PROGRAM_ID: _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID,
+            CHARGE_CD: _this9._cache_budget.HEADER.CHARGE_CD,
+            PROGRAM_GENRE_CD: _this9._cache_budget.HEADER.PROGRAM_GENRE_CD,
+            PARENT_PROGRAM_ID: _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID,
+            BDGT_VIEW_CD: 'EPISODIC',
+            APPR_STAT_CD: _this9._cache_budget.HEADER.APPR_STAT_CD,
+            CHARGE_TYPE_CD: '',
+            BDGT_TOTAL: 0,
+            REMARKS: _this9._cache_budget.HEADER.REMARKS,
+            CREATED_BY: _this9._user,
+            CREATED_DT: new Date(Date.now()),
+            LAST_UPDATED_BY: _this9._user,
+            LAST_UPDATED_DT: new Date(Date.now()),
+            TELECAST_MODE_CD: _this9._cache_budget.HEADER.TELECAST_MODE_CD,
+            BDGT_STAT_CD: getMax,
+
+            BDGT_FOR_CD: 'BDGT-EPISODIC',
+            PROGRAM_NAME: _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE,
+            EPISODES: _this9._cache_budget.HEADER.EPISODES,
+            STATION_ID: _this9._cache_budget.HEADER.STATION_ID,
+            STATION_SENT_DATE: new Date(),
+            STATION_SENT: 0
+          });
+
+          (0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
+
+          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+            _this9._cache_budget.HEADER.BDGT_TMPL_ID = success.entities[0].BDGT_TMPL_ID;
+
+            _this9._disableCreateBudget = true;
+            _this9._disableCancelBudget = false;
+            _this9._disableRefreshBudget = false;
+            _this9._disableSaveBudget = false;
+
+            if (_this9._cache_budget.HEADER.APPR_STAT_CD == "APP-APPROVED") {
+              _this9._cache_budget.STATUS = "APPROVED";
+              _this9._disableSaveBudget = true;
+
+              _this9.budgetDisabled = true;
+              _this9.programDisabled = true;
+            } else {
+
+              _this9.budgetDisabled = true;
+              _this9.programDisabled = false;
+            }
+
+            _toastr2.default.success("Succesfully Saved", "Budget Template");
+
+            if (_this9._cache_budget.IS_COPYING) {
+
+              _this9._cache_budget.OBSERVERS.copy_template.forEach(function (all) {
+
+                all('REGULAR');
+              });
+
+              _this9._cache_budget.IS_COPYING = false;
+            } else {
+              _this9.fnBudget("refresh");
+            }
+
+            _this9._disableCreateBudget = true;
+            _this9._disableSaveBudget = false;
+            _this9._disableCancelBudget = false;
+            _this9._disableRefreshBudget = false;
+            _this9._disablePrintBudget = true;
+
+            _this9.budgetDisabled = false;
+            _this9.programDisabled = false;
+          }, function (fail) {
+
+            if (varInsert != null) {
+              varInsert.entityAspect.setDeleted();
+            }
+
+            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+              var errors = entity.entityAspect.getValidationErrors();
+              if (errors.length > 0) console.log(errors);
+            });
+            console.log(fail);
+            _toastr2.default.error("Error Occured", fail);
+          });
+        });
+      } else {
+
+        var getEntityQuery = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where("BDGT_TMPL_ID", "==", this._cache_budget.HEADER.BDGT_TMPL_ID);
+        (0, _entityManagerFactory.EntityManager)().executeQuery(getEntityQuery).then(function (item) {
+
+          item.results[0].BDGT_FROM = varFrom;
+          item.results[0].BDGT_TO = varTo;
+          item.results[0].EPISODE_TYPE_CD = _this9._cache_budget.HEADER.EPISODE_TYPE_CD;
+          item.results[0].TAPING_DAYS = _this9._cache_budget.HEADER.TAPING_DAYS;
+          item.results[0].PROGRAM_ID = _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID;
+          item.results[0].CHARGE_CD = _this9._cache_budget.HEADER.CHARGE_CD;
+          item.results[0].PROGRAM_GENRE_CD = _this9._cache_budget.HEADER.PROGRAM_GENRE_CD;
+          item.results[0].PARENT_PROGRAM_ID = _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID;
+          item.results[0].APPR_STAT_CD = _this9._cache_budget.HEADER.APPR_STAT_CD;
+          item.results[0].REMARKS = _this9._cache_budget.HEADER.REMARKS;
+          item.results[0].LAST_UPDATED_BY = _this9._user;
+          item.results[0].LAST_UPDATED_DT = new Date(Date.now());
+          item.results[0].TELECAST_MODE_CD = _this9._cache_budget.HEADER.TELECAST_MODE_CD;
+          item.results[0].PROGRAM_NAME = _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE;
+          item.results[0].EPISODES = _this9._cache_budget.HEADER.EPISODES;
+          item.results[0].STATION_ID = _this9._cache_budget.HEADER.STATION_ID;
+
+          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+
+            _this9._disableCreateBudget = true;
+            _this9._disableCancelBudget = false;
+            _this9._disableRefreshBudget = false;
+            _this9._disableSaveBudget = false;
+
+            _this9.budgetDisabled = true;
+            _this9.programDisabled = false;
+
+
+            _toastr2.default.success("Succesfully Saved", "Budget Template");
+            _this9.fnBudget("refresh");
+          }, function (fail) {
+
+            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+              var errors = entity.entityAspect.getValidationErrors();
+              if (errors.length > 0) console.log(errors);
+            });
+            console.log(fail);
+            _toastr2.default.error("Error Occured", fail);
+          });
+        });
+
+        this._disableBudgetId = true;
+
+        this.budgetDisabled = true;
+
+        this._disablePrintBudget = false;
+      }
+    };
+
+    MainHeaderCustomElement.prototype.fnDialogProgram = function fnDialogProgram() {
+      this.dialogService.open({
+        viewModel: _program.program
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {} else {}
+      });
+    };
+
+    MainHeaderCustomElement.prototype.fnDialogBudget = function fnDialogBudget() {
+      this.dialogService.open({
+        viewModel: _budget.budget
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {
+          _settings2.default.isNavigating = true;
+        } else {}
+      });
+    };
+
+    return MainHeaderCustomElement;
+  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'to', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  })), _class2)) || _class);
+});
+define('ppfcs/budget/mainview',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'toastr', 'aurelia-dialog', '../../helpers', 'multi-observer', 'modals/login', 'aurelia-router'], function (exports, _aureliaFramework, _cache_budget, _entityManagerFactory, _masterfiles, _toastr, _aureliaDialog, _helpers, _multiObserver, _login, _aureliaRouter) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.mainview = undefined;
+
+  var _toastr2 = _interopRequireDefault(_toastr);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _dec, _class;
+
+  var mainview = exports.mainview = (_dec = (0, _aureliaFramework.inject)(_toastr2.default, _cache_budget.cache_budget, _multiObserver.MultiObserver, _aureliaDialog.DialogService, _aureliaRouter.Router), _dec(_class = function () {
+    function mainview(toastr, cache_budget, multiObserver, dialogService, Router) {
+      _classCallCheck(this, mainview);
+
+      this._toastr = null;
+      this.showingLogout = "hidden";
+      this.dialogService = null;
+      this.loginDisabled = true;
+      this.logoutDisabled = false;
+      this.masterFilesLoaded = false;
+
+      this._cache_budget = cache_budget;
+      this.router = Router;
+
+      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
+        this.router.navigateToRoute('mainpage');
+        return;
+      }
+
+      this.dialogService = dialogService;
+
+      if (this.dialogService.controllers.length > 0) {
+        for (var i = this.dialogService.controllers.length - 1; i >= 0; i--) {
+          this.dialogService.controllers[i].close();
+        }
+      }
+    }
+
+    mainview.prototype.clickTab = function clickTab(index) {
+      if (index == 0) {} else if (index == 1) {
+
+        this._cache_budget.OBSERVERS.refreshPersonnelTab.forEach(function (all) {
+          all('REGULAR');
+        });
+      } else if (index == 2) {
+
+        this._cache_budget.OBSERVERS.refreshPersonnelTab.forEach(function (all) {
+          all('SEMI_REGULAR');
+        });
+      } else if (index == 3) {
+
+        this._cache_budget.OBSERVERS.refreshPersonnelTab.forEach(function (all) {
+          all('STAFF');
+        });
+      }
+    };
+
+    return mainview;
+  }()) || _class);
+});
+define('ppfcs/budget/personnel',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'cache_obj', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'modals/modal-wizard', 'numeral', 'multi-observer', 'toastr', '../../modals/globalindivmstr', '../../modals/indivmstr', '../../modals/job', '../../modals/paymentterm', 'aurelia-dialog', 'breeze-client'], function (exports, _aureliaFramework, _cache_budget, _cache_obj, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _modalWizard, _numeral, _multiObserver, _toastr, _globalindivmstr, _indivmstr, _job, _paymentterm, _aureliaDialog, _breezeClient) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.PersonnelCustomElement = undefined;
+
+  var _typeahead2 = _interopRequireDefault(_typeahead);
+
+  var _settings2 = _interopRequireDefault(_settings);
+
+  var _underscore2 = _interopRequireDefault(_underscore);
+
+  var _numeral2 = _interopRequireDefault(_numeral);
+
+  var _toastr2 = _interopRequireDefault(_toastr);
+
+  var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _initDefineProp(target, property, descriptor, context) {
+    if (!descriptor) return;
+    Object.defineProperty(target, property, {
+      enumerable: descriptor.enumerable,
+      configurable: descriptor.configurable,
+      writable: descriptor.writable,
+      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+    });
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+    var desc = {};
+    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+      desc[key] = descriptor[key];
+    });
+    desc.enumerable = !!desc.enumerable;
+    desc.configurable = !!desc.configurable;
+
+    if ('value' in desc || desc.initializer) {
+      desc.writable = true;
+    }
+
+    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+      return decorator(target, property, desc) || desc;
+    }, desc);
+
+    if (context && desc.initializer !== void 0) {
+      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+      desc.initializer = undefined;
+    }
+
+    if (desc.initializer === void 0) {
+      Object['define' + 'Property'](target, property, desc);
+      desc = null;
+    }
+
+    return desc;
+  }
+
+  function _initializerWarningHelper(descriptor, context) {
+    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+  }
+
+  var _dec, _class, _desc, _value, _class2, _descriptor, _descriptor2;
+
+  var PersonnelCustomElement = exports.PersonnelCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _modalWizard.ModalWizard, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
+    function PersonnelCustomElement(cache_obj, cache_budget, ModalWizard, multiObserver, dialogService) {
+      var _this = this;
+
+      _classCallCheck(this, PersonnelCustomElement);
+
+      _initDefineProp(this, 'toPerson', _descriptor, this);
+
+      _initDefineProp(this, 'toPersonModel', _descriptor2, this);
+
+      this._cache_obj = null;
+      this._cache_budget = null;
+      this.styleStringHidden = 'visibility: hidden;display:none;';
+      this.styleStringVisible = 'visibility: visible;';
+      this._JOBS = null;
+      this._PYMNTTERM = [];
+      this._Personnel = [];
+      this._PersonnelTM = [];
+      this._Index = 0;
+      this.varPymnt = null;
+      this.isIndivMstrTalentsDisabled = false;
+      this.isIndivMstrManagerDisabled = false;
+      this.isJobDisabled = false;
+      this.isIndivMstrDisabled = false;
+      this.dialogService = null;
+
+
+      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
+        return;
+      }
+
+      this.cache_budget = cache_budget;
+      this.dialogService = dialogService;
+
+      this._cache_obj = cache_obj;
+      this._cache_budget = cache_budget;
+
+      this._ModalWizard = ModalWizard;
+      this._ce_head = "+";
+
+      multiObserver.observe([[this, '_personnelSearch']], function (newValue, oldValue) {
+        return _this.onSpeculateProp(newValue, oldValue);
+      });
+
+      this._cache_budget.OBSERVERS.disable_search_personnel.push(function (val) {
+        _this.ButtonStatus(val);
+      });
+
+      this._cache_budget.OBSERVERS.reset_all.push(function () {
+        _this.resetView();
+      });
+
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
+        _this.CloseBudgetDialog(val);
+      });
+
+      this._cache_budget.OBSERVERS.enable_approved.push(function (val) {
+        _this.ButtonStatus(val);
+      });
+
+      this._cache_budget.OBSERVERS.copy_template.push(function (val) {
+        _this.fnCallCopy(val);
+      });
+
+      this._cache_budget.OBSERVERS.pass_indiv.push(function (val) {
+        _this.PassedIndiv(val);
+      });
+
+      this._cache_budget.OBSERVERS.pass_group.push(function (val) {
+        _this.PassedGroup(val);
+      });
+
+      this._cache_budget.OBSERVERS.refreshPersonnelTab.push(function (val) {
+        _this.refreshOnSelect(val);
+      });
+
+      this._cache_budget.OBSERVERS.pass_job.push(function (val) {
+        _this.passJob(val);
+      });
+
+      this._PYMNTTERM = (0, _masterfiles.getLookups)().PAYMENT_TERM;
+
+      this._JOBS = (0, _masterfiles.getLookups)().JOB_GRP_CATEGORY.filter(function (all) {
+        return all.COMPANY_ID == _this._cache_obj.USER.COMPANY_ID;
+      });
+    }
+
+    PersonnelCustomElement.prototype.passJob = function passJob(job) {
+      var _this2 = this;
+
+      var index = this._Index;
+
+      this._Personnel[index].JOB_ID = job.JOB_ID;
+      this._Personnel[index].JOB_DESC = job.JOB_DESC;
+      var varGrpCategory = (0, _masterfiles.getLookups)().JOB_GRP_CATEGORY.find(function (all) {
+        return all.JOB_ID == _this2._Personnel[index].JOB_ID && all.COMPANY_ID == _this2._cache_obj.USER.COMPANY_ID;
+      });
+
+      if (varGrpCategory !== undefined) {
+        this._Personnel[index].CATEGORY_ID = varGrpCategory.CATEGORY_ID;
+        this._Personnel[index].CATEGORY_DESC = varGrpCategory.CATEGORY_DESC;
+      }
+    };
+
+    PersonnelCustomElement.prototype.onSpeculateProp = function onSpeculateProp(newValue, oldValue) {
+      var _this3 = this;
+
+      var varResult = [];
+
+      this._Personnel.forEach(function (all) {
+        all.visible = true;
+
+        if (_this3._personnelSearch.toUpperCase() !== "") {
+          if (all['PERSONNEL_NAME'] !== undefined && all['PERSONNEL_NAME'] != null) if (!all['PERSONNEL_NAME'].toUpperCase().includes(_this3._personnelSearch.toUpperCase())) {
+            all.visible = false;
+          }
+
+          if (all['BLANK_PERSONNEL_NAME'] !== undefined && all['PERSONNEL_NAME'] != null) if (!all['BLANK_PERSONNEL_NAME'].toUpperCase().includes(_this3._personnelSearch.toUpperCase())) {
+            all.visible = false;
+          }
+        }
+      });
+
+      this._signal = (0, _entityManagerFactory.generateID)();
+    };
+
+    PersonnelCustomElement.prototype.resetView = function resetView() {
+
+      this._signal = (0, _entityManagerFactory.generateID)();
+    };
+
+    PersonnelCustomElement.prototype.collapse_expand_head = function collapse_expand_head() {
+      var _this4 = this;
+
+      if (this._ce_head == "+") {
+        this._ce_head = "-";
+        this._Personnel.forEach(function (item) {
+          item.ce_value = "-";
+          item.styleString = _this4.styleStringVisible;
+        });
+      } else {
+        this._ce_head = "+";
+        this._Personnel.forEach(function (item) {
+          item.ce_value = "+";
+          item.styleString = _this4.styleStringHidden;
+        });
+      }
+    };
+
+    PersonnelCustomElement.prototype.collapse_expand = function collapse_expand(item) {
+
+      if (item.ce_value == "+") {
+
+        item.ce_value = "-";
+        item.styleString = this.styleStringVisible;
+      } else {
+
+        item.ce_value = "+";
+        item.styleString = this.styleStringHidden;
+      }
+    };
+
+    PersonnelCustomElement.prototype.CloseBudgetDialog = function CloseBudgetDialog(value) {
+
+      this.fnCheckBudget(value);
+    };
+
+    PersonnelCustomElement.prototype.fnCheckExistingTalents = function fnCheckExistingTalents(TALENTS, item) {
+
+      if (TALENTS == undefined || TALENTS == null || TALENTS == "") {
+
+        return true;
+      } else if (TALENTS.length > 0) {
+        if (item) item.REMOVE = false;
+
+        return false;
+      }
+
+      return true;
+    };
+
+    PersonnelCustomElement.prototype.myFunction = function myFunction() {
+
+      alert('loaded');
+    };
+
+    PersonnelCustomElement.prototype.ButtonStatus = function ButtonStatus(value) {
+      var _this5 = this;
+
+      this._cache_obj.OBSERVERS.enable_modal_button.forEach(function (all) {
+        _this5.isIndivMstrDisabled = !value;
+        _this5.isIndivMstrTalentsDisabled = !value;
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnCallCopy = function fnCallCopy(usr) {
+
+      this._Personnel.forEach(function (item) {
+        if (item.TALENT_MANAGER !== undefined) {
+          item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP = undefined;
+          item.TALENT_MANAGER.BDGT_TMPL_DTL_ID = undefined;
+        };
+        item.BDGT_TMPL_DTL_ID = undefined;
+
+        item.BDGT_TMPL_DTL_ID_LINK = undefined;
+        item.BDGT_TMPL_DTL_ID_LINK_TMP = undefined;
+      });
+
+      if (this.toPersonModel.USE == usr) this.savePersonnel(1);
+    };
+
+    PersonnelCustomElement.prototype.fnCheckBudget = function fnCheckBudget(BDGT_TMPL_ID) {
+      var _this6 = this;
+
+      this._cache_obj.OBSERVERS.enable_modal_button.forEach(function (all) {
+        _this6.isIndivMstrDisabled = false;
+        _this6.isIndivMstrTalentsDisabled = false;
+      });
+
+      setTimeout(function () {
+
+        _this6.scrollDiv();
+      }, 5000);
+
+      var varPsClType = "";
+      if (this.toPersonModel.USE == "REGULAR") {
+
+        varPsClType = "Regular";
+        this._cache_budget.REGULAR = [];
+      } else if (this.toPersonModel.USE == "SEMI_REGULAR") {
+
+        varPsClType = "Semi-Regular";
+        this._cache_budget.SEMI_REGULAR = [];
+      } else if (this.toPersonModel.USE == "STAFF") {
+
+        varPsClType = "Staff";
+        this._cache_budget.STAFF = [];
+      }
+
+      var p1 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '==', BDGT_TMPL_ID);
+      var p2 = _breezeClient2.default.Predicate.create('PERSONNEL_CLASS_TYPE', '==', varPsClType);
+      var pred = _breezeClient2.default.Predicate.and([p1, p2]);
+
+      var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_DTL').where(pred).orderBy("GROUP_ORDER");
+      (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
+
+        var varJobLength = (0, _masterfiles.getLookups)().JOB_MSTR.length - 1;
+        var varCategoryLength = (0, _masterfiles.getLookups)().CATEGORY_MSTR.length - 1;
+
+        _this6._Personnel.splice(0, _this6._Personnel.length);
+        _this6._PersonnelTM.splice(0, _this6._PersonnelTM.length);
+
+        found.results.forEach(function (item) {
+
+          _this6._Personnel.push({
+            BDGT_TMPL_DTL_ID: item.BDGT_TMPL_DTL_ID,
+            BDGT_TMPL_ID: _this6._cache_budget.HEADER.BDGT_TMPL_ID,
+            JOB_ID: item.JOB_ID,
+            GLOBAL_ID: item.GLOBAL_ID,
+            CONTRACT_AMT: item.CONTRACT_AMT,
+            CATEGORY_ID: item.CATEGORY_ID,
+            STAFF_WORK: item.STAFF_WORK,
+            PYMNT_TERM_CD: item.PYMNT_TERM_CD,
+            PAY_TO_PERSON_FL: 'T',
+            PAY_RATE_FACTOR: item.PAY_RATE_FACTOR,
+            BUDGET_AMT: item.INPUT_AMT,
+            TAPING_DAY_CNT: _this6._cache_budget.HEADER.TAPING_DAYS,
+            PERSONNEL_CLASS_CD: item.PERSONNEL_CLASS_CD,
+            REMARKS: item.REMARKS,
+            PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
+            PERSONNEL_NAME: item.PERSONNEL_NAME,
+            INPUT_AMT: item.INPUT_AMT,
+            CONFIDENTIAL: item.CONFIDENTIAL,
+            POOL_RECORD: item.POOL_RECORD,
+            GROUP_ORDER: item.GROUP_ORDER,
+            GLOBAL_ID_LINK: item.GLOBAL_ID_LINK,
+            BDGT_TMPL_DTL_ID_LINK: item.BDGT_TMPL_DTL_ID_LINK
+          });
+        });
+
+        if (_this6.toPersonModel.USE == "REGULAR") {
+
+          _this6._cache_budget.REGULAR = _this6._Personnel;
+
+          if (_this6._cache_budget.REGULAR.length > 0) _toastr2.default.success("REGULAR PERSONNEL", "Loading Successful.");
+
+          _this6.setPersonnelValues(_this6._cache_budget.REGULAR, varJobLength, varCategoryLength);
+        } else if (_this6.toPersonModel.USE == "SEMI_REGULAR") {
+
+          varPsClType = "Semi-Regular";
+
+          _this6._cache_budget.SEMI_REGULAR = _this6._Personnel;
+
+          if (_this6._cache_budget.SEMI_REGULAR.length > 0) _toastr2.default.success("SEMI-REGULAR PERSONNEL", "Loading Successful.");
+
+          _this6.setPersonnelValues(_this6._cache_budget.SEMI_REGULAR, varJobLength, varCategoryLength);
+        } else if (_this6.toPersonModel.USE == "STAFF") {
+
+          varPsClType = "Staff";
+
+          _this6._cache_budget.STAFF = _this6._Personnel;
+
+          if (_this6._cache_budget.STAFF.length > 0) _toastr2.default.success("STAFF PERSONNEL", "Loading Successful.");
+
+          _this6.setPersonnelValues(_this6._cache_budget.STAFF, varJobLength, varCategoryLength);
+        }
+
+        _this6._signal = (0, _entityManagerFactory.generateID)();
+
+        _this6._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+
+          all();
+        });
+      });
+    };
+
+    PersonnelCustomElement.prototype.setPersonnelValues = function setPersonnelValues(obj, varJobLength, varCategoryLength) {
+      var _this7 = this;
+
+      _underscore2.default.each(obj, function (item) {
+        item.TALENTS = undefined;
+      });
+
+      _underscore2.default.each(obj, function (item) {
+
+        for (var i = 0; i <= varJobLength; ++i) {
+          if ((0, _masterfiles.getLookups)().JOB_MSTR[i].JOB_ID == item.JOB_ID) {
+            item.JOB_DESC = (0, _masterfiles.getLookups)().JOB_MSTR[i].JOB_DESC;
+            break;
+          }
+        };
+
+        for (var i = 0; i <= varCategoryLength; ++i) {
+          if ((0, _masterfiles.getLookups)().CATEGORY_MSTR[i].CATEGORY_ID == item.CATEGORY_ID) {
+            item.CATEGORY_DESC = (0, _masterfiles.getLookups)().CATEGORY_MSTR[i].CATEGORY_DESC;
+            break;
+          }
+        };
+
+        for (var i = 0; i <= _this7._PYMNTTERM.length - 1; ++i) {
+          if (_this7._PYMNTTERM[i].REF_CD == item.PYMNT_TERM_CD) {
+            item.PAYMENT_TERM = _this7._PYMNTTERM[i].REF_DESC;
+            break;
+          }
+        };
+
+        if (item.BDGT_TMPL_DTL_ID_LINK !== 0) {
+          var varTM = obj.find(function (all) {
+            return all.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK;
+          });
+          item.TALENT_MANAGER = {
+            BDGT_TMPL_DTL_ID_TMP: varTM.BDGT_TMPL_DTL_ID,
+            GLOBAL_INDIV_ID: varTM.GLOBAL_ID,
+            PERSONNEL_NAME: varTM.PERSONNEL_NAME,
+            CONTRACT_AMT_TMP: (0, _numeral2.default)(varTM.CONTRACT_AMT).format('0,0.00'),
+            INPUT_AMT_TMP: (0, _numeral2.default)(varTM.INPUT_AMT).format('0,0.00'),
+            PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(varTM.PAY_RATE_FACTOR).format('0,0.00'),
+            REMARKS: varTM.REMARKS,
+            JOB_ID: varTM.JOB_ID,
+            CATEGORY_ID: varTM.CATEGORY_ID,
+            GROUP_ORDER: -1
+          };
+
+          _this7._PersonnelTM.push({
+            BDGT_TMPL_DTL_ID: varTM.BDGT_TMPL_DTL_ID,
+            BDGT_TMPL_DTL_ID_TMP: varTM.BDGT_TMPL_DTL_ID,
+            GLOBAL_INDIV_ID: varTM.GLOBAL_ID,
+            PERSONNEL_NAME: varTM.PERSONNEL_NAME,
+            CONTRACT_AMT_TMP: (0, _numeral2.default)(varTM.CONTRACT_AMT).format('0,0.00'),
+            INPUT_AMT_TMP: (0, _numeral2.default)(varTM.INPUT_AMT).format('0,0.00'),
+            PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(varTM.PAY_RATE_FACTOR).format('0,0.00'),
+            REMARKS: varTM.REMARKS,
+            JOB_ID: varTM.JOB_ID,
+            CATEGORY_ID: varTM.CATEGORY_ID,
+            GROUP_ORDER: -1
+          });
+        }
+
+        item.BLANK_PERSONNEL_NAME = item.PERSONNEL_NAME;
+        item.CONTRACT_AMT_TMP = (0, _numeral2.default)(item.CONTRACT_AMT).format('0,0.00');
+        item.INPUT_AMT_TMP = (0, _numeral2.default)(item.INPUT_AMT).format('0,0.00');
+        item.PAY_RATE_FACTOR_TMP = (0, _numeral2.default)(item.PAY_RATE_FACTOR).format('0,0.00');
+        item.CONFIDENTIAL_TMP = item.CONFIDENTIAL == 1 ? true : false;
+        item.STAFF_WORK_TMP = item.STAFF_WORK == 1 ? true : false;
+        item.POOL_RECORD_TMP = item.POOL_RECORD == 1 ? true : false;
+
+        item.BDGT_TMPL_DTL_ID_LINK_TMP = item.BDGT_TMPL_DTL_ID_LINK;
+
+        item.styleString = _this7.styleStringHidden;
+        item.ce_value = "+";
+        item.visible = true;
+      });
+
+      for (var i = obj.length - 1; i >= 0; i--) {
+        var varToDelete = this._PersonnelTM.find(function (all) {
+          return all.BDGT_TMPL_DTL_ID_TMP == obj[i].BDGT_TMPL_DTL_ID;
+        });
+
+        if (varToDelete !== undefined) {
+          obj.splice(i, 1);
+        }
+      }
+    };
+
+    PersonnelCustomElement.prototype.removeTalent = function removeTalent(parent, item, index) {
+      var _this8 = this;
+
+      this._Personnel.forEach(function (all) {
+        if (all.GLOBAL_ID == item.GLOBAL_INDIV_ID) {
+          var varToSplice = parent.item.TALENTS.splice(index, 1);
+
+          delete item.TALENT_MANAGER.CONTRACT_AMT_TMP;
+          delete item.TALENT_MANAGER.INPUT_AMT_TMP;
+          delete item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP;
+          delete item.TALENT_MANAGER.REMARKS;
+          delete item.TALENT_MANAGER;
+
+          _this8._signal = (0, _entityManagerFactory.generateID)();
+        }
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnRegularFocus = function fnRegularFocus(index, prop) {
+
+      this._Index = index;
+      if (prop == "JOB") {
+
+        this.fnModalJob();
+
+        return;
+      }
+
+      this.fnModalPaymentTerm();
+    };
+
+    PersonnelCustomElement.prototype.scrollDiv = function scrollDiv() {
+      var _this9 = this;
+
+      $(this.tblHeader).css("visibility", "visible");
+
+      $(this.tblHeader).css("top", $(this.divRegular).scrollTop() + $(this.tblData).position().top);
+
+      var varCol = 0;
+      _underscore2.default.each($(this.tblData).find('td'), function (item) {
+        if (varCol > $(_this9.tblHeader).find('td').length - 2) return;
+
+        $($(_this9.tblHeader).find('td')[varCol]).css("width", $(_this9.tblData).find('td')[varCol].clientWidth + 1);
+        ++varCol;
+      });
+    };
+
+    PersonnelCustomElement.prototype.AmountBlur = function AmountBlur(item, property) {
+
+      var varConverted = (0, _numeral2.default)(item[property]).format('0,0.00');
+      item[property] = varConverted;
+    };
+
+    PersonnelCustomElement.prototype.showTalents = function showTalents(item) {
+      var _this10 = this;
+
+      this._selectedItem = item;
+
+      this._cache_budget.OBSERVERS.open_modal.forEach(function (all) {
+        _this10.isIndivMstrTalentsDisabled = false;
+      });
+    };
+
+    PersonnelCustomElement.prototype.showTalentMngr = function showTalentMngr(item) {
+
+      this._selectedItem = item;
+
+      this.fnIndivMstr();
+    };
+
+    PersonnelCustomElement.prototype.removeTalentMngr = function removeTalentMngr(item) {
+      item.TALENT_MANAGER = undefined;
+
+      this._signal = (0, _entityManagerFactory.generateID)();
+
+      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+        all();
+      });
+    };
+
+    PersonnelCustomElement.prototype.PassedIndiv = function PassedIndiv(value) {
+      if (this._selectedItem !== undefined) if (value.GLOBAL_INDIV_ID == this._selectedItem.GLOBAL_ID) {
+        _toastr2.default.error("<strong>Talent Manager cannot be same Personnel</strong>.", "Problem occured");
+        return;
+      }
+
+      var varJobTManager = (0, _masterfiles.getJobByName)("TALENT MANAGER");
+      if (parseInt(varJobTManager.COMPANY_ID) != parseInt(this._cache_obj.USER.COMPANY_ID)) {
+        _toastr2.default.error(varJobTManager.JOB_DESC + " Job is not included on jobs from users company.", "Problem occured");
+        varJobTManager.JOB_ID = "";
+        varJobTManager.JOB_DESC = "";
+      }
+
+      this.getDefaultPymntTerm();
+
+      this._selectedItem.TALENT_MANAGER = { GLOBAL_INDIV_ID: value.GLOBAL_INDIV_ID, PERSONNEL_NAME: value.PERSONNEL_NAME,
+        PERSONNEL_INFO_SRC: value.PERSONNEL_INFO_SRC,
+        JOB_ID: varJobTManager.JOB_ID,
+        JOB_DESC: varJobTManager.JOB_DESC,
+        PYMNT_TERM_CD: this.varPymnt.REF_CD,
+        PAYMENT_TERM: this.varPymnt.REF_DESC,
+        CATEGORY_ID: varJobTManager.CATEGORY_ID,
+        CATEGORY_DESC: varJobTManager.CATEGORY_DESC,
+        PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
+        CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+        INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00')
+      };
+
+      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+        all();
+      });
+    };
+
+    PersonnelCustomElement.prototype.getDefaultPymntTerm = function getDefaultPymntTerm() {
+
+      if (this.varPymnt == null) this.varPymnt = this._PYMNTTERM.find(function (all) {
+        return all.REF_GRP_CD == 'PYMNT_TERM_CD' && all.REF_CD == 'DAILY';
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnPassedPersonnels = function fnPassedPersonnels(value) {
+      var _this11 = this;
+
+      this.getDefaultPymntTerm();
+
+      value.forEach(function (val) {
+
+        var varJob = (0, _masterfiles.getJobByGlobalCompany)(val.GLOBAL_INDIV_ID);
+
+        if (parseInt(varJob.COMPANY_ID) !== parseInt(_this11._cache_obj.USER.COMPANY_ID)) {
+          _toastr2.default.error(varJob.JOB_DESC + " Job is not included on jobs from users company.", "Problem occured");
+          varJob.JOB_ID = "";
+          varJob.JOB_DESC = "";
+        }
+
+        _this11._Personnel.push({
+          GLOBAL_ID: val.GLOBAL_INDIV_ID,
+          PERSONNEL_NAME: val.PERSONNEL_NAME,
+          PERSONNEL_INFO_SRC: val.PERSONNEL_INFO_SRC,
+          JOB_ID: varJob.JOB_ID,
+          JOB_DESC: varJob.JOB_DESC,
+          PYMNT_TERM_CD: _this11.varPymnt.REF_CD,
+          PAYMENT_TERM: _this11.varPymnt.REF_DESC,
+          CATEGORY_ID: varJob.CATEGORY_ID,
+          CATEGORY_DESC: varJob.CATEGORY_DESC,
+          PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
+          CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+          INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+          STAFF_WORK_TMP: false,
+          CONFIDENTIAL_TMP: false,
+          visible: true
+        });
+      });
+
+      this._Personnel.forEach(function (all) {
+        if (all.STATUS_CD == "" || all.STATUS_CD === undefined) {
+          all.STATUS_CD = "";
+        }
+        all.ce_value = "+";
+        all.styleString = _this11.styleStringHidden;
+      });
+
+      this._Personnel.forEach(function (all) {
+        var varIndiv = (0, _masterfiles.getLookups)().GRP_INDIV_MSTR.find(function (allIndiv) {
+          return allIndiv.GLOBAL_INDIV_ID == all.GLOBAL_ID;
+        });
+
+        if (varIndiv !== undefined) {
+          var varJobTManager = (0, _masterfiles.getJobByName)("TALENT MANAGER");
+
+          if (parseInt(varJobTManager.COMPANY_ID) != parseInt(_this11._cache_obj.USER.COMPANY_ID)) {
+            _toastr2.default.error(varJobTManager.JOB_DESC + "Job is not included on jobs from users company.", "Problem occured");
+            varJobTManager.JOB_ID = "";
+            varJobTManager.JOB_DESC = "";
+          }
+
+          var varTalent = (0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.find(function (allIndiv) {
+            return allIndiv.GLOBAL_GRP_ID == varIndiv.GLOBAL_GRP_ID;
+          });
+          all.TALENT_MANAGER = { GLOBAL_INDIV_ID: varTalent.GLOBAL_GRP_ID, PERSONNEL_NAME: varTalent.GROUP_NAME,
+            PERSONNEL_INFO_SRC: varJobTManager.PERSONNEL_INFO_SRC,
+            JOB_ID: varJobTManager.JOB_ID,
+            JOB_DESC: varJobTManager.JOB_DESC,
+            PYMNT_TERM_CD: _this11.varPymnt.REF_CD,
+            PAYMENT_TERM: _this11.varPymnt.REF_DESC,
+            CATEGORY_ID: varJobTManager.CATEGORY_ID,
+            CATEGORY_DESC: varJobTManager.CATEGORY_DESC,
+            PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
+            CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+            INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+            STAFF_WORK_TMP: false,
+            CONFIDENTIAL_TMP: false
+          };
+        }
+      });
+
+      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+        all();
+      });
+    };
+
+    PersonnelCustomElement.prototype.PassedGroup = function PassedGroup(value) {
+      var _this12 = this;
+
+      if (this.modalIndivMstrTalents.id == this._ModalWizard.ids[this._ModalWizard.ids.length - 1]) {
+
+        this.getDefaultPymntTerm();
+
+        this._selectedItem.TALENTS = value;
+
+        this._selectedItem.TALENTS.forEach(function (all) {
+          if (_this12._Personnel.find(function (allReg) {
+            return allReg.GLOBAL_ID == all.GLOBAL_INDIV_ID;
+          }) === undefined) {
+
+            var varJob = (0, _masterfiles.getJobByGlobalCompany)(all.GLOBAL_INDIV_ID);
+
+            if (parseInt(varJob.COMPANY_ID) != parseInt(_this12._cache_obj.USER.COMPANY_ID)) {
+              _toastr2.default.error(varJob.JOB_DESC + " Job is not included on jobs from users company.", "Problem occured");
+              varJob.JOB_ID = "";
+              varJob.JOB_DESC = "";
+            }
+
+            var varTalent = (0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS.find(function (allIndiv) {
+              return allIndiv.GLOBAL_INDIV_ID == all.GLOBAL_INDIV_ID;
+            });
+
+            _this12._Personnel.push({
+              GLOBAL_ID: all.GLOBAL_INDIV_ID,
+              PERSONNEL_NAME: all.PERSONNEL_NAME,
+              PERSONNEL_INFO_SRC: varTalent.PERSONNEL_INFO_SRC,
+              JOB_ID: varJob.JOB_ID,
+              JOB_DESC: varJob.JOB_DESC,
+              PYMNT_TERM_CD: _this12.varPymnt.REF_CD,
+              PAYMENT_TERM: _this12.varPymnt.REF_DESC,
+              CATEGORY_ID: varJob.CATEGORY_ID,
+              CATEGORY_DESC: varJob.CATEGORY_DESC,
+              PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
+              CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+              INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+              STAFF_WORK_TMP: false,
+              CONFIDENTIAL_TMP: false,
+              GLOBAL_ID_LINK: _this12._selectedItem.GLOBAL_ID,
+              TALENT_MANAGER: {
+                GLOBAL_INDIV_ID: _this12._selectedItem.GLOBAL_ID,
+                PERSONNEL_NAME: _this12._selectedItem.PERSONNEL_NAME
+              }
+            });
+          }
+        });
+
+        this._ModalWizard.ids.pop();
+
+        this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+          all();
+        });
+      }
+
+      this._signal = (0, _entityManagerFactory.generateID)();
+    };
+
+    PersonnelCustomElement.prototype.refreshOnSelect = function refreshOnSelect(personnel) {
+      $(this.tblHeader).css("visibility", "hidden");
+    };
+
+    PersonnelCustomElement.prototype.moveTrigger = function moveTrigger(value) {
+
+      if (value == "up") {
+        if (this._currentIndex > 0) {
+
+          this._Personnel.splice(this._currentIndex - 1, 0, this._Personnel[this._currentIndex]);
+          var varCopy = this._Personnel.splice(this._currentIndex + 1, 1);
+          this._currentIndex = this._currentIndex - 1;
+        }
+      } else {
+
+        if (this._currentIndex < this._Personnel.length - 1) {
+
+          this._Personnel.splice(this._currentIndex + 2, 0, this._Personnel[this._currentIndex]);
+          var varCopy = this._Personnel.splice(this._currentIndex, 1);
+          this._currentIndex = this._currentIndex + 1;
+        }
+      }
+
+      this._signal = (0, _entityManagerFactory.generateID)();
+    };
+
+    PersonnelCustomElement.prototype.focusTrigger = function focusTrigger(index) {
+
+      this._currentIndex = index;
+    };
+
+    PersonnelCustomElement.prototype.savePersonnel = function savePersonnel(tag) {
+      var _this13 = this;
+
+      var varErrorDuplicate = "";
+      var varErrorJobTerms = "";
+      var varErrorCheckTalentManager = "";
+
+      var varDuplicateValidation = [];
+
+      var varI = 0;
+      var varJ = 0;
+
+      for (var i = 0; i <= this._Personnel.length - 1; ++i) {
+
+        for (var j = 0; j <= this._Personnel.length - 1; ++j) {
+
+          if (this._Personnel[j].GROUP_ORDER !== -1 && this._Personnel[i].GROUP_ORDER !== -1) {
+            if (this._Personnel[j].PERSONNEL_NAME == this._Personnel[i].PERSONNEL_NAME && this._Personnel[j].JOB_ID == this._Personnel[i].JOB_ID && i != j && varDuplicateValidation.find(function (all) {
+              return all == _this13._Personnel[j].PERSONNEL_NAME;
+            }) == undefined && (this._Personnel[i].PERSONNEL_NAME == null ? "" : this._Personnel[i].PERSONNEL_NAME.trim()) != "") {
+
+              varErrorDuplicate += "<br /><br />" + this._Personnel[j].PERSONNEL_NAME + "-" + this._Personnel[j].JOB_DESC + " Row(" + (varJ + 1) + ").";
+
+              varDuplicateValidation.push(this._Personnel[j].PERSONNEL_NAME);
+            }
+          }
+
+          if (this._Personnel[j].GROUP_ORDER !== -1) {
+            ++varJ;
+          }
+        }
+
+        if (this._Personnel[i].GROUP_ORDER !== -1) {
+          ++varI;
+        }
+      }
+
+      varI = 0;
+      varJ = 0;
+
+      for (var j = 0; j <= this._Personnel.length - 1; ++j) {
+
+        if (this._Personnel[j].GROUP_ORDER !== -1) if (this._Personnel[j].JOB_ID === undefined || this._Personnel[j].JOB_ID == "" || this._Personnel[j].PYMNT_TERM_CD == "" || this._Personnel[j].PYMNT_TERM_CD === undefined || this._Personnel[j].JOB_ID === null || this._Personnel[j].PYMNT_TERM_CD === null) {
+          varErrorJobTerms += "<br /><br />" + "Row (" + (varJ + 1) + ").";
+        }
+
+        if (this._Personnel[j].GROUP_ORDER !== -1) {
+          ++varJ;
+        }
+      }
+
+      if (varErrorDuplicate != "") {
+        _toastr2.default.error("<strong>Duplicate Personnel and Job</strong>" + varErrorDuplicate + "<br /><br />Saving cancelled.", "Problem occured");
+      }
+
+      if (varErrorJobTerms != "") {
+        _toastr2.default.error("<strong>JOB/PAYMENT TERM not set</strong>" + varErrorJobTerms + "<br /><br />Saving cancelled.", "Problem occured");
+      }
+
+      if (varErrorDuplicate != "" || varErrorJobTerms != "" || varErrorCheckTalentManager != "") {
+        return;
+      }
+
+      var getMax = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_DTL').orderByDesc('BDGT_TMPL_DTL_ID').take(1);
+      (0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
+        var getMax = 1;
+
+        if (successMax.results.length > 0) getMax = successMax.results[0].BDGT_TMPL_DTL_ID + 1;
+
+        var varIndex = 1;
+
+        var getAllDtl = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_DTL').where("BDGT_TMPL_ID", '==', _this13._cache_budget.HEADER.BDGT_TMPL_ID);
+        (0, _entityManagerFactory.EntityManager)().executeQuery(getAllDtl).then(function (foundDtl) {
+
+          _this13._Personnel.forEach(function (item) {
+            if (item.BDGT_TMPL_DTL_ID === undefined) {
+              item.BDGT_TMPL_DTL_ID_TMP = getMax;
+              ++getMax;
+            }
+          });
+
+          _this13._Personnel.forEach(function (item) {
+            if (item.TALENT_MANAGER !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
+
+              if (item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP == undefined) {
+                item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP = getMax;
+                item.BDGT_TMPL_DTL_ID_LINK = getMax;
+                item.TALENT_MANAGER.IsNewTalent = true;
+                ++getMax;
+              }
+            }
+          });
+
+          _this13._Personnel.forEach(function (item) {
+
+            if (item.BDGT_TMPL_DTL_ID === undefined && item.GROUP_ORDER !== -1) {
+
+              var varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_DTL', {
+                BDGT_TMPL_DTL_ID: item.BDGT_TMPL_DTL_ID_TMP,
+                BDGT_TMPL_ID: _this13._cache_budget.HEADER.BDGT_TMPL_ID,
+                JOB_ID: item.JOB_ID,
+                GLOBAL_ID: item.GLOBAL_ID,
+                CONTRACT_AMT: item.CONTRACT_AMT_TMP.replace(/,/g, ''),
+                CATEGORY_ID: item.CATEGORY_ID,
+                STAFF_WORK: item.STAFF_WORK_TMP === undefined ? 0 : item.STAFF_WORK_TMP == true ? 1 : 0,
+                PYMNT_TERM_CD: item.PYMNT_TERM_CD,
+                PAY_TO_PERSON_FL: 'T',
+                PAY_RATE_FACTOR: item.PAY_RATE_FACTOR_TMP.replace(/,/g, ''),
+                BUDGET_AMT: item.INPUT_AMT_TMP.replace(/,/g, ''),
+                TAPING_DAY_CNT: _this13._cache_budget.HEADER.TAPING_DAYS,
+                PERSONNEL_CLASS_CD: _this13.toPersonModel.USE != "STAFF" ? "Mainstay" : "Staff",
+                REMARKS: item.REMARKS,
+                PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
+                PERSONNEL_NAME: item.BLANK_PERSONNEL_NAME !== undefined ? item.BLANK_PERSONNEL_NAME : item.PERSONNEL_NAME,
+                CREATED_BY: _this13._cache_obj.USER.USER_ID,
+                CREATED_DT: new Date(),
+                LAST_UPDATED_BY: _this13._cache_obj.USER.USER_ID,
+                LAST_UPDATED_DT: new Date(),
+                INPUT_AMT: item.INPUT_AMT_TMP.replace(/,/g, ''),
+                EPISODES: _this13._cache_budget.HEADER.EPISODES,
+                CONFIDENTIAL: item.CONFIDENTIAL_TMP === undefined ? 0 : item.CONFIDENTIAL_TMP == true ? 1 : 0,
+                PER_TAPING_DAY_RATE: 0,
+                PERSONNEL_CLASS_TYPE: _this13.getPersonnelClassType(),
+                POOL_RECORD: item.POOL_RECORD_TMP == null || item.POOL_RECORD_TMP == undefined ? 0 : item.POOL_RECORD_TMP == true ? 1 : 0,
+                GROUP_ORDER: varIndex,
+                GLOBAL_ID_LINK: item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? item.TALENT_MANAGER.GLOBAL_INDIV_ID : "NONE",
+                BDGT_TMPL_DTL_ID_LINK: item.BDGT_TMPL_DTL_ID_LINK !== undefined && item.BDGT_TMPL_DTL_ID_LINK !== null ? item.BDGT_TMPL_DTL_ID_LINK : 0,
+                WITH_TALENT_MANAGER: item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? '1' : '0'
+              });
+
+              (0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
+
+              if (item.TALENT_MANAGER !== undefined) {
+
+                var varInsertTM = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_DTL', {
+                  BDGT_TMPL_DTL_ID: item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP,
+                  BDGT_TMPL_ID: _this13._cache_budget.HEADER.BDGT_TMPL_ID,
+                  JOB_ID: item.TALENT_MANAGER.JOB_ID,
+                  GLOBAL_ID: item.TALENT_MANAGER.GLOBAL_INDIV_ID,
+                  CONTRACT_AMT: item.TALENT_MANAGER.CONTRACT_AMT_TMP.replace(/,/g, ''),
+                  CATEGORY_ID: item.TALENT_MANAGER.CATEGORY_ID,
+                  STAFF_WORK: 0,
+                  PYMNT_TERM_CD: item.PYMNT_TERM_CD,
+                  PAY_TO_PERSON_FL: 'T',
+                  PAY_RATE_FACTOR: item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP.replace(/,/g, ''),
+                  BUDGET_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
+                  TAPING_DAY_CNT: _this13._cache_budget.HEADER.TAPING_DAYS,
+                  PERSONNEL_CLASS_CD: _this13.toPersonModel.USE != "STAFF" ? "Mainstay" : "Staff",
+                  REMARKS: item.TALENT_MANAGER.REMARKS,
+                  PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
+                  PERSONNEL_NAME: item.TALENT_MANAGER.PERSONNEL_NAME,
+                  CREATED_BY: _this13._cache_obj.USER.USER_ID,
+                  CREATED_DT: new Date(),
+                  LAST_UPDATED_BY: _this13._cache_obj.USER.USER_ID,
+                  LAST_UPDATED_DT: new Date(),
+                  INPUT_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
+                  EPISODES: _this13._cache_budget.HEADER.EPISODES,
+                  CONFIDENTIAL: 0,
+                  PER_TAPING_DAY_RATE: 0,
+                  PERSONNEL_CLASS_TYPE: _this13.getPersonnelClassType(),
+                  POOL_RECORD: 0,
+                  GROUP_ORDER: -1,
+                  WITH_TALENT_MANAGER: '0',
+                  GLOBAL_ID_LINK: 'NONE',
+                  BDGT_TMPL_DTL_ID_LINK: 0
+                });
+
+                (0, _entityManagerFactory.EntityManager)().addEntity(varInsertTM);
+              }
+            } else if (item.REMOVE == true) {
+
+              if (item.TALENT_MANAGER !== undefined) {
+                var varTalentMngrToDelete = foundDtl.results.find(function (allTm) {
+                  return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
+                });
+
+                varTalentMngrToDelete.entityAspect.setDeleted();
+              }
+
+              var varTalentToDelete = foundDtl.results.find(function (allTm) {
+                return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID;
+              });
+
+              varTalentToDelete.entityAspect.setDeleted();
+            } else {
+
+              var varTalentToEdit = foundDtl.results.find(function (allTm) {
+                return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID;
+              });
+
+              varTalentToEdit.JOB_ID = item.JOB_ID;
+
+              varTalentToEdit.GLOBAL_ID = item.GLOBAL_ID;
+              varTalentToEdit.CONTRACT_AMT = item.CONTRACT_AMT_TMP.replace(/,/g, '');
+              varTalentToEdit.CATEGORY_ID = item.CATEGORY_ID;
+              varTalentToEdit.STAFF_WORK = item.STAFF_WORK_TMP === undefined ? 0 : item.STAFF_WORK_TMP == true ? 1 : 0;
+              varTalentToEdit.PYMNT_TERM_CD = item.PYMNT_TERM_CD;
+              varTalentToEdit.PAY_RATE_FACTOR = item.PAY_RATE_FACTOR_TMP.replace(/,/g, '');
+              varTalentToEdit.BUDGET_AMT = item.INPUT_AMT_TMP.replace(/,/g, '');
+              varTalentToEdit.TAPING_DAY_CNT = _this13._cache_budget.HEADER.TAPING_DAYS;
+              varTalentToEdit.REMARKS = item.REMARKS;
+              varTalentToEdit.PERSONNEL_INFO_SRC = item.PERSONNEL_INFO_SRC;
+              varTalentToEdit.PERSONNEL_NAME = item.BLANK_PERSONNEL_NAME !== undefined ? item.BLANK_PERSONNEL_NAME : item.PERSONNEL_NAME;
+              varTalentToEdit.LAST_UPDATED_BY = _this13._cache_obj.USER.USER_ID;
+              varTalentToEdit.LAST_UPDATED_DT = new Date();
+              varTalentToEdit.INPUT_AMT = item.INPUT_AMT_TMP.replace(/,/g, '');
+              varTalentToEdit.EPISODES = _this13._cache_budget.HEADER.EPISODES;
+              varTalentToEdit.CONFIDENTIAL = item.CONFIDENTIAL_TMP === undefined ? 0 : item.CONFIDENTIAL_TMP == true ? 1 : 0;
+              varTalentToEdit.POOL_RECORD = item.POOL_RECORD_TMP == null || item.POOL_RECORD_TMP == undefined ? 0 : item.POOL_RECORD_TMP == true ? 1 : 0;
+
+              if (varTalentToEdit.GROUP_ORDER !== -1) varTalentToEdit.GROUP_ORDER = varIndex;
+
+              varTalentToEdit.GLOBAL_ID_LINK = item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? item.TALENT_MANAGER.GLOBAL_INDIV_ID : "NONE";
+              varTalentToEdit.BDGT_TMPL_DTL_ID_LINK = item.BDGT_TMPL_DTL_ID_LINK !== undefined && item.BDGT_TMPL_DTL_ID_LINK !== null ? item.BDGT_TMPL_DTL_ID_LINK : 0;
+              varTalentToEdit.WITH_TALENT_MANAGER = item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? '1' : '0';
+
+              if (item.TALENT_MANAGER !== undefined) {
+
+                if (item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
+                  var varCheckTalent = _this13._PersonnelTM.find(function (allTalent) {
+                    return allTalent.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
+                  });
+                  save;
+                  if (varCheckTalent !== undefined) {
+
+                    if (varCheckTalent.BDGT_TMPL_DTL_ID !== item.BDGT_TMPL_DTL_ID_LINK && item.BDGT_TMPL_DTL_ID_LINK != 0) {
+
+                      var varTalentMngrToEdit = foundDtl.results.find(function (allTm) {
+                        return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
+                      });
+
+                      varTalentMngrToEdit.entityAspect.setDeleted();
+                    } else {
+                      var varTalentMngrToEdit = foundDtl.results.find(function (allTm) {
+                        return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
+                      });
+                      varTalentMngrToEdit.CONTRACT_AMT = item.TALENT_MANAGER.CONTRACT_AMT_TMP.replace(/,/g, '');
+                      varTalentMngrToEdit.PAY_RATE_FACTOR = item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP.replace(/,/g, '');
+                      varTalentMngrToEdit.INPUT_AMT = item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, '');
+                      varTalentMngrToEdit.BUDGET_AMT = item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, '');
+                      varTalentMngrToEdit.REMARKS = item.TALENT_MANAGER.REMARKS;
+                    }
+                  }
+                }
+
+                if (item.TALENT_MANAGER.IsNewTalent) {
+                  var varInsertTM = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_DTL', {
+                    BDGT_TMPL_DTL_ID: item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP,
+                    BDGT_TMPL_ID: _this13._cache_budget.HEADER.BDGT_TMPL_ID,
+                    JOB_ID: item.TALENT_MANAGER.JOB_ID,
+                    GLOBAL_ID: item.TALENT_MANAGER.GLOBAL_INDIV_ID,
+                    CONTRACT_AMT: item.TALENT_MANAGER.CONTRACT_AMT_TMP.replace(/,/g, ''),
+                    CATEGORY_ID: item.TALENT_MANAGER.CATEGORY_ID,
+                    STAFF_WORK: 0,
+                    PYMNT_TERM_CD: item.PYMNT_TERM_CD,
+                    PAY_TO_PERSON_FL: 'T',
+                    PAY_RATE_FACTOR: item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP.replace(/,/g, ''),
+                    BUDGET_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
+                    TAPING_DAY_CNT: _this13._cache_budget.HEADER.TAPING_DAYS,
+                    PERSONNEL_CLASS_CD: _this13.toPersonModel.USE != "STAFF" ? "Mainstay" : "Staff",
+                    REMARKS: item.TALENT_MANAGER.REMARKS,
+                    PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
+                    PERSONNEL_NAME: item.TALENT_MANAGER.PERSONNEL_NAME,
+                    CREATED_BY: _this13._cache_obj.USER.USER_ID,
+                    CREATED_DT: new Date(),
+                    LAST_UPDATED_BY: _this13._cache_obj.USER.USER_ID,
+                    LAST_UPDATED_DT: new Date(),
+                    INPUT_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
+                    EPISODES: _this13._cache_budget.HEADER.EPISODES,
+                    CONFIDENTIAL: 0,
+                    PER_TAPING_DAY_RATE: 0,
+                    PERSONNEL_CLASS_TYPE: _this13.getPersonnelClassType(),
+                    POOL_RECORD: 0,
+                    GROUP_ORDER: -1,
+                    WITH_TALENT_MANAGER: '0',
+                    GLOBAL_ID_LINK: 'NONE',
+                    BDGT_TMPL_DTL_ID_LINK: 0
+                  });
+                  (0, _entityManagerFactory.EntityManager)().addEntity(varInsertTM);
+                }
+              } else if (item.TALENT_MANAGER === undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
+
+                var varTalentMngrToDelete = foundDtl.results.find(function (allTm) {
+                  return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
+                });
+
+                if (varTalentMngrToDelete !== undefined) {
+                  consoole.log(item.BDGT_TMPL_DTL_ID);
+                  var varTalentToEdit = foundDtl.results.find(function (allTm) {
+                    return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID;
+                  });
+                  varTalentMngrToDelete.entityAspect.setDeleted();
+
+                  varTalentToEdit.GLOBAL_ID_LINK = 'NONE';
+                  varTalentToEdit.BDGT_TMPL_DTL_ID_LINK = 0;
+                  varTalentToEdit.WITH_TALENT_MANAGER = '0';
+                }
+              }
+            }
+
+            ++varIndex;
+          });
+
+          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+            _this13.fnCheckBudget(_this13._cache_budget.HEADER.BDGT_TMPL_ID);
+            _toastr2.default.success("Succesfully Saved", _this13.toPersonModel.USE);
+
+            if (tag == 1) _this13.fnSequenceDispatch();
+          }, function (fail) {
+
+            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
+              var errors = entity.entityAspect.getValidationErrors();
+              if (errors.length > 0) console.log(errors);
+            });
+            console.log(fail);
+            _toastr2.default.error("Error Occured", fail);
+
+            if (tag == 1) _this13.fnSequenceDispatch();
+          });
+        });
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnSequenceDispatch = function fnSequenceDispatch() {
+
+      if (this.toPersonModel.USE == "REGULAR") {
+
+        this._cache_budget.OBSERVERS.copy_template.forEach(function (all) {
+          all('SEMI_REGULAR');
+        });
+      } else if (this.toPersonModel.USE == "SEMI_REGULAR") {
+
+        this._cache_budget.OBSERVERS.copy_template.forEach(function (all) {
+          all('STAFF');
+        });
+      } else if (this.toPersonModel.USE == "STAFF") {
+
+        this._cache_budget.OBSERVERS.copy_template_guest.forEach(function (all) {
+          all();
+        });
+      }
+    };
+
+    PersonnelCustomElement.prototype.getPersonnelClassType = function getPersonnelClassType() {
+      if (this.toPersonModel.USE == 'REGULAR') {
+        return 'Regular';
+      } else if (this.toPersonModel.USE == 'SEMI_REGULAR') {
+        return 'Semi-Regular';
+      } else return 'Staff';
+    };
+
+    PersonnelCustomElement.prototype.fnRegularBlurEvt = function fnRegularBlurEvt(item, property, index, BDGT_TMPL_DTL_ID) {
+
+      if (property == "TERM") {
+        if ($("input[tableTermIndex*='" + index + "']").val() === undefined) return;
+        this._Personnel[index].PAYMENT_TERM = $("input[tableTermIndex*='" + index + "']").val().toUpperCase();
+
+        var varPaymentTerm = this._Personnel[index].PAYMENT_TERM.trim();
+        var varFound = this._PYMNTTERM.find(function (all) {
+          return varPaymentTerm == all.REF_DESC.trim();
+        });
+
+        if (varFound !== undefined) {
+          this._Personnel[index].PYMNT_TERM_CD = varFound.REF_CD;
+        } else this._Personnel[index].PYMNT_TERM_CD = "";
+      }
+    };
+
+    PersonnelCustomElement.prototype.fnBlankPersonnelRegular = function fnBlankPersonnelRegular() {
+
+      this.getDefaultPymntTerm();
+
+      this._Personnel.push({ visible: true, PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
+        CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+        INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
+        PYMNT_TERM_CD: this.varPymnt.REF_CD,
+        PAYMENT_TERM: this.varPymnt.REF_DESC
+      });
+
+      var varBudgetLast = this._Personnel[this._Personnel.length - 1];
+      varBudgetLast.ce_value = "+";
+      varBudgetLast.styleString = this.styleStringHidden;
+
+      this._signal = (0, _entityManagerFactory.generateID)();
+
+      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+        all();
+      });
+    };
+
+    PersonnelCustomElement.prototype.chkRemove = function chkRemove(item) {
+      if (item.REMOVE) {
+        item.REMOVE = false;
+      } else {
+        item.REMOVE = true;
+      }
+    };
+
+    PersonnelCustomElement.prototype.removeRegular = function removeRegular(index) {
+
+      var varRemoved = this._Personnel.splice(index, 1);
+      this._signal = (0, _entityManagerFactory.generateID)();
+
+      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
+        all();
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnIndivMstrTalents = function fnIndivMstrTalents() {
+      this.dialogService.open({
+        viewModel: _globalindivmstr.globalindivmstr, model: { allPersonnel: false }
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {} else {}
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnIndivMstr = function fnIndivMstr() {
+      var _this14 = this;
+
+      this.dialogService.open({
+        viewModel: _indivmstr.indivmstr, model: { allPersonnel: false }
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {
+          _this14.PassedIndiv(response.output);
+        } else {}
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnModalJob = function fnModalJob() {
+      var _this15 = this;
+
+      this.dialogService.open({
+        viewModel: _job.job
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {
+          _this15.passJob(response.output);
+        } else {}
+      });
+    };
+
+    PersonnelCustomElement.prototype.fnModalPaymentTerm = function fnModalPaymentTerm() {
+      var _this16 = this;
+
+      this.dialogService.open({
+        viewModel: _paymentterm.paymentterm
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {
+          _this16.passTerm(response.output);
+        } else {}
+      });
+    };
+
+    PersonnelCustomElement.prototype.passTerm = function passTerm(term) {
+
+      var index = this._Index;
+
+      this._Personnel[index].PYMNT_TERM_CD = term.REF_CD;
+      this._Personnel[index].PAYMENT_TERM = term.REF_DESC;
+    };
+
+    PersonnelCustomElement.prototype.fnIndivMstrManager = function fnIndivMstrManager() {
+      var _this17 = this;
+
+      this.dialogService.open({
+        viewModel: _globalindivmstr.globalindivmstr, model: { allPersonnel: false }
+      }).whenClosed(function (response) {
+
+        if (!response.wasCancelled) {
+          _this17.fnPassedPersonnels(response.output);
+        } else {}
+      });
+    };
+
+    return PersonnelCustomElement;
+  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'toPerson', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'toPersonModel', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  })), _class2)) || _class);
+});
+define('ppfcs/budget/summary',['exports', 'aurelia-framework', 'cache_obj', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'numeral', 'toastr', 'multi-observer'], function (exports, _aureliaFramework, _cache_obj, _cache_budget, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _numeral, _toastr, _multiObserver) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.SummaryCustomElement = undefined;
+
+  var _typeahead2 = _interopRequireDefault(_typeahead);
+
+  var _settings2 = _interopRequireDefault(_settings);
+
+  var _underscore2 = _interopRequireDefault(_underscore);
+
+  var _numeral2 = _interopRequireDefault(_numeral);
+
+  var _toastr2 = _interopRequireDefault(_toastr);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _initDefineProp(target, property, descriptor, context) {
+    if (!descriptor) return;
+    Object.defineProperty(target, property, {
+      enumerable: descriptor.enumerable,
+      configurable: descriptor.configurable,
+      writable: descriptor.writable,
+      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+    });
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+    var desc = {};
+    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+      desc[key] = descriptor[key];
+    });
+    desc.enumerable = !!desc.enumerable;
+    desc.configurable = !!desc.configurable;
+
+    if ('value' in desc || desc.initializer) {
+      desc.writable = true;
+    }
+
+    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+      return decorator(target, property, desc) || desc;
+    }, desc);
+
+    if (context && desc.initializer !== void 0) {
+      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+      desc.initializer = undefined;
+    }
+
+    if (desc.initializer === void 0) {
+      Object['define' + 'Property'](target, property, desc);
+      desc = null;
+    }
+
+    return desc;
+  }
+
+  function _initializerWarningHelper(descriptor, context) {
+    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+  }
+
+  var _dec, _class, _desc, _value, _class2, _descriptor;
+
+  var SummaryCustomElement = exports.SummaryCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _multiObserver.MultiObserver), _dec(_class = (_class2 = function () {
+    function SummaryCustomElement(cache_obj, cache_budget, multiObserver) {
+      var _this = this;
+
+      _classCallCheck(this, SummaryCustomElement);
+
+      _initDefineProp(this, 'to', _descriptor, this);
+
+      this._cache_obj = null;
+      this._enableAdd = false;
+      this._enableRemove = false;
+      this._INPUT_AMT_MAINSTAY = 0;
+      this._INPUT_AMT_STAFF = 0;
+      this._INPUT_AMT_GUEST = 0;
+      this._INPUT_AMT_TOTAL = 0;
+      this.varObserveSubscriptions = [];
+      this._cache_budget = null;
+
+      this._cache_obj = cache_obj;
+      this._cache_budget = cache_budget;
+      this._multiObserver = multiObserver;
+
+      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
+        _this.fnCheckSummary(val);
+      });
+
+      this._cache_budget.OBSERVERS.reset_summary.push(function () {
+        _this.fnResetSummarySubscription();
+      });
+    }
+
+    SummaryCustomElement.prototype.fnCheckAll = function fnCheckAll() {
+      var _this2 = this;
+
+      this._INPUT_AMT_MAINSTAY = 0;
+      this._INPUT_AMT_TOTAL = 0;
+      this._cache_budget._INPUT_AMT_REGULAR = 0;
+      this._cache_budget._INPUT_AMT_SEMI_REGULAR = 0;
+
+      this._cache_budget.REGULAR.forEach(function (all) {
+
+        if (_this2._cache_obj.ALLOW_PASS_CONFIDENTIAL || !all.CONFIDENTIAL_TMP) {
+          if (all.GROUP_ORDER !== -1) if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) {
+            _this2._INPUT_AMT_MAINSTAY += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
+          }
+
+          if (all.TALENT_MANAGER) {
+            if (all.TALENT_MANAGER.INPUT_AMT_TMP != "" && all.TALENT_MANAGER.INPUT_AMT_TMP != null && all.TALENT_MANAGER.INPUT_AMT_TMP != undefined) {
+              _this2._INPUT_AMT_MAINSTAY += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
+            }
+          }
+        }
+      });
+
+      this._cache_budget._INPUT_AMT_REGULAR = (0, _numeral2.default)(this._INPUT_AMT_MAINSTAY).format('0,0.00');
+
+      this._cache_budget.SEMI_REGULAR.forEach(function (all) {
+
+        if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) {
+          if (all.GROUP_ORDER !== -1) {
+            if (_this2._cache_obj.ALLOW_PASS_CONFIDENTIAL || !all.CONFIDENTIAL_TMP) _this2._INPUT_AMT_MAINSTAY += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
+            _this2._cache_budget._INPUT_AMT_SEMI_REGULAR += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
+          }
+
+          if (all.TALENT_MANAGER) {
+            if (all.TALENT_MANAGER.INPUT_AMT_TMP != "" && all.TALENT_MANAGER.INPUT_AMT_TMP != null && all.TALENT_MANAGER.INPUT_AMT_TMP != undefined) {
+              _this2._INPUT_AMT_MAINSTAY += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
+              _this2._cache_budget._INPUT_AMT_SEMI_REGULAR += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
+            }
+          }
+        }
+      });
+
+      this._INPUT_AMT_TOTAL = this._INPUT_AMT_MAINSTAY;
+      this._INPUT_AMT_MAINSTAY = (0, _numeral2.default)(this._INPUT_AMT_MAINSTAY).format('0,0.00');
+
+      this._cache_budget._INPUT_AMT_SEMI_REGULAR = (0, _numeral2.default)(this._cache_budget._INPUT_AMT_SEMI_REGULAR).format('0,0.00');
+
+      this._INPUT_AMT_STAFF = 0;
+      this._cache_budget._INPUT_AMT_STAFF = 0;
+
+      this._cache_budget.STAFF.forEach(function (all) {
+
+        if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) {
+
+          if (all.GROUP_ORDER !== -1) {
+
+            if (_this2._cache_obj.ALLOW_PASS_CONFIDENTIAL || !all.CONFIDENTIAL_TMP) _this2._INPUT_AMT_STAFF += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
+          }
+
+          if (all.TALENT_MANAGER) {
+
+            if (all.TALENT_MANAGER.INPUT_AMT_TMP != "" && all.TALENT_MANAGER.INPUT_AMT_TMP != null && all.TALENT_MANAGER.INPUT_AMT_TMP != undefined) {
+              _this2._INPUT_AMT_STAFF += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
+            }
+          }
+        }
+      });
+
+      this._INPUT_AMT_TOTAL += this._INPUT_AMT_STAFF;
+      this._INPUT_AMT_STAFF = (0, _numeral2.default)(this._INPUT_AMT_STAFF).format('0,0.00');
+      this._cache_budget._INPUT_AMT_STAFF = this._INPUT_AMT_STAFF;
+
+      this._INPUT_AMT_GUEST = 0;
+      this._cache_budget.GUEST.forEach(function (all) {
+
+        if (all.GROUP_ORDER !== -1) if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) _this2._INPUT_AMT_GUEST += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, '')) * all.PAY_RATE_FACTOR;
+      });
+
+      this._INPUT_AMT_TOTAL += this._INPUT_AMT_GUEST;
+      this._INPUT_AMT_GUEST = (0, _numeral2.default)(this._INPUT_AMT_GUEST).format('0,0.00');
+      this._cache_budget._INPUT_AMT_GUEST = (0, _numeral2.default)(this._INPUT_AMT_GUEST).format('0,0.00');
+
+      this._INPUT_AMT_TOTAL = (0, _numeral2.default)(this._INPUT_AMT_TOTAL).format('0,0.00');
+
+      this._cache_budget.TOTAL = this._INPUT_AMT_TOTAL;
+
+      if (this._cache_budget._LOADING_BUDGET == 1 && this._cache_budget.TOTAL != 0) {
+        this._cache_budget_LOADING_BUDGET = 0;
+        this._cache_budget.OBSERVERS.budget_loaded.forEach(function (all) {
+          all();
+        });
+      }
+    };
+
+    SummaryCustomElement.prototype.fnCheckSummary = function fnCheckSummary(value) {
+      var _this3 = this;
+
+      setTimeout(function () {
+        for (var name in _this3._cache_budget.REGULAR) {
+
+          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.REGULAR[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
+
+            _this3.fnCheckAll();
+          });
+
+          _this3.varObserveSubscriptions.push(varSubscription);
+
+          if (_this3._cache_budget.REGULAR[name].TALENT_MANAGER !== undefined) {
+
+            var varSubscriptionTM = _this3._multiObserver.observe([[_this3._cache_budget.REGULAR[name].TALENT_MANAGER, 'INPUT_AMT_TMP']], function (newValue, oldValue) {
+
+              _this3.fnCheckAll();
+            });
+
+            _this3.varObserveSubscriptions.push(varSubscriptionTM);
+          }
+        }
+
+        for (var name in _this3._cache_budget.SEMI_REGULAR) {
+
+          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.SEMI_REGULAR[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
+
+            _this3.fnCheckAll();
+          });
+
+          _this3.varObserveSubscriptions.push(varSubscription);
+
+          if (_this3._cache_budget.SEMI_REGULAR[name].TALENT_MANAGER !== undefined) {
+
+            var varSubscriptionTM = _this3._multiObserver.observe([[_this3._cache_budget.SEMI_REGULAR[name].TALENT_MANAGER, 'INPUT_AMT_TMP']], function (newValue, oldValue) {
+
+              _this3.fnCheckAll();
+            });
+
+            _this3.varObserveSubscriptions.push(varSubscriptionTM);
+          }
+        }
+
+        for (var name in _this3._cache_budget.STAFF) {
+
+          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.STAFF[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
+
+            _this3.fnCheckAll();
+          });
+
+          _this3.varObserveSubscriptions.push(varSubscription);
+
+          if (_this3._cache_budget.STAFF[name].TALENT_MANAGER !== undefined) {
+
+            var varSubscriptionTM = _this3._multiObserver.observe([[_this3._cache_budget.STAFF[name].TALENT_MANAGER, 'INPUT_AMT_TMP']], function (newValue, oldValue) {
+
+              _this3.fnCheckAll();
+            });
+
+            _this3.varObserveSubscriptions.push(varSubscriptionTM);
+          }
+        }
+
+        for (var name in _this3._cache_budget.GUEST) {
+
+          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.GUEST[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
+
+            _this3.fnCheckAll();
+          });
+
+          _this3.varObserveSubscriptions.push(varSubscription);
+        }
+
+        _this3.fnCheckAll();
+      }, 6000);
+    };
+
+    SummaryCustomElement.prototype.fnResetSummarySubscription = function fnResetSummarySubscription() {
+
+      this.varObserveSubscriptions.forEach(function (toDispose) {
+        toDispose();
+      });
+
+      while (this.varObserveSubscriptions.length > 0) {
+        this.varObserveSubscriptions.pop();
+      }
+
+      this.fnCheckSummary();
+    };
+
+    return SummaryCustomElement;
+  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'to', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  })), _class2)) || _class);
+});
+define('ppid/contract/cache_contract',['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var cache_contract = exports.cache_contract = function cache_contract() {
+    _classCallCheck(this, cache_contract);
+
+    this.LAST_UPDATED_DT = new Date(Date.now());
+    this.CREATED_DT = new Date(Date.now());
+    this.ISNEWCONTRACT = true;
+    this.ISSAVE = true;
+    this.CONTRACT_HDR_ID = '';
+  };
+});
+define('ppid/contract/contract_form',['exports', 'aurelia-framework', 'cache_obj', 'ppid/contract/cache_contract', 'entity-manager-factory', 'masterfiles', 'settings', 'modals/modal-wizard', 'toastr', 'moment', 'underscore', 'multi-observer', 'aurelia-dialog', 'breeze-client', 'ppid/contract/contract_search'], function (exports, _aureliaFramework, _cache_obj, _cache_contract, _entityManagerFactory, _masterfiles, _settings, _modalWizard, _toastr, _moment, _underscore, _multiObserver, _aureliaDialog, _breezeClient, _contract_search) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.contract_form = undefined;
+
+  var _settings2 = _interopRequireDefault(_settings);
+
+  var _toastr2 = _interopRequireDefault(_toastr);
+
+  var _moment2 = _interopRequireDefault(_moment);
+
+  var _underscore2 = _interopRequireDefault(_underscore);
+
+  var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _initDefineProp(target, property, descriptor, context) {
+    if (!descriptor) return;
+    Object.defineProperty(target, property, {
+      enumerable: descriptor.enumerable,
+      configurable: descriptor.configurable,
+      writable: descriptor.writable,
+      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+    });
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+    var desc = {};
+    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+      desc[key] = descriptor[key];
+    });
+    desc.enumerable = !!desc.enumerable;
+    desc.configurable = !!desc.configurable;
+
+    if ('value' in desc || desc.initializer) {
+      desc.writable = true;
+    }
+
+    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+      return decorator(target, property, desc) || desc;
+    }, desc);
+
+    if (context && desc.initializer !== void 0) {
+      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+      desc.initializer = undefined;
+    }
+
+    if (desc.initializer === void 0) {
+      Object['define' + 'Property'](target, property, desc);
+      desc = null;
+    }
+
+    return desc;
+  }
+
+  function _initializerWarningHelper(descriptor, context) {
+    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+  }
+
+  var _dec, _class, _desc, _value, _class2, _descriptor;
+
+  var contract_form = exports.contract_form = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_contract.cache_contract, _modalWizard.ModalWizard, _toastr2.default, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
+    function contract_form(cache_obj, cache_contract, ModalWizard, toastr, multiObserver, DialogService) {
+      var _this = this;
+
+      _classCallCheck(this, contract_form);
+
+      _initDefineProp(this, 'EMPLOYEE_NAME', _descriptor, this);
+
+      this._disableCreateContract = false;
+      this._disableEditContract = true;
+      this._disableCancelContract = true;
+      this._disableRefreshContract = true;
+      this._disableSaveContract = true;
+      this._disablePrintContract = true;
+      this.MSTR_LIST = [];
+      this.NAME_ARRAY = [];
+      this.ALIAS_ARRAY = [];
+      this.COMPANY = [{ ref: '', desc: '' }];
+      this.DIVISION = [];
+      this.JOB_GRP_ARRAY = [];
+      this.JOB = [];
+      this.ALIAS = [];
+      this.CONTRACT_STATUS = [];
+      this.menuNameShow = false;
+      this.menuAliasShow = false;
+      this.dialogService = null;
+
+      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
+        return;
+      }
+
+      this.dialogService = DialogService;
+      this._cache_obj = cache_obj;
+      this._cache_contract = cache_contract;
+      this.COMPANY1 = this._cache_obj.USER.COMPANY_ID;
+
+      this.LEVEL_NO1 = this._cache_obj.USER.LEVEL_NO;
+      console.log(this._cache_obj.USER);
+
+      this._cache_obj.OBSERVERS.contract_dialog.push(function (val) {
+        _this.fnCheckContract(val);
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('COMPANY_MSTR').where('COMPANY_ID', '==', this.COMPANY1)).then(function (found) {
+        _this.COMPANY_NAME1 = found.results[0].COMPANY_NAME;
+        _this.COMPANY_CD1 = found.results[0].COMPANY_CD;
+      });
+
+      if (this.LEVEL_NO1 == 3) {
+        var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS;
+        var newPersonnel = _underscore2.default.sortBy(personnel, 'PERSONNEL_NAME');
+        newPersonnel.forEach(function (item) {
+          if (item.PERSONNEL_INFO_SRC == 'INDIV') _this.MSTR_LIST.push({ ref: item.GLOBAL_INDIV_ID, desc: item.PERSONNEL_NAME });
+        });
+      } else {
+        var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_MSTR;
+        var newPersonnel = _underscore2.default.sortBy(personnel, 'LAST_NAME', 'GIVEN_NAME', 'MIDDLE_NAME');
+
+        newPersonnel.forEach(function (item) {
+          _this.MSTR_LIST.push({ ref: item.GLOBAL_INDIV_ID, desc: item.LAST_NAME + ', ' + item.GIVEN_NAME + ' ' + item.MIDDLE_NAME });
+        });
+      }
+
+      this.CONTRACT_STATUS.push({ ref: 'ACTIVE', desc: 'ACTIVE' });
+      this.CONTRACT_STATUS.push({ ref: 'EXPIRED', desc: 'EXPIRED' });
+
+      this.DIVISION = [{ ref: '', desc: '' }];
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('DIVISION_MSTR').where('COMPANY_ID', '==', this.COMPANY1).orderBy('DIVISION_NAME')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this.DIVISION.push({ ref: all.DIVISION_ID, desc: all.DIVISION_NAME });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('JOB_GRP_MSTR').where('COMPANY_ID', '==', this.COMPANY1).orderBy('JOB_GRP_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this.JOB_GRP_ARRAY.push(all.JOB_GRP_ID);
+        });
+      });
+
+      this.JOB = [{ ref: '', desc: '' }];
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('JOB_MSTR').orderBy('JOB_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          if (_this.JOB_GRP_ARRAY.indexOf(all.JOB_GRP_ID) > -1) {
+            _this.JOB.push({ ref: all.JOB_ID, desc: all.JOB_DESC });
+          }
+        });
+      });
+
+      setTimeout(function () {
+        $('#dtPicker1').datepicker({
+          format: "mm/dd/yyyy"
+        }).on("changeDate", function () {
+          _this.CONTRACT_START_DT1 = (0, _moment2.default)(new Date($('#dtPicker1').val())).format('MM/DD/YYYY');
+          if (new Date($('#dtPicker1').val()) > new Date($('#dtPicker2').val())) {
+            toastr.error("Invalid date range.", "Date Change..");
+
+            return;
+          }
+          if (!Date(_this.CONTRACT_START_DT1) || !Date(_this.CONTRACT_END_DT1) || _this.CONTRACT_START_DT1 == undefined || _this.CONTRACT_END_DT1 == undefined || _this.CONTRACT_START_DT1 == '' || _this.CONTRACT_END_DT1 == '') {
+            _this.DURATION_MONTHS1 = 0;
+          } else {
+            _this.DURATION_MONTHS1 = _this.monthDiff(_this.CONTRACT_START_DT1, _this.CONTRACT_END_DT1);
+          }
+          $('#dtPicker1').datepicker('hide');
+        });
+
+        $('#dtPicker2').datepicker({
+          format: "mm/dd/yyyy"
+        }).on("changeDate", function () {
+          _this.CONTRACT_END_DT1 = (0, _moment2.default)(new Date($('#dtPicker2').val())).format('MM/DD/YYYY');
+          if (new Date($('#dtPicker2').val()) < new Date($('#dtPicker1').val())) {
+            toastr.error("Invalid date range.", "Date Change..");
+
+            return;
+          }
+          if (!Date(_this.CONTRACT_START_DT1) || !Date(_this.CONTRACT_END_DT1) || _this.CONTRACT_START_DT1 == undefined || _this.CONTRACT_END_DT1 == undefined || _this.CONTRACT_START_DT1 == '' || _this.CONTRACT_END_DT1 == '') {
+            _this.DURATION_MONTHS1 = 0;
+          } else {
+            _this.DURATION_MONTHS1 = _this.monthDiff(_this.CONTRACT_START_DT1, _this.CONTRACT_END_DT1);
+          }
+          $('#dtPicker2').datepicker('hide');
+        });
+      }, 1000);
+    }
+
+    contract_form.prototype.pad = function pad(str, max) {
+      str = str.toString();
+      return str.length < max ? this.pad("0" + str, max) : str;
+    };
+
+    contract_form.prototype.EMPLOYEE_NAMEChanged = function EMPLOYEE_NAMEChanged() {
+      var _this2 = this;
+
+      this.NAME_ARRAY = this.MSTR_LIST.filter(function (all) {
+        return all.desc.substring(0, _this2.EMPLOYEE_NAME.length) == _this2.EMPLOYEE_NAME.toUpperCase();
+      });
+    };
+
+    contract_form.prototype.division_change = function division_change() {
+      var _this3 = this;
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('DIVISION_MSTR').where("DIVISION_ID", "==", this.DIVISION1)).then(function (success) {
+        _this3.DIVISION_CD1 = success.results[0].DIVISION_CD;
+        _this3._cache_contract.ISSAVE = false;
+      }, function (fail) {
+        _toastr2.default.error("Error Division", "Division CD not found");
+        return;
+      });
+    };
+
+    contract_form.prototype.job_change = function job_change() {
+      var _this4 = this;
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('JOB_MSTR').where('JOB_ID', '==', this.JOB1)).then(function (found) {
+        (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('JOB_GRP_MSTR').where('JOB_GRP_ID', '==', found.results[0].JOB_GRP_ID)).then(function (found1) {
+          _this4.JOB_GRP_NAME1 = found1.results[0].JOB_GRP_DESC;
+          _this4._cache_contract.ISSAVE = false;
+        });
+      });
+    };
+
+    contract_form.prototype.name_change = function name_change() {
+      var _this5 = this;
+
+      this.ALIAS = [];
+
+      this.GLOBAL_ID1 = this.MSTR_LIST1;
+      if (this.LEVEL_NO1 == 3) {
+        var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS.find(function (found) {
+          return found.GLOBAL_INDIV_ID == _this5.MSTR_LIST1;
+        });
+        personnel.ALIASES.forEach(function (all) {
+          _this5.ALIAS.push(all);
+        });
+        this.ALIAS.push(personnel.PERSONNEL_NAME);
+      } else {
+        var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_MSTR.find(function (found) {
+          return found.GLOBAL_INDIV_ID == _this5.MSTR_LIST1;
+        });
+        this.ALIAS.push(personnel.LAST_NAME + ', ' + personnel.GIVEN_NAME + ' ' + personnel.MIDDLE_NAME);
+      }
+      this._cache_contract.ISSAVE = false;
+    };
+
+    contract_form.prototype.name_change = function name_change(item, name) {
+      var _this6 = this;
+
+      this.ALIAS = [];
+      this.EMPLOYEE_NAME = name;
+      this.EMPLOYEE_ALIAS = '';
+      this.MSTR_LIST1 = item;
+      this.GLOBAL_ID1 = this.MSTR_LIST1;
+      if (this.LEVEL_NO1 == 3) {
+        var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS.find(function (found) {
+          return found.GLOBAL_INDIV_ID == _this6.MSTR_LIST1;
+        });
+
+        personnel.ALIASES.forEach(function (all) {
+          _this6.ALIAS.push(all);
+        });
+        this.ALIAS.push(personnel.PERSONNEL_NAME);
+      } else {
+        var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_MSTR.find(function (found) {
+          return found.GLOBAL_INDIV_ID == _this6.MSTR_LIST1;
+        });
+        this.ALIAS.push(personnel.LAST_NAME + ', ' + personnel.GIVEN_NAME + ' ' + personnel.MIDDLE_NAME);
+      }
+      this.ALIAS_ARRAY = this.ALIAS;
+      this._cache_contract.ISSAVE = false;
+    };
+
+    contract_form.prototype.alias_change = function alias_change(item) {
+      this.EMPLOYEE_ALIAS = item;
+      this._cache_contract.ISSAVE = false;
+    };
+
+    contract_form.prototype.onfocusName = function onfocusName() {
+      if (!(this._disableEditContract || !this._cache_contract.ISNEWCONTRACT)) this.menuNameShow = true;
+    };
+
+    contract_form.prototype.lostfocusName = function lostfocusName() {
+      var _this7 = this;
+
+      setTimeout(function () {
+        _this7.menuNameShow = false;
+      }, 200);
+    };
+
+    contract_form.prototype.onfocusAlias = function onfocusAlias() {
+      if (!this._disableEditContract) this.menuAliasShow = true;
+    };
+
+    contract_form.prototype.lostfocusAlias = function lostfocusAlias() {
+      var _this8 = this;
+
+      setTimeout(function () {
+        _this8.menuAliasShow = false;
+      }, 200);
+    };
+
+    contract_form.prototype.onchangeName = function onchangeName() {
+      this._cache_contract.ISSAVE = false;
+    };
+
+    contract_form.prototype.onchangeAlias = function onchangeAlias() {
+      this._cache_contract.ISSAVE = false;
+    };
+
+    contract_form.prototype.checkDate = function checkDate() {
+      var _this9 = this;
+
+      setTimeout(function () {
+        if (!Date(_this9.CONTRACT_START_DT1) || !Date(_this9.CONTRACT_END_DT1) || _this9.CONTRACT_START_DT1 == undefined || _this9.CONTRACT_END_DT1 == undefined || _this9.CONTRACT_START_DT1 == '' || _this9.CONTRACT_END_DT1 == '') {
+          _this9.DURATION_MONTHS1 = 0;
+        } else {
+          _this9.DURATION_MONTHS1 = _this9.monthDiff(_this9.CONTRACT_START_DT1, _this9.CONTRACT_END_DT1);
+        }
+      }, 1000);
+      this._cache_contract.ISSAVE = false;
+    };
+
+    contract_form.prototype.monthDiff = function monthDiff(d1, d2) {
+      var date1 = new Date(d1);
+      var date2 = new Date(d2);
+
+      var months = (date2.getDate() - date1.getDate()) / 30 + date2.getMonth() - date1.getMonth() + 12 * (date2.getFullYear() - date1.getFullYear());
+      return Math.round(months);
+    };
+
+    contract_form.prototype.keyStroke = function keyStroke(evt) {
+      return true;
+      if (evt.keyCode == 8 || evt.keyCode >= 48 && evt.keyCode <= 57 || evt.keyCode == 190 || evt.keyCode == 9) {}
+      return false;
+    };
+
+    contract_form.prototype.fnContract = function fnContract(eventName) {
+      switch (eventName) {
+        case 'create':
+          this._disableCreateContract = true;
+          this._disableEditContract = false;
+          this._disableCancelContract = false;
+          this._disableRefreshContract = false;
+          this._disableSaveContract = false;
+          this._disablePrintContract = false;
+          this.initializeEntry();
+          break;
+
+        case 'save':
+          this.saveEntry();
+
+          break;
+
+        case 'cancel':
+          if (!this._cache_contract.ISSAVE) {
+            if (!confirm('You made changes. Are you sure you want to cancel it?')) return;
+          }
+          this._disableCreateContract = false;
+          this._disableEditContract = true;
+          this._disableCancelContract = true;
+          this._disableRefreshContract = true;
+          this._disableSaveContract = true;
+          this._disablePrintContract = true;
+          this._cache_contract.ISSAVE = true;
+
+          this.initializeEntry();
+
+          this.menuNameShow = false;
+          this.menuAliasShow = false;
+
+        default:
+
+      }
+    };
+
+    contract_form.prototype.initializeEntry = function initializeEntry() {
+      this.LEVEL_NO1 = this._cache_obj.USER.LEVEL_NO;
+      this.MSTR_LIST1 = '';
+      this.DIVISION1 = '';
+      this.JOB1 = '';
+      this.ALIAS_NAME1 = '';
+
+      this.CONTRACT_HDR_ID1 = '';
+      this.GLOBAL_ID1 = '';
+      this.CONTRACT_NO1 = '';
+      this.COMPENTENCY_LEVEL1 = '';
+      this.JOB_ID1 = '';
+      this.JOB_GRP_NAME1 = '';
+      this.CONTRACT_END_DT1 = '';
+      this.CONTRACT_START_DT1 = '';
+      this.DURATION_MONTHS1 = '';
+      this.CONTRACT_FEE1 = 0.00;
+      this.CONTRACT_TYPE1 = '';
+      this.MONTHLY_FEE1 = 0.00;
+      this.CONTRACT_STATUS1 = 'ACTIVE';
+      this.MAIN_CONTRACT_NO1 = '';
+      this.TERMINATE_REASON1 = '';
+      this.TERMINATE_DT1 = '';
+      this.CREATED_BY1 = '';
+      this.LAST_UPDATED_BY1 = '';
+      this.CREATED_DT1 = '';
+      this.LAST_UPDATED_DT1 = '';
+      this.BATCH1 = '';
+      this.ALIAS1 = '';
+
+
+      this.EMPLOYEE_NAME = '';
+      this.EMPLOYEE_ALIAS = '';
+
+      $('#dtPicker1').val('');
+      $('#dtPicker2').val('');
+
+      this._cache_contract = {
+        ISNEWCONTRACT: true,
+        CONTRACT_STATUS: 'ACTIVE',
+        ISSAVE: false
+      };
+    };
+
+    contract_form.prototype.saveEntry = function saveEntry() {
+      var _this10 = this;
+
+      if (this.MSTR_LIST1 == null || this.MSTR_LIST1 == '') {
+        _toastr2.default.error("Error Saving", "Empty MASTER LIST");
+        return;
+      }
+
+      if (this.DIVISION1 == null || this.DIVISION1 == '') {
+        _toastr2.default.error("Error Saving", "Empty DIVISION NAME");
+        return;
+      }
+
+      if (this.JOB1 == null || this.JOB1 == '') {
+        _toastr2.default.error("Error Saving", "Empty JOB NAME");
+        return;
+      }
+
+      if (this.CONTRACT_START_DT1 == null || this.CONTRACT_START_DT1 == '') {
+        _toastr2.default.error("Error Saving", "Empty Contract Start");
+        return;
+      }
+
+      if (this.CONTRACT_STATUS1 == null || this.CONTRACT_STATUS1 == '') {
+        _toastr2.default.error("Error Saving", "Empty Contract Stutus");
+        return;
+      }
+
+      this.CONTRACT_START_DT1 = (0, _moment2.default)(new Date(this.CONTRACT_START_DT1)).format('MM/DD/YYYY');
+      this.CONTRACT_END_DT1 = (0, _moment2.default)(new Date(this.CONTRACT_END_DT1)).format('MM/DD/YYYY');
+
+      if (this.CONTRACT_START_DT1 > this.CONTRACT_END_DT1) {
+        _toastr2.default.error("Error Saving", "Contract range is invalid");
+        return;
+      }
+
+      this.DURATION_MONTHS1 = this.monthDiff(this.CONTRACT_START_DT1, this.CONTRACT_END_DT1);
+
+      this.JOB_ID1 = this.JOB1;
+      this.ALIAS1 = this.EMPLOYEE_ALIAS.toUpperCase();
+      this.GLOBAL_ID1 = this.MSTR_LIST1;
+
+      if (!this._cache_contract.ISNEWCONTRACT) {
+
+        if (this._cache_contract.CONTRACT_STATUS == 'EXPIRED') {
+          _toastr2.default.error("Unsuccesfully Saved", "NPS Contract Transaction");
+          return;
+        }
+
+        var getContractForEdit = (0, _entityManagerFactory.EntityQuery)().from('NPS_CONTRACT_HDR_TRX').where("CONTRACT_HDR_ID", "==", this.CONTRACT_HDR_ID1);
+        (0, _entityManagerFactory.EntityManager)().executeQuery(getContractForEdit).then(function (success) {
+          _this10.LAST_UPDATED_BY1 = _this10._cache_obj.USER.USER_ID;
+
+          success.results[0].DIVISION_CD = _this10.DIVISION_CD1;
+
+          success.results[0].JOB_ID = _this10.JOB_ID1;
+
+          success.results[0].CONTRACT_START_DT = _this10.CONTRACT_START_DT1;
+          success.results[0].CONTRACT_END_DT = _this10.CONTRACT_END_DT1;
+          success.results[0].DURATION_MONTHS = _this10.DURATION_MONTHS1;
+
+          success.results[0].CONTRACT_STATUS = _this10.CONTRACT_STATUS1;
+
+          success.results[0].LAST_UPDATED_BY = _this10.LAST_UPDATED_BY1;
+          success.results[0].LAST_UPDATED_DT = new Date(Date.now());
+
+          success.results[0].ALIAS = _this10.ALIAS1;
+
+          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+            console.log(success);
+            _toastr2.default.success("Succesfully Saved", "NPS Contract Transaction");
+          }, function (fail) {
+            _toastr2.default.error("Error Occured", fail);
+          });
+        });
+
+        this._cache_contract = {
+          ISNEWCONTRACT: false,
+          ISSAVE: true,
+          CONTRACT_STATUS: this.CONTRACT_STATUS1
+        };
+        return;
+      }
+
+      this.CREATED_BY1 = this._cache_obj.USER.USER_ID;
+
+      var getMax = (0, _entityManagerFactory.EntityQuery)().from('NPS_CONTRACT_HDR_TRX').orderByDesc('CONTRACT_HDR_ID').take(1);
+      (0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
+
+        var getMax = 1;
+
+        if (successMax.results.length > 0) getMax = parseInt(successMax.results[0].CONTRACT_HDR_ID) + 1;
+
+        var varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('NPS_CONTRACT_HDR_TRX', {
+          CONTRACT_HDR_ID: _this10.pad(getMax, 20),
+          GLOBAL_ID: _this10.GLOBAL_ID1,
+          COMPANY_CD: _this10.COMPANY_CD1,
+          DIVISION_CD: _this10.DIVISION_CD1,
+
+          JOB_ID: _this10.JOB_ID1,
+
+          CONTRACT_START_DT: _this10.CONTRACT_START_DT1,
+          CONTRACT_END_DT: _this10.CONTRACT_END_DT1,
+          DURATION_MONTHS: _this10.DURATION_MONTHS1,
+
+          CONTRACT_STATUS: _this10.CONTRACT_STATUS1,
+
+          CREATED_BY: _this10.CREATED_BY1,
+          CREATED_DT: new Date(Date.now()),
+          LEVEL_NO: _this10.LEVEL_NO1,
+
+          ALIAS: _this10.ALIAS1
+        });
+
+        (0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
+
+        (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
+          console.log(success);
+          _toastr2.default.success("Succesfully Saved", "NPS Contract Transaction");
+
+          _this10.CONTRACT_HDR_ID1 = varInsert.CONTRACT_HDR_ID;
+          _this10._cache_contract = {
+            ISNEWCONTRACT: false,
+            CONTRACT_STATUS: _this10.CONTRACT_STATUS1,
+            ISSAVE: true
+          };
+        }, function (fail) {
+          console.log(fail);
+          _toastr2.default.error("Error Occured", fail);
+        });
+      }, function (fail2) {
+        console.log(fail2);
+        _toastr2.default.error("Error Occured", fail2);
+      });
+    };
+
+    contract_form.prototype.searchContract = function searchContract() {
+      this.dialogService.open({
+        viewModel: _contract_search.contract_search
+      }).whenClosed(function (response) {
+        if (!response.wasCancelled) {} else {}
+      });
+    };
+
+    contract_form.prototype.fnCheckContract = function fnCheckContract(val) {
+      var _this11 = this;
+
+      this._cache_contract.CONTRACT_HDR_ID = val;
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('NPS_CONTRACT_HDR_TRX').where('CONTRACT_HDR_ID', '==', this._cache_contract.CONTRACT_HDR_ID)).then(function (success) {
+
+        var result = success.results[0];
+
+        _this11.MSTR_LIST1 = result.GLOBAL_ID;
+
+        _this11.DIVISION_CD1 = result.DIVISION_CD;
+        (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('DIVISION_MSTR').where("DIVISION_CD", "==", result.DIVISION_CD)).then(function (success_div) {
+          _this11.DIVISION1 = success_div.results[0].DIVISION_ID.toString();
+          _this11.DIVISION_NAME1 = success_div.results[0].DIVISION_NAME;
+        });
+
+        _this11.JOB1 = result.JOB_ID.toString();
+
+        (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('JOB_MSTR').where('JOB_ID', '==', _this11.JOB1)).then(function (success_job) {
+          (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('JOB_GRP_MSTR').where('JOB_GRP_ID', '==', success_job.results[0].JOB_GRP_ID)).then(function (success_job_grp) {
+            _this11.JOB_GRP_NAME1 = success_job_grp.results[0].JOB_GRP_DESC;
+            _this11.JOB_NAME1 = success_job.results[0].JOB_DESC;
+          });
+        });
+
+        var nameofemployee = _this11.MSTR_LIST.find(function (all) {
+          return all.ref == _this11.MSTR_LIST1;
+        });
+
+        _this11.EMPLOYEE_NAME = nameofemployee.desc;
+
+        _this11.ALIAS = [];
+
+        if (_this11.LEVEL_NO1 == 3) {
+
+          var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS.find(function (sucess_alias) {
+            return sucess_alias.GLOBAL_INDIV_ID == _this11.MSTR_LIST1;
+          });
+          personnel.ALIASES.forEach(function (all_alias) {
+            _this11.ALIAS.push(all_alias);
+          });
+          _this11.ALIAS.push(personnel.PERSONNEL_NAME);
+        } else {
+          var personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_MSTR.find(function (success_alias) {
+            return success_alias.GLOBAL_INDIV_ID == _this11.MSTR_LIST1;
+          });
+          _this11.ALIAS.push(personnel.LAST_NAME + ', ' + personnel.GIVEN_NAME + ' ' + personnel.MIDDLE_NAME);
+        }
+
+        if (result.ALIAS != null && result.ALIAS != '' && _this11.ALIAS.filter(function (all) {
+          return all == result.ALIAS;
+        }).length == 0) {
+          _this11.ALIAS.push(result.ALIAS);
+        }
+
+        _this11.ALIAS_ARRAY = _this11.ALIAS;
+        _this11.ALIAS_NAME1 = result.ALIAS;
+        _this11.EMPLOYEE_ALIAS = result.ALIAS;
+
+        _this11.CONTRACT_HDR_ID1 = result.CONTRACT_HDR_ID;
+        _this11.GLOBAL_ID1 = result.GLOBAL_ID;
+        _this11.CONTRACT_NO1 = result.CONTRACT_NO;
+        _this11.COMPENTENCY_LEVEL1 = result.COMPENTENCY_LEVEL;
+        _this11.JOB_ID1 = result.JOB_ID;
+        _this11.CONTRACT_END_DT1 = (0, _moment2.default)(new Date(result.CONTRACT_END_DT)).format('MM/DD/YYYY');
+        _this11.CONTRACT_START_DT1 = (0, _moment2.default)(new Date(result.CONTRACT_START_DT)).format('MM/DD/YYYY');
+        _this11.DURATION_MONTHS1 = result.DURATION_MONTHS;
+        _this11.CONTRACT_FEE1 = result.CONTRACT_FEE;
+        _this11.CONTRACT_TYPE1 = result.CONTRACT_TYPE;
+        _this11.MONTHLY_FEE1 = result.MONTHLY_FEE;
+        _this11.CONTRACT_STATUS1 = result.CONTRACT_STATUS;
+        _this11.MAIN_CONTRACT_NO1 = result.MAIN_CONTRACT_NO;
+        _this11.TERMINATE_REASON1 = result.TERMINATE_REASON;
+        _this11.TERMINATE_DT1 = result.TERMINATE_DT;
+        _this11.CREATED_BY1 = result.CREATED_BY;
+        _this11.LAST_UPDATED_BY1 = result.LAST_UPDATED_BY;
+        _this11.CREATED_DT1 = result.CREATED_DT;
+        _this11.LAST_UPDATED_DT1 = result.LAST_UPDATED_DT;
+        _this11.BATCH1 = result.BATCH;
+        _this11.ALIAS1 = result.ALIAS;
+        _this11.LEVEL_NO1 = result.LEVEL_NO;
+
+        _this11._cache_contract = {
+          ISNEWCONTRACT: false,
+          CONTRACT_STATUS: result.CONTRACT_STATUS,
+          ISSAVE: true
+        };
+
+        $('#dtPicker1').val(_this11.CONTRACT_START_DT1);
+        $('#dtPicker2').val(_this11.CONTRACT_END_DT1);
+
+        _this11._disableCreateContract = false;
+        _this11._disableEditContract = _this11.CONTRACT_STATUS1 != "ACTIVE";
+        _this11._disableCancelContract = false;
+        _this11._disableRefreshContract = false;
+        _this11._disableSaveContract = false;
+        _this11._disablePrintContract = false;
+        _this11.menuNameShow = false;
+        _this11.menuAliasShow = false;
+      });
+    };
+
+    return contract_form;
+  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'EMPLOYEE_NAME', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  })), _class2)) || _class);
+});
+define('ppid/contract/contract_search',['exports', 'masterfiles', 'multi-observer', 'aurelia-framework', 'helpers', 'underscore', 'jquery', 'entity-manager-factory', 'toastr', 'cache_obj', 'aurelia-dialog', 'breeze-client', 'ppid/contract/cache_contract'], function (exports, _masterfiles, _multiObserver, _aureliaFramework, _helpers, _underscore, _jquery, _entityManagerFactory, _toastr, _cache_obj, _aureliaDialog, _breezeClient, _cache_contract) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.contract_search = undefined;
+
+  var _underscore2 = _interopRequireDefault(_underscore);
+
+  var _jquery2 = _interopRequireDefault(_jquery);
+
+  var _toastr2 = _interopRequireDefault(_toastr);
+
+  var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _dec, _class;
+
+  var contract_search = exports.contract_search = (_dec = (0, _aureliaFramework.inject)(_cache_contract.cache_contract, _multiObserver.MultiObserver, _aureliaFramework.ObserverLocator, Element, _cache_obj.cache_obj, _aureliaDialog.DialogController), _dec(_class = function () {
+    function contract_search(cache_contract, multiObserver, observerLocator, Element, cache_obj, controller) {
+      var _this = this;
+
+      _classCallCheck(this, contract_search);
+
+      this.observerLocator = null;
+      this.pageindex = 0;
+      this.varFilterArrayLength = 0;
+      this.varFilterArray = [];
+      this.currPredicate = null;
+      this.lstPredicates = [];
+      this.controller = null;
+      this.varGlobaIndivWithNps = [];
+
+      this.controller = controller;
+
+      this._cache_obj = cache_obj;
+      this.observerLocator = observerLocator;
+      this._cache_contract = cache_contract;
+
+      var personnel;
+
+      if (this._cache_obj.USER.LEVEL_NO == 3) {
+        personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS;
+      } else {
+        personnel = (0, _masterfiles.getLookups)().GLOBAL_INDIV_MSTR;
+      }
+
+      var getContractList = (0, _entityManagerFactory.EntityQuery)().from('NPS_CONTRACT_HDR_TRX').where('LEVEL_NO', '==', this._cache_obj.USER.LEVEL_NO);
+      (0, _entityManagerFactory.EntityManager)().executeQuery(getContractList).then(function (success) {
+        success.results.forEach(function (result) {
+          var varCheck = personnel.find(function (all) {
+            return all.GLOBAL_INDIV_ID == result.GLOBAL_ID;
+          });
+          if (varCheck !== undefined) {
+            var contract = result;
+            _this.varGlobaIndivWithNps.push({
+              CONTRACT_HDR_ID: contract.CONTRACT_HDR_ID,
+              GLOBAL_ID: contract.GLOBAL_ID,
+              LAST_NAME: varCheck.LAST_NAME,
+              GIVEN_NAME: varCheck.GIVEN_NAME,
+              MIDDLE_NAME: varCheck.MIDDLE_NAME,
+              CONTRACT_STATUS: contract.CONTRACT_STATUS
+            });
+          }
+        });
+      });
+
+      multiObserver.observe([[this, '_bGLOBAL_ID'], [this, '_bLAST_NAME'], [this, '_bGIVEN_NAME'], [this, '_bMIDDLE_NAME'], [this, '_bCONTRACT_STATUS']], function (newValue, oldValue) {
+        return _this.onSpeculateProp(newValue, oldValue);
+      });
+    }
+
+    contract_search.prototype.fnManualFilter = function fnManualFilter(tmpVar) {
+      var _this2 = this;
+
+      this.lstPredicates = [];
+
+      _underscore2.default.each(this._rCONTRACT_TITLE.querySelectorAll('input'), function (all) {
+        var varOb = _this2.observerLocator.getObserver(_this2, all.getAttribute('searchable').replace('_s', '_b'));
+
+        if (varOb.getValue() != undefined && varOb.getValue() != null && varOb.getValue() != "" && varOb.getValue() != "undefined") if (tmpVar.length > 0) {
+          tmpVar = (0, _helpers.getFilter)(tmpVar, varOb.getValue(), all.getAttribute('searchable').replace('_s', ''));
+        }
+      });
+
+      return tmpVar;
+    };
+
+    contract_search.prototype.onSpeculateProp = function onSpeculateProp(newValue, oldValue) {
+      var _this3 = this;
+
+      var varValuesHasChanged = false;
+
+      _underscore2.default.each(this._rCONTRACT_TITLE.querySelectorAll('input'), function (all) {
+        var varOb = _this3.observerLocator.getObserver(_this3, all.getAttribute('searchable').replace('_s', '_b'));
+
+        if (varOb.getValue() != '' && varOb.getValue() !== undefined) {
+          varValuesHasChanged = true;
+        }
+      });
+
+      if (!varValuesHasChanged) return;
+
+      if (this.varFilterArray.length == 0) {
+        _underscore2.default.each(this.varGlobaIndivWithNps, function (all) {
+          _this3.varFilterArray.push({
+            CONTRACT_HDR_ID: all.CONTRACT_HDR_ID,
+            GLOBAL_ID: all.GLOBAL_ID,
+            LAST_NAME: all.LAST_NAME,
+            GIVEN_NAME: all.GIVEN_NAME,
+            MIDDLE_NAME: all.MIDDLE_NAME,
+            CONTRACT_STATUS: all.CONTRACT_STATUS
+          });
+        });
+      }
+      var tmpVar = this.fnManualFilter(this.varFilterArray);
+
+      if (tmpVar.length > 0) {
+        var tmpVarNew = _underscore2.default.sortBy(tmpVar, 'LAST_NAME', 'GIVEN_NAME', 'MIDDLE_NAME');
+        this.varFilterArray = tmpVarNew;
+        this.varFilterArrayLength = this.varFilterArray.length;
+        return;
+      } else {
+        this.varFilterArray = [];
+      }
+    };
+
+    contract_search.prototype.selectedContract = function selectedContract(item) {
+      this._cache_obj.OBSERVERS.contract_dialog.forEach(function (all) {
+        all(item.CONTRACT_HDR_ID);
+      });
+
+      this.controller.ok();
+    };
+
+    contract_search.prototype.fnKeyup = function fnKeyup(evt, item) {
+      if (evt.keyCode == 13) {
+        if (this.varFilterArray.length == 1) {
+          this.selectedContract(this.varFilterArray[0]);
+        }
+      }
+    };
+
+    return contract_search;
+  }()) || _class);
 });
 define('ppid/forms/company_info',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment) {
 	'use strict';
@@ -9424,69 +13287,12 @@ define('ppid/modals/ppid_search',['exports', 'aurelia-framework', 'aurelia-dialo
 		return ppid_search;
 	}()) || _class);
 });
-define('ppfcs/actual_cost/actual_cost',['exports', 'aurelia-framework', 'cache_obj', 'settings'], function (exports, _aureliaFramework, _cache_obj, _settings) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.actual_cost = undefined;
-
-    var _settings2 = _interopRequireDefault(_settings);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _dec, _class;
-
-    var actual_cost = exports.actual_cost = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj), _dec(_class = function actual_cost(cache_obj) {
-        _classCallCheck(this, actual_cost);
-
-        this._cache_obj = cache_obj;
-    }) || _class);
-});
-define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'numeral', 'toastr', 'multi-observer', '../../modals/paymentterm', 'aurelia-dialog', 'cache_obj'], function (exports, _aureliaFramework, _cache_budget, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _numeral, _toastr, _multiObserver, _paymentterm, _aureliaDialog, _cache_obj) {
-  'use strict';
+define('ppid/talent_search/results_output',["exports"], function (exports) {
+  "use strict";
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.GuestCustomElement = undefined;
-
-  var _typeahead2 = _interopRequireDefault(_typeahead);
-
-  var _settings2 = _interopRequireDefault(_settings);
-
-  var _underscore2 = _interopRequireDefault(_underscore);
-
-  var _numeral2 = _interopRequireDefault(_numeral);
-
-  var _toastr2 = _interopRequireDefault(_toastr);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  function _initDefineProp(target, property, descriptor, context) {
-    if (!descriptor) return;
-    Object.defineProperty(target, property, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      writable: descriptor.writable,
-      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-    });
-  }
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -9494,256 +13300,17 @@ define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget
     }
   }
 
-  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-    var desc = {};
-    Object['ke' + 'ys'](descriptor).forEach(function (key) {
-      desc[key] = descriptor[key];
-    });
-    desc.enumerable = !!desc.enumerable;
-    desc.configurable = !!desc.configurable;
-
-    if ('value' in desc || desc.initializer) {
-      desc.writable = true;
-    }
-
-    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-      return decorator(target, property, desc) || desc;
-    }, desc);
-
-    if (context && desc.initializer !== void 0) {
-      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-      desc.initializer = undefined;
-    }
-
-    if (desc.initializer === void 0) {
-      Object['define' + 'Property'](target, property, desc);
-      desc = null;
-    }
-
-    return desc;
-  }
-
-  function _initializerWarningHelper(descriptor, context) {
-    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-  }
-
-  var _dec, _class, _desc, _value, _class2, _descriptor;
-
-  var GuestCustomElement = exports.GuestCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
-    function GuestCustomElement(cache_obj, cache_budget, multiObserver, dialogService) {
-      var _this = this;
-
-      _classCallCheck(this, GuestCustomElement);
-
-      _initDefineProp(this, 'to', _descriptor, this);
-
-      this._cache_budget = null;
-      this._enableAdd = false;
-      this._enableRemove = false;
-      this.dialogService = null;
-      this._cache_obj = null;
-
-      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
-        return;
-      }
-
-      this._cache_budget = cache_budget;
-      this.dialogService = dialogService;
-      this._cache_obj = cache_obj;
-
-      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
-        _this.fnCheckBudget(val);
-      });
-
-      this._cache_budget.OBSERVERS.copy_template_guest.push(function () {
-        _this.fnCallCopy();
-      });
-
-      this._cache_budget.OBSERVERS.reset_all.push(function () {
-        _this.resetView();
-      });
-
-      this._PYMNTTERM = (0, _masterfiles.getLookups)().PAYMENT_TERM;
-    }
-
-    GuestCustomElement.prototype.fnModalPaymentTerm = function fnModalPaymentTerm() {
-      var _this2 = this;
-
-      this.dialogService.open({
-        viewModel: _paymentterm.paymentterm
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {
-          _this2.passTerm(response.output);
-        } else {}
-      });
-    };
-
-    GuestCustomElement.prototype.passTerm = function passTerm(term) {
-      this._cache_budget.GUEST[0].PAYMENT_TERM = term.REF_DESC;
-      this._cache_budget.GUEST[0].PYMNT_TERM_CD = term.REF_CD;
-    };
-
-    GuestCustomElement.prototype.fnCheckBudget = function fnCheckBudget(value) {
-      var _this3 = this;
-
-      var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_GUEST_DTL').where('BDGT_TMPL_ID', '==', value);
-      (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
-
-        _this3._cache_budget.GUEST = found.results;
-
-        var varRefCd = [];
-
-        _underscore2.default.each(_this3._cache_budget.GUEST, function (item) {
-
-          for (var i = 0; i <= _this3._PYMNTTERM.length - 1; ++i) {
-            if (_this3._PYMNTTERM[i].REF_CD == item.PYMNT_TERM_CD) {
-              item.PAYMENT_TERM = _this3._PYMNTTERM[i].REF_DESC;
-              break;
-            }
-          };
-
-          item.PAY_RATE_FACTOR_TMP = (0, _numeral2.default)(item.PAY_RATE_FACTOR).format('0,0.00');
-          item.INPUT_AMT_TMP = (0, _numeral2.default)(item.INPUT_AMT).format('0,0.00');
-          item.visible = true;
-        });
-
-        _this3._enableAdd = false;
-        _this3._enableRemove = false;
-
-        if (_this3._cache_budget.GUEST.length == 0) _this3._enableAdd = true;else _this3._enableRemove = true;
-
-        _this3._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-          all();
-        });
-
-        if (_this3._cache_budget.GUEST.length > 0) _toastr2.default.success("GUEST PERSONNEL", "Loading Successful.");
-      });
-    };
-
-    GuestCustomElement.prototype.fnCallCopy = function fnCallCopy() {
-      this.saveGuest();
-    };
-
-    GuestCustomElement.prototype.fnAddGuest = function fnAddGuest() {
-      if (this._cache_budget.GUEST.length > 0) {
-        this._cache_budget.GUEST[0].visible = true;
-      } else this._cache_budget.GUEST.push({ INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'), PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
-        INPUT_AMT: 0, PAY_RATE_FACTOR: 1, visible: true });
-
-      this._enableAdd = false;
-      this._enableRemove = true;
-      this._signal = (0, _entityManagerFactory.generateID)();
-    };
-
-    GuestCustomElement.prototype.resetView = function resetView() {
-      this._signal = (0, _entityManagerFactory.generateID)();
-    };
-
-    GuestCustomElement.prototype.fnRemoveGuest = function fnRemoveGuest() {
-      if (this._cache_budget.GUEST.length > 0) {
-        this._cache_budget.GUEST[0].visible = false;
-      }
-
-      this._enableAdd = true;
-      this._enableRemove = false;
-      this._signal = (0, _entityManagerFactory.generateID)();
-    };
-
-    GuestCustomElement.prototype.saveGuest = function saveGuest() {
-      var _this4 = this;
-
-      if (this._cache_budget.GUEST.length > 0) {
-        if (this._cache_budget.GUEST[0].PYMNT_TERM_CD == "" || this._cache_budget.GUEST[0] == undefined || this._cache_budget.GUEST[0] == null) {
-          _toastr2.default.error("<strong>Payment Term not defined</strong><br /><br />Saving cancelled.", "Problem occured");
-          return;
-        }
-      }
-
-      var getMax = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_GUEST_DTL').orderByDesc('BDGT_TMPL_GUEST_DTL_ID').take(1);
-      (0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
-        var getMax = 1;
-
-        if (successMax.results.length > 0) getMax = successMax.results[0].BDGT_TMPL_GUEST_DTL_ID + 1;
-
-        var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_GUEST_DTL').where('BDGT_TMPL_ID', '==', _this4._cache_budget.HEADER.BDGT_TMPL_ID);
-        (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
-
-          if (_this4._cache_budget.GUEST.length > 0) if (_this4._cache_budget.GUEST[0].visible) {
-
-            if (found.results.length > 0) {
-
-              found.results[0].BDGT_AMT = parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, ''));
-              found.results[0].PYMNT_TERM_CD = _this4._cache_budget.GUEST[0].PYMNT_TERM_CD;
-              found.results[0].INPUT_AMT = parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, ''));
-              found.results[0].PAY_RATE_FACTOR = parseFloat(_this4._cache_budget.GUEST[0].PAY_RATE_FACTOR_TMP.replace(/,/g, ''));
-              found.results[0].REMARKS = _this4._cache_budget.GUEST[0].REMARKS;
-
-              found.results[0].LAST_UPDATED_BY = _this4._cache_obj.USER.USER_ID;
-              found.results[0].LAST_UPDATED_DT = new Date();
-            } else {
-
-              var varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_GUEST_DTL', {
-                BDGT_TMPL_GUEST_DTL_ID: getMax,
-                PYMNT_TERM_CD: _this4._cache_budget.GUEST[0].PYMNT_TERM_CD,
-                INPUT_AMT: parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, '')),
-                BDGT_AMT: parseFloat(_this4._cache_budget.GUEST[0].INPUT_AMT_TMP.replace(/,/g, '')),
-                PAY_RATE_FACTOR: parseFloat(_this4._cache_budget.GUEST[0].PAY_RATE_FACTOR_TMP.replace(/,/g, '')),
-                REMARKS: _this4._cache_budget.GUEST[0].REMARKS,
-                BDGT_TMPL_ID: _this4._cache_budget.HEADER.BDGT_TMPL_ID,
-                CREATED_BY: _this4._cache_obj.USER.USER_ID,
-                CREATED_DT: new Date(),
-                LAST_UPDATED_BY: _this4._cache_obj.USER.USER_ID,
-                LAST_UPDATED_DT: new Date()
-              });
-
-              (0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
-            }
-          } else {
-            if (found.results.length > 0) found.results[0].entityAspect.setDeleted();
-          }
-
-          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-            _this4.fnCheckBudget(_this4._cache_budget.HEADER.BDGT_TMPL_ID);
-            _toastr2.default.success("Succesfully Saved", "GUEST");
-          }, function (fail) {
-
-            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-              var errors = entity.entityAspect.getValidationErrors();
-              if (errors.length > 0) console.log(errors);
-            });
-            console.log(fail);
-            _toastr2.default.error("Error Occured", fail);
-          });
-        });
-      });
-    };
-
-    GuestCustomElement.prototype.fnRegularBlurEvt = function fnRegularBlurEvt(item, index) {};
-
-    GuestCustomElement.prototype.fnRegularFocus = function fnRegularFocus(index, prop) {
-
-      this.fnModalPaymentTerm();
-    };
-
-    GuestCustomElement.prototype.AmountBlur = function AmountBlur(item, property) {
-      var varConverted = (0, _numeral2.default)(item[property]).format('0,0.00');
-      item[property] = varConverted;
-    };
-
-    return GuestCustomElement;
-  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'to', [_aureliaFramework.bindable], {
-    enumerable: true,
-    initializer: null
-  })), _class2)) || _class);
+  var results_output = exports.results_output = function results_output() {
+    _classCallCheck(this, results_output);
+  };
 });
-define('ppfcs/budget/main-header',['exports', 'aurelia-framework', 'cache_obj', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'settings', 'modals/modal-wizard', 'toastr', 'moment', 'underscore', 'multi-observer', 'aurelia-dialog', '../../modals/program', '../../modals/budget', '../../modals/confirm_dialog', 'breeze-client'], function (exports, _aureliaFramework, _cache_obj, _cache_budget, _entityManagerFactory, _masterfiles, _settings, _modalWizard, _toastr, _moment, _underscore, _multiObserver, _aureliaDialog, _program, _budget, _confirm_dialog, _breezeClient) {
+define('ppid/talent_search/talent_search',['exports', 'aurelia-framework', 'cache_obj', 'entity-manager-factory', 'masterfiles', 'settings', 'modals/modal-wizard', 'toastr', 'moment', 'underscore', 'multi-observer', 'aurelia-dialog', 'breeze-client'], function (exports, _aureliaFramework, _cache_obj, _entityManagerFactory, _masterfiles, _settings, _modalWizard, _toastr, _moment, _underscore, _multiObserver, _aureliaDialog, _breezeClient) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.MainHeaderCustomElement = undefined;
+  exports.talent_search = undefined;
 
   var _settings2 = _interopRequireDefault(_settings);
 
@@ -9761,995 +13328,6 @@ define('ppfcs/budget/main-header',['exports', 'aurelia-framework', 'cache_obj', 
     };
   }
 
-  function _initDefineProp(target, property, descriptor, context) {
-    if (!descriptor) return;
-    Object.defineProperty(target, property, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      writable: descriptor.writable,
-      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-    });
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-    var desc = {};
-    Object['ke' + 'ys'](descriptor).forEach(function (key) {
-      desc[key] = descriptor[key];
-    });
-    desc.enumerable = !!desc.enumerable;
-    desc.configurable = !!desc.configurable;
-
-    if ('value' in desc || desc.initializer) {
-      desc.writable = true;
-    }
-
-    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-      return decorator(target, property, desc) || desc;
-    }, desc);
-
-    if (context && desc.initializer !== void 0) {
-      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-      desc.initializer = undefined;
-    }
-
-    if (desc.initializer === void 0) {
-      Object['define' + 'Property'](target, property, desc);
-      desc = null;
-    }
-
-    return desc;
-  }
-
-  function _initializerWarningHelper(descriptor, context) {
-    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-  }
-
-  var _dec, _class, _desc, _value, _class2, _descriptor;
-
-  var MainHeaderCustomElement = exports.MainHeaderCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _modalWizard.ModalWizard, _toastr2.default, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
-    function MainHeaderCustomElement(cache_obj, cache_budget, ModalWizard, toastr, multiObserver, DialogService) {
-      var _this = this;
-
-      _classCallCheck(this, MainHeaderCustomElement);
-
-      _initDefineProp(this, 'to', _descriptor, this);
-
-      this._cache_obj = null;
-      this._PROGRAM_GENRE_MSTR = [];
-      this._TELECAST_MODE_MSTR = [];
-      this._EPISODE_TYPE_MSTR = [];
-      this._STATIONS = [];
-      this._disableCreateBudget = false;
-      this._disableCancelBudget = true;
-      this._disableRefreshBudget = true;
-      this._disableSaveBudget = true;
-      this._disableBudgetId = false;
-      this._disablePrintBudget = true;
-      this._disableCopyBudget = true;
-      this.dialogService = null;
-      this.programDisabled = true;
-      this.budgetDisabled = false;
-
-      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
-
-        return;
-      }
-
-      this.dialogService = DialogService;
-      this._cache_obj = cache_obj;
-      this._cache_budget = cache_budget;
-
-      this.LoginPassed(this._cache_obj.USER);
-
-      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
-        _this.CloseBudgetDialog(val);
-      });
-
-      this._cache_obj.OBSERVERS.pass_program.push(function (val) {
-        _this.PassedProgram(val);
-      });
-
-      this._cache_budget.OBSERVERS.budget_refresh.push(function () {
-        _this.fnBudgetRefreshHandle();
-      });
-
-      this._cache_budget.OBSERVERS.budget_loaded.push(function () {
-        if (_this._disableSaveBudget == true) {
-          _this._disableSaveBudget = false;
-          _this._disableCopyBudget = false;
-          _settings2.default.isNavigating = false;
-          toastr.success("Budget has been successfully loaded.", "Budget Template");
-        }
-      });
-
-      this._toastr = toastr;
-
-      this.fnClearHeader();
-
-      this._disableCreateBudget = false;
-      this._disableCancelBudget = true;
-      this._disableRefreshBudget = true;
-      this._disableSaveBudget = true;
-      this._disableBudgetId = false;
-      this._disablePrintBudget = true;
-      this._disableCopyBudget = true;
-      this._ModalWizard = ModalWizard;
-
-      setTimeout(function () {
-
-        $('.datepicker').datepicker();
-
-        $('#refFrom').datepicker({
-          format: "mm/dd/yyyy"
-        }).on("changeDate", function () {
-
-          if (new Date($('#refFrom').val()) > new Date($('#refTo').val())) {
-            toastr.error("Invalid date range.", "Date Change..");
-            $('#refTo').datepicker("setValue", new Date($('#refFrom').val()));
-            return;
-          }
-
-          _this._cache_budget.HEADER.BDGT_FROM = $('#refFrom').val();
-          if (_this._cache_budget.HEADER.BDGT_TO == "") {
-            _this._cache_budget.HEADER.BDGT_TO = _this._cache_budget.HEADER.BDGT_FROM;
-          }
-
-          $('#refFrom').datepicker('hide');
-        });
-
-        $('#refTo').datepicker({
-          format: "mm/dd/yyyy"
-        }).on("changeDate", function () {
-
-          if (new Date($('#refTo').val()) < new Date($('#refFrom').val())) {
-            toastr.error("Invalid date range.", "Date Change..");
-            $('#refFrom').datepicker("setValue", new Date($('#refTo').val()));
-            return;
-          }
-
-          _this._cache_budget.HEADER.BDGT_TO = $('#refTo').val();
-          $('#refTo').datepicker('hide');
-        });
-      }, 1000);
-
-      var varToday = new Date(Date.now());
-      var p1 = _breezeClient2.default.Predicate.create('BDGT_TO', '<=', new Date(varToday.getFullYear(), varToday.getMonth(), varToday.getDate()));
-      var p2 = _breezeClient2.default.Predicate.create('APPR_STAT_CD', '==', "APP-APPROVED");
-      var pred = _breezeClient2.default.Predicate.and([p1, p2]);
-
-      var checkExpired = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where(pred);
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery(checkExpired).then(function (success) {
-        success.results.forEach(function (all) {
-          all.APPR_STAT_CD = "APP-EXPIRED";
-          all.LAST_UPDATED_BY = "ADMIN";
-          all.LAST_UPDATED_DT = new Date(Date.now());
-        });
-
-        (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {}, function (fail) {
-          console.log(fail);
-        });
-      });
-    }
-
-    MainHeaderCustomElement.prototype.checkDate = function checkDate(id) {
-
-      setTimeout(function () {
-        if (!Date.parse($("#" + id).val())) {
-          _toastr2.default.error("Invalid starting date ", "Date Change..");
-        } else {
-          $("#" + id).datepicker("setValue", new Date($("#" + id).val()));
-        }
-      }, 1000);
-    };
-
-    MainHeaderCustomElement.prototype.validate = function validate() {};
-
-    MainHeaderCustomElement.prototype.inputChanged = function inputChanged(evt, value) {
-      var _this2 = this;
-
-      if (evt.keyCode == 13) {
-
-        this._cache_obj.OBSERVERS.budget_dialog.forEach(function (all) {
-          all(_this2._cache_budget.HEADER.BDGT_TMPL_ID);
-        });
-      }
-    };
-
-    MainHeaderCustomElement.prototype.LoginPassed = function LoginPassed(user) {
-
-      if (user.USER_ID == undefined) return;
-      this._user = user.USER_ID;
-      this._COMPANY_ID = user.COMPANY_ID;
-
-      this.budgetDisabled = false;
-
-      this.programDisabled = true;
-
-
-      this.fnClearBudget();
-
-      this._disableCreateBudget = false;
-      this._disableCancelBudget = true;
-      this._disableRefreshBudget = true;
-      this._disableSaveBudget = true;
-      this._disablePrintBudget = true;
-      this._disableCopyBudget = true;
-    };
-
-    MainHeaderCustomElement.prototype.LoggedOut = function LoggedOut() {
-
-      this._disableCreateBudget = true;
-      this._disableCancelBudget = true;
-      this._disableRefreshBudget = true;
-      this._disableSaveBudget = true;
-      this._disablePrintBudget = true;
-      this._disableCopyBudget = true;
-
-      this.budgetDisabled = false;
-
-
-      this.programDisabled = true;
-
-
-      this.fnClearHeader();
-    };
-
-    MainHeaderCustomElement.prototype.fnClearHeader = function fnClearHeader() {
-      this._cache_budget.HEADER = {
-        BDGT_TMPL_ID: "",
-
-        CHARGE_CD: "",
-        PROGRAM_GENRE_CD: "",
-        TELECAST_MODE_CD: "",
-        EPISODE_TYPE_CD: "",
-        EPISODES: "",
-        TAPING_DAYS: "",
-        BDGT_FROM: "",
-        BDGT_TO: "",
-        STATION_ID: "",
-        APPR_STAT_CD: "",
-        REMARKS: ""
-      };
-
-      while (this._cache_budget.REGULAR.length > 0) {
-        this._cache_budget.REGULAR.pop();
-      }
-      this._cache_budget.REGULAR = [];
-
-      while (this._cache_budget.SEMI_REGULAR.length > 0) {
-        this._cache_budget.SEMI_REGULAR.pop();
-      }
-      this._cache_budget.SEMI_REGULAR = [];
-
-      while (this._cache_budget.STAFF.length > 0) {
-        this._cache_budget.STAFF.pop();
-      }
-      this._cache_budget.STAFF = [];
-
-      while (this._cache_budget.GUEST.length > 0) {
-        this._cache_budget.GUEST.pop();
-      }
-
-      this._cache_budget.GUEST = [];
-
-      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-        all();
-      });
-
-      this._disableBudgetId = false;
-
-      this._cache_budget.OBSERVERS.reset_all.forEach(function (all) {
-        all();
-      });
-    };
-
-    MainHeaderCustomElement.prototype.fnClearBudget = function fnClearBudget() {
-      this.fnClearHeader();
-
-      this._PROGRAM_GENRE_MSTR = (0, _masterfiles.getLookups)().PROGRAM_GENRE_MSTR;
-      this._PROGRAM_GENRE_MSTR.unshift({});
-      this._TELECAST_MODE_MSTR = (0, _masterfiles.getLookups)().TELECAST_MODE_MSTR;
-      this._TELECAST_MODE_MSTR.unshift({});
-      this._EPISODE_TYPE_MSTR = (0, _masterfiles.getLookups)().EPISODE_TYPE_MSTR;
-      this._EPISODE_TYPE_MSTR.unshift({});
-      this._STATIONS = _settings2.default.STATIONS;
-
-      this._STATUS = [{}];
-    };
-
-    MainHeaderCustomElement.prototype.CloseBudgetDialog = function CloseBudgetDialog(value) {
-      var _this3 = this;
-
-      var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where('BDGT_TMPL_ID', '==', value).expand('PROGRAM_MSTR').select('BDGT_TMPL_ID, PROGRAM_MSTR, CHARGE_CD, PROGRAM_GENRE_CD,  TELECAST_MODE_CD,  EPISODE_TYPE_CD,   EPISODES,  TAPING_DAYS, BDGT_FROM, BDGT_TO, STATION_ID, APPR_STAT_CD, REMARKS, CREATED_BY, LAST_UPDATED_BY ');
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
-
-        _this3._STATUS = [{ REF_CD: "APP-DRAFT", REF_DESC: "APP-DRAFT" }, { REF_CD: "APP-APPROVED", REF_DESC: "APP-APPROVED" }];
-
-        if (found.results.length == 0) return;
-
-        _this3._cache_budget.HEADER = found.results[0];
-
-        _this3._cache_budget.HEADER.BDGT_FROM = (0, _moment2.default)(new Date(_this3._cache_budget.HEADER.BDGT_FROM)).format('MM-DD-YYYY');
-        _this3._cache_budget.HEADER.BDGT_TO = (0, _moment2.default)(new Date(_this3._cache_budget.HEADER.BDGT_TO)).format('MM-DD-YYYY');
-
-        _this3._disableBudgetId = true;
-
-        _this3._disableCreateBudget = true;
-        _this3._disableCancelBudget = false;
-        _this3._disableRefreshBudget = false;
-
-        _this3._cache_budget._LOADING_BUDGET = 1;
-        _this3._disableSaveBudget = true;
-
-        _this3._disablePrintBudget = false;
-        _this3._disableCopyBudget = true;
-
-        _this3.budgetDisabled = true;
-
-
-        if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-CLOSED") {
-          _this3._STATUS = [{ REF_CD: "APP-CLOSED", REF_DESC: "APP-CLOSED" }];
-          _this3._disableSaveBudget = true;
-        } else if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-EXPIRED") {
-          _this3._STATUS = [{ REF_CD: "APP-EXPIRED", REF_DESC: "APP-EXPIRED" }];
-          _this3._disableSaveBudget = true;
-          _this3._disablePrintBudget = true;
-        } else if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-DRAFT") {
-
-          _this3.programDisabled = false;
-
-
-          _this3._cache_budget.OBSERVERS.enable_approved.forEach(function (all) {
-            all(true);
-          });
-        } else {
-
-          _this3._cache_budget.OBSERVERS.enable_approved.forEach(function (all) {
-            all(false);
-          });
-        }
-
-        if (_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-APPROVED") {
-
-          _this3._cache_budget.STATUS = "APPROVED";
-          _this3._disableSaveBudget = true;
-
-          _this3.programDisabled = true;
-        } else _this3._cache_budget.STATUS = "VIEW";
-
-        _this3._cache_budget.OBSERVERS.disable_search_personnel.forEach(function (all) {
-          all(_this3._cache_budget.HEADER.APPR_STAT_CD == "APP-DRAFT");
-        });
-      }, function (fail) {
-        console.log(fail);
-      });
-    };
-
-    MainHeaderCustomElement.prototype.PassedProgram = function PassedProgram(value) {
-      this._cache_budget.HEADER.PROGRAM_MSTR = value;
-      this._cache_budget.HEADER.CHARGE_CD = value.PROGRAM_CD;
-    };
-
-    MainHeaderCustomElement.prototype.fnBudgetRefreshHandle = function fnBudgetRefreshHandle() {
-      this.fnBudget("refresh");
-    };
-
-    MainHeaderCustomElement.prototype.fnBudget = function fnBudget(call) {
-      var _this4 = this;
-
-      switch (call) {
-        case "create":
-          {
-            this._disableCreateBudget = true;
-            this._disableCancelBudget = false;
-            this._disableRefreshBudget = true;
-            this._disableSaveBudget = false;
-            this._disableBudgetId = true;
-            this._disablePrintBudget = true;
-
-            this.budgetDisabled = true;
-            this.programDisabled = false;
-
-
-            this._cache_budget.STATUS = "CREATE";
-            this._STATUS = [{ REF_CD: "APP-DRAFT", REF_DESC: "APP-DRAFT" }];
-
-            this.fnDialogProgram();
-
-            break;
-          }
-        case "cancel":
-          {
-            this.fnClearHeader();
-            this._disableCreateBudget = false;
-            this._disableCancelBudget = false;
-            this._disableRefreshBudget = true;
-            this._disableSaveBudget = true;
-            this._disablePrintBudget = true;
-
-            this.budgetDisabled = false;
-            this.programDisabled = true;
-
-            this._cache_budget.STATUS = "NONE";
-            break;
-          }
-        case "refresh":
-          {
-
-            this._disableCreateBudget = true;
-            this._disableSaveBudget = false;
-            this._disableCancelBudget = false;
-            this._disableRefreshBudget = false;
-            this._disablePrintBudget = true;
-
-            this._cache_obj.OBSERVERS.budget_dialog.forEach(function (all) {
-              all(_this4._cache_budget.HEADER.BDGT_TMPL_ID);
-            });
-
-            this.budgetDisabled = true;
-            this.programDisabled = false;
-
-
-            break;
-          }
-        case "save":
-          {
-
-            this.fnSaveBudget("");
-
-            break;
-          }
-        case "print":
-          {
-
-            var varUseReport = "";
-            if (this._cache_budget.HEADER.APPR_STAT_CD == "APP-DRAFT") {
-              varUseReport = "Draft";
-            }
-            if (this._cache_budget.HEADER.APPR_STAT_CD == "APP-APPROVED") {
-              varUseReport = "Approved";
-            }
-
-            if (varUseReport != "") {
-              var popup = window.open(_settings2.default.actualCostWebUrl + "/report/Budget_" + varUseReport + "_Report.aspx?BDID=" + this._cache_obj.HEADER.BDGT_TMPL_ID + "&ConcealConfidentialBudgetAmt=" + this._cache_obj.ALLOW_PASS_CONFIDENTIAL + "&USER_ACCOUNT=" + this._user + "&COMPANY_ID=" + this._COMPANY_ID, "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
-              popup.moveTo(0, 0);
-            }
-
-            break;
-          }
-        case "copy":
-          {
-
-            this.dialogService.open({ viewModel: _confirm_dialog.confirm_dialog, model: 'Copy Template?' }).whenClosed(function (response) {
-              if (!response.wasCancelled) {
-
-                var varGetHeader = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where('BDGT_TMPL_ID', '==', _this4._cache_budget.HEADER.BDGT_TMPL_ID);
-
-                (0, _entityManagerFactory.EntityManager)().executeQuery(varGetHeader).then(function (found) {
-                  found.results[0].APPR_STAT_CD = "APP-CLOSED";
-                  (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-                    _this4._cache_budget.HEADER.BDGT_TMPL_ID = "";
-                    _this4._cache_budget.HEADER.APPR_STAT_CD = "APP-DRAFT";
-                    _this4._cache_budget.STATUS = "DRAFT";
-                    _this4._cache_budget.IS_COPYING = true;
-
-                    _this4.fnSaveBudget("");
-                  });
-                });
-              } else {}
-            });
-          }
-          break;
-        case "close":
-          {
-
-            this.dialogService.open({ viewModel: _confirm_dialog.confirm_dialog, model: 'Close Template?' }).whenClosed(function (response) {
-              if (!response.wasCancelled) {
-                _this4.fnSaveBudget('APP-CLOSED');
-              } else {}
-            });
-          }
-          break;
-
-      }
-    };
-
-    MainHeaderCustomElement.prototype.fnBudgetValidation_1 = function fnBudgetValidation_1() {
-      var _this5 = this;
-
-      return new Promise(function (resolve, reject) {
-
-        var varSubMin = new Date(_this5._cache_budget.HEADER.BDGT_FROM);
-        var varAddMin = new Date(_this5._cache_budget.HEADER.BDGT_TO);
-
-        console.log(new Date(varSubMin.getFullYear(), varSubMin.getMonth(), varSubMin.getDate() - 1));
-        console.log(new Date(varAddMin.getFullYear(), varAddMin.getMonth(), varAddMin.getDate() + 1));
-
-        var p1 = _breezeClient2.default.Predicate.create('BDGT_FROM', '>=', new Date(varSubMin.getFullYear(), varSubMin.getMonth(), varSubMin.getDate() - 1));
-        var p2 = _breezeClient2.default.Predicate.create('BDGT_TO', '<=', new Date(varAddMin.getFullYear(), varAddMin.getMonth(), varAddMin.getDate() + 1));
-        var p3 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '!=', _this5._cache_budget.HEADER.BDGT_TMPL_ID);
-        var p4 = _breezeClient2.default.Predicate.create('EPISODE_TYPE_CD', '==', _this5._cache_budget.HEADER.EPISODE_TYPE_CD);
-        var pred = _breezeClient2.default.Predicate.and([p1, p2, p3, p4]);
-
-        var strException = "";
-        var varFromMax = null;
-        var varToMax = null;
-        var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where(pred);
-        (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
-          if (found.results !== undefined) {
-            var countError = 0;
-            found.results.forEach(function (all) {
-              if (all.APPR_STAT_CD != null) if (all.APPR_STAT_CD.includes('EXPIRE') || all.APPR_STAT_CD.includes('CLOSE')) {
-                console.log(all);
-
-                if (varFromMax == null || varFromMax > all.BDGT_FROM) {
-                  varFromMax = all.BDGT_FROM;
-                }
-
-                if (varToMax == null || varToMax < all.BDGT_TO) {
-                  varToMax = all.BDGT_TO;
-                }
-
-                ++countError;
-              }
-            });
-
-            if (countError > 0) {
-              _toastr2.default.error("Budget can only be acceptable if date will be out of range of the last CLOSED/EXPIRED TEMPLATE");
-              _toastr2.default.error("Not in between " + varFromMax.getMonth() + "-" + varFromMax.getDate() + "-" + varFromMax.getFullYear() + " and " + varToMax.getMonth() + "-" + varToMax.getDate() + "-" + varToMax.getFullYear());
-              reject(false);
-            } else resolve(true);
-          } else resolve(true);
-        });
-      });
-    };
-
-    MainHeaderCustomElement.prototype.fnBudgetValidation_2 = function fnBudgetValidation_2() {
-      var _this6 = this;
-
-      return new Promise(function (resolve, reject) {
-
-        var varAddMin = new Date(_this6._cache_budget.HEADER.BDGT_TO);
-        var varSubMin = new Date(_this6._cache_budget.HEADER.BDGT_FROM);
-
-        var p3 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '!=', _this6._cache_budget.HEADER.BDGT_TMPL_ID);
-        var c1 = _breezeClient2.default.Predicate.create('BDGT_TMPL_HDR.PROGRAM_ID', '==', _this6._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID);
-
-        var pred2 = _breezeClient2.default.Predicate.and([c1, p3]);
-        var _queryCheckActual = (0, _entityManagerFactory.EntityQuery)().from('ACTUAL_COST_HDR').where(pred2).expand("BDGT_TMPL_HDR");
-        (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckActual).then(function (found) {
-
-          if (found.results !== undefined) {
-
-            var varPromises = [];
-            found.results.forEach(function (all) {
-
-              var newPromise = new Promise(function (resolve_2, reject_2) {
-
-                var varTmpFrom = new Date(all.ACTUAL_FROM.getFullYear(), all.ACTUAL_FROM.getMonth(), all.ACTUAL_FROM.getDate());
-                var varTmpTo = new Date(all.ACTUAL_TO.getFullYear(), all.ACTUAL_TO.getMonth(), all.ACTUAL_TO.getDate());
-
-                if (varTmpFrom <= new Date(_this6._cache_budget.HEADER.BDGT_FROM) && varTmpFrom >= new Date(_this6._cache_budget.HEADER.BDGT_TO) || varTmpTo <= new Date(_this6._cache_budget.HEADER.BDGT_FROM) && varTmpTo >= new Date(_this6._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this6._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this6._cache_budget.HEADER.BDGT_FROM) && varTmpTo <= new Date(_this6._cache_budget.HEADER.BDGT_TO)) {
-                  _toastr2.default.error("Please enter range beyond the created budget (AC:" + all.ACTUAL_COST_ID + ")");
-                  reject_2(false);
-                }
-
-                var _queryCheckVtr = (0, _entityManagerFactory.EntityQuery)().from('VTR_LIVE_DT_DTL').where('ACTUAL_COST_ID', '==', all.ACTUAL_COST_ID);
-                (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckVtr).then(function (foundVtr) {
-
-                  if (foundVtr.results === undefined) {
-                    resolve_2(true);
-                  }
-
-                  var varDataFromCompare = new Date(_this6._cache_budget.HEADER.BDGT_FROM);
-                  var varDataToCompare = new Date(_this6._cache_budget.HEADER.BDGT_FROM);
-
-                  var varMaxDate = null;
-                  foundVtr.results.forEach(function (allDate) {
-                    var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
-                    var varDateCompare = new Date(varVtr);
-
-                    if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
-                      if (varMaxDate == null) varMaxDate = varVtr;else if (varMaxDate < varVtr) varMaxDate = varVtr;
-                    }
-                  });
-
-                  if (varMaxDate == null) {
-                    resolve_2(true);
-                  } else {
-                    var new_date = (0, _moment2.default)(varMaxDate, "MM-DD-YYYY");
-                    new_date.add(1, 'days');
-                    new_date = (0, _moment2.default)(new Date(new_date)).format('MM-DD-YYYY');
-                    _toastr2.default.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." + " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
-
-                    reject_2(false);
-                  }
-                });
-              });
-
-              varPromises.push(newPromise);
-            });
-
-            Promise.all(varPromises).then(function (passed) {
-              resolve(true);
-            }, function (fail) {
-              reject(false);
-            });
-          } else resolve(true);
-        });
-      });
-    };
-
-    MainHeaderCustomElement.prototype.fnValidation_Approved = function fnValidation_Approved() {
-      var _this7 = this;
-
-      return new Promise(function (resolve, reject) {
-        var p3 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '!=', _this7._cache_budget.HEADER.BDGT_TMPL_ID);
-        var c1 = _breezeClient2.default.Predicate.create('BDGT_TMPL_HDR.PROGRAM_ID', '==', _this7._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID);
-        var c2 = _breezeClient2.default.Predicate.create('APPR_STAT_CD', '==', "APP-APPROVED");
-        var pred2 = _breezeClient2.default.Predicate.and([c1, c2, p3]);
-        var _queryCheckActual = (0, _entityManagerFactory.EntityQuery)().from('ACTUAL_COST_HDR').where(pred2).expand("BDGT_TMPL_HDR");
-        (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckActual).then(function (found) {
-
-          if (found.results !== undefined) {
-
-            var varPromises = [];
-            found.results.forEach(function (all) {
-
-              var newPromise = new Promise(function (resolve_2, reject_2) {
-
-                var varTmpFrom = new Date(all.ACTUAL_FROM.getFullYear(), all.ACTUAL_FROM.getMonth(), all.ACTUAL_FROM.getDate());
-                var varTmpTo = new Date(all.ACTUAL_TO.getFullYear(), all.ACTUAL_TO.getMonth(), all.ACTUAL_TO.getDate());
-
-                var _queryCheckVtr = (0, _entityManagerFactory.EntityQuery)().from('VTR_LIVE_DT_DTL').where('ACTUAL_COST_ID', '==', all.ACTUAL_COST_ID);
-                (0, _entityManagerFactory.EntityManager)().executeQuery(_queryCheckVtr).then(function (foundVtr) {
-
-                  if (foundVtr.results === undefined) {
-                    resolve_2(true);
-                  }
-
-                  var varMaxDate = null;
-                  var varDataFromCompare = new Date(_this7._cache_budget.HEADER.BDGT_FROM);
-                  var varDataToCompare = new Date(_this7._cache_budget.HEADER.BDGT_FROM);
-
-                  foundVtr.results.forEach(function (allDate) {
-                    var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
-
-                    if (varTmpFrom <= new Date(_this7._cache_budget.HEADER.BDGT_FROM) && varTmpFrom >= new Date(_this7._cache_budget.HEADER.BDGT_TO) || varTmpTo <= new Date(_this7._cache_budget.HEADER.BDGT_FROM) && varTmpTo >= new Date(_this7._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this7._cache_budget.HEADER.BDGT_TO) || varTmpFrom >= new Date(_this7._cache_budget.HEADER.BDGT_FROM) && varTmpTo <= new Date(_this7._cache_budget.HEADER.BDGT_TO)) {
-
-                      var varVtr = (0, _moment2.default)(new Date(allDate.VTR_LIVE_DT)).format('MM-DD-YYYY');
-                      var varDateCompare = new Date(varVtr);
-
-                      if (varDataFromCompare <= varDateCompare && varDateCompare <= varDataToCompare) {
-                        if (varMaxDate == null) varMaxDate = varVtr;else if (varMaxDate < varVtr) varMaxDate = varVtr;
-                      }
-                    }
-                  });
-
-                  if (varMaxDate == null) {
-                    resolve_2(true);
-                  } else {
-                    var new_date = (0, _moment2.default)(varMaxDate, "MM-DD-YYYY");
-
-                    new_date.add(1, 'days');
-                    new_date = (0, _moment2.default)(new Date(new_date)).format('MM-DD-YYYY');
-                    _toastr2.default.error("An existing ActualCost with Id (" + all.ACTUAL_COST_ID + ") is using this budget template. <br>BudgetId (" + all.BDGT_TMPL_ID + ") with status (" + all.BDGT_TMPL_HDR.APPR_STAT_CD.replace("APP-", "") + ")." + " Either open the existing Budget Template and create a Copy, or start the validity on " + new_date);
-
-                    reject_2(false);
-                  }
-                });
-              });
-
-              varPromises.push(newPromise);
-            });
-
-            Promise.all(varPromises).then(function (passed) {
-              resolve(true);
-            }, function (fail) {
-              reject(false);
-            });
-          } else resolve(true);
-        });
-      });
-    };
-
-    MainHeaderCustomElement.prototype.fnSaveBudget = function fnSaveBudget(passed_status) {
-      var _this8 = this;
-
-      var strValidation = "";
-
-      if (this._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE == "") {
-        strValidation += "No Program specified. <br>";
-      }
-
-      if (!(0, _moment2.default)(this._cache_budget.HEADER.BDGT_FROM).isValid() || !(0, _moment2.default)(this._cache_budget.HEADER.BDGT_TO).isValid()) {
-        strValidation += "Invalid Template Start/End Date validity. <br>";
-      }
-
-      if (this._cache_budget.HEADER.PROGRAM_GENRE_CD == "") {
-        strValidation += "No Program Genre. <br>";
-      }
-
-      if (this._cache_budget.HEADER.EPISODE_TYPE_CD == "") {
-        strValidation += "No Episode Type. <br>";
-      }
-
-      if (this._cache_budget.HEADER.TELECAST_MODE_CD == "") {
-        strValidation += "No Telecast Mode. <br>";
-      }
-
-      if (!parseInt(this._cache_budget.HEADER.TAPING_DAYS) > 0) {
-        strValidation += "Invalid Taping Day(s).<br>";
-      }
-
-      if (!parseInt(this._cache_budget.HEADER.EPISODES) > 0) {
-        strValidation += "Invalid Episode(s).<br>";
-      }
-
-      if (strValidation != "") {
-        _toastr2.default.error("Exception occured. <br/><br/>" + strValidation, "Budget Template");
-        return;
-      }
-
-      if (this._cache_budget.TOTAL <= 0 && this._cache_budget.HEADER.APPR_STAT_CD.includes('APPROVED')) {
-        _toastr2.default.error("Cannot have Zero Total Budget.", "Budget Template");
-        return;
-      }
-
-      if (passed_status.includes('EXPIRE') || passed_status.includes('CLOSE')) {
-        Promise.all([this.fnBudgetValidation_2()]).then(function (passed) {
-          if (passed_status != '') _this8._cache_budget.HEADER.APPR_STAT_CD = passed_status;
-          _this8.fnExecuteSaveBudgetHeader();
-        }, function (fail) {
-          _toastr2.default.error("Saving Cancelled.", "Saving..");
-        });
-      } else if (this._cache_budget.HEADER.APPR_STAT_CD.includes('APPROVED')) {
-
-        this.fnValidation_Approved().then(function (passed) {
-
-          var varToday = new Date(Date.now());
-
-          if (new Date(varToday.getFullYear(), varToday.getMonth(), varToday.getDate()) >= new Date((0, _moment2.default)(_this8._cache_budget.HEADER.BDGT_TO).subtract(8, 'hours').format('MM-DD-YYYY'))) {
-            _this8._cache_budget.HEADER.APPR_STAT_CD = "APP-EXPIRED";
-          }
-
-          _this8.fnExecuteSaveBudgetHeader();
-        }, function (fail) {
-          _toastr2.default.error("Saving Cancelled.", "Saving..");
-        });
-      } else {
-        this.fnExecuteSaveBudgetHeader();
-      }
-
-      return;
-    };
-
-    MainHeaderCustomElement.prototype.fnExecuteSaveBudgetHeader = function fnExecuteSaveBudgetHeader() {
-      var _this9 = this;
-
-      var varInsert = null;
-
-      var varFrom = (0, _moment2.default)(new Date(this._cache_budget.HEADER.BDGT_FROM)).add(8, 'hours');
-      varFrom = new Date(varFrom);
-
-      var varTo = (0, _moment2.default)(new Date(this._cache_budget.HEADER.BDGT_TO)).add(8, 'hours');
-      varTo = new Date(varTo);
-
-      if (this._cache_budget.HEADER.REMARKS === undefined || this._cache_budget.HEADER.REMARKS === null) {
-        this._cache_budget.HEADER.REMARKS = "NONE";
-      } else if (this._cache_budget.HEADER.REMARKS.trim() == "") {
-        this._cache_budget.HEADER.REMARKS = "NONE";
-      }
-
-      if (this._cache_budget.HEADER.BDGT_TMPL_ID == "") {
-        var getMax = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').orderByDesc('BDGT_TMPL_ID').take(1);
-
-        if (this._cache_budget.HEADER.APPR_STAT_CD == null || this._cache_budget.HEADER.APPR_STAT_CD == undefined || this._cache_budget.HEADER.APPR_STAT_CD == 'undefined') {
-          this._cache_budget.HEADER.APPR_STAT_CD = this._STATUS[0].REF_CD;
-        }
-
-        (0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
-          var getMax = 1;
-
-          if (successMax.results.length > 0) getMax = successMax.results[0].BDGT_TMPL_ID + 1;
-
-          varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_HDR', {
-            BDGT_TMPL_ID: getMax,
-            COMPANY_ID: _this9._COMPANY_ID,
-            BDGT_FROM: varFrom,
-            BDGT_TO: varTo,
-
-            EPISODE_TYPE_CD: _this9._cache_budget.HEADER.EPISODE_TYPE_CD,
-            BDGT_VIEW_FCTR: 1,
-            TAPING_DAYS: _this9._cache_budget.HEADER.TAPING_DAYS,
-            PROGRAM_ID: _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID,
-            CHARGE_CD: _this9._cache_budget.HEADER.CHARGE_CD,
-            PROGRAM_GENRE_CD: _this9._cache_budget.HEADER.PROGRAM_GENRE_CD,
-            PARENT_PROGRAM_ID: _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID,
-            BDGT_VIEW_CD: 'EPISODIC',
-            APPR_STAT_CD: _this9._cache_budget.HEADER.APPR_STAT_CD,
-            CHARGE_TYPE_CD: '',
-            BDGT_TOTAL: 0,
-            REMARKS: _this9._cache_budget.HEADER.REMARKS,
-            CREATED_BY: _this9._user,
-            CREATED_DT: new Date(Date.now()),
-            LAST_UPDATED_BY: _this9._user,
-            LAST_UPDATED_DT: new Date(Date.now()),
-            TELECAST_MODE_CD: _this9._cache_budget.HEADER.TELECAST_MODE_CD,
-            BDGT_STAT_CD: getMax,
-
-            BDGT_FOR_CD: 'BDGT-EPISODIC',
-            PROGRAM_NAME: _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE,
-            EPISODES: _this9._cache_budget.HEADER.EPISODES,
-            STATION_ID: _this9._cache_budget.HEADER.STATION_ID,
-            STATION_SENT_DATE: new Date(),
-            STATION_SENT: 0
-          });
-
-          (0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
-
-          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-            _this9._cache_budget.HEADER.BDGT_TMPL_ID = success.entities[0].BDGT_TMPL_ID;
-
-            _this9._disableCreateBudget = true;
-            _this9._disableCancelBudget = false;
-            _this9._disableRefreshBudget = false;
-            _this9._disableSaveBudget = false;
-
-            if (_this9._cache_budget.HEADER.APPR_STAT_CD == "APP-APPROVED") {
-              _this9._cache_budget.STATUS = "APPROVED";
-              _this9._disableSaveBudget = true;
-
-              _this9.budgetDisabled = true;
-              _this9.programDisabled = true;
-            } else {
-
-              _this9.budgetDisabled = true;
-              _this9.programDisabled = false;
-            }
-
-            _toastr2.default.success("Succesfully Saved", "Budget Template");
-
-            if (_this9._cache_budget.IS_COPYING) {
-
-              _this9._cache_budget.OBSERVERS.copy_template.forEach(function (all) {
-
-                all('REGULAR');
-              });
-
-              _this9._cache_budget.IS_COPYING = false;
-            } else {
-              _this9.fnBudget("refresh");
-            }
-
-            _this9._disableCreateBudget = true;
-            _this9._disableSaveBudget = false;
-            _this9._disableCancelBudget = false;
-            _this9._disableRefreshBudget = false;
-            _this9._disablePrintBudget = true;
-
-            _this9.budgetDisabled = false;
-            _this9.programDisabled = false;
-          }, function (fail) {
-
-            if (varInsert != null) {
-              varInsert.entityAspect.setDeleted();
-            }
-
-            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-              var errors = entity.entityAspect.getValidationErrors();
-              if (errors.length > 0) console.log(errors);
-            });
-            console.log(fail);
-            _toastr2.default.error("Error Occured", fail);
-          });
-        });
-      } else {
-
-        var getEntityQuery = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_HDR').where("BDGT_TMPL_ID", "==", this._cache_budget.HEADER.BDGT_TMPL_ID);
-        (0, _entityManagerFactory.EntityManager)().executeQuery(getEntityQuery).then(function (item) {
-
-          item.results[0].BDGT_FROM = varFrom;
-          item.results[0].BDGT_TO = varTo;
-          item.results[0].EPISODE_TYPE_CD = _this9._cache_budget.HEADER.EPISODE_TYPE_CD;
-          item.results[0].TAPING_DAYS = _this9._cache_budget.HEADER.TAPING_DAYS;
-          item.results[0].PROGRAM_ID = _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID;
-          item.results[0].CHARGE_CD = _this9._cache_budget.HEADER.CHARGE_CD;
-          item.results[0].PROGRAM_GENRE_CD = _this9._cache_budget.HEADER.PROGRAM_GENRE_CD;
-          item.results[0].PARENT_PROGRAM_ID = _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_ID;
-          item.results[0].APPR_STAT_CD = _this9._cache_budget.HEADER.APPR_STAT_CD;
-          item.results[0].REMARKS = _this9._cache_budget.HEADER.REMARKS;
-          item.results[0].LAST_UPDATED_BY = _this9._user;
-          item.results[0].LAST_UPDATED_DT = new Date(Date.now());
-          item.results[0].TELECAST_MODE_CD = _this9._cache_budget.HEADER.TELECAST_MODE_CD;
-          item.results[0].PROGRAM_NAME = _this9._cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE;
-          item.results[0].EPISODES = _this9._cache_budget.HEADER.EPISODES;
-          item.results[0].STATION_ID = _this9._cache_budget.HEADER.STATION_ID;
-
-          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-
-            _this9._disableCreateBudget = true;
-            _this9._disableCancelBudget = false;
-            _this9._disableRefreshBudget = false;
-            _this9._disableSaveBudget = false;
-
-            _this9.budgetDisabled = true;
-            _this9.programDisabled = false;
-
-
-            _toastr2.default.success("Succesfully Saved", "Budget Template");
-            _this9.fnBudget("refresh");
-          }, function (fail) {
-
-            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-              var errors = entity.entityAspect.getValidationErrors();
-              if (errors.length > 0) console.log(errors);
-            });
-            console.log(fail);
-            _toastr2.default.error("Error Occured", fail);
-          });
-        });
-
-        this._disableBudgetId = true;
-
-        this.budgetDisabled = true;
-
-        this._disablePrintBudget = false;
-      }
-    };
-
-    MainHeaderCustomElement.prototype.fnDialogProgram = function fnDialogProgram() {
-      this.dialogService.open({
-        viewModel: _program.program
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {} else {}
-      });
-    };
-
-    MainHeaderCustomElement.prototype.fnDialogBudget = function fnDialogBudget() {
-      this.dialogService.open({
-        viewModel: _budget.budget
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {
-          _settings2.default.isNavigating = true;
-        } else {}
-      });
-    };
-
-    return MainHeaderCustomElement;
-  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'to', [_aureliaFramework.bindable], {
-    enumerable: true,
-    initializer: null
-  })), _class2)) || _class);
-});
-define('ppfcs/budget/mainview',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'toastr', 'aurelia-dialog', '../../helpers', 'multi-observer', 'modals/login', 'aurelia-router'], function (exports, _aureliaFramework, _cache_budget, _entityManagerFactory, _masterfiles, _toastr, _aureliaDialog, _helpers, _multiObserver, _login, _aureliaRouter) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.mainview = undefined;
-
-  var _toastr2 = _interopRequireDefault(_toastr);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -10758,1638 +13336,112 @@ define('ppfcs/budget/mainview',['exports', 'aurelia-framework', 'ppfcs/cache_bud
 
   var _dec, _class;
 
-  var mainview = exports.mainview = (_dec = (0, _aureliaFramework.inject)(_toastr2.default, _cache_budget.cache_budget, _multiObserver.MultiObserver, _aureliaDialog.DialogService, _aureliaRouter.Router), _dec(_class = function () {
-    function mainview(toastr, cache_budget, multiObserver, dialogService, Router) {
-      _classCallCheck(this, mainview);
+  var talent_search = exports.talent_search = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _modalWizard.ModalWizard, _toastr2.default, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = function () {
+    function talent_search(cache_obj, cache_budget, ModalWizard, toastr, multiObserver, DialogService) {
+      _classCallCheck(this, talent_search);
 
-      this._toastr = null;
-      this.showingLogout = "hidden";
-      this.dialogService = null;
-      this.loginDisabled = true;
-      this.logoutDisabled = false;
-      this.masterFilesLoaded = false;
-
-      this._cache_budget = cache_budget;
-      this.router = Router;
+      this._CITIZENSHIP_ARR = [{ ref: '', desc: '' }];
+      this._RELIGION_ARR = [{ ref: '', desc: '' }];
+      this._CIVIL_STATUS_ARR = [{ ref: '', desc: '' }];
+      this._GENDER_ARR = [{ ref: '', desc: '' }, { ref: 'M', desc: 'MALE' }, { ref: 'F', desc: 'FEMALE' }];
+      this._COUNTRY_ARR = [{ ref: '', desc: '' }];
+      this._LOCATION_ARR = [{ ref: '', desc: '' }];
+      this._INTEREST_ARR = [{ ref: '', desc: '' }];
+      this._SKILL_TALENT_ARR = [{ ref: '', desc: '' }];
 
       if ((0, _entityManagerFactory.EntityManager)() === undefined) {
-        this.router.navigateToRoute('mainpage');
         return;
       }
-
-      this.dialogService = dialogService;
-
-      if (this.dialogService.controllers.length > 0) {
-        for (var i = this.dialogService.controllers.length - 1; i >= 0; i--) {
-          this.dialogService.controllers[i].close();
-        }
-      }
+      this.initialize();
     }
 
-    mainview.prototype.clickTab = function clickTab(index) {
-      if (index == 0) {} else if (index == 1) {
+    talent_search.prototype.initialize = function initialize() {
+      var _this = this;
 
-        this._cache_budget.OBSERVERS.refreshPersonnelTab.forEach(function (all) {
-          all('REGULAR');
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'CITIZENSHIP_CD').orderBy('REF_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CITIZENSHIP_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
         });
-      } else if (index == 2) {
+      });
 
-        this._cache_budget.OBSERVERS.refreshPersonnelTab.forEach(function (all) {
-          all('SEMI_REGULAR');
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'RELIGION_CD').orderBy('REF_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._RELIGION_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
         });
-      } else if (index == 3) {
+      });
 
-        this._cache_budget.OBSERVERS.refreshPersonnelTab.forEach(function (all) {
-          all('STAFF');
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'CIVIL_STATUS').orderBy('REF_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CIVIL_STATUS_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
         });
-      }
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._COUNTRY_ARR.push({ ref: all.COUNTRY_CD, desc: all.COUNTRY_NAME });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('LOCATION_MSTR').orderBy('LOCATION_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._LOCATION_ARR.push({ ref: all.LOCATION_CD, desc: all.LOCATION_DESC });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('INTEREST_MSTR').orderBy('INTEREST_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._INTEREST_ARR.push({ ref: all.INTEREST_CD, desc: all.INTEREST_DESC });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('SKILL_TALENT_MSTR').orderBy('SKILL_TALENT_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._SKILL_TALENT_ARR.push({ ref: all.SKILL_TALENT_CD, desc: all.SKILL_TALENT_DESC });
+        });
+      });
     };
 
-    return mainview;
+    talent_search.prototype.search_on = function search_on() {
+      var _this2 = this;
+
+      this._QUERY_VAL = [];
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('PT_INDIV_MSTR')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this2._QUERY_VAL.push({ PT_INDIV_ID: all.PT_INDIV_ID, GIVEN_NAME: all.GIVEN_NAME, MIDDLE_NAME: all.MIDDLE_NAME, LAST_NAME: all.LAST_NAME });
+        });
+      });
+
+      console.log(this._QUERY_VAL);
+    };
+
+    return talent_search;
   }()) || _class);
 });
-define('ppfcs/budget/personnel',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'cache_obj', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'modals/modal-wizard', 'numeral', 'multi-observer', 'toastr', '../../modals/globalindivmstr', '../../modals/indivmstr', '../../modals/job', '../../modals/paymentterm', 'aurelia-dialog', 'breeze-client'], function (exports, _aureliaFramework, _cache_budget, _cache_obj, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _modalWizard, _numeral, _multiObserver, _toastr, _globalindivmstr, _indivmstr, _job, _paymentterm, _aureliaDialog, _breezeClient) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.PersonnelCustomElement = undefined;
-
-  var _typeahead2 = _interopRequireDefault(_typeahead);
-
-  var _settings2 = _interopRequireDefault(_settings);
-
-  var _underscore2 = _interopRequireDefault(_underscore);
-
-  var _numeral2 = _interopRequireDefault(_numeral);
-
-  var _toastr2 = _interopRequireDefault(_toastr);
-
-  var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  function _initDefineProp(target, property, descriptor, context) {
-    if (!descriptor) return;
-    Object.defineProperty(target, property, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      writable: descriptor.writable,
-      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-    });
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-    var desc = {};
-    Object['ke' + 'ys'](descriptor).forEach(function (key) {
-      desc[key] = descriptor[key];
-    });
-    desc.enumerable = !!desc.enumerable;
-    desc.configurable = !!desc.configurable;
-
-    if ('value' in desc || desc.initializer) {
-      desc.writable = true;
-    }
-
-    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-      return decorator(target, property, desc) || desc;
-    }, desc);
-
-    if (context && desc.initializer !== void 0) {
-      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-      desc.initializer = undefined;
-    }
-
-    if (desc.initializer === void 0) {
-      Object['define' + 'Property'](target, property, desc);
-      desc = null;
-    }
-
-    return desc;
-  }
-
-  function _initializerWarningHelper(descriptor, context) {
-    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-  }
-
-  var _dec, _class, _desc, _value, _class2, _descriptor, _descriptor2;
-
-  var PersonnelCustomElement = exports.PersonnelCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _modalWizard.ModalWizard, _multiObserver.MultiObserver, _aureliaDialog.DialogService), _dec(_class = (_class2 = function () {
-    function PersonnelCustomElement(cache_obj, cache_budget, ModalWizard, multiObserver, dialogService) {
-      var _this = this;
-
-      _classCallCheck(this, PersonnelCustomElement);
-
-      _initDefineProp(this, 'toPerson', _descriptor, this);
-
-      _initDefineProp(this, 'toPersonModel', _descriptor2, this);
-
-      this._cache_obj = null;
-      this._cache_budget = null;
-      this.styleStringHidden = 'visibility: hidden;display:none;';
-      this.styleStringVisible = 'visibility: visible;';
-      this._JOBS = null;
-      this._PYMNTTERM = [];
-      this._Personnel = [];
-      this._PersonnelTM = [];
-      this._Index = 0;
-      this.varPymnt = null;
-      this.isIndivMstrTalentsDisabled = false;
-      this.isIndivMstrManagerDisabled = false;
-      this.isJobDisabled = false;
-      this.isIndivMstrDisabled = false;
-      this.dialogService = null;
-
-
-      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
-        return;
-      }
-
-      this.cache_budget = cache_budget;
-      this.dialogService = dialogService;
-
-      this._cache_obj = cache_obj;
-      this._cache_budget = cache_budget;
-
-      this._ModalWizard = ModalWizard;
-      this._ce_head = "+";
-
-      multiObserver.observe([[this, '_personnelSearch']], function (newValue, oldValue) {
-        return _this.onSpeculateProp(newValue, oldValue);
-      });
-
-      this._cache_budget.OBSERVERS.disable_search_personnel.push(function (val) {
-        _this.ButtonStatus(val);
-      });
-
-      this._cache_budget.OBSERVERS.reset_all.push(function () {
-        _this.resetView();
-      });
-
-      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
-        _this.CloseBudgetDialog(val);
-      });
-
-      this._cache_budget.OBSERVERS.enable_approved.push(function (val) {
-        _this.ButtonStatus(val);
-      });
-
-      this._cache_budget.OBSERVERS.copy_template.push(function (val) {
-        _this.fnCallCopy(val);
-      });
-
-      this._cache_budget.OBSERVERS.pass_indiv.push(function (val) {
-        _this.PassedIndiv(val);
-      });
-
-      this._cache_budget.OBSERVERS.pass_group.push(function (val) {
-        _this.PassedGroup(val);
-      });
-
-      this._cache_budget.OBSERVERS.refreshPersonnelTab.push(function (val) {
-        _this.refreshOnSelect(val);
-      });
-
-      this._cache_budget.OBSERVERS.pass_job.push(function (val) {
-        _this.passJob(val);
-      });
-
-      this._PYMNTTERM = (0, _masterfiles.getLookups)().PAYMENT_TERM;
-
-      this._JOBS = (0, _masterfiles.getLookups)().JOB_GRP_CATEGORY.filter(function (all) {
-        return all.COMPANY_ID == _this._cache_obj.USER.COMPANY_ID;
-      });
-    }
-
-    PersonnelCustomElement.prototype.passJob = function passJob(job) {
-      var _this2 = this;
-
-      var index = this._Index;
-
-      this._Personnel[index].JOB_ID = job.JOB_ID;
-      this._Personnel[index].JOB_DESC = job.JOB_DESC;
-      var varGrpCategory = (0, _masterfiles.getLookups)().JOB_GRP_CATEGORY.find(function (all) {
-        return all.JOB_ID == _this2._Personnel[index].JOB_ID && all.COMPANY_ID == _this2._cache_obj.USER.COMPANY_ID;
-      });
-
-      if (varGrpCategory !== undefined) {
-        this._Personnel[index].CATEGORY_ID = varGrpCategory.CATEGORY_ID;
-        this._Personnel[index].CATEGORY_DESC = varGrpCategory.CATEGORY_DESC;
-      }
-    };
-
-    PersonnelCustomElement.prototype.onSpeculateProp = function onSpeculateProp(newValue, oldValue) {
-      var _this3 = this;
-
-      var varResult = [];
-
-      this._Personnel.forEach(function (all) {
-        all.visible = true;
-
-        if (_this3._personnelSearch.toUpperCase() !== "") {
-          if (all['PERSONNEL_NAME'] !== undefined && all['PERSONNEL_NAME'] != null) if (!all['PERSONNEL_NAME'].toUpperCase().includes(_this3._personnelSearch.toUpperCase())) {
-            all.visible = false;
-          }
-
-          if (all['BLANK_PERSONNEL_NAME'] !== undefined && all['PERSONNEL_NAME'] != null) if (!all['BLANK_PERSONNEL_NAME'].toUpperCase().includes(_this3._personnelSearch.toUpperCase())) {
-            all.visible = false;
-          }
-        }
-      });
-
-      this._signal = (0, _entityManagerFactory.generateID)();
-    };
-
-    PersonnelCustomElement.prototype.resetView = function resetView() {
-
-      this._signal = (0, _entityManagerFactory.generateID)();
-    };
-
-    PersonnelCustomElement.prototype.collapse_expand_head = function collapse_expand_head() {
-      var _this4 = this;
-
-      if (this._ce_head == "+") {
-        this._ce_head = "-";
-        this._Personnel.forEach(function (item) {
-          item.ce_value = "-";
-          item.styleString = _this4.styleStringVisible;
-        });
-      } else {
-        this._ce_head = "+";
-        this._Personnel.forEach(function (item) {
-          item.ce_value = "+";
-          item.styleString = _this4.styleStringHidden;
-        });
-      }
-    };
-
-    PersonnelCustomElement.prototype.collapse_expand = function collapse_expand(item) {
-
-      if (item.ce_value == "+") {
-
-        item.ce_value = "-";
-        item.styleString = this.styleStringVisible;
-      } else {
-
-        item.ce_value = "+";
-        item.styleString = this.styleStringHidden;
-      }
-    };
-
-    PersonnelCustomElement.prototype.CloseBudgetDialog = function CloseBudgetDialog(value) {
-
-      this.fnCheckBudget(value);
-    };
-
-    PersonnelCustomElement.prototype.fnCheckExistingTalents = function fnCheckExistingTalents(TALENTS, item) {
-
-      if (TALENTS == undefined || TALENTS == null || TALENTS == "") {
-
-        return true;
-      } else if (TALENTS.length > 0) {
-        if (item) item.REMOVE = false;
-
-        return false;
-      }
-
-      return true;
-    };
-
-    PersonnelCustomElement.prototype.myFunction = function myFunction() {
-
-      alert('loaded');
-    };
-
-    PersonnelCustomElement.prototype.ButtonStatus = function ButtonStatus(value) {
-      var _this5 = this;
-
-      this._cache_obj.OBSERVERS.enable_modal_button.forEach(function (all) {
-        _this5.isIndivMstrDisabled = !value;
-        _this5.isIndivMstrTalentsDisabled = !value;
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnCallCopy = function fnCallCopy(usr) {
-
-      this._Personnel.forEach(function (item) {
-        if (item.TALENT_MANAGER !== undefined) {
-          item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP = undefined;
-          item.TALENT_MANAGER.BDGT_TMPL_DTL_ID = undefined;
-        };
-        item.BDGT_TMPL_DTL_ID = undefined;
-
-        item.BDGT_TMPL_DTL_ID_LINK = undefined;
-        item.BDGT_TMPL_DTL_ID_LINK_TMP = undefined;
-      });
-
-      if (this.toPersonModel.USE == usr) this.savePersonnel(1);
-    };
-
-    PersonnelCustomElement.prototype.fnCheckBudget = function fnCheckBudget(BDGT_TMPL_ID) {
-      var _this6 = this;
-
-      this._cache_obj.OBSERVERS.enable_modal_button.forEach(function (all) {
-        _this6.isIndivMstrDisabled = false;
-        _this6.isIndivMstrTalentsDisabled = false;
-      });
-
-      setTimeout(function () {
-
-        _this6.scrollDiv();
-      }, 5000);
-
-      var varPsClType = "";
-      if (this.toPersonModel.USE == "REGULAR") {
-
-        varPsClType = "Regular";
-        this._cache_budget.REGULAR = [];
-      } else if (this.toPersonModel.USE == "SEMI_REGULAR") {
-
-        varPsClType = "Semi-Regular";
-        this._cache_budget.SEMI_REGULAR = [];
-      } else if (this.toPersonModel.USE == "STAFF") {
-
-        varPsClType = "Staff";
-        this._cache_budget.STAFF = [];
-      }
-
-      var p1 = _breezeClient2.default.Predicate.create('BDGT_TMPL_ID', '==', BDGT_TMPL_ID);
-      var p2 = _breezeClient2.default.Predicate.create('PERSONNEL_CLASS_TYPE', '==', varPsClType);
-      var pred = _breezeClient2.default.Predicate.and([p1, p2]);
-
-      var _query = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_DTL').where(pred).orderBy("GROUP_ORDER");
-      (0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (found) {
-
-        var varJobLength = (0, _masterfiles.getLookups)().JOB_MSTR.length - 1;
-        var varCategoryLength = (0, _masterfiles.getLookups)().CATEGORY_MSTR.length - 1;
-
-        _this6._Personnel.splice(0, _this6._Personnel.length);
-        _this6._PersonnelTM.splice(0, _this6._PersonnelTM.length);
-
-        found.results.forEach(function (item) {
-
-          _this6._Personnel.push({
-            BDGT_TMPL_DTL_ID: item.BDGT_TMPL_DTL_ID,
-            BDGT_TMPL_ID: _this6._cache_budget.HEADER.BDGT_TMPL_ID,
-            JOB_ID: item.JOB_ID,
-            GLOBAL_ID: item.GLOBAL_ID,
-            CONTRACT_AMT: item.CONTRACT_AMT,
-            CATEGORY_ID: item.CATEGORY_ID,
-            STAFF_WORK: item.STAFF_WORK,
-            PYMNT_TERM_CD: item.PYMNT_TERM_CD,
-            PAY_TO_PERSON_FL: 'T',
-            PAY_RATE_FACTOR: item.PAY_RATE_FACTOR,
-            BUDGET_AMT: item.INPUT_AMT,
-            TAPING_DAY_CNT: _this6._cache_budget.HEADER.TAPING_DAYS,
-            PERSONNEL_CLASS_CD: item.PERSONNEL_CLASS_CD,
-            REMARKS: item.REMARKS,
-            PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
-            PERSONNEL_NAME: item.PERSONNEL_NAME,
-            INPUT_AMT: item.INPUT_AMT,
-            CONFIDENTIAL: item.CONFIDENTIAL,
-            POOL_RECORD: item.POOL_RECORD,
-            GROUP_ORDER: item.GROUP_ORDER,
-            GLOBAL_ID_LINK: item.GLOBAL_ID_LINK,
-            BDGT_TMPL_DTL_ID_LINK: item.BDGT_TMPL_DTL_ID_LINK
-          });
-        });
-
-        if (_this6.toPersonModel.USE == "REGULAR") {
-
-          _this6._cache_budget.REGULAR = _this6._Personnel;
-
-          if (_this6._cache_budget.REGULAR.length > 0) _toastr2.default.success("REGULAR PERSONNEL", "Loading Successful.");
-
-          _this6.setPersonnelValues(_this6._cache_budget.REGULAR, varJobLength, varCategoryLength);
-        } else if (_this6.toPersonModel.USE == "SEMI_REGULAR") {
-
-          varPsClType = "Semi-Regular";
-
-          _this6._cache_budget.SEMI_REGULAR = _this6._Personnel;
-
-          if (_this6._cache_budget.SEMI_REGULAR.length > 0) _toastr2.default.success("SEMI-REGULAR PERSONNEL", "Loading Successful.");
-
-          _this6.setPersonnelValues(_this6._cache_budget.SEMI_REGULAR, varJobLength, varCategoryLength);
-        } else if (_this6.toPersonModel.USE == "STAFF") {
-
-          varPsClType = "Staff";
-
-          _this6._cache_budget.STAFF = _this6._Personnel;
-
-          if (_this6._cache_budget.STAFF.length > 0) _toastr2.default.success("STAFF PERSONNEL", "Loading Successful.");
-
-          _this6.setPersonnelValues(_this6._cache_budget.STAFF, varJobLength, varCategoryLength);
-        }
-
-        _this6._signal = (0, _entityManagerFactory.generateID)();
-
-        _this6._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-
-          all();
-        });
-      });
-    };
-
-    PersonnelCustomElement.prototype.setPersonnelValues = function setPersonnelValues(obj, varJobLength, varCategoryLength) {
-      var _this7 = this;
-
-      _underscore2.default.each(obj, function (item) {
-        item.TALENTS = undefined;
-      });
-
-      _underscore2.default.each(obj, function (item) {
-
-        for (var i = 0; i <= varJobLength; ++i) {
-          if ((0, _masterfiles.getLookups)().JOB_MSTR[i].JOB_ID == item.JOB_ID) {
-            item.JOB_DESC = (0, _masterfiles.getLookups)().JOB_MSTR[i].JOB_DESC;
-            break;
-          }
-        };
-
-        for (var i = 0; i <= varCategoryLength; ++i) {
-          if ((0, _masterfiles.getLookups)().CATEGORY_MSTR[i].CATEGORY_ID == item.CATEGORY_ID) {
-            item.CATEGORY_DESC = (0, _masterfiles.getLookups)().CATEGORY_MSTR[i].CATEGORY_DESC;
-            break;
-          }
-        };
-
-        for (var i = 0; i <= _this7._PYMNTTERM.length - 1; ++i) {
-          if (_this7._PYMNTTERM[i].REF_CD == item.PYMNT_TERM_CD) {
-            item.PAYMENT_TERM = _this7._PYMNTTERM[i].REF_DESC;
-            break;
-          }
-        };
-
-        if (item.BDGT_TMPL_DTL_ID_LINK !== 0) {
-          var varTM = obj.find(function (all) {
-            return all.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK;
-          });
-          item.TALENT_MANAGER = {
-            BDGT_TMPL_DTL_ID_TMP: varTM.BDGT_TMPL_DTL_ID,
-            GLOBAL_INDIV_ID: varTM.GLOBAL_ID,
-            PERSONNEL_NAME: varTM.PERSONNEL_NAME,
-            CONTRACT_AMT_TMP: (0, _numeral2.default)(varTM.CONTRACT_AMT).format('0,0.00'),
-            INPUT_AMT_TMP: (0, _numeral2.default)(varTM.INPUT_AMT).format('0,0.00'),
-            PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(varTM.PAY_RATE_FACTOR).format('0,0.00'),
-            REMARKS: varTM.REMARKS,
-            JOB_ID: varTM.JOB_ID,
-            CATEGORY_ID: varTM.CATEGORY_ID,
-            GROUP_ORDER: -1
-          };
-
-          _this7._PersonnelTM.push({
-            BDGT_TMPL_DTL_ID: varTM.BDGT_TMPL_DTL_ID,
-            BDGT_TMPL_DTL_ID_TMP: varTM.BDGT_TMPL_DTL_ID,
-            GLOBAL_INDIV_ID: varTM.GLOBAL_ID,
-            PERSONNEL_NAME: varTM.PERSONNEL_NAME,
-            CONTRACT_AMT_TMP: (0, _numeral2.default)(varTM.CONTRACT_AMT).format('0,0.00'),
-            INPUT_AMT_TMP: (0, _numeral2.default)(varTM.INPUT_AMT).format('0,0.00'),
-            PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(varTM.PAY_RATE_FACTOR).format('0,0.00'),
-            REMARKS: varTM.REMARKS,
-            JOB_ID: varTM.JOB_ID,
-            CATEGORY_ID: varTM.CATEGORY_ID,
-            GROUP_ORDER: -1
-          });
-        }
-
-        item.BLANK_PERSONNEL_NAME = item.PERSONNEL_NAME;
-        item.CONTRACT_AMT_TMP = (0, _numeral2.default)(item.CONTRACT_AMT).format('0,0.00');
-        item.INPUT_AMT_TMP = (0, _numeral2.default)(item.INPUT_AMT).format('0,0.00');
-        item.PAY_RATE_FACTOR_TMP = (0, _numeral2.default)(item.PAY_RATE_FACTOR).format('0,0.00');
-        item.CONFIDENTIAL_TMP = item.CONFIDENTIAL == 1 ? true : false;
-        item.STAFF_WORK_TMP = item.STAFF_WORK == 1 ? true : false;
-        item.POOL_RECORD_TMP = item.POOL_RECORD == 1 ? true : false;
-
-        item.BDGT_TMPL_DTL_ID_LINK_TMP = item.BDGT_TMPL_DTL_ID_LINK;
-
-        item.styleString = _this7.styleStringHidden;
-        item.ce_value = "+";
-        item.visible = true;
-      });
-
-      for (var i = obj.length - 1; i >= 0; i--) {
-        var varToDelete = this._PersonnelTM.find(function (all) {
-          return all.BDGT_TMPL_DTL_ID_TMP == obj[i].BDGT_TMPL_DTL_ID;
-        });
-
-        if (varToDelete !== undefined) {
-          obj.splice(i, 1);
-        }
-      }
-    };
-
-    PersonnelCustomElement.prototype.removeTalent = function removeTalent(parent, item, index) {
-      var _this8 = this;
-
-      this._Personnel.forEach(function (all) {
-        if (all.GLOBAL_ID == item.GLOBAL_INDIV_ID) {
-          var varToSplice = parent.item.TALENTS.splice(index, 1);
-
-          delete item.TALENT_MANAGER.CONTRACT_AMT_TMP;
-          delete item.TALENT_MANAGER.INPUT_AMT_TMP;
-          delete item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP;
-          delete item.TALENT_MANAGER.REMARKS;
-          delete item.TALENT_MANAGER;
-
-          _this8._signal = (0, _entityManagerFactory.generateID)();
-        }
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnRegularFocus = function fnRegularFocus(index, prop) {
-
-      this._Index = index;
-      if (prop == "JOB") {
-
-        this.fnModalJob();
-
-        return;
-      }
-
-      this.fnModalPaymentTerm();
-    };
-
-    PersonnelCustomElement.prototype.scrollDiv = function scrollDiv() {
-      var _this9 = this;
-
-      $(this.tblHeader).css("visibility", "visible");
-
-      $(this.tblHeader).css("top", $(this.divRegular).scrollTop() + $(this.tblData).position().top);
-
-      var varCol = 0;
-      _underscore2.default.each($(this.tblData).find('td'), function (item) {
-        if (varCol > $(_this9.tblHeader).find('td').length - 2) return;
-
-        $($(_this9.tblHeader).find('td')[varCol]).css("width", $(_this9.tblData).find('td')[varCol].clientWidth + 1);
-        ++varCol;
-      });
-    };
-
-    PersonnelCustomElement.prototype.AmountBlur = function AmountBlur(item, property) {
-
-      var varConverted = (0, _numeral2.default)(item[property]).format('0,0.00');
-      item[property] = varConverted;
-    };
-
-    PersonnelCustomElement.prototype.showTalents = function showTalents(item) {
-      var _this10 = this;
-
-      this._selectedItem = item;
-
-      this._cache_budget.OBSERVERS.open_modal.forEach(function (all) {
-        _this10.isIndivMstrTalentsDisabled = false;
-      });
-    };
-
-    PersonnelCustomElement.prototype.showTalentMngr = function showTalentMngr(item) {
-
-      this._selectedItem = item;
-
-      this.fnIndivMstr();
-    };
-
-    PersonnelCustomElement.prototype.removeTalentMngr = function removeTalentMngr(item) {
-      item.TALENT_MANAGER = undefined;
-
-      this._signal = (0, _entityManagerFactory.generateID)();
-
-      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-        all();
-      });
-    };
-
-    PersonnelCustomElement.prototype.PassedIndiv = function PassedIndiv(value) {
-      if (this._selectedItem !== undefined) if (value.GLOBAL_INDIV_ID == this._selectedItem.GLOBAL_ID) {
-        _toastr2.default.error("<strong>Talent Manager cannot be same Personnel</strong>.", "Problem occured");
-        return;
-      }
-
-      var varJobTManager = (0, _masterfiles.getJobByName)("TALENT MANAGER");
-      if (parseInt(varJobTManager.COMPANY_ID) != parseInt(this._cache_obj.USER.COMPANY_ID)) {
-        _toastr2.default.error(varJobTManager.JOB_DESC + " Job is not included on jobs from users company.", "Problem occured");
-        varJobTManager.JOB_ID = "";
-        varJobTManager.JOB_DESC = "";
-      }
-
-      this.getDefaultPymntTerm();
-
-      this._selectedItem.TALENT_MANAGER = { GLOBAL_INDIV_ID: value.GLOBAL_INDIV_ID, PERSONNEL_NAME: value.PERSONNEL_NAME,
-        PERSONNEL_INFO_SRC: value.PERSONNEL_INFO_SRC,
-        JOB_ID: varJobTManager.JOB_ID,
-        JOB_DESC: varJobTManager.JOB_DESC,
-        PYMNT_TERM_CD: this.varPymnt.REF_CD,
-        PAYMENT_TERM: this.varPymnt.REF_DESC,
-        CATEGORY_ID: varJobTManager.CATEGORY_ID,
-        CATEGORY_DESC: varJobTManager.CATEGORY_DESC,
-        PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
-        CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-        INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00')
-      };
-
-      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-        all();
-      });
-    };
-
-    PersonnelCustomElement.prototype.getDefaultPymntTerm = function getDefaultPymntTerm() {
-
-      if (this.varPymnt == null) this.varPymnt = this._PYMNTTERM.find(function (all) {
-        return all.REF_GRP_CD == 'PYMNT_TERM_CD' && all.REF_CD == 'DAILY';
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnPassedPersonnels = function fnPassedPersonnels(value) {
-      var _this11 = this;
-
-      this.getDefaultPymntTerm();
-
-      value.forEach(function (val) {
-
-        var varJob = (0, _masterfiles.getJobByGlobalCompany)(val.GLOBAL_INDIV_ID);
-
-        if (parseInt(varJob.COMPANY_ID) !== parseInt(_this11._cache_obj.USER.COMPANY_ID)) {
-          _toastr2.default.error(varJob.JOB_DESC + " Job is not included on jobs from users company.", "Problem occured");
-          varJob.JOB_ID = "";
-          varJob.JOB_DESC = "";
-        }
-
-        _this11._Personnel.push({
-          GLOBAL_ID: val.GLOBAL_INDIV_ID,
-          PERSONNEL_NAME: val.PERSONNEL_NAME,
-          PERSONNEL_INFO_SRC: val.PERSONNEL_INFO_SRC,
-          JOB_ID: varJob.JOB_ID,
-          JOB_DESC: varJob.JOB_DESC,
-          PYMNT_TERM_CD: _this11.varPymnt.REF_CD,
-          PAYMENT_TERM: _this11.varPymnt.REF_DESC,
-          CATEGORY_ID: varJob.CATEGORY_ID,
-          CATEGORY_DESC: varJob.CATEGORY_DESC,
-          PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
-          CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-          INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-          STAFF_WORK_TMP: false,
-          CONFIDENTIAL_TMP: false,
-          visible: true
-        });
-      });
-
-      this._Personnel.forEach(function (all) {
-        if (all.STATUS_CD == "" || all.STATUS_CD === undefined) {
-          all.STATUS_CD = "";
-        }
-        all.ce_value = "+";
-        all.styleString = _this11.styleStringHidden;
-      });
-
-      this._Personnel.forEach(function (all) {
-        var varIndiv = (0, _masterfiles.getLookups)().GRP_INDIV_MSTR.find(function (allIndiv) {
-          return allIndiv.GLOBAL_INDIV_ID == all.GLOBAL_ID;
-        });
-
-        if (varIndiv !== undefined) {
-          var varJobTManager = (0, _masterfiles.getJobByName)("TALENT MANAGER");
-
-          if (parseInt(varJobTManager.COMPANY_ID) != parseInt(_this11._cache_obj.USER.COMPANY_ID)) {
-            _toastr2.default.error(varJobTManager.JOB_DESC + "Job is not included on jobs from users company.", "Problem occured");
-            varJobTManager.JOB_ID = "";
-            varJobTManager.JOB_DESC = "";
-          }
-
-          var varTalent = (0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.find(function (allIndiv) {
-            return allIndiv.GLOBAL_GRP_ID == varIndiv.GLOBAL_GRP_ID;
-          });
-          all.TALENT_MANAGER = { GLOBAL_INDIV_ID: varTalent.GLOBAL_GRP_ID, PERSONNEL_NAME: varTalent.GROUP_NAME,
-            PERSONNEL_INFO_SRC: varJobTManager.PERSONNEL_INFO_SRC,
-            JOB_ID: varJobTManager.JOB_ID,
-            JOB_DESC: varJobTManager.JOB_DESC,
-            PYMNT_TERM_CD: _this11.varPymnt.REF_CD,
-            PAYMENT_TERM: _this11.varPymnt.REF_DESC,
-            CATEGORY_ID: varJobTManager.CATEGORY_ID,
-            CATEGORY_DESC: varJobTManager.CATEGORY_DESC,
-            PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
-            CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-            INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-            STAFF_WORK_TMP: false,
-            CONFIDENTIAL_TMP: false
-          };
-        }
-      });
-
-      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-        all();
-      });
-    };
-
-    PersonnelCustomElement.prototype.PassedGroup = function PassedGroup(value) {
-      var _this12 = this;
-
-      if (this.modalIndivMstrTalents.id == this._ModalWizard.ids[this._ModalWizard.ids.length - 1]) {
-
-        this.getDefaultPymntTerm();
-
-        this._selectedItem.TALENTS = value;
-
-        this._selectedItem.TALENTS.forEach(function (all) {
-          if (_this12._Personnel.find(function (allReg) {
-            return allReg.GLOBAL_ID == all.GLOBAL_INDIV_ID;
-          }) === undefined) {
-
-            var varJob = (0, _masterfiles.getJobByGlobalCompany)(all.GLOBAL_INDIV_ID);
-
-            if (parseInt(varJob.COMPANY_ID) != parseInt(_this12._cache_obj.USER.COMPANY_ID)) {
-              _toastr2.default.error(varJob.JOB_DESC + " Job is not included on jobs from users company.", "Problem occured");
-              varJob.JOB_ID = "";
-              varJob.JOB_DESC = "";
-            }
-
-            var varTalent = (0, _masterfiles.getLookups)().GLOBAL_INDIV_WITH_ALIAS.find(function (allIndiv) {
-              return allIndiv.GLOBAL_INDIV_ID == all.GLOBAL_INDIV_ID;
-            });
-
-            _this12._Personnel.push({
-              GLOBAL_ID: all.GLOBAL_INDIV_ID,
-              PERSONNEL_NAME: all.PERSONNEL_NAME,
-              PERSONNEL_INFO_SRC: varTalent.PERSONNEL_INFO_SRC,
-              JOB_ID: varJob.JOB_ID,
-              JOB_DESC: varJob.JOB_DESC,
-              PYMNT_TERM_CD: _this12.varPymnt.REF_CD,
-              PAYMENT_TERM: _this12.varPymnt.REF_DESC,
-              CATEGORY_ID: varJob.CATEGORY_ID,
-              CATEGORY_DESC: varJob.CATEGORY_DESC,
-              PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
-              CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-              INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-              STAFF_WORK_TMP: false,
-              CONFIDENTIAL_TMP: false,
-              GLOBAL_ID_LINK: _this12._selectedItem.GLOBAL_ID,
-              TALENT_MANAGER: {
-                GLOBAL_INDIV_ID: _this12._selectedItem.GLOBAL_ID,
-                PERSONNEL_NAME: _this12._selectedItem.PERSONNEL_NAME
-              }
-            });
-          }
-        });
-
-        this._ModalWizard.ids.pop();
-
-        this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-          all();
-        });
-      }
-
-      this._signal = (0, _entityManagerFactory.generateID)();
-    };
-
-    PersonnelCustomElement.prototype.refreshOnSelect = function refreshOnSelect(personnel) {
-      $(this.tblHeader).css("visibility", "hidden");
-    };
-
-    PersonnelCustomElement.prototype.moveTrigger = function moveTrigger(value) {
-
-      if (value == "up") {
-        if (this._currentIndex > 0) {
-
-          this._Personnel.splice(this._currentIndex - 1, 0, this._Personnel[this._currentIndex]);
-          var varCopy = this._Personnel.splice(this._currentIndex + 1, 1);
-          this._currentIndex = this._currentIndex - 1;
-        }
-      } else {
-
-        if (this._currentIndex < this._Personnel.length - 1) {
-
-          this._Personnel.splice(this._currentIndex + 2, 0, this._Personnel[this._currentIndex]);
-          var varCopy = this._Personnel.splice(this._currentIndex, 1);
-          this._currentIndex = this._currentIndex + 1;
-        }
-      }
-
-      this._signal = (0, _entityManagerFactory.generateID)();
-    };
-
-    PersonnelCustomElement.prototype.focusTrigger = function focusTrigger(index) {
-
-      this._currentIndex = index;
-    };
-
-    PersonnelCustomElement.prototype.savePersonnel = function savePersonnel(tag) {
-      var _this13 = this;
-
-      var varErrorDuplicate = "";
-      var varErrorJobTerms = "";
-      var varErrorCheckTalentManager = "";
-
-      var varDuplicateValidation = [];
-
-      var varI = 0;
-      var varJ = 0;
-
-      for (var i = 0; i <= this._Personnel.length - 1; ++i) {
-
-        for (var j = 0; j <= this._Personnel.length - 1; ++j) {
-
-          if (this._Personnel[j].GROUP_ORDER !== -1 && this._Personnel[i].GROUP_ORDER !== -1) {
-            if (this._Personnel[j].PERSONNEL_NAME == this._Personnel[i].PERSONNEL_NAME && this._Personnel[j].JOB_ID == this._Personnel[i].JOB_ID && i != j && varDuplicateValidation.find(function (all) {
-              return all == _this13._Personnel[j].PERSONNEL_NAME;
-            }) == undefined && (this._Personnel[i].PERSONNEL_NAME == null ? "" : this._Personnel[i].PERSONNEL_NAME.trim()) != "") {
-
-              varErrorDuplicate += "<br /><br />" + this._Personnel[j].PERSONNEL_NAME + "-" + this._Personnel[j].JOB_DESC + " Row(" + (varJ + 1) + ").";
-
-              varDuplicateValidation.push(this._Personnel[j].PERSONNEL_NAME);
-            }
-          }
-
-          if (this._Personnel[j].GROUP_ORDER !== -1) {
-            ++varJ;
-          }
-        }
-
-        if (this._Personnel[i].GROUP_ORDER !== -1) {
-          ++varI;
-        }
-      }
-
-      varI = 0;
-      varJ = 0;
-
-      for (var j = 0; j <= this._Personnel.length - 1; ++j) {
-
-        if (this._Personnel[j].GROUP_ORDER !== -1) if (this._Personnel[j].JOB_ID === undefined || this._Personnel[j].JOB_ID == "" || this._Personnel[j].PYMNT_TERM_CD == "" || this._Personnel[j].PYMNT_TERM_CD === undefined || this._Personnel[j].JOB_ID === null || this._Personnel[j].PYMNT_TERM_CD === null) {
-          varErrorJobTerms += "<br /><br />" + "Row (" + (varJ + 1) + ").";
-        }
-
-        if (this._Personnel[j].GROUP_ORDER !== -1) {
-          ++varJ;
-        }
-      }
-
-      if (varErrorDuplicate != "") {
-        _toastr2.default.error("<strong>Duplicate Personnel and Job</strong>" + varErrorDuplicate + "<br /><br />Saving cancelled.", "Problem occured");
-      }
-
-      if (varErrorJobTerms != "") {
-        _toastr2.default.error("<strong>JOB/PAYMENT TERM not set</strong>" + varErrorJobTerms + "<br /><br />Saving cancelled.", "Problem occured");
-      }
-
-      if (varErrorDuplicate != "" || varErrorJobTerms != "" || varErrorCheckTalentManager != "") {
-        return;
-      }
-
-      var getMax = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_DTL').orderByDesc('BDGT_TMPL_DTL_ID').take(1);
-      (0, _entityManagerFactory.EntityManager)().executeQuery(getMax).then(function (successMax) {
-        var getMax = 1;
-
-        if (successMax.results.length > 0) getMax = successMax.results[0].BDGT_TMPL_DTL_ID + 1;
-
-        var varIndex = 1;
-
-        var getAllDtl = (0, _entityManagerFactory.EntityQuery)().from('BDGT_TMPL_DTL').where("BDGT_TMPL_ID", '==', _this13._cache_budget.HEADER.BDGT_TMPL_ID);
-        (0, _entityManagerFactory.EntityManager)().executeQuery(getAllDtl).then(function (foundDtl) {
-
-          _this13._Personnel.forEach(function (item) {
-            if (item.BDGT_TMPL_DTL_ID === undefined) {
-              item.BDGT_TMPL_DTL_ID_TMP = getMax;
-              ++getMax;
-            }
-          });
-
-          _this13._Personnel.forEach(function (item) {
-            if (item.TALENT_MANAGER !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
-
-              if (item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP == undefined) {
-                item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP = getMax;
-                item.BDGT_TMPL_DTL_ID_LINK = getMax;
-                item.TALENT_MANAGER.IsNewTalent = true;
-                ++getMax;
-              }
-            }
-          });
-
-          _this13._Personnel.forEach(function (item) {
-
-            if (item.BDGT_TMPL_DTL_ID === undefined && item.GROUP_ORDER !== -1) {
-
-              var varInsert = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_DTL', {
-                BDGT_TMPL_DTL_ID: item.BDGT_TMPL_DTL_ID_TMP,
-                BDGT_TMPL_ID: _this13._cache_budget.HEADER.BDGT_TMPL_ID,
-                JOB_ID: item.JOB_ID,
-                GLOBAL_ID: item.GLOBAL_ID,
-                CONTRACT_AMT: item.CONTRACT_AMT_TMP.replace(/,/g, ''),
-                CATEGORY_ID: item.CATEGORY_ID,
-                STAFF_WORK: item.STAFF_WORK_TMP === undefined ? 0 : item.STAFF_WORK_TMP == true ? 1 : 0,
-                PYMNT_TERM_CD: item.PYMNT_TERM_CD,
-                PAY_TO_PERSON_FL: 'T',
-                PAY_RATE_FACTOR: item.PAY_RATE_FACTOR_TMP.replace(/,/g, ''),
-                BUDGET_AMT: item.INPUT_AMT_TMP.replace(/,/g, ''),
-                TAPING_DAY_CNT: _this13._cache_budget.HEADER.TAPING_DAYS,
-                PERSONNEL_CLASS_CD: _this13.toPersonModel.USE != "STAFF" ? "Mainstay" : "Staff",
-                REMARKS: item.REMARKS,
-                PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
-                PERSONNEL_NAME: item.BLANK_PERSONNEL_NAME !== undefined ? item.BLANK_PERSONNEL_NAME : item.PERSONNEL_NAME,
-                CREATED_BY: _this13._cache_obj.USER.USER_ID,
-                CREATED_DT: new Date(),
-                LAST_UPDATED_BY: _this13._cache_obj.USER.USER_ID,
-                LAST_UPDATED_DT: new Date(),
-                INPUT_AMT: item.INPUT_AMT_TMP.replace(/,/g, ''),
-                EPISODES: _this13._cache_budget.HEADER.EPISODES,
-                CONFIDENTIAL: item.CONFIDENTIAL_TMP === undefined ? 0 : item.CONFIDENTIAL_TMP == true ? 1 : 0,
-                PER_TAPING_DAY_RATE: 0,
-                PERSONNEL_CLASS_TYPE: _this13.getPersonnelClassType(),
-                POOL_RECORD: item.POOL_RECORD_TMP == null || item.POOL_RECORD_TMP == undefined ? 0 : item.POOL_RECORD_TMP == true ? 1 : 0,
-                GROUP_ORDER: varIndex,
-                GLOBAL_ID_LINK: item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? item.TALENT_MANAGER.GLOBAL_INDIV_ID : "NONE",
-                BDGT_TMPL_DTL_ID_LINK: item.BDGT_TMPL_DTL_ID_LINK !== undefined && item.BDGT_TMPL_DTL_ID_LINK !== null ? item.BDGT_TMPL_DTL_ID_LINK : 0,
-                WITH_TALENT_MANAGER: item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? '1' : '0'
-              });
-
-              (0, _entityManagerFactory.EntityManager)().addEntity(varInsert);
-
-              if (item.TALENT_MANAGER !== undefined) {
-
-                var varInsertTM = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_DTL', {
-                  BDGT_TMPL_DTL_ID: item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP,
-                  BDGT_TMPL_ID: _this13._cache_budget.HEADER.BDGT_TMPL_ID,
-                  JOB_ID: item.TALENT_MANAGER.JOB_ID,
-                  GLOBAL_ID: item.TALENT_MANAGER.GLOBAL_INDIV_ID,
-                  CONTRACT_AMT: item.TALENT_MANAGER.CONTRACT_AMT_TMP.replace(/,/g, ''),
-                  CATEGORY_ID: item.TALENT_MANAGER.CATEGORY_ID,
-                  STAFF_WORK: 0,
-                  PYMNT_TERM_CD: item.PYMNT_TERM_CD,
-                  PAY_TO_PERSON_FL: 'T',
-                  PAY_RATE_FACTOR: item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP.replace(/,/g, ''),
-                  BUDGET_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
-                  TAPING_DAY_CNT: _this13._cache_budget.HEADER.TAPING_DAYS,
-                  PERSONNEL_CLASS_CD: _this13.toPersonModel.USE != "STAFF" ? "Mainstay" : "Staff",
-                  REMARKS: item.TALENT_MANAGER.REMARKS,
-                  PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
-                  PERSONNEL_NAME: item.TALENT_MANAGER.PERSONNEL_NAME,
-                  CREATED_BY: _this13._cache_obj.USER.USER_ID,
-                  CREATED_DT: new Date(),
-                  LAST_UPDATED_BY: _this13._cache_obj.USER.USER_ID,
-                  LAST_UPDATED_DT: new Date(),
-                  INPUT_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
-                  EPISODES: _this13._cache_budget.HEADER.EPISODES,
-                  CONFIDENTIAL: 0,
-                  PER_TAPING_DAY_RATE: 0,
-                  PERSONNEL_CLASS_TYPE: _this13.getPersonnelClassType(),
-                  POOL_RECORD: 0,
-                  GROUP_ORDER: -1,
-                  WITH_TALENT_MANAGER: '0',
-                  GLOBAL_ID_LINK: 'NONE',
-                  BDGT_TMPL_DTL_ID_LINK: 0
-                });
-
-                (0, _entityManagerFactory.EntityManager)().addEntity(varInsertTM);
-              }
-            } else if (item.REMOVE == true) {
-
-              if (item.TALENT_MANAGER !== undefined) {
-                var varTalentMngrToDelete = foundDtl.results.find(function (allTm) {
-                  return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
-                });
-
-                varTalentMngrToDelete.entityAspect.setDeleted();
-              }
-
-              var varTalentToDelete = foundDtl.results.find(function (allTm) {
-                return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID;
-              });
-
-              varTalentToDelete.entityAspect.setDeleted();
-            } else {
-
-              var varTalentToEdit = foundDtl.results.find(function (allTm) {
-                return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID;
-              });
-
-              varTalentToEdit.JOB_ID = item.JOB_ID;
-
-              varTalentToEdit.GLOBAL_ID = item.GLOBAL_ID;
-              varTalentToEdit.CONTRACT_AMT = item.CONTRACT_AMT_TMP.replace(/,/g, '');
-              varTalentToEdit.CATEGORY_ID = item.CATEGORY_ID;
-              varTalentToEdit.STAFF_WORK = item.STAFF_WORK_TMP === undefined ? 0 : item.STAFF_WORK_TMP == true ? 1 : 0;
-              varTalentToEdit.PYMNT_TERM_CD = item.PYMNT_TERM_CD;
-              varTalentToEdit.PAY_RATE_FACTOR = item.PAY_RATE_FACTOR_TMP.replace(/,/g, '');
-              varTalentToEdit.BUDGET_AMT = item.INPUT_AMT_TMP.replace(/,/g, '');
-              varTalentToEdit.TAPING_DAY_CNT = _this13._cache_budget.HEADER.TAPING_DAYS;
-              varTalentToEdit.REMARKS = item.REMARKS;
-              varTalentToEdit.PERSONNEL_INFO_SRC = item.PERSONNEL_INFO_SRC;
-              varTalentToEdit.PERSONNEL_NAME = item.BLANK_PERSONNEL_NAME !== undefined ? item.BLANK_PERSONNEL_NAME : item.PERSONNEL_NAME;
-              varTalentToEdit.LAST_UPDATED_BY = _this13._cache_obj.USER.USER_ID;
-              varTalentToEdit.LAST_UPDATED_DT = new Date();
-              varTalentToEdit.INPUT_AMT = item.INPUT_AMT_TMP.replace(/,/g, '');
-              varTalentToEdit.EPISODES = _this13._cache_budget.HEADER.EPISODES;
-              varTalentToEdit.CONFIDENTIAL = item.CONFIDENTIAL_TMP === undefined ? 0 : item.CONFIDENTIAL_TMP == true ? 1 : 0;
-              varTalentToEdit.POOL_RECORD = item.POOL_RECORD_TMP == null || item.POOL_RECORD_TMP == undefined ? 0 : item.POOL_RECORD_TMP == true ? 1 : 0;
-
-              if (varTalentToEdit.GROUP_ORDER !== -1) varTalentToEdit.GROUP_ORDER = varIndex;
-
-              varTalentToEdit.GLOBAL_ID_LINK = item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? item.TALENT_MANAGER.GLOBAL_INDIV_ID : "NONE";
-              varTalentToEdit.BDGT_TMPL_DTL_ID_LINK = item.BDGT_TMPL_DTL_ID_LINK !== undefined && item.BDGT_TMPL_DTL_ID_LINK !== null ? item.BDGT_TMPL_DTL_ID_LINK : 0;
-              varTalentToEdit.WITH_TALENT_MANAGER = item.TALENT_MANAGER !== undefined && item.TALENT_MANAGER !== null ? '1' : '0';
-
-              if (item.TALENT_MANAGER !== undefined) {
-
-                if (item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
-                  var varCheckTalent = _this13._PersonnelTM.find(function (allTalent) {
-                    return allTalent.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
-                  });
-                  save;
-                  if (varCheckTalent !== undefined) {
-
-                    if (varCheckTalent.BDGT_TMPL_DTL_ID !== item.BDGT_TMPL_DTL_ID_LINK && item.BDGT_TMPL_DTL_ID_LINK != 0) {
-
-                      var varTalentMngrToEdit = foundDtl.results.find(function (allTm) {
-                        return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
-                      });
-
-                      varTalentMngrToEdit.entityAspect.setDeleted();
-                    } else {
-                      var varTalentMngrToEdit = foundDtl.results.find(function (allTm) {
-                        return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
-                      });
-                      varTalentMngrToEdit.CONTRACT_AMT = item.TALENT_MANAGER.CONTRACT_AMT_TMP.replace(/,/g, '');
-                      varTalentMngrToEdit.PAY_RATE_FACTOR = item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP.replace(/,/g, '');
-                      varTalentMngrToEdit.INPUT_AMT = item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, '');
-                      varTalentMngrToEdit.BUDGET_AMT = item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, '');
-                      varTalentMngrToEdit.REMARKS = item.TALENT_MANAGER.REMARKS;
-                    }
-                  }
-                }
-
-                if (item.TALENT_MANAGER.IsNewTalent) {
-                  var varInsertTM = (0, _entityManagerFactory.EntityManager)().createEntity('BDGT_TMPL_DTL', {
-                    BDGT_TMPL_DTL_ID: item.TALENT_MANAGER.BDGT_TMPL_DTL_ID_TMP,
-                    BDGT_TMPL_ID: _this13._cache_budget.HEADER.BDGT_TMPL_ID,
-                    JOB_ID: item.TALENT_MANAGER.JOB_ID,
-                    GLOBAL_ID: item.TALENT_MANAGER.GLOBAL_INDIV_ID,
-                    CONTRACT_AMT: item.TALENT_MANAGER.CONTRACT_AMT_TMP.replace(/,/g, ''),
-                    CATEGORY_ID: item.TALENT_MANAGER.CATEGORY_ID,
-                    STAFF_WORK: 0,
-                    PYMNT_TERM_CD: item.PYMNT_TERM_CD,
-                    PAY_TO_PERSON_FL: 'T',
-                    PAY_RATE_FACTOR: item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP.replace(/,/g, ''),
-                    BUDGET_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
-                    TAPING_DAY_CNT: _this13._cache_budget.HEADER.TAPING_DAYS,
-                    PERSONNEL_CLASS_CD: _this13.toPersonModel.USE != "STAFF" ? "Mainstay" : "Staff",
-                    REMARKS: item.TALENT_MANAGER.REMARKS,
-                    PERSONNEL_INFO_SRC: item.PERSONNEL_INFO_SRC,
-                    PERSONNEL_NAME: item.TALENT_MANAGER.PERSONNEL_NAME,
-                    CREATED_BY: _this13._cache_obj.USER.USER_ID,
-                    CREATED_DT: new Date(),
-                    LAST_UPDATED_BY: _this13._cache_obj.USER.USER_ID,
-                    LAST_UPDATED_DT: new Date(),
-                    INPUT_AMT: item.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''),
-                    EPISODES: _this13._cache_budget.HEADER.EPISODES,
-                    CONFIDENTIAL: 0,
-                    PER_TAPING_DAY_RATE: 0,
-                    PERSONNEL_CLASS_TYPE: _this13.getPersonnelClassType(),
-                    POOL_RECORD: 0,
-                    GROUP_ORDER: -1,
-                    WITH_TALENT_MANAGER: '0',
-                    GLOBAL_ID_LINK: 'NONE',
-                    BDGT_TMPL_DTL_ID_LINK: 0
-                  });
-                  (0, _entityManagerFactory.EntityManager)().addEntity(varInsertTM);
-                }
-              } else if (item.TALENT_MANAGER === undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== undefined && item.BDGT_TMPL_DTL_ID_LINK_TMP !== 0) {
-
-                var varTalentMngrToDelete = foundDtl.results.find(function (allTm) {
-                  return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID_LINK_TMP;
-                });
-
-                if (varTalentMngrToDelete !== undefined) {
-                  consoole.log(item.BDGT_TMPL_DTL_ID);
-                  var varTalentToEdit = foundDtl.results.find(function (allTm) {
-                    return allTm.BDGT_TMPL_DTL_ID == item.BDGT_TMPL_DTL_ID;
-                  });
-                  varTalentMngrToDelete.entityAspect.setDeleted();
-
-                  varTalentToEdit.GLOBAL_ID_LINK = 'NONE';
-                  varTalentToEdit.BDGT_TMPL_DTL_ID_LINK = 0;
-                  varTalentToEdit.WITH_TALENT_MANAGER = '0';
-                }
-              }
-            }
-
-            ++varIndex;
-          });
-
-          (0, _entityManagerFactory.EntityManager)().saveChanges().then(function (success) {
-            _this13.fnCheckBudget(_this13._cache_budget.HEADER.BDGT_TMPL_ID);
-            _toastr2.default.success("Succesfully Saved", _this13.toPersonModel.USE);
-
-            if (tag == 1) _this13.fnSequenceDispatch();
-          }, function (fail) {
-
-            (0, _entityManagerFactory.EntityManager)().getEntities().forEach(function (entity) {
-              var errors = entity.entityAspect.getValidationErrors();
-              if (errors.length > 0) console.log(errors);
-            });
-            console.log(fail);
-            _toastr2.default.error("Error Occured", fail);
-
-            if (tag == 1) _this13.fnSequenceDispatch();
-          });
-        });
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnSequenceDispatch = function fnSequenceDispatch() {
-
-      if (this.toPersonModel.USE == "REGULAR") {
-
-        this._cache_budget.OBSERVERS.copy_template.forEach(function (all) {
-          all('SEMI_REGULAR');
-        });
-      } else if (this.toPersonModel.USE == "SEMI_REGULAR") {
-
-        this._cache_budget.OBSERVERS.copy_template.forEach(function (all) {
-          all('STAFF');
-        });
-      } else if (this.toPersonModel.USE == "STAFF") {
-
-        this._cache_budget.OBSERVERS.copy_template_guest.forEach(function (all) {
-          all();
-        });
-      }
-    };
-
-    PersonnelCustomElement.prototype.getPersonnelClassType = function getPersonnelClassType() {
-      if (this.toPersonModel.USE == 'REGULAR') {
-        return 'Regular';
-      } else if (this.toPersonModel.USE == 'SEMI_REGULAR') {
-        return 'Semi-Regular';
-      } else return 'Staff';
-    };
-
-    PersonnelCustomElement.prototype.fnRegularBlurEvt = function fnRegularBlurEvt(item, property, index, BDGT_TMPL_DTL_ID) {
-
-      if (property == "TERM") {
-        if ($("input[tableTermIndex*='" + index + "']").val() === undefined) return;
-        this._Personnel[index].PAYMENT_TERM = $("input[tableTermIndex*='" + index + "']").val().toUpperCase();
-
-        var varPaymentTerm = this._Personnel[index].PAYMENT_TERM.trim();
-        var varFound = this._PYMNTTERM.find(function (all) {
-          return varPaymentTerm == all.REF_DESC.trim();
-        });
-
-        if (varFound !== undefined) {
-          this._Personnel[index].PYMNT_TERM_CD = varFound.REF_CD;
-        } else this._Personnel[index].PYMNT_TERM_CD = "";
-      }
-    };
-
-    PersonnelCustomElement.prototype.fnBlankPersonnelRegular = function fnBlankPersonnelRegular() {
-
-      this.getDefaultPymntTerm();
-
-      this._Personnel.push({ visible: true, PAY_RATE_FACTOR_TMP: (0, _numeral2.default)(1).format('0,0.00'),
-        CONTRACT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-        INPUT_AMT_TMP: (0, _numeral2.default)(0).format('0,0.00'),
-        PYMNT_TERM_CD: this.varPymnt.REF_CD,
-        PAYMENT_TERM: this.varPymnt.REF_DESC
-      });
-
-      var varBudgetLast = this._Personnel[this._Personnel.length - 1];
-      varBudgetLast.ce_value = "+";
-      varBudgetLast.styleString = this.styleStringHidden;
-
-      this._signal = (0, _entityManagerFactory.generateID)();
-
-      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-        all();
-      });
-    };
-
-    PersonnelCustomElement.prototype.chkRemove = function chkRemove(item) {
-      if (item.REMOVE) {
-        item.REMOVE = false;
-      } else {
-        item.REMOVE = true;
-      }
-    };
-
-    PersonnelCustomElement.prototype.removeRegular = function removeRegular(index) {
-
-      var varRemoved = this._Personnel.splice(index, 1);
-      this._signal = (0, _entityManagerFactory.generateID)();
-
-      this._cache_budget.OBSERVERS.reset_summary.forEach(function (all) {
-        all();
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnIndivMstrTalents = function fnIndivMstrTalents() {
-      this.dialogService.open({
-        viewModel: _globalindivmstr.globalindivmstr
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {} else {}
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnIndivMstr = function fnIndivMstr() {
-      var _this14 = this;
-
-      this.dialogService.open({
-        viewModel: _indivmstr.indivmstr
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {
-          _this14.PassedIndiv(response.output);
-        } else {}
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnModalJob = function fnModalJob() {
-      var _this15 = this;
-
-      this.dialogService.open({
-        viewModel: _job.job
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {
-          _this15.passJob(response.output);
-        } else {}
-      });
-    };
-
-    PersonnelCustomElement.prototype.fnModalPaymentTerm = function fnModalPaymentTerm() {
-      var _this16 = this;
-
-      this.dialogService.open({
-        viewModel: _paymentterm.paymentterm
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {
-          _this16.passTerm(response.output);
-        } else {}
-      });
-    };
-
-    PersonnelCustomElement.prototype.passTerm = function passTerm(term) {
-
-      var index = this._Index;
-
-      this._Personnel[index].PYMNT_TERM_CD = term.REF_CD;
-      this._Personnel[index].PAYMENT_TERM = term.REF_DESC;
-    };
-
-    PersonnelCustomElement.prototype.fnIndivMstrManager = function fnIndivMstrManager() {
-      var _this17 = this;
-
-      this.dialogService.open({
-        viewModel: _globalindivmstr.globalindivmstr
-      }).whenClosed(function (response) {
-
-        if (!response.wasCancelled) {
-          _this17.fnPassedPersonnels(response.output);
-        } else {}
-      });
-    };
-
-    return PersonnelCustomElement;
-  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'toPerson', [_aureliaFramework.bindable], {
-    enumerable: true,
-    initializer: null
-  }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'toPersonModel', [_aureliaFramework.bindable], {
-    enumerable: true,
-    initializer: null
-  })), _class2)) || _class);
-});
-define('ppfcs/budget/summary',['exports', 'aurelia-framework', 'cache_obj', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'numeral', 'toastr', 'multi-observer'], function (exports, _aureliaFramework, _cache_obj, _cache_budget, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _numeral, _toastr, _multiObserver) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.SummaryCustomElement = undefined;
-
-  var _typeahead2 = _interopRequireDefault(_typeahead);
-
-  var _settings2 = _interopRequireDefault(_settings);
-
-  var _underscore2 = _interopRequireDefault(_underscore);
-
-  var _numeral2 = _interopRequireDefault(_numeral);
-
-  var _toastr2 = _interopRequireDefault(_toastr);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  function _initDefineProp(target, property, descriptor, context) {
-    if (!descriptor) return;
-    Object.defineProperty(target, property, {
-      enumerable: descriptor.enumerable,
-      configurable: descriptor.configurable,
-      writable: descriptor.writable,
-      value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-    });
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-    var desc = {};
-    Object['ke' + 'ys'](descriptor).forEach(function (key) {
-      desc[key] = descriptor[key];
-    });
-    desc.enumerable = !!desc.enumerable;
-    desc.configurable = !!desc.configurable;
-
-    if ('value' in desc || desc.initializer) {
-      desc.writable = true;
-    }
-
-    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-      return decorator(target, property, desc) || desc;
-    }, desc);
-
-    if (context && desc.initializer !== void 0) {
-      desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-      desc.initializer = undefined;
-    }
-
-    if (desc.initializer === void 0) {
-      Object['define' + 'Property'](target, property, desc);
-      desc = null;
-    }
-
-    return desc;
-  }
-
-  function _initializerWarningHelper(descriptor, context) {
-    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-  }
-
-  var _dec, _class, _desc, _value, _class2, _descriptor;
-
-  var SummaryCustomElement = exports.SummaryCustomElement = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj, _cache_budget.cache_budget, _multiObserver.MultiObserver), _dec(_class = (_class2 = function () {
-    function SummaryCustomElement(cache_obj, cache_budget, multiObserver) {
-      var _this = this;
-
-      _classCallCheck(this, SummaryCustomElement);
-
-      _initDefineProp(this, 'to', _descriptor, this);
-
-      this._cache_obj = null;
-      this._enableAdd = false;
-      this._enableRemove = false;
-      this._INPUT_AMT_MAINSTAY = 0;
-      this._INPUT_AMT_STAFF = 0;
-      this._INPUT_AMT_GUEST = 0;
-      this._INPUT_AMT_TOTAL = 0;
-      this.varObserveSubscriptions = [];
-      this._cache_budget = null;
-
-      this._cache_obj = cache_obj;
-      this._cache_budget = cache_budget;
-      this._multiObserver = multiObserver;
-
-      this._cache_obj.OBSERVERS.budget_dialog.push(function (val) {
-        _this.fnCheckSummary(val);
-      });
-
-      this._cache_budget.OBSERVERS.reset_summary.push(function () {
-        _this.fnResetSummarySubscription();
-      });
-    }
-
-    SummaryCustomElement.prototype.fnCheckAll = function fnCheckAll() {
-      var _this2 = this;
-
-      this._INPUT_AMT_MAINSTAY = 0;
-      this._INPUT_AMT_TOTAL = 0;
-      this._cache_budget._INPUT_AMT_REGULAR = 0;
-      this._cache_budget._INPUT_AMT_SEMI_REGULAR = 0;
-
-      this._cache_budget.REGULAR.forEach(function (all) {
-
-        if (_this2._cache_obj.ALLOW_PASS_CONFIDENTIAL || !all.CONFIDENTIAL_TMP) {
-          if (all.GROUP_ORDER !== -1) if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) {
-            _this2._INPUT_AMT_MAINSTAY += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
-          }
-
-          if (all.TALENT_MANAGER) {
-            if (all.TALENT_MANAGER.INPUT_AMT_TMP != "" && all.TALENT_MANAGER.INPUT_AMT_TMP != null && all.TALENT_MANAGER.INPUT_AMT_TMP != undefined) {
-              _this2._INPUT_AMT_MAINSTAY += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
-            }
-          }
-        }
-      });
-
-      this._cache_budget._INPUT_AMT_REGULAR = (0, _numeral2.default)(this._INPUT_AMT_MAINSTAY).format('0,0.00');
-
-      this._cache_budget.SEMI_REGULAR.forEach(function (all) {
-
-        if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) {
-          if (all.GROUP_ORDER !== -1) {
-            if (_this2._cache_obj.ALLOW_PASS_CONFIDENTIAL || !all.CONFIDENTIAL_TMP) _this2._INPUT_AMT_MAINSTAY += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
-            _this2._cache_budget._INPUT_AMT_SEMI_REGULAR += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
-          }
-
-          if (all.TALENT_MANAGER) {
-            if (all.TALENT_MANAGER.INPUT_AMT_TMP != "" && all.TALENT_MANAGER.INPUT_AMT_TMP != null && all.TALENT_MANAGER.INPUT_AMT_TMP != undefined) {
-              _this2._INPUT_AMT_MAINSTAY += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
-              _this2._cache_budget._INPUT_AMT_SEMI_REGULAR += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
-            }
-          }
-        }
-      });
-
-      this._INPUT_AMT_TOTAL = this._INPUT_AMT_MAINSTAY;
-      this._INPUT_AMT_MAINSTAY = (0, _numeral2.default)(this._INPUT_AMT_MAINSTAY).format('0,0.00');
-
-      this._cache_budget._INPUT_AMT_SEMI_REGULAR = (0, _numeral2.default)(this._cache_budget._INPUT_AMT_SEMI_REGULAR).format('0,0.00');
-
-      this._INPUT_AMT_STAFF = 0;
-      this._cache_budget._INPUT_AMT_STAFF = 0;
-
-      this._cache_budget.STAFF.forEach(function (all) {
-
-        if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) {
-
-          if (all.GROUP_ORDER !== -1) {
-
-            if (_this2._cache_obj.ALLOW_PASS_CONFIDENTIAL || !all.CONFIDENTIAL_TMP) _this2._INPUT_AMT_STAFF += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, ''));
-          }
-
-          if (all.TALENT_MANAGER) {
-
-            if (all.TALENT_MANAGER.INPUT_AMT_TMP != "" && all.TALENT_MANAGER.INPUT_AMT_TMP != null && all.TALENT_MANAGER.INPUT_AMT_TMP != undefined) {
-              _this2._INPUT_AMT_STAFF += parseFloat(all.TALENT_MANAGER.INPUT_AMT_TMP.replace(/,/g, ''));
-            }
-          }
-        }
-      });
-
-      this._INPUT_AMT_TOTAL += this._INPUT_AMT_STAFF;
-      this._INPUT_AMT_STAFF = (0, _numeral2.default)(this._INPUT_AMT_STAFF).format('0,0.00');
-      this._cache_budget._INPUT_AMT_STAFF = this._INPUT_AMT_STAFF;
-
-      this._INPUT_AMT_GUEST = 0;
-      this._cache_budget.GUEST.forEach(function (all) {
-
-        if (all.GROUP_ORDER !== -1) if (all.INPUT_AMT_TMP != "" && all.INPUT_AMT_TMP != null && all.INPUT_AMT_TMP != undefined) _this2._INPUT_AMT_GUEST += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, '')) * all.PAY_RATE_FACTOR;
-      });
-
-      this._INPUT_AMT_TOTAL += this._INPUT_AMT_GUEST;
-      this._INPUT_AMT_GUEST = (0, _numeral2.default)(this._INPUT_AMT_GUEST).format('0,0.00');
-      this._cache_budget._INPUT_AMT_GUEST = (0, _numeral2.default)(this._INPUT_AMT_GUEST).format('0,0.00');
-
-      this._INPUT_AMT_TOTAL = (0, _numeral2.default)(this._INPUT_AMT_TOTAL).format('0,0.00');
-
-      this._cache_budget.TOTAL = this._INPUT_AMT_TOTAL;
-
-      if (this._cache_budget._LOADING_BUDGET == 1 && this._cache_budget.TOTAL != 0) {
-        this._cache_budget_LOADING_BUDGET = 0;
-        this._cache_budget.OBSERVERS.budget_loaded.forEach(function (all) {
-          all();
-        });
-      }
-    };
-
-    SummaryCustomElement.prototype.fnCheckSummary = function fnCheckSummary(value) {
-      var _this3 = this;
-
-      setTimeout(function () {
-        for (var name in _this3._cache_budget.REGULAR) {
-
-          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.REGULAR[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
-
-            _this3.fnCheckAll();
-          });
-
-          _this3.varObserveSubscriptions.push(varSubscription);
-
-          if (_this3._cache_budget.REGULAR[name].TALENT_MANAGER !== undefined) {
-
-            var varSubscriptionTM = _this3._multiObserver.observe([[_this3._cache_budget.REGULAR[name].TALENT_MANAGER, 'INPUT_AMT_TMP']], function (newValue, oldValue) {
-
-              _this3.fnCheckAll();
-            });
-
-            _this3.varObserveSubscriptions.push(varSubscriptionTM);
-          }
-        }
-
-        for (var name in _this3._cache_budget.SEMI_REGULAR) {
-
-          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.SEMI_REGULAR[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
-
-            _this3.fnCheckAll();
-          });
-
-          _this3.varObserveSubscriptions.push(varSubscription);
-
-          if (_this3._cache_budget.SEMI_REGULAR[name].TALENT_MANAGER !== undefined) {
-
-            var varSubscriptionTM = _this3._multiObserver.observe([[_this3._cache_budget.SEMI_REGULAR[name].TALENT_MANAGER, 'INPUT_AMT_TMP']], function (newValue, oldValue) {
-
-              _this3.fnCheckAll();
-            });
-
-            _this3.varObserveSubscriptions.push(varSubscriptionTM);
-          }
-        }
-
-        for (var name in _this3._cache_budget.STAFF) {
-
-          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.STAFF[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
-
-            _this3.fnCheckAll();
-          });
-
-          _this3.varObserveSubscriptions.push(varSubscription);
-
-          if (_this3._cache_budget.STAFF[name].TALENT_MANAGER !== undefined) {
-
-            var varSubscriptionTM = _this3._multiObserver.observe([[_this3._cache_budget.STAFF[name].TALENT_MANAGER, 'INPUT_AMT_TMP']], function (newValue, oldValue) {
-
-              _this3.fnCheckAll();
-            });
-
-            _this3.varObserveSubscriptions.push(varSubscriptionTM);
-          }
-        }
-
-        for (var name in _this3._cache_budget.GUEST) {
-
-          var varSubscription = _this3._multiObserver.observe([[_this3._cache_budget.GUEST[name], 'INPUT_AMT_TMP']], function (newValue, oldValue) {
-
-            _this3.fnCheckAll();
-          });
-
-          _this3.varObserveSubscriptions.push(varSubscription);
-        }
-
-        _this3.fnCheckAll();
-      }, 6000);
-    };
-
-    SummaryCustomElement.prototype.fnResetSummarySubscription = function fnResetSummarySubscription() {
-
-      this.varObserveSubscriptions.forEach(function (toDispose) {
-        toDispose();
-      });
-
-      while (this.varObserveSubscriptions.length > 0) {
-        this.varObserveSubscriptions.pop();
-      }
-
-      this.fnCheckSummary();
-    };
-
-    return SummaryCustomElement;
-  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'to', [_aureliaFramework.bindable], {
-    enumerable: true,
-    initializer: null
-  })), _class2)) || _class);
-});
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\r\n  <!--<link href=\"/styles/bootstrap.css\" rel=\"stylesheet\" />-->\r\n  <link rel=\"stylesheet\" href=\"/styles/styles.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/datepicker.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/toastr.css\">\r\n  <link href=\"/styles/font-awesome.min.css\" rel=\"stylesheet\" />\r\n  <require from='nav-bar'></require>\r\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\r\n  <!--<require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff\"></require>\r\n  <require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff2\"></require>-->\r\n  \r\n  <nav-bar router.bind=\"router\"></nav-bar>\r\n\r\n  <div class=\"page-host\">\r\n    <router-view></router-view>\r\n  </div>\r\n\r\n  <!--<router-view></router-view>-->\r\n</template>\r\n"; });
-define('text!blankpage.html', ['module'], function(module) { module.exports = "<template>\r\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\r\n      \r\n\r\n    </div>\r\n    \r\n\r\n</template>"; });
-define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\r\n  <section class=\"au-animate\">\r\n    <h2>${heading}</h2>\r\n    <div>\r\n      <div class=\"col-md-2\">\r\n        <ul class=\"well nav nav-pills nav-stacked\">\r\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\r\n            <a href.bind=\"row.href\">${row.title}</a>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n      <div class=\"col-md-10\" style=\"padding: 0\">\r\n        <router-view></router-view>\r\n      </div>\r\n    </div>\r\n  </section>\r\n</template>\r\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <!--<link href=\"/styles/bootstrap.css\" rel=\"stylesheet\" />-->\r\n  <link rel=\"stylesheet\" href=\"/styles/styles.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/datepicker.css\">\n  <link rel=\"stylesheet\" href=\"/styles/toastr.css\">\n  <link href=\"/styles/font-awesome.min.css\" rel=\"stylesheet\" />\n  <require from='nav-bar'></require>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <!--<require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff\"></require>\n  <require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff2\"></require>-->\n  \n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div class=\"page-host\">\n    <router-view></router-view>\n  </div>\n\n  <!--<router-view></router-view>-->\n</template>\n"; });
+define('text!blankpage.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\n      \n\n    </div>\n    \n\r\n</template>"; });
+define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h2>${heading}</h2>\n    <div>\n      <div class=\"col-md-2\">\n        <ul class=\"well nav nav-pills nav-stacked\">\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n            <a href.bind=\"row.href\">${row.title}</a>\n          </li>\n        </ul>\n      </div>\n      <div class=\"col-md-10\" style=\"padding: 0\">\n        <router-view></router-view>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!group_individual.html', ['module'], function(module) { module.exports = "<template>\r\n  <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n  <require from=\"converters/filtercustom\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;text-align:center\" class=\"text-center divBackground\" >\r\n  \t<table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:80%;\">\r\n     <tr>\r\n        <td style=\"width:50%;text-align:center;\" colspan=3><strong>TALENT LIST</strong></td>\r\n      </tr>\r\n  \t\t<tr>\r\n        <!-- class=\"typeahead\" -->\r\n        <td style=\"width:20%;\" class=\"text-left\">Global ID: ${_GLOBAL_GRP_ID}</td>\r\n        <!-- class=\"typeahead\" -->\r\n        <td style=\"width:45%;\"class=\"text-left\">Name: ${_GROUP_NAME}\r\n          <!-- <input id=\"idTalentManager\" class=\"typeahead\"/> -->\r\n        </td>\r\n        <td style=\"width:30%;\">\r\n          <!-- <modalcontainer to.bind=\"modalTalentManager\"></modalcontainer> -->\r\n          <input type=\"button\" class=\"btn btn-xs customButton\" value=\"Find Talent Manager\" style=\"padding-left:15px;padding-right:15px;\" click.delegate=\"findTalentManager()\" disabled.bind=\"disabledfindTM\" />\r\n\r\n          <button class=\"btn btn-xs customButton\" click.trigger=\"clear()\">Clear</button>\r\n          <button class=\"btn btn-xs customButton\" click.trigger=\"saveGroupIndiv()\"  disabled.bind=\"isDisableSave\" >Save</button>\r\n\r\n        </td>\r\n      </tr>\r\n     \r\n      <tr>\r\n        <td colspan=3 style=\"text-align:right;\">\r\n          <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstr\"></modalcontainer> -->\r\n          <input type=\"button\" class=\"btn btn-xs customButton\" value=\"Search Talent\" style=\"padding-left:15px;padding-right:15px;\" disabled.bind=\"disabledfindTalent\" click.delegate=\"findTalent()\"/>\r\n        </td>\r\n      </tr>\r\n      <tr>\r\n       <td colspan=3>\r\n         <table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:100%;\">\r\n          <thead>\r\n           <tr><td style=\"width:30%;\">GLOBAL ID</td><td style=\"width:60%;\">TALENTS</td><td></td></tr>\r\n         </thead>\r\n         <tbody>\r\n           <tr repeat.for=\"item of grpMembers | filtercustom:'STATUS_CD':'ACTV':_signal | sorttext:'PERSONNEL_NAME':'ascending'\">\r\n            <td style=\"width:20%;\">${item.GLOBAL_INDIV_ID}</td>\r\n            <td style=\"width:60%;\">${item.PERSONNEL_NAME}</td>\r\n            <td><button click.delegate=\"$parent.deleteItem(item)\">X</button>\r\n            </td>\r\n          </tr>\r\n\r\n        </tbody>\r\n      </table>\r\n    </td>\r\n  </tr>\r\n</table>\r\n\r\n<!-- <modalcontainer to.bind=\"modalLogin\"></modalcontainer> -->\r\n<!--<div style=\"margin-right:200px!important;\">\r\n    <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.delegate=\"fnLogin()\"/>\r\n    <input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\"> \r\n</div>-->\r\n<div>\r\n  <br/>\r\n  <br/>\r\n  <table class= \"table-bordered\">\r\n    <tr>\r\n      <td>\r\n        LOGGED AS:\r\n      </td>\r\n      <td>\r\n        <strong>${_cache_obj.USER.USER_ID}</strong> \r\n      </td>\r\n    </tr>\r\n  </table>\r\n</div>\r\n</div>\r\n\r\n</template>"; });
-define('text!mainpage.html', ['module'], function(module) { module.exports = "<template>\r\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\r\n    <!--<div class=\"panel panel-info\">...</div>-->\r\n    <center>\r\n      <div class=\"row\">\r\n        <div class=\"list-group\" style=\"padding-top:2%;margin-left:4%;margin-right:4%;\">\r\n          <a href=\"#\" class=\"list-group-item active\" if.bind=\"headerVisible\" style=\"background-color: #d9edf7; color: #31708f;   border: 1px solid #a4d4e6;\">\r\n            <h3 style=\"margin-left:10px;margin-top:10px;margin-right:10px;\" class=\"list-group-item-heading\">PLEASE SELECT..</h3>\r\n          </a>\r\n          <!--<a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('mainview')\" if.bind=\"budgetAccess\" style=\" padding-top:15px;\">\r\n\r\n                      <h3 style=\"margin:0px;color: #31708f;\">\r\n                        BUDGET TEMPLATE\r\n                      </h3>\r\n\r\n        </a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('actual_cost')\"  if.bind=\"actualAccess\"><h3 style=\"margin:0px;color: #31708f;\">ACTUAL COST</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('group_individual')\" if.bind=\"talentgroupAccess\"><h3 style=\"margin:0px;color: #31708f;\">TALENT GROUP</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('buh')\"  if.bind=\"buhAccess\"><h3 style=\"margin:0px;color: #31708f;\">BUH</h3></a>-->\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _application\" click.trigger=\"applicationClick(item)\" if.bind=\"!_remove.includes(item.APPLICATION_DESC) && _application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC}</h3></a>\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _ppfcs_modules\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC.toUpperCase()}</h3></a>\r\n          <!--<a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _roles\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.MODULE_NAME.toUpperCase()}</h3></a>-->\r\n          <a href=\"#\" class=\"list-group-item\" if.bind=\"!_application_on\" click.trigger=\"applicationOn()\"><h3 style=\"margin:0px;color: #31708f;background-color:#d9edf7;\">BACK..</h3></a>\r\n\r\n          <!--<a href=\"#\" class=\"list-group-item\">IPS</a>-->\r\n\r\n\r\n        </div>\r\n\r\n        <div class=\"col-xs-0 col-md-4\"></div>\r\n      </div>\r\n    </center>\r\n    </div>\r\n    \r\n\r\n</template>"; });
-define('text!nav-bar.html', ['module'], function(module) { module.exports = "<template>\r\n  <nav class=\"navbar navbar-default navbar-fixed-top backroundTab\" role=\"navigation\" >\r\n    <div class=\"navbar-header\" style=\"background-color:#2191c0;margin-right:20px;margin-left:20px;\">\r\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\r\n        <span class=\"sr-only\">Toggle Navigation</span>\r\n        <span class=\"icon-bar\"></span>\r\n        <span class=\"icon-bar\"></span>\r\n        <span class=\"icon-bar\"></span>\r\n      </button>\r\n      <a class=\"navbar-brand\" href=\"#\" >\r\n        <i class=\"fa fa-home\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\r\n        <span style=\"color:white\">${router.title}</span>\r\n      </a>\r\n\r\n    </div>\r\n\r\n    <div class=\"collapse navbar-collapse  .navbar-right\" id=\"bs-example-navbar-collapse-1\">\r\n      <!--<ul class=\"nav navbar-nav\">\r\n        <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\r\n          <a if.bind=\"row.title!='PPMS'\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\r\n        </li>\r\n      </ul>-->\r\n    <!--   <img if.bind=\"_cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=hdpi.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/> -->\r\n<!-- \r\n      <form method=\"post\" enctype=\"multipart/form-data\" action=\"/ViewFile/Upload\">\r\n          <div>\r\n              <p>Upload one or more files using this form:</p>\r\n              <input type=\"file\" name=\"files\" />\r\n          </div>\r\n          <div>\r\n               <input type=\"submit\" value=\"Upload\" />\r\n          </div>\r\n      </form> -->\r\n      <ul class=\"nav navbar-nav\">\r\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"home()\" href=\"#\">HOME</a>\r\n         \r\n        </li>\r\n          \r\n        <!--<li  if.bind=\"_cache_obj.USER.USER_ID===undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" click.trigger=\"fnLogin()\" href=\"#\">LOG-IN</a>\r\n        </li>-->\r\n      </ul>\r\n      <ul class=\"nav navbar-nav\">\r\n        <li class=\"loader\" if.bind=\"router.isNavigating || settings.isNavigating\">\r\n          <i class=\"fa fa-spinner fa-spin fa-2x\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\r\n        </li>\r\n      </ul>\r\n      <ul class=\"nav navbar-nav navbar-right\" style=\"background-color:#2191c0;height:50px;\"  if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n        <li style=\"color:white;font-size:13px;margin-top:16px;margin-right:20px;margin-left:20px;\">\r\n          ${_cache_obj.USER.USER_ID}\r\n        </li>\r\n        <li class=\"dropdown\">\r\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"  style=\"color:white;font-size:13px;\">PASSWORD<span class=\"caret\"></span></a>\r\n          <ul class=\"dropdown-menu\">\r\n            <li><a href=\"#\" click.trigger=\"changePassword()\">CHANGE PASSWORD</a></li>\r\n            <!--<li role=\"separator\" class=\"divider\"></li>-->\r\n            <!--<li><a href=\"#\">EMAIL PASSWORD</a></li>-->\r\n          </ul>\r\n        </li>\r\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"logout()\" href=\"#\">LOG-OUT</a>\r\n        </li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n</template>\r\n"; });
-define('text!users.html', ['module'], function(module) { module.exports = "<template>\r\n  <require from=\"blur-image\"></require>\r\n\r\n  <section class=\"au-animate\">\r\n      <h2>${heading}</h2>\r\n      <div class=\"row au-stagger\">\r\n        <div class=\"col-sm-6 col-md-3 card-container au-animate\" repeat.for=\"user of users\">\r\n            <div class=\"card\">\r\n                <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\r\n                <div class=\"avatar\">\r\n                    <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\r\n                </div>\r\n                <div class=\"content\">\r\n                    <p class=\"name\">${user.login}</p>\r\n                    <p><a target=\"_blank\" class=\"btn btn-default\" href.bind=\"user.html_url\">Contact</a></p>\r\n                </div>\r\n            </div>\r\n        </div>\r\n      </div>\r\n  </section>\r\n</template>\r\n"; });
-define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\r\n  <section class=\"au-animate\">\r\n    <h2>${heading}</h2>\r\n\r\n    <form role=\"form\" submit.delegate=\"submit()\">\r\n      <div class=\"form-group\">\r\n        <label for=\"fn\">First Name</label>\r\n        <input type=\"text\" value.bind=\"firstName\" class=\"form-control\" id=\"fn\" placeholder=\"first name\">\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label for=\"ln\">Last Name</label>\r\n        <input type=\"text\" value.bind=\"lastName\" class=\"form-control\" id=\"ln\" placeholder=\"last name\">\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label>Full Name</label>\r\n        <p class=\"help-block\">${fullName | upper}</p>\r\n      </div>\r\n      <button type=\"submit\" class=\"btn btn-default\">Submit</button>\r\n    </form>\r\n  </section>\r\n</template>\r\n"; });
-define('text!modals/budget.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n     \r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>BUDGET TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    BUDGET ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM IO\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bBDGT_TMPL_ID\" searchable=\"_sBDGT_TMPL_ID\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_IO\" searchable=\"_sPROGRAM_IO\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bAPPR_STAT_CD\" searchable=\"_sAPPR_STAT_CD\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <!-- | sorttext:'PROGRAM_TITLE':'ascending'  -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedBudget(item)\">\r\n                <td>\r\n                    ${item.BDGT_TMPL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_TITLE}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_IO}\r\n                </td>\r\n                <td>\r\n                    ${item.APPR_STAT_CD}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
-define('text!modals/buh-program-dialog.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n  <!--<ux-dialog-header class=\"colorHeader\">\r\n        \r\n                    <h4 class=\"modal-title\">SELECT PROGRAMS</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PROGRAMS</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:420px; overflow: auto;\">\r\n  <table>\r\n    <tr>\r\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td class=\"colorCell2\" style=\"width:140px\">PROGRAM CODE</td>\r\n                        <td class=\"colorCell2\">PROGRAM TITLE</td>\r\n                    </tr>\r\n                    <tr ref=\"_rGROUP_TITLE\">\r\n                        <td class=\"colorCell2\" style=\"width:140px\">\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\r\n                        </td>\r\n                        <td class=\"colorCell2\" >\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                        </td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n                        <td>${item.PROGRAM_CD}</td>\r\n                        <td>${item.PROGRAM_TITLE}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n    </td>\r\n    <td style=\"vertical-align:top;\">\r\n\r\n\r\n        <div style=\"height:350px; overflow: auto;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td colspan=3 class=\"colorCell2\" >\r\n                            SELECTED\r\n                        </td>\r\n                    </tr>\r\n                    <tr>\r\n                        <td class=\"colorCell2\"  style=\"width:140px\">\r\n                            PROGRAM CODE\r\n                        </td>\r\n                        <td colspan=2 class=\"colorCell2\" >\r\n                            PROGRAM TITLE\r\n                        </td>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArraySelected\">\r\n                        <td style=\"width:140px\">\r\n                            ${item.PROGRAM_CD}\r\n                        </td>\r\n                        <td>\r\n                            ${item.PROGRAM_TITLE}\r\n                        </td>\r\n                        <td>\r\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n\r\n    </td>\r\n</tr>\r\n<tr>\r\n    <td colspan=2>\r\n        <div style=\"width:100%;text-align:center;\">\r\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\r\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\r\n        </div>\r\n    </td>\r\n</tr>\r\n</table>\r\n</div>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n</ux-dialog-footer>    \r\n\r\n</ux-dialog>\r\n</template>\r\n\r\n"; });
-define('text!modals/buh-search.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                GLOBAL ID (OPTIONAL)\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                FIRST NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                MIDDLE NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                LAST NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n               E-MAIL\r\n             </td>\r\n           </tr>\r\n           <tr ref=\"_rBUH_SEARCH\">\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bOPTIONAL_GLOBAL_ID\" searchable=\"_sOPTIONAL_GLOBAL_ID\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bFIRST_NAME\" searchable=\"_sFIRST_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bEMAIL_ADDRESS\" searchable=\"_sEMAIL_ADDRESS\" />\r\n            </td>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <tr repeat.for=\"item of varFilterArray | sorttext:'LAST_NAME':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedBUH(item)\">\r\n            <td>\r\n              ${item.OPTIONAL_GLOBAL_ID}\r\n            </td>\r\n            <td>\r\n              ${item.FIRST_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.MIDDLE_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.LAST_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.EMAIL_ADDRESS}\r\n            </td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </div>\r\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n  </ux-dialog-body>\r\n  <ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
-define('text!modals/change_password.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">CHANGE PASSWORD</span></ux-dialog-header>\r\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\r\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tNew Password:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n                  <input value.bind=\"_NEW_PASSWORD\"  type=\"password\" keyup.trigger=\"keyPressed($event)\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\" click.trigger=\"savePassword()\" value=\"SAVE\" class=\"btn customButton\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
-define('text!modals/confirm_dialog.html', ['module'], function(module) { module.exports = "<template>   \r\n          <!-- <modal showing.two-way=\"showing\"  mwidth.bind=\"_width\">\r\n              <modal-header title.bind=\"_setTitle\" close.call=\"closeModal()\"></modal-header>\r\n              <modal-body><div class=\"text-center\"><h4>${_message}</h3></div></modal-body>\r\n              <modal-footer>\r\n                  <button class=\"btn\" click.trigger=\"closeModal()\">Save</button>\r\n                  <au-button text=\"Continue\" click.call=\"confirm()\">Continue</au-button>\r\n                  <au-button text=\"Cancel\" click.call=\"closeModal()\">Close</au-button>\r\n                  \r\n              </modal-footer>\r\n          </modal> -->\r\n\r\n          <ux-dialog>\r\n         <!--<ux-dialog-header class=\"colorHeader\">\r\n      <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> \r\n                    <h4 class=\"modal-title\">LOG-IN</h4>\r\n</ux-dialog-header>-->\r\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">${_setTitle}</span></ux-dialog-header>\r\n\r\n          <ux-dialog-body>\r\n        <div class=\"text-center\"><h4>${_message}</h3></div>\r\n        </ux-dialog-body>\r\n\r\n        <ux-dialog-footer>\r\n                <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n                <button click.trigger=\"confirm()\">Ok</button>\r\n      </ux-dialog-footer>\r\n       </ux-dialog>\r\n</template>"; });
+define('text!mainpage.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\n    <!--<div class=\"panel panel-info\">...</div>-->\n    <center>\r\n      <div class=\"row\">\r\n        <div class=\"list-group\" style=\"padding-top:2%;margin-left:4%;margin-right:4%;\">\r\n          <a href=\"#\" class=\"list-group-item active\" if.bind=\"headerVisible\" style=\"background-color: #d9edf7; color: #31708f;   border: 1px solid #a4d4e6;\">\r\n            <h3 style=\"margin-left:10px;margin-top:10px;margin-right:10px;\" class=\"list-group-item-heading\">PLEASE SELECT..</h3>\r\n          </a>\r\n          <!--<a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('mainview')\" if.bind=\"budgetAccess\" style=\" padding-top:15px;\">\r\n\r\n                      <h3 style=\"margin:0px;color: #31708f;\">\r\n                        BUDGET TEMPLATE\r\n                      </h3>\r\n\r\n        </a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('actual_cost')\"  if.bind=\"actualAccess\"><h3 style=\"margin:0px;color: #31708f;\">ACTUAL COST</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('group_individual')\" if.bind=\"talentgroupAccess\"><h3 style=\"margin:0px;color: #31708f;\">TALENT GROUP</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('buh')\"  if.bind=\"buhAccess\"><h3 style=\"margin:0px;color: #31708f;\">BUH</h3></a>-->\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _application\" click.trigger=\"applicationClick(item)\" if.bind=\"!_remove.includes(item.APPLICATION_DESC) && _application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC}</h3></a>\n\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _ppfcs_modules\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC.toUpperCase()}</h3></a>\n          <!--<a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _roles\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.MODULE_NAME.toUpperCase()}</h3></a>-->\n          <a href=\"#\" class=\"list-group-item\" if.bind=\"!_application_on\" click.trigger=\"applicationOn()\"><h3 style=\"margin:0px;color: #31708f;background-color:#d9edf7;\">BACK..</h3></a>\n\r\n          <!--<a href=\"#\" class=\"list-group-item\">IPS</a>-->\r\n\r\n\r\n        </div>\r\n\r\n        <div class=\"col-xs-0 col-md-4\"></div>\r\n      </div>\r\n    </center>\n    </div>\n    \n\r\n</template>"; });
+define('text!nav-bar.html', ['module'], function(module) { module.exports = "<template>\n  <nav class=\"navbar navbar-default navbar-fixed-top backroundTab\" role=\"navigation\" >\n    <div class=\"navbar-header\" style=\"background-color:#2191c0;margin-right:20px;margin-left:20px;\">\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\n        <span class=\"sr-only\">Toggle Navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\" >\n        <i class=\"fa fa-home\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\n        <span style=\"color:white\">${router.title}</span>\n      </a>\n\n    </div>\n\n    <div class=\"collapse navbar-collapse  .navbar-right\" id=\"bs-example-navbar-collapse-1\">\n      <!--<ul class=\"nav navbar-nav\">\n        <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n          <a if.bind=\"row.title!='PPMS'\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\n        </li>\n      </ul>-->\n    <!--   <img if.bind=\"_cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=hdpi.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/> -->\n<!-- \n      <form method=\"post\" enctype=\"multipart/form-data\" action=\"/ViewFile/Upload\">\n          <div>\n              <p>Upload one or more files using this form:</p>\n              <input type=\"file\" name=\"files\" />\n          </div>\n          <div>\n               <input type=\"submit\" value=\"Upload\" />\n          </div>\n      </form> -->\n      <ul class=\"nav navbar-nav\">\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"home()\" href=\"#\">HOME</a>\n         \n        </li>\n          \n        <!--<li  if.bind=\"_cache_obj.USER.USER_ID===undefined\">\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" click.trigger=\"fnLogin()\" href=\"#\">LOG-IN</a>\n        </li>-->\n      </ul>\n      <ul class=\"nav navbar-nav\">\n        <li class=\"loader\" if.bind=\"router.isNavigating || settings.isNavigating\">\n          <i class=\"fa fa-spinner fa-spin fa-2x\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\n        </li>\n      </ul>\n      <ul class=\"nav navbar-nav navbar-right\" style=\"background-color:#2191c0;height:50px;\"  if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\n        <li style=\"color:white;font-size:13px;margin-top:16px;margin-right:20px;margin-left:20px;\">\n          ${_cache_obj.USER.USER_ID}\n        </li>\n        <li class=\"dropdown\">\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"  style=\"color:white;font-size:13px;\">PASSWORD<span class=\"caret\"></span></a>\n          <ul class=\"dropdown-menu\">\n            <li><a href=\"#\" click.trigger=\"changePassword()\">CHANGE PASSWORD</a></li>\n            <!--<li role=\"separator\" class=\"divider\"></li>-->\n            <!--<li><a href=\"#\">EMAIL PASSWORD</a></li>-->\n          </ul>\n        </li>\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"logout()\" href=\"#\">LOG-OUT</a>\n        </li>\n      </ul>\n    </div>\n  </nav>\n</template>\n"; });
+define('text!users.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"blur-image\"></require>\n\n  <section class=\"au-animate\">\n      <h2>${heading}</h2>\n      <div class=\"row au-stagger\">\n        <div class=\"col-sm-6 col-md-3 card-container au-animate\" repeat.for=\"user of users\">\n            <div class=\"card\">\n                <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n                <div class=\"avatar\">\n                    <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n                </div>\n                <div class=\"content\">\n                    <p class=\"name\">${user.login}</p>\n                    <p><a target=\"_blank\" class=\"btn btn-default\" href.bind=\"user.html_url\">Contact</a></p>\n                </div>\n            </div>\n        </div>\n      </div>\n  </section>\n</template>\n"; });
+define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h2>${heading}</h2>\n\n    <form role=\"form\" submit.delegate=\"submit()\">\n      <div class=\"form-group\">\n        <label for=\"fn\">First Name</label>\n        <input type=\"text\" value.bind=\"firstName\" class=\"form-control\" id=\"fn\" placeholder=\"first name\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"ln\">Last Name</label>\n        <input type=\"text\" value.bind=\"lastName\" class=\"form-control\" id=\"ln\" placeholder=\"last name\">\n      </div>\n      <div class=\"form-group\">\n        <label>Full Name</label>\n        <p class=\"help-block\">${fullName | upper}</p>\n      </div>\n      <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n    </form>\n  </section>\n</template>\n"; });
+define('text!ppid/ppid.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Program Personal Information Database</h3>\r\n\t<!-- <div style=\"background:#A2A2D0; width:100%; height:38px; padding:5px;\">\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"FindUsers()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"\" value=\"ADD NEW PROGRAM PERSONNEL\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<label hidden.bind=\"obj_personnel.global_indiv_id.length==0\">Global Id: ${obj_personnel.global_indiv_id}</label>\r\n\t</div> -->\r\n\t<require from=\"./forms/main\"></require>\r\n\t<require from=\"./forms/relative_character_ref\"></require>\r\n\t<require from=\"./forms/e_a_s_t\"></require>\r\n\t<require from=\"./forms/gov_info\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<!--<require from=\"converters/filtercustom\"></require>\r\n\t<require from=\"converters/sorttext\"></require>-->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Personnel Info</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#relative_character_ref\" aria-controls=\"other_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(1)\">Relative & Character Ref.</a></li> -->\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Experience, Awards, Seminars, & Training</a></li> -->\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"staff\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n        </ul>\r\n\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<main></main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_character_ref\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<relative_character_ref></relative_character_ref>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<e_a_s_t></e_a_s_t>\r\n\t\t\t</div> -->\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info></gov_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
+define('text!ppfcs/buh.html', ['module'], function(module) { module.exports = "<template>\n\t<div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;width:800px;text-align:center;\" class=\"divBackground\">\n\t\t<table>\n\t\t\t<tr>\n\t\t\t\t<td><label>GLOBAL ID:</label></td>\n\t\t\t\t<td><input value.bind=\"_objBUH.OPTIONAL_GLOBAL_ID\" disabled.bind=\"_disableCells\" id=\"txtGlobalID\"/></td>\n\t\t\t\t<td class=\"text-right\"><label>E-Mail:</label></td>\n\t\t\t\t<td colspan=\"2\" class=\"text-left\"><input id=\"txtEmail\" value.bind=\"_objBUH.EMAIL_ADDRESS\"  disabled.bind=\"_disableCells\" style=\"width:250px;\" /></td>\n\t\t\t</tr>\n\n\t\t\t<tr>\n\t\t\t\t<td><label>LAST NAME:</label></td>\n\t\t\t\t<td><input value.bind=\"_objBUH.LAST_NAME\" id=\"txtLastName\" disabled.bind=\"_disableCells\" /></td>\n\t\t\t\t<td class=\"text-right\"><label>FIRST NAME:</label></td>\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.FIRST_NAME\" id=\"txtFirstName\" disabled.bind=\"_disableCells\" /></td>\n\t\t\t\t<td class=\"text-right\"><label>MIDDLE:</label></td>\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.MIDDLE_NAME\"  id=\"txtMiddle\" disabled.bind=\"_disableCells\" /></td>\n\t\t\t</tr>\n\n\t\t\t<tr>\n\t\t\t\t<td colspan=\"7\" style=\"text-align:center;\"><br/>\n\t\t\t\t\t<input type=\"Button\" id=\"btnGlobalID\" value=\"Search\" click.delegate=\"fnCRUD('search')\" disabled.bind=\"_disableSearch\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnAdd\"  disabled.bind=\"_disableAdd\" value=\"Add\" click.delegate=\"fnCRUD('add')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnDelete\" disabled.bind=\"_disableDelete\"  value=\"Delete\" click.delegate=\"fnCRUD('delete')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnSave\" disabled.bind=\"_disableSave\" value=\"Save\" click.delegate=\"fnCRUD('save')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnCancel\" value=\"Cancel/Clear\" click.delegate=\"fnCRUD('cancel')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<br/><br/>\n\t\t\t\t</td>\n\t\t\t</tr>\t\n\t\t</table>\n\n\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\" >\n\t\t\t<thead>\n\t\t\t\t<tr><td class=\"colorCell\">PROGRAM ID</td>\n\t\t\t\t\t<td class=\"colorCell\">PROGRAM TITLE</td>\n\t\t\t\t\t<td class=\"colorCell\"><input type=\"button\" value=\"+\" disabled.bind=\"_disableGrid\" click.delegate=\"searchPrograms()\"/> </td>\n\t\t\t\t</tr>\n\t\t\t</thead>\n\t\t\t<tbody>\n\t\t\t\t<tr repeat.for=\"item of _objBUH.PROGRAMS\">\n\t\t\t\t\t<td>${item.PROGRAM_CD}</td>\n\t\t\t\t\t<td>${item.PROGRAM_TITLE}</td>\n\t\t\t\t\t<td><input type=\"button\" value=\"-\" disabled.bind=\"_disableGrid\" click.delegate=\"$parent.deleteSelected($index)\"/>\n\t\t\t\t\t</td> \n\t\t\t\t</tr>\n\t\t\t</tbody>\n\t\t</table>  \n\n\n\t\t<!--<input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\n\t\t<input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\">--> \n\n\n\n\t\t<br/>\n\t\t<br/>\n\t\t<table class= \"table-bordered\">\n\t\t\t<tr>\n\t\t\t\t<td>\n\t\t\t\t\tLOGGED AS:\n\t\t\t\t</td>\n\t\t\t\t<td>\n\t\t\t\t\t<strong>${_user.USER_ID}</strong> \n\t\t\t\t</td>\n\t\t\t</tr>\n\t\t</table>\n\n\n\t</template>"; });
+define('text!tools/gridpaging.html', ['module'], function(module) { module.exports = "<template>\r\n\t<nav>\r\n        <ul class=\"pagination\">\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Previous\" click.delegate=\"endClick(0)\" if.bind=\"_currentIndex!=0 && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&laquo;</span>\r\n                </a>\r\n            </li>\r\n            <li repeat.for=\"item of _PagesShow\">\r\n                    <a style=\"cursor:pointer\" click.delegate=\"$parent.selectedClick($index)\" >${item}</a>\r\n            </li>\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Next\"  click.delegate=\"endClick(1)\" if.bind=\"_Pages.length-1>_currentIndex && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&raquo;</span>\r\n                </a>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</template>"; });
+define('text!modals/budget.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n     \r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>BUDGET TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    BUDGET ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM IO\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bBDGT_TMPL_ID\" searchable=\"_sBDGT_TMPL_ID\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_IO\" searchable=\"_sPROGRAM_IO\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bAPPR_STAT_CD\" searchable=\"_sAPPR_STAT_CD\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <!-- | sorttext:'PROGRAM_TITLE':'ascending'  -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedBudget(item)\">\r\n                <td>\r\n                    ${item.BDGT_TMPL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_TITLE}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_IO}\r\n                </td>\r\n                <td>\r\n                    ${item.APPR_STAT_CD}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
+define('text!modals/buh-program-dialog.html', ['module'], function(module) { module.exports = "<template>\n  <ux-dialog>\n  <!--<ux-dialog-header class=\"colorHeader\">\n        \n                    <h4 class=\"modal-title\">SELECT PROGRAMS</h4>\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PROGRAMS</b></span></ux-dialog-header>\n  <ux-dialog-body>\n  <require from=\"converters/take\"></require>\n  <require from=\"converters/sorttext\"></require>\n  <require from=\"tools/gridpaging\"></require>\n  <div style=\"height:420px; overflow: auto;\">\n  <table>\n    <tr>\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\n                <thead class=\"table-default\">\n                    <tr>\n                        <td class=\"colorCell2\" style=\"width:140px\">PROGRAM CODE</td>\n                        <td class=\"colorCell2\">PROGRAM TITLE</td>\n                    </tr>\n                    <tr ref=\"_rGROUP_TITLE\">\n                        <td class=\"colorCell2\" style=\"width:140px\">\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\n                        </td>\n                        <td class=\"colorCell2\" >\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" keyup.delegate=\"fnKeyup($event,'')\" />\n                        </td>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\n                        <td>${item.PROGRAM_CD}</td>\n                        <td>${item.PROGRAM_TITLE}</td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\n    </td>\n    <td style=\"vertical-align:top;\">\n\n\n        <div style=\"height:350px; overflow: auto;\">\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\n                <thead class=\"table-default\">\n                    <tr>\n                        <td colspan=3 class=\"colorCell2\" >\n                            SELECTED\n                        </td>\n                    </tr>\n                    <tr>\n                        <td class=\"colorCell2\"  style=\"width:140px\">\n                            PROGRAM CODE\n                        </td>\n                        <td colspan=2 class=\"colorCell2\" >\n                            PROGRAM TITLE\n                        </td>\n\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr repeat.for=\"item of varFilterArraySelected\">\n                        <td style=\"width:140px\">\n                            ${item.PROGRAM_CD}\n                        </td>\n                        <td>\n                            ${item.PROGRAM_TITLE}\n                        </td>\n                        <td>\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\n                        </td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n\n    </td>\n</tr>\n<tr>\n    <td colspan=2>\n        <div style=\"width:100%;text-align:center;\">\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\n        </div>\n    </td>\n</tr>\n</table>\n</div>\n</ux-dialog-body>\n\n<ux-dialog-footer>\n<button click.trigger=\"controller.cancel()\">Cancel</button>\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\n</ux-dialog-footer>    \n\n</ux-dialog>\n</template>\n\n"; });
+define('text!modals/buh-search.html', ['module'], function(module) { module.exports = "<template>\n\n  <ux-dialog>\n    <ux-dialog-body>\n\n\n      <require from=\"converters/take\"></require>\n      <require from=\"converters/sorttext\"></require>\n      <require from=\"tools/gridpaging\"></require>\n      <div style=\"height:500px!important;overflow:auto;\">\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\n          <thead class=\"table-default\">\n            <tr>\n              <td class=\"colorCell2\">\n                GLOBAL ID (OPTIONAL)\n              </td>\n              <td class=\"colorCell2\">\n                FIRST NAME\n              </td>\n              <td class=\"colorCell2\">\n                MIDDLE NAME\n              </td>\n              <td class=\"colorCell2\">\n                LAST NAME\n              </td>\n              <td class=\"colorCell2\">\n               E-MAIL\n             </td>\n           </tr>\n           <tr ref=\"_rBUH_SEARCH\">\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bOPTIONAL_GLOBAL_ID\" searchable=\"_sOPTIONAL_GLOBAL_ID\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bFIRST_NAME\" searchable=\"_sFIRST_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bEMAIL_ADDRESS\" searchable=\"_sEMAIL_ADDRESS\" />\n            </td>\n          </tr>\n        </thead>\n        <tbody>\n          <tr repeat.for=\"item of varFilterArray | sorttext:'LAST_NAME':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedBUH(item)\">\n            <td>\n              ${item.OPTIONAL_GLOBAL_ID}\n            </td>\n            <td>\n              ${item.FIRST_NAME}\n            </td>\n            <td>\n              ${item.MIDDLE_NAME}\n            </td>\n            <td>\n              ${item.LAST_NAME}\n            </td>\n            <td>\n              ${item.EMAIL_ADDRESS}\n            </td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\n  </ux-dialog-body>\n  <ux-dialog-footer>\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\n  </ux-dialog-footer>\n</ux-dialog>\n</template>"; });
+define('text!modals/change_password.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">CHANGE PASSWORD</span></ux-dialog-header>\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tNew Password:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n                  <input value.bind=\"_NEW_PASSWORD\"  type=\"password\" keyup.trigger=\"keyPressed($event)\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\" click.trigger=\"savePassword()\" value=\"SAVE\" class=\"btn customButton\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
+define('text!modals/confirm_dialog.html', ['module'], function(module) { module.exports = "<template>   \r\n          <!-- <modal showing.two-way=\"showing\"  mwidth.bind=\"_width\">\r\n              <modal-header title.bind=\"_setTitle\" close.call=\"closeModal()\"></modal-header>\r\n              <modal-body><div class=\"text-center\"><h4>${_message}</h3></div></modal-body>\r\n              <modal-footer>\r\n                  <button class=\"btn\" click.trigger=\"closeModal()\">Save</button>\r\n                  <au-button text=\"Continue\" click.call=\"confirm()\">Continue</au-button>\r\n                  <au-button text=\"Cancel\" click.call=\"closeModal()\">Close</au-button>\r\n                  \r\n              </modal-footer>\r\n          </modal> -->\r\n\r\n          <ux-dialog>\r\n         <!--<ux-dialog-header class=\"colorHeader\">\r\n      <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> \r\n                    <h4 class=\"modal-title\">LOG-IN</h4>\r\n</ux-dialog-header>-->\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">${_setTitle}</span></ux-dialog-header>\r\n\r\n          <ux-dialog-body>\r\n        <div class=\"text-center\"><h4>${_message}</h3></div>\r\n        </ux-dialog-body>\r\n\r\n        <ux-dialog-footer>\r\n                <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n                <button click.trigger=\"confirm()\">Ok</button>\r\n      </ux-dialog-footer>\r\n       </ux-dialog>\r\n</template>"; });
 define('text!modals/edit-person.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n      <h2>Edit first name</h2>\r\n      <input value.bind=\"person.firstName\" />\r\n    </ux-dialog-body>\r\n\r\n    <ux-dialog-footer>\r\n      <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n      <button click.trigger=\"controller.ok(person)\">Ok</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
-define('text!modals/globalindivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n  <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:420px; overflow: auto;\">\r\n  <table>\r\n    <tr>\r\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td class=\"colorCell2\" style=\"width:140px\">GLOBAL ID</td>\r\n                        <td class=\"colorCell2\">PERSONNEL NAME</td>\r\n                    </tr>\r\n                    <tr ref=\"_rGROUP_TITLE\">\r\n                        <td class=\"colorCell2\" style=\"width:140px\">\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\r\n                        </td>\r\n                        <td class=\"colorCell2\" >\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                        </td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n                        <td>${item.GLOBAL_INDIV_ID}</td>\r\n                        <td>${item.PERSONNEL_NAME}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n    </td>\r\n    <td style=\"vertical-align:top;\">\r\n\r\n\r\n        <div style=\"height:350px; overflow: auto;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td colspan=3 class=\"colorCell2\" >\r\n                            SELECTED\r\n                        </td>\r\n                    </tr>\r\n                    <tr>\r\n                        <td class=\"colorCell2\"  style=\"width:140px\">\r\n                            GLOBAL ID\r\n                        </td>\r\n                        <td colspan=2 class=\"colorCell2\" >\r\n                            PERSONNEL NAME\r\n                        </td>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArraySelected\">\r\n                        <td style=\"width:140px\">\r\n                            ${item.GLOBAL_INDIV_ID}\r\n                        </td>\r\n                        <td>\r\n                            ${item.PERSONNEL_NAME}\r\n                        </td>\r\n                        <td>\r\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n\r\n    </td>\r\n</tr>\r\n<tr>\r\n    <td colspan=2>\r\n        <div style=\"width:100%;text-align:center;\">\r\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\r\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\r\n        </div>\r\n    </td>\r\n</tr>\r\n</table>\r\n</div>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n</ux-dialog-footer>    \r\n\r\n</ux-dialog>\r\n</template>\r\n\r\n"; });
-define('text!modals/indivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n <ux-dialog>\r\n   <!--<ux-dialog-header class=\"colorHeader\">\r\n        \r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\r\n   <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<div style=\"height:420px; overflow: auto;\">\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    GLOBAL ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PERSONNEL NAME\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rGROUP_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedIndiv(item)\">\r\n                <td>\r\n                    ${item.GLOBAL_INDIV_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PERSONNEL_NAME}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n          </ux-dialog-body>\r\n\r\n  <ux-dialog-footer>\r\n      <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!--       <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n    </ux-dialog-footer>    \r\n     </ux-dialog>\r\n</template>\r\n\r\n"; });
-define('text!modals/job.html', ['module'], function(module) { module.exports = "<template>\r\n          <ux-dialog><!--         <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n            <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT JOB</h4>\r\n</ux-dialog-header>-->\r\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    JOB GROUP\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    JOB DESCRIPTION\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rJOB_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_GRP\" searchable=\"_sJOB_GRP\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_DESC\" searchable=\"_sJOB_DESC\" ref=\"refJobDesc\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n             <!-- | sorttext:'JOB_DESC':'ascending' -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedJob(item)\">\r\n                <td>\r\n                    ${item.JOB_GRP}\r\n                </td>\r\n                <td>\r\n                    ${item.JOB_DESC}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n       <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n   </ux-dialog-body>\r\n         <ux-dialog-footer>\r\n         <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n       </ux-dialog-footer>\r\n          </ux-dialog>\r\n          \r\n</template>"; });
-define('text!modals/login.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">LOG-IN</span></ux-dialog-header>\r\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\r\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tCOMPANY:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select value.bind=\"_COMPANY\" style=\"width:172px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"company of _companies\"  model.bind=\"company\">${company.COMPANY_NAME}</option>\r\n\t\t\t\t\t</select>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tUSER ID:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select  value.bind=\"_USER\" style=\"width:136px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"user of _user_content\"  model.bind=\"user\">${user.USER_ID}</option>\r\n\t\t\t\t\t</select> \r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tPASSWORD:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input value.bind=\"_PASSWORD\" type=\"password\" keyup.trigger=\"keyPressed($event)\"/> &nbsp;<a href=\"#\" click.trigger=\"resetPassword()\">Reset</a>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n          <tr if.bind=\"user_expired\">\r\n            <td>\r\n              NEW PASSWORD:\r\n            </td>\r\n            <td>\r\n              <input value.bind=\"_NEW_PASSWORD\" type=\"password\"/>\r\n            </td>\r\n          </tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\"  disabled.bind=\"disableLogButton\" click.trigger=\"tryLogin()\" value=\"LOG-IN\" class=\"btn customButton\" />\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
+define('text!modals/globalindivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n  <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:420px; overflow: auto;\">\r\n  <table>\r\n    <tr>\r\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td class=\"colorCell2\" style=\"width:140px\">GLOBAL ID</td>\r\n                        <td class=\"colorCell2\">PERSONNEL NAME</td>\r\n                    </tr>\r\n                    <tr ref=\"_rGROUP_TITLE\">\r\n                        <td class=\"colorCell2\" style=\"width:140px\">\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\r\n                        </td>\r\n                        <td class=\"colorCell2\" >\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                        </td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n                        <td>${item.GLOBAL_INDIV_ID}</td>\r\n                        <td>${item.PERSONNEL_NAME}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n    </td>\r\n    <td style=\"vertical-align:top;\">\r\n\r\n\r\n        <div style=\"height:350px; overflow: auto;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td colspan=3 class=\"colorCell2\" >\r\n                            SELECTED\r\n                        </td>\r\n                    </tr>\r\n                    <tr>\r\n                        <td class=\"colorCell2\"  style=\"width:140px\">\r\n                            GLOBAL ID\r\n                        </td>\r\n                        <td colspan=2 class=\"colorCell2\" >\r\n                            PERSONNEL NAME\r\n                        </td>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArraySelected\">\r\n                        <td style=\"width:140px\">\r\n                            ${item.GLOBAL_INDIV_ID}\r\n                        </td>\r\n                        <td>\r\n                            ${item.PERSONNEL_NAME}\r\n                        </td>\r\n                        <td>\r\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n\r\n    </td>\r\n</tr>\r\n<tr>\r\n    <td colspan=2>\r\n        <div style=\"width:100%;text-align:center;\">\r\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\r\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\r\n        </div>\r\n    </td>\r\n</tr>\r\n</table>\r\n</div>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n</ux-dialog-footer>    \r\n\r\n</ux-dialog>\r\n</template>\r\n\r\n"; });
+define('text!modals/indivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n <ux-dialog>\r\n   <!--<ux-dialog-header class=\"colorHeader\">\r\n        \r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\n   <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<div style=\"height:420px; overflow: auto;\">\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    GLOBAL ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PERSONNEL NAME\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rGROUP_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedIndiv(item)\">\r\n                <td>\r\n                    ${item.GLOBAL_INDIV_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PERSONNEL_NAME}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n          </ux-dialog-body>\r\n\r\n  <ux-dialog-footer>\r\n      <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!--       <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n    </ux-dialog-footer>    \r\n     </ux-dialog>\r\n</template>\r\n\r\n"; });
+define('text!modals/job.html', ['module'], function(module) { module.exports = "<template>\r\n          <ux-dialog><!--         <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n            <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT JOB</h4>\r\n</ux-dialog-header>-->\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    JOB GROUP\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    JOB DESCRIPTION\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rJOB_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_GRP\" searchable=\"_sJOB_GRP\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_DESC\" searchable=\"_sJOB_DESC\" ref=\"refJobDesc\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n             <!-- | sorttext:'JOB_DESC':'ascending' -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedJob(item)\">\r\n                <td>\r\n                    ${item.JOB_GRP}\r\n                </td>\r\n                <td>\r\n                    ${item.JOB_DESC}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n       <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n   </ux-dialog-body>\r\n         <ux-dialog-footer>\r\n         <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n       </ux-dialog-footer>\r\n          </ux-dialog>\r\n          \r\n</template>"; });
+define('text!modals/login.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">LOG-IN</span></ux-dialog-header>\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tCOMPANY:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select value.bind=\"_COMPANY\" style=\"width:172px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"company of _companies\"  model.bind=\"company\">${company.COMPANY_NAME}</option>\r\n\t\t\t\t\t</select>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tUSER ID:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select  value.bind=\"_USER\" style=\"width:136px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"user of _user_content\"  model.bind=\"user\">${user.USER_ID}</option>\r\n\t\t\t\t\t</select> \n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tPASSWORD:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input value.bind=\"_PASSWORD\" type=\"password\" keyup.trigger=\"keyPressed($event)\"/> &nbsp;<a href=\"#\" click.trigger=\"resetPassword()\">Reset</a>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\n          <tr if.bind=\"user_expired\">\r\n            <td>\r\n              NEW PASSWORD:\r\n            </td>\r\n            <td>\r\n              <input value.bind=\"_NEW_PASSWORD\" type=\"password\"/>\r\n            </td>\r\n          </tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\"  disabled.bind=\"disableLogButton\" click.trigger=\"tryLogin()\" value=\"LOG-IN\" class=\"btn customButton\" />\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
 define('text!modals/modalcontainer.html', ['module'], function(module) { module.exports = "<template>   \r\n          <modal showing.two-way=\"showing\"  mwidth.bind=\"_width\">\r\n              <modal-header title.bind=\"_setTitle\" close.call=\"closeModal()\"></modal-header>\r\n              <modal-body content-view.bind=\"_setContent\"></modal-body>\r\n              \r\n              <modal-footer>\r\n                  <!-- <button class=\"btn\" click.trigger=\"closeModal()\">Save</button> -->\r\n                  <au-button text=\"Cancel\" click.call=\"closeModal()\">Close</au-button>\r\n                  <!-- <button class=\"btn\" click.trigger=\"hotest()\">Talent 11</button> -->\r\n              </modal-footer>\r\n          </modal>\r\n\r\n       <input type=\"button\" ref=\"btnRef\" class=\"btn btn-xs customButton\" click.delegate=\"showDialog()\" value.bind=\"_buttonTitle\" disabled.bind=\"_isDisableElement\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n</template>"; });
-define('text!modals/paymentterm.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n      <h4 class=\"modal-title\">SELECT PAYMENT TERM</h4>\r\n    </ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PAYMENT TERM</b></span></ux-dialog-header>\r\n\r\n    <ux-dialog-body>\r\n      <table keyup.delegate=\"fnKeyup($event,'')\"  class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <tbody>\r\n          <tr repeat.for=\"item of varFilterArray\" click.delegate=\"$parent.selectedTerm(item)\">\r\n            <td>\r\n              ${item.REF_DESC}\r\n            </td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n     <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n   </ux-dialog-footer>\r\n </ux-dialog>\r\n</template>"; });
+define('text!modals/paymentterm.html', ['module'], function(module) { module.exports = "<template>\n  <ux-dialog>\n    <!--<ux-dialog-header class=\"colorHeader\">\n      <h4 class=\"modal-title\">SELECT PAYMENT TERM</h4>\n    </ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PAYMENT TERM</b></span></ux-dialog-header>\n\n    <ux-dialog-body>\n      <table keyup.delegate=\"fnKeyup($event,'')\"  class=\"table table-hover table-condensed table-bordered table-striped \">\n        <tbody>\n          <tr repeat.for=\"item of varFilterArray\" click.delegate=\"$parent.selectedTerm(item)\">\n            <td>\n              ${item.REF_DESC}\n            </td>\n          </tr>\n        </tbody>\n      </table>\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\n    </ux-dialog-body>\n    <ux-dialog-footer>\n     <button click.trigger=\"controller.cancel()\">Cancel</button>\n   </ux-dialog-footer>\n </ux-dialog>\n</template>"; });
 define('text!modals/program.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM CODE\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM NAME\r\n              </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" />\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" />\r\n              </td>\r\n            </tr>\r\n          </thead>\r\n          <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedProgram(item)\">\r\n              <td>\r\n                ${item.PROGRAM_CD}\r\n              </td>\r\n              <td>\r\n                ${item.PROGRAM_TITLE}\r\n              </td>\r\n            </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n      <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
 define('text!modals/talentmanagergroups.html', ['module'], function(module) { module.exports = "<template>\r\n    <ux-dialog>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sort\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n    <thead class=\"table-default\">\r\n        <tr>\r\n            <td class=\"colorCell2\">\r\n                GLOBAL ID\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                GROUP NAME\r\n            </td>\r\n        </tr>\r\n        <tr ref=\"_rGROUP_TITLE\">\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_GRP_ID\" searchable=\"_sGLOBAL_GRP_ID\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGROUP_NAME\" searchable=\"_sGROUP_NAME\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n        </tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr repeat.for=\"item of varFilterArray | sort:'GROUP_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n            <td>\r\n                ${item.GLOBAL_GRP_ID}\r\n            </td>\r\n            <td>\r\n                ${item.GROUP_NAME}\r\n            </td>\r\n        </tr>\r\n    </tbody>\r\n</table>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
-define('text!ppfcs/buh.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;width:800px;text-align:center;\" class=\"divBackground\">\r\n\t\t<table>\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>GLOBAL ID:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.OPTIONAL_GLOBAL_ID\" disabled.bind=\"_disableCells\" id=\"txtGlobalID\"/></td>\r\n\t\t\t\t<td class=\"text-right\"><label>E-Mail:</label></td>\r\n\t\t\t\t<td colspan=\"2\" class=\"text-left\"><input id=\"txtEmail\" value.bind=\"_objBUH.EMAIL_ADDRESS\"  disabled.bind=\"_disableCells\" style=\"width:250px;\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>LAST NAME:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.LAST_NAME\" id=\"txtLastName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>FIRST NAME:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.FIRST_NAME\" id=\"txtFirstName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>MIDDLE:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.MIDDLE_NAME\"  id=\"txtMiddle\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"7\" style=\"text-align:center;\"><br/>\r\n\t\t\t\t\t<input type=\"Button\" id=\"btnGlobalID\" value=\"Search\" click.delegate=\"fnCRUD('search')\" disabled.bind=\"_disableSearch\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnAdd\"  disabled.bind=\"_disableAdd\" value=\"Add\" click.delegate=\"fnCRUD('add')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnDelete\" disabled.bind=\"_disableDelete\"  value=\"Delete\" click.delegate=\"fnCRUD('delete')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnSave\" disabled.bind=\"_disableSave\" value=\"Save\" click.delegate=\"fnCRUD('save')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnCancel\" value=\"Cancel/Clear\" click.delegate=\"fnCRUD('cancel')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<br/><br/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\r\n\t\t</table>\r\n\r\n\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\" >\r\n\t\t\t<thead>\r\n\t\t\t\t<tr><td class=\"colorCell\">PROGRAM ID</td>\r\n\t\t\t\t\t<td class=\"colorCell\">PROGRAM TITLE</td>\r\n\t\t\t\t\t<td class=\"colorCell\"><input type=\"button\" value=\"+\" disabled.bind=\"_disableGrid\" click.delegate=\"searchPrograms()\"/> </td>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr repeat.for=\"item of _objBUH.PROGRAMS\">\r\n\t\t\t\t\t<td>${item.PROGRAM_CD}</td>\r\n\t\t\t\t\t<td>${item.PROGRAM_TITLE}</td>\r\n\t\t\t\t\t<td><input type=\"button\" value=\"-\" disabled.bind=\"_disableGrid\" click.delegate=\"$parent.deleteSelected($index)\"/>\r\n\t\t\t\t\t</td> \r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>  \r\n\r\n\r\n\t\t<!--<input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n\t\t<input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\">--> \r\n\r\n\r\n\r\n\t\t<br/>\r\n\t\t<br/>\r\n\t\t<table class= \"table-bordered\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<strong>${_user.USER_ID}</strong> \r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\r\n\r\n\t</template>"; });
-define('text!ppid/ppid.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Program Personal Information Database</h3>\r\n\t<!-- <div style=\"background:#A2A2D0; width:100%; height:38px; padding:5px;\">\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"FindUsers()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"\" value=\"ADD NEW PROGRAM PERSONNEL\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<label hidden.bind=\"obj_personnel.global_indiv_id.length==0\">Global Id: ${obj_personnel.global_indiv_id}</label>\r\n\t</div> -->\r\n\t<require from=\"./forms/main\"></require>\r\n\t<require from=\"./forms/relative_character_ref\"></require>\r\n\t<require from=\"./forms/e_a_s_t\"></require>\r\n\t<require from=\"./forms/gov_info\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<!--<require from=\"converters/filtercustom\"></require>\r\n\t<require from=\"converters/sorttext\"></require>-->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Personnel Info</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#relative_character_ref\" aria-controls=\"other_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(1)\">Relative & Character Ref.</a></li> -->\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Experience, Awards, Seminars, & Training</a></li> -->\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"staff\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n        </ul>\r\n\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<main></main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_character_ref\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<relative_character_ref></relative_character_ref>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<e_a_s_t></e_a_s_t>\r\n\t\t\t</div> -->\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info></gov_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!tools/gridpaging.html', ['module'], function(module) { module.exports = "<template>\r\n\t<nav>\r\n        <ul class=\"pagination\">\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Previous\" click.delegate=\"endClick(0)\" if.bind=\"_currentIndex!=0 && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&laquo;</span>\r\n                </a>\r\n            </li>\r\n            <li repeat.for=\"item of _PagesShow\">\r\n                    <a style=\"cursor:pointer\" click.delegate=\"$parent.selectedClick($index)\" >${item}</a>\r\n            </li>\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Next\"  click.delegate=\"endClick(1)\" if.bind=\"_Pages.length-1>_currentIndex && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&raquo;</span>\r\n                </a>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</template>"; });
-define('text!ppfcs/actual_cost/actual_cost.html', ['module'], function(module) { module.exports = "<template>\r\n  <!--   <iframe src=\"http://localhost:15253\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe> -->\r\n  <iframe src=\"http://absppms2:8084\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe>\r\n  </template>"; });
 define('text!ppid/forms/company_info.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./miscellaneous\"></require>\r\n\t<require from=\"./company_info_main\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#company_specific\" aria-controls=\"company_specific\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(0)\" >Company Specific</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#company_endorsement\" aria-controls=\"company_endorsement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Endorsement</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_branding\" aria-controls=\"company_branding\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Image Branding / Target Market</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#miscellaneous\" aria-controls=\"guest\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Miscellaneous</a></li> -->\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"company_specific\"  style=\"height:550px; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<company_info_main></company_info_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_endorsement\"  style=\"width:980px;height:500px; background:#00C4B0; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_branding\"  style=\"width:980px;height:550px; background:#FFBF00; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"miscellaneous\"  style=\"width:1024px;height:620px; background:#E3E3E3; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<miscellaneous></miscellaneous>\r\n\t\t\t</div> -->\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/company_info_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">ID #</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.id_no\" disabled.bind=\"_disableIDNo\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"1\" id=\"_start_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Kapamilya Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"kapamilya_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">is Exclusive?</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input type=\"checkbox\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_companyChanged()\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.company_id\" >\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COMPANY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"_end_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Membership Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"membership_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.membership_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd\" disabled.bind=\"_disableStatus\" >\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.STATUS\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'INACTV'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Reason for Cessation</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CESSATION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'INACTV'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.remarks\" > </textarea>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'SUSPEND'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Suspension Start Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"suspended_start_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.COMPANY_SPECIFIC.model.status_cd != 'SUSPEND'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Suspension End Date</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" id=\"suspended_end_dt\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"margin-left:20px; margin-right: 20px;\">\r\n\t\t\t\t\t\t<b>Note: The Start Date refers to the commencement date of the FIRST contract executed by Talent with Company while the End Date refers to the expiration date of the LAST contract executed by Talent with Company. Unless expressly stated, the dates do not imply or indicate continuous tenure or engagement during the period between the Start Date and End Date.</b>\r\n\t\t\t\t\t</div>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\" style=\"vertical-align: left;\">\r\n\t\t\t\t\t<table style=\"width: 500px;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Division</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" change.delegate=\"dd_divisionChanged()\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.division_id\">\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.DIVISION\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location(RNG only)</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" disabled.bind=\"_disableLocations\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.location_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"--NONE--\">--NONE--</option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS_RNG\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Category</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.category_id\">\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CATEGORY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Home Job</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.job_id\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.JOB\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Payroll Group</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PAYROLL_GROUP\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Professional Type</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd\">\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROFESSIONAL_TYPE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t\t\t\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t\t\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#contracts\" aria-controls=\"contracts\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Contracts</a></li>\r\n\t\t\t\t\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#accreditation\" aria-controls=\"accreditation\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Accreditation</a></li>\r\n\t\t\t\t\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#bank_info\" aria-controls=\"bank_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Bank Information</a></li>\r\n        \t\t\t\t</ul>\r\n        \t\t\t\t<div class='tab-content'>\r\n        \t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"contracts\"  style=\"width:850px;height:100px; margin-left:auto; margin-right:auto;\">\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Project Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"> </td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of contracts\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"contracts == null || contracts.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</div>\r\n\r\n\t\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"accreditation\"  style=\"width:850px;height:200px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t\t\t\t\t<!-- <br/> -->\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Job Group</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" disabled.bind=\"_disableTabsInput\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CATEGORY\" value.bind=\"item.id\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.accreditation_start_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Job</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.accreditation_end_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Competency Level</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Memo</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput\" >Save</button>&nbsp;\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" disabled.bind=\"_disableTabsInput\" >Clear</button>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Job group</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Job</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Level</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Division</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Home</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Entry</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Memo</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.COMPANY_SPECIFIC.model.accreditation\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.job_grp_id}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.job_id}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.competency}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.end_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.division_id}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.home_fl}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.entry_fl}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.accreditation_memo}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>-</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>X</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.COMPANY_SPECIFIC.model.accreditation == null || obj_personnel.COMPANY_SPECIFIC.model.accreditation.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"11\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</div>\r\n\r\n\t\t\t\t\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"bank_info\"  style=\"width:850px;height:100px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t\t\t\t\t<!-- <br/> -->\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bank Information</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" disabled.bind=\"_disableTabsInput\" value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_id\" change.delegate=\"dd_bankChanged()\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.BANK\" value.bind=\"item.id\">${item.bank_cd}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Account Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" readonly value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.acct_name\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<table style=\"width: 500px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bank Branch</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" readonly value.bind=\"obj_personnel.COMPANY_SPECIFIC.model.personnel_bank.bank_nm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Account Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableTabsInput\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</div>\r\n        \t\t\t\t</div>\r\n        \t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" tabindex=\"18\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/e_a_s_t.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#e_a_s_t_work\" aria-controls=\"e_a_s_t_work\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Work Experience</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t_awards\" aria-controls=\"e_a_s_t_awards\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Awards</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#e_a_s_t_seminar_training\" aria-controls=\"e_a_s_t_seminar_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"e_a_s_t_work\"  style=\"width:980px;height:550px; background:#E32636; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t_awards\"  style=\"width:980px;height:550px; background:#C46210; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"e_a_s_t_seminar_training\"  style=\"width:980px;height:550px; background:#EFDECD; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
@@ -12402,12 +13454,17 @@ define('text!ppid/forms/miscellaneous.html', ['module'], function(module) { modu
 define('text!ppid/forms/relative_character_ref.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./relative_parent\"></require>\r\n\t<require from=\"./relative_siblings\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#relative_parent\" aria-controls=\"relative_parent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Parent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_siblings\" aria-controls=\"relative_siblings\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Siblings</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_spouse\" aria-controls=\"relative_spouse\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Spouse</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_children\" aria-controls=\"relative_children\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" >Children</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_in_case\" aria-controls=\"relative_in_case\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">In Case of Emergency</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#char_ref\" aria-controls=\"char_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\">Character reference</a></li>\t\t\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"relative_parent\"  style=\"width:980px;height:550px; background:#00308F; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_parent></relative_parent>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_siblings\"  style=\"width:980px;height:550px; background:#72A0C1; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_siblings></relative_siblings>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_spouse\"  style=\"width:980px;height:550px; background:#AF002A; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_children\"  style=\"width:980px;height:550px; background:#F2F0E6; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_in_case\"  style=\"width:980px;height:550px; background:#F0F8FF; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"char_ref\"  style=\"width:980px;height:550px; background:#84DE02; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\r\n\t\t\t</div>\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/relative_parent.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"background: white; height: 500px; width: 913px; margin: 5px auto; overflow-y: scroll; \">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Mother</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Father</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\t\t\t\t\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/relative_siblings.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"background: white; height: 500px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Siblings</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Dependent/Deceased</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of x\">\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item}</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/modals/DialogBox.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body style=\"border-radius: 0px;\" class=\"divBackground\">\r\n\t\t\t<div style=\"white-space: pre;\">${message}</div>\r\n\t\t</ux-dialog-body>\r\n\t\t<ux-dialog-footer>\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.ok()\">Yes</button>&nbsp;&nbsp;\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.cancel()\">No</button>&nbsp;&nbsp;\r\n\t\t</ux-dialog-footer>\r\n\t</ux-dialog>\r\n</template>"; });
+define('text!ppid/modals/photo_list.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header>class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body>\r\n\t\t\t<div>\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</ux-dialog-body>\r\n\t</ux-dialog>\r\n</template>"; });
+define('text!ppid/modals/ppid_search.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SEARCH PERSONNEL(S)</b></span></ux-dialog-header>\r\n\t\t\r\n\t\t<ux-dialog-body style=\"background:#E3E3E3;\" class=\".divBackground\">\r\n\t\t\t<require from=\"converters/take\"></require>\r\n\t\t\t<require from=\"converters/sorttext\"></require>\r\n\t\t\t<require from=\"tools/gridpaging\"></require>\t\t\t\r\n\t\t\t<div style=\"height:350px;overflow: auto;\">\r\n\t\t\t\t<table class=\"table table-hover table-condensed table-bordered\">\r\n\t\t\t\t\t<thead class=\"table-default\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GLOBAL ID</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">TIN</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GROUP</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">LAST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">FIRST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">NICKNAME / ALIAS</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">PROJECT NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">COUNTRY</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr ref=\"_rppid_queries\">\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bglobal_indiv_id\" searchable=\"_bglobal_indiv_id\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_btin\" searchable=\"_stin\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bgroup\" searchable=\"_sgroup\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_blast_name\" searchable=\"_slast_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bfirst_name\" searchable=\"_sfirst_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bnickname\" searchable=\"_snickname\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bproject_name\" searchable=\"_sproject_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bcountry\" searchable=\"_scountry\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</thead>\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedPersonnel(item)\">\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GLOBAL_INDIV_ID}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.TIN}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GROUP}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.LAST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.FIRST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.NICK_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.PROJECT_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.COUNTRY}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"10\"></gridpaging>\r\n\t\t</ux-dialog-body>\r\n\t\t<!--<ux-dialog-footer>\t\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"Submit()\">Search</button>\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"controller.cancel()\">Close</button>\r\n\t\t</ux-dialog-footer>-->\r\n\t</ux-dialog>\r\n</template>"; });
+define('text!ppfcs/actual_cost/actual_cost.html', ['module'], function(module) { module.exports = "<template>\n    <iframe src=\"http://localhost:15253\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe>\n  <!-- <iframe src=\"http://absppms2:8084\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe> -->\n  </template>"; });
 define('text!ppfcs/budget/guest.html', ['module'], function(module) { module.exports = "<template>\r\n            <require from=\"converters/filtercustom\"></require>\r\n            <require from=\"converters/signals\"></require>\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:70%;\" ref=\"tblData\">\r\n                <thead>\r\n                    <tr><td class=\"colorCell\">PAY MODE</td>\r\n                        <td class=\"colorCell\">BUDGET</td>\r\n                        <td class=\"colorCell\">PAY MODE FACTOR</td>\r\n                        <td class=\"colorCell\">REMARKS</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of _cache_budget.GUEST | filtercustom:'visible':true:_signal\">\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:auto !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,$index)\"  focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/></td>\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:auto !important;\"/></td>\r\n                      <td>  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:auto !important;\"/></td>\r\n                      <td> <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea></td>\r\n                </tr>\r\n                </tbody>\r\n            </table>  \r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableAdd\" click.delegate=\"fnAddGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Add Guest</button>\r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableRemove\"click.delegate=\"fnRemoveGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Remove Guest</button>\r\n              <button class=\"btn btn-xs customButton\" click.delegate=\"saveGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button>\r\n</template>"; });
 define('text!ppfcs/budget/main-header.html', ['module'], function(module) { module.exports = "<template>\r\n    <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n    <!-- <require from=\"modals/confirm_dialog\"></require> -->\r\n\r\n    <require from=\"converters/datepattern\"></require>\r\n   \r\n     <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n            <tbody >\r\n                <tr>\r\n                    <td style=\"vertical-align: top;\">\r\n                        <table>\r\n                             <tr>\r\n                                <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Budget ID</td>\r\n                                <td>\r\n                                 <input value.bind=\"_cache_budget.HEADER.BDGT_TMPL_ID\" style=\"width: 80px;\" keyup.delegate=\"inputChanged($event,_cache_budget.HEADER.BDGT_TMPL_ID)\" readonly.bind=\"_disableBudgetId\"/>\r\n                                 <!-- <modalcontainer to.bind=\"modalBudget\"></modalcontainer> -->\r\n                                 <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"budgetDisabled\" click.trigger=\"fnDialogBudget()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                             </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td style=\"width: 120px;\">Program Name/CC</td>\r\n                                <td style=\"width: auto;\">\r\n                                    <input readonly=\"readonly\" value.bind=\"_cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE\"style=\"width: 250px;\"/>*\r\n                                    <!-- <modalcontainer to.bind=\"modalProgram\"></modalcontainer> -->\r\n                                    <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"programDisabled\" click.trigger=\"fnDialogProgram()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program IO/CC#</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.CHARGE_CD\" readonly=\"readonly\" /></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program Genre</td>\r\n                                <td>\r\n                                    <select value.bind=\"_cache_budget.HEADER.PROGRAM_GENRE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _PROGRAM_GENRE_MSTR\" value.bind=\"item.PROGRAM_GENRE_CD\">\r\n                                            ${item.PROGRAM_GENRE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Telecast Mode</td>\r\n                                <td>\r\n                                      <select value.bind=\"_cache_budget.HEADER.TELECAST_MODE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _TELECAST_MODE_MSTR\" value.bind=\"item.TELECAST_MODE_CD\">\r\n                                            ${item.TELECAST_MODE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Episode Type</td>\r\n                                <td>\r\n                                       <select value.bind=\"_cache_budget.HEADER.EPISODE_TYPE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _EPISODE_TYPE_MSTR\" value.bind=\"item.EPISODE_TYPE_CD\">\r\n                                            ${item.EPISODE_TYPE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                    </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>No. of Episodes</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.EPISODES\" class=\"col-md-3 text-right\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\"/>*</td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>No. of Taping days</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.TAPING_DAYS\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" class=\"col-md-3 text-right\"/>*</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n                        <table style=\"padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;\">\r\n                            <tr>\r\n                                <td class=\"text-center\" colspan=2><strong>Template Validity</strong></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Start Date</td>\r\n                                <td>\r\n                                    <input id=\"refFrom\"  readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_FROM\" blur.trigger=\"checkDate('refFrom')\"/>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>End Date</td>\r\n                                <td>\r\n                                    <!-- trigger does not accept '', set the string id w/out '' -->\r\n                                   <input id=\"refTo\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_TO\" blur.trigger=\"checkDate('refTo')\"/>*</td>\r\n                            </tr>\r\n                             <tr><td colspan=2 style=\"height:20px;\"></td></tr>\r\n                            <tr>\r\n                                <td>TV Station</td>\r\n                                <td>\r\n                                   <select disabled.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.STATION_ID\">\r\n                                        <option repeat.for=\"item of _STATIONS\" value.bind=\"item\">\r\n                                            ${item}\r\n                                        </option>\r\n                                    </select>(For <strong>RNG</strong>*)\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Status</td>\r\n                                <td>\r\n                                     <select value.bind=\"_cache_budget.HEADER.APPR_STAT_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _STATUS\" value.bind=\"item.REF_CD\">\r\n                                            ${item.REF_DESC}\r\n                                        </option>\r\n                                    </select>*\r\n                                     <!-- value.bind=\"options: EPISODE_MODE_LIST, EPISODE_MODE_SELECTED, optionsText: 'text'\" -->\r\n                                </td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>Remarks</td>\r\n                                <td rowspan=3>\r\n                                    <textarea readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.REMARKS\" style=\"width:200px!important;\" >\r\n                                    </textarea>\r\n                                </td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n\r\n                </tr>\r\n\r\n            </tbody>\r\n        </table>\r\n        <br/>\r\n        <br/>\r\n        <div style=\"margin-left:350px;\"><h5>( <strong>Note</strong> : * is required )</h2></div>\r\n        <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n        <div style=\"margin-left:100px;\">\r\n            <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('create')\" disabled.bind=\"_disableCreateBudget\" if.bind=\"!_disableCreateBudget\">CREATE BUDGET</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('cancel')\" disabled.bind=\"_disableCancelBudget\">CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.STATUS!='APPROVED'\" style=\"width:150px;\" click.delegate=\"fnBudget('refresh')\" disabled.bind=\"_disableRefreshBudget\">REFRESH</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-EXPIRED'\" style=\"width:150px;\" click.delegate=\"fnBudget('save')\" if.bind=\"!_disableSaveBudget\" disabled.bind=\"_disableSaveBudget\">SAVE BUDGET</button>\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('print')\" disabled.bind=\"_disablePrintBudget\" disabled.bind=\"!_disablePrintBudget\">PRINT BUDGET</button>\r\n        <button if.bind=\"_cache_budget.HEADER.APPR_STAT_CD=='APP-EXPIRED' || _cache_budget.HEADER.APPR_STAT_CD=='APP-CLOSED'\" class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('copy')\" disabled.bind=\"_disableCopyBudget\">COPY TEMPLATE</button>\r\n        <button if.bind=\"_cache_budget.STATUS=='APPROVED'\"  class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('close')\" disabled.bind=\"_disablePrintBudget\">SET AS CLOSED</button>\r\n         <!-- <confirm_dialog to.bind=\"modalConfirm\"></confirm_dialog> -->\r\n        </div>\r\n              <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n\r\n        \r\n \r\n</template>"; });
 define('text!ppfcs/budget/mainview.html', ['module'], function(module) { module.exports = " \r\n\r\n <template>\r\n\r\n <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n <require from=\"ppfcs/budget/main-header\"></require>\r\n <require from=\"ppfcs/budget/personnel\"></require>\r\n <require from=\"ppfcs/budget/guest\"></require>\r\n <require from=\"ppfcs/budget/summary\"></require>\r\n    <br/>\r\n      \r\n <!--stylemainstayft:20px;margin-right:20px;margin-bottom:10px;margin-top:10px;\"-->\r\n     <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 686px;\">\r\n          <!-- Nav tabs -->\r\n          <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n              <li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(0)\">Program Budget</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#regular\" aria-controls=\"regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(1)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\" >Regular</a>\r\n              </li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#semi_regular\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(2)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Semi-Regular</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#staff\" aria-controls=\"staff\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(3)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Staff</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#guest\" aria-controls=\"guest\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(4)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Guest</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#summary\" aria-controls=\"summary\" role=\"tab\" data-toggle=\"tab\"click.trigger=\"clickTab(5)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Budget Summary</a></li>\r\n          </ul>\r\n\r\n          <!-- Tab panes -->\r\n          <div class=\"tab-content\">\r\n              <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1024px;height:620px;\"><br/><main-header></main-header>\r\n                <br/>\r\n                <br/>\r\n                <br/>\r\n          <!--<div style=\"margin-left:40%;\">\r\n             <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n                   <input type=\"button\" click.trigger=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\"> \r\n          </div>-->\r\n\r\n              <div style=\"margin-left:25%;\">\r\n                <br/>\r\n                <br/>\r\n              <table class= \"table-bordered\">\r\n                <tr>\r\n                    <td>\r\n                        CREATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.CREATED_BY}\r\n                    </td>\r\n                    <td>\r\n                        LAST UPDATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.LAST_UPDATED_BY}\r\n                    </td>\r\n                    <!--<td>\r\n                        LOGGED AS:\r\n                    </td>\r\n                    <td>\r\n                        <strong>${_cache_budget.USER.USER_ID}</strong> \r\n                    </td>-->\r\n                    </tr>\r\n              </table>\r\n              </div>\r\n\r\n              </div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.REGULAR\" to-person-model.bind=\"{USE:'REGULAR'}\" ></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"semi_regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.SEMI_REGULAR\" to-person-model.bind=\"{USE:'SEMI_REGULAR'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"staff\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.STAFF\"to-person-model.bind=\"{USE:'STAFF'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"guest\"  style=\"width:1024px;\"><guest></guest></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"summary\" style=\"width:1024px;\">\r\n                <summary></summary>\r\n              </div>\r\n          </div>\r\n            \r\n      </div>\r\n      \r\n    \r\n   <!-- <div class=\"well\">\r\n        <div class=\"input-append date\" id=\"dp3\" data-date=\"12-02-2012\" data-date-format=\"dd-mm-yyyy\">\r\n        <input class=\"span2\" size=\"16\" type=\"text\" value=\"12-02-2012\" readonly=\"\">\r\n        <span class=\"add-on\"><i class=\"icon-calendar\"></i></span>\r\n        </div>\r\n    </div> -->\r\n\r\n\r\n </template>\r\n"; });
 define('text!ppfcs/budget/personnel.html', ['module'], function(module) { module.exports = "<template>\r\n  <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n  <require from=\"converters/number-format\"></require>\r\n  <require from=\"converters/filtercustom\"></require>\r\n  <require from=\"converters/signals\"></require>\r\n                <div style=\"overflow:scroll;height:600px !important; padding-left:10px;padding-top:10px;!important; \" scroll.trigger=\"scrollDiv()\" ref=\"divRegular\">\r\n                 <table class= \"table-hover table-condensed table-bordered table-striped\" style=\"position:absolute;z-index:1000;visibility:hidden;top:100px;\" ref=\"tblHeader\" scroll.trigger=\"scrollDiv()\" >\r\n                <thead>\r\n                    <tr>\r\n                      <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n              </table>\r\n              <table class= \"table-hover table-condensed table-bordered table-striped\" onload=\"myFunction()\"  ref=\"tblData\">\r\n                <thead>\r\n                    <tr>\r\n                        <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\"\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody repeat.for=\"item of _Personnel | filtercustom:'visible':true:_signal \">\r\n                    <tr>\r\n                      <td style=\"width:41px !important;\"> \r\n                        <input disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"text-center\" value.one-way=\"$index+1\" style=\"width:40px !important;color:gray;border:0px;\" click.trigger=\"$parent.focusTrigger($index)\"/>\r\n                        </td>\r\n                      <td style=\"width:5px !important;\">\r\n                        <button class=\"btn btn-xs \" click.trigger=\"$parent.collapse_expand(item)\">${item.ce_value}</button></td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"item.GLOBAL_ID\">${item.PERSONNEL_NAME}</td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"!item.GLOBAL_ID\"><input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.BLANK_PERSONNEL_NAME\"/></td>\r\n                      <td style=\"width:5px !important;\">\r\n                         <input readonly disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"jobclass\" value.bind=\"item.JOB_DESC\" style=\"width:120px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'JOB', $index, item.BDGT_TMPL_DTL_ID)\" focus.trigger=\"$parent.fnRegularFocus($index,'JOB')\" />\r\n                      </td>   \r\n                      <td style=\"width:100px !important;\">\r\n                         <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:90px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'TERM', $index)\" focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/>\r\n                      </td>\r\n                      <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                        <!-- ${item.CONFIDENTIAL_TMP}\r\n                        ${$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL} -->\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <!-- click.delegate=\"$parent.chkRemove(item)\" -->\r\n                      <td style=\"width:100px !important;\" class=\"text-center\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"type=\"checkbox\" checked.bind=\"item.REMOVE\" if.bind=\"item.BDGT_TMPL_DTL_ID && $parent.fnCheckExistingTalents(item.TALENTS,item)\"/>\r\n                          <button class=\"btn btn-xs\" click.trigger=\"$parent.removeRegular($index)\"  if.bind=\"!item.BDGT_TMPL_DTL_ID\">-</button>\r\n                      </td>\r\n                    </tr>\r\n                     <tr>\r\n                      <td colspan=9 style.bind=\"item.styleString\">\r\n                        <div>\r\n                         <table style=\"margin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                          <tr>\r\n                            <td>CATEGORY</td>\r\n                            <td>CONFIDENTIAL</td>\r\n                            <td>STAFF WORK</td>\r\n                            <td>REMARKS</td>\r\n                            <td>TALENT MANAGER</td>\r\n                            <!-- <td>TALENTS</td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\">IS POOL</td>\r\n                          </tr>\r\n                          <tr>\r\n                            <td>${item.CATEGORY_DESC}</td>\r\n                            <td class=\"text-center\">\r\n                               <!-- if.bind=\"$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL\" -->\r\n                               <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.CONFIDENTIAL_TMP\" />\r\n                            </td>\r\n                            <td>\r\n                              <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.STAFF_WORK_TMP\"/>\r\n                            </td>\r\n                            <td>\r\n                              <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea>\r\n                            </td>\r\n                            <td> \r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"!item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.showTalentMngr(item)\" >+</button>\r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.removeTalentMngr(item)\">-</button>\r\n                            </td>\r\n                           <!--  <td>\r\n                                 <table class=\"table-hover table-condensed table-bordered table-striped\">\r\n                                    <thead>\r\n                                      <tr>\r\n                                        <td>NAME</td> \r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.showTalents(item)\" >+</button>\r\n                                            \r\n                                        </td>\r\n                                      </tr>\r\n                                    </thead>\r\n                                    <tbody>\r\n                                      <tr repeat.for=\"itemTalent of item.TALENTS\">\r\n                                        <td>${itemTalent.PERSONNEL_NAME}</td>\r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.$parent.removeTalent($parent,itemTalent,$index)\">-</button></td>\r\n                                      </tr>\r\n                                    </tbody>\r\n                                 </table>\r\n                            </td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\"> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.POOL_RECORD_TMP\"/></td>\r\n                          </tr>\r\n                        </table>\r\n                        </div>\r\n                         <div if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" style=\"margin-left:20%;margin-top:5px;\">\r\n                              <table style=\"margin-topin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                              <tr>\r\n                              <td class=\"colorCell\">Talent Manager</td>\r\n                              <td class=\"colorCell\">Pay Factor</td>\r\n                              <td class=\"colorCell\">Contract</td>\r\n                              <td class=\"colorCell\">Rate</td>\r\n                              <td class=\"colorCell\">Remarks</td>\r\n                              </tr>\r\n                              <tr>\r\n                                   <td> ${item.TALENT_MANAGER.PERSONNEL_NAME}</td>\r\n                               <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input   disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"value.bind=\"item.TALENT_MANAGER.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                    <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.REMARKS\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                              </tr>\r\n\r\n                              </table>\r\n                          </div>  \r\n                      </td>\r\n                    </tr>\r\n               </tbody>\r\n            </table>\r\n            </div>\r\n           \r\n            <!-- ${_Personnel.length} -->\r\n            \r\n                \r\n               <div style=\"position:absolute;top:20px;left:0px;\">\r\n                <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrTalents\" ></modalcontainer>\r\n                <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrManager\" ></modalcontainer>\r\n                <modalcontainer to.bind=\"modalJob\"></modalcontainer> -->\r\n         <!--        <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrTalentsDisabled\" click.trigger=\"fnIndivMstrTalents()\" value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrManagerDisabled\"  click.trigger=\"fnIndivMstrManager()\"  value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isJobDisabled\"  click.trigger=\"fnModalJob()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/> -->\r\n\r\n               </div>   \r\n               <table>\r\n                <tr>\r\n                  <td>\r\n                    <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstr\"> --></modalcontainer>\r\n                     <input type=\"button\" class=\"btn btn-xs customButton\"  disabled.bind=\"isIndivMstrDisabled\"  click.trigger=\"fnIndivMstrManager()\" value=\"Search Personnel\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                  </td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"fnBlankPersonnelRegular()\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Blank Personnel</button></td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"savePersonnel(0)\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button></td>\r\n               \r\n               \r\n                <td if.bind=\"toPersonModel.USE=='REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                <td if.bind=\"toPersonModel.USE=='SEMI_REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Semi-Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_SEMI_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n               <td if.bind=\"toPersonModel.USE=='STAFF'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Staff) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_STAFF\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                </tr>\r\n                </table>\r\n\r\n</template>\r\n"; });
 define('text!ppfcs/budget/summary.html', ['module'], function(module) { module.exports = "<template>\r\n\t\t\t<table class= \"table-hover table-condensed table-bordered table-striped\" style=\"margin-left:50px;margin-top:40px;margin-botton:20px;\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"width:150px;\">\r\n\t\t\t\t\t\t\t<strong>CLASSIFICATION</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"width:150px;text-align:center;\">\r\n\t\t\t\t\t\t\t<strong>TOTAL PROGRAM</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tMAINSTAY\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_MAINSTAY}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tSTAFF\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_STAFF}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tGUEST\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_GUEST}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t<strong>TOTAL</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;border-top-width:3px;\">\r\n\t\t\t\t\t\t\t<strong>${_INPUT_AMT_TOTAL}</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\t\t\t\t\t\r\n\t\t\t</table>\r\n            <br/>\r\n</template>"; });
-define('text!ppid/modals/DialogBox.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body style=\"border-radius: 0px;\" class=\"divBackground\">\r\n\t\t\t<div style=\"white-space: pre;\">${message}</div>\r\n\t\t</ux-dialog-body>\r\n\t\t<ux-dialog-footer>\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.ok()\">Yes</button>&nbsp;&nbsp;\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.cancel()\">No</button>&nbsp;&nbsp;\r\n\t\t</ux-dialog-footer>\r\n\t</ux-dialog>\r\n</template>"; });
-define('text!ppid/modals/photo_list.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header>class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body>\r\n\t\t\t<div>\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</ux-dialog-body>\r\n\t</ux-dialog>\r\n</template>"; });
-define('text!ppid/modals/ppid_search.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SEARCH PERSONNEL(S)</b></span></ux-dialog-header>\r\n\t\t\r\n\t\t<ux-dialog-body style=\"background:#E3E3E3;\" class=\".divBackground\">\r\n\t\t\t<require from=\"converters/take\"></require>\r\n\t\t\t<require from=\"converters/sorttext\"></require>\r\n\t\t\t<require from=\"tools/gridpaging\"></require>\t\t\t\r\n\t\t\t<div style=\"height:350px;overflow: auto;\">\r\n\t\t\t\t<table class=\"table table-hover table-condensed table-bordered\">\r\n\t\t\t\t\t<thead class=\"table-default\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GLOBAL ID</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">TIN</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GROUP</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">LAST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">FIRST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">NICKNAME / ALIAS</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">PROJECT NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">COUNTRY</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr ref=\"_rppid_queries\">\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bglobal_indiv_id\" searchable=\"_bglobal_indiv_id\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_btin\" searchable=\"_stin\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bgroup\" searchable=\"_sgroup\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_blast_name\" searchable=\"_slast_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bfirst_name\" searchable=\"_sfirst_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bnickname\" searchable=\"_snickname\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bproject_name\" searchable=\"_sproject_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bcountry\" searchable=\"_scountry\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</thead>\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedPersonnel(item)\">\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GLOBAL_INDIV_ID}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.TIN}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GROUP}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.LAST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.FIRST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.NICK_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.PROJECT_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.COUNTRY}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"10\"></gridpaging>\r\n\t\t</ux-dialog-body>\r\n\t\t<!--<ux-dialog-footer>\t\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"Submit()\">Search</button>\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"controller.cancel()\">Close</button>\r\n\t\t</ux-dialog-footer>-->\r\n\t</ux-dialog>\r\n</template>"; });
+define('text!ppid/contract/contract_form.html', ['module'], function(module) { module.exports = "<template>\r\n  <require from=\"converters/datepattern\"></require>\r\n  <br/>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:900px;height: 300px;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:880px;height:38px;\">\r\n        <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">UTILIZATION</strong>\r\n      </ul>\r\n      <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n        <tbody >\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Global ID</td>\r\n                    <td>\r\n                      <input value.bind=\"GLOBAL_ID1\" style=\"width: 160px;text-align:center\" readonly.bind=\"!_disableEditContract || _cache_contract. CONTRACT_STATUS!='ACTIVE'\"/>\r\n                      <input type=\"button\" class=\"btn btn-xs customButton\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\" disabled.bind='!_disableCancelContract' click.trigger=\"searchContract()\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:55px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract Status</td>\r\n                    <td>\r\n                      <select value.bind=\"CONTRACT_STATUS1\" style=\"width:260px;\" disabled.bind=\"_disableEditContract || _cache_contract.ISNEWCONTRACT\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of CONTRACT_STATUS\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value=\"EXPIRED\" style=\"width:260px; padding-left: 3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Personnel Name</td>\r\n                    <td>\r\n                      <div>\r\n                        <input value.bind=\"EMPLOYEE_NAME\" style=\"width:300px;padding-left: 3px;\"  readonly.bind=\"_disableEditContract || !_cache_contract.ISNEWCONTRACT\" focus.trigger=\"onfocusName()\" blur.trigger=\"lostfocusName()\" change.delegate=\"onchangeName()\"/>\r\n                        <div style=\"position: absolute;z-index: 999;\" show.bind=\"menuNameShow\">\r\n                          <a repeat.for=\"item of NAME_ARRAY\" style=\"width:300px;\" value.bind=\"item.ref\" class=\"list-group-item\" click.trigger=\"name_change(item.ref, item.desc)\" >${item.desc}</a>\r\n                        </div>\r\n                      </div>\r\n                      <!--<auto-complete items.bind=\"languages\"></auto-complete>-->\r\n                      <!--<select value.bind=\"MSTR_LIST1\" style=\"width:300px;\" change.delegate=\"name_change()\" disabled.bind=\"_disableEditContract || !_cache_contract.ISNEWCONTRACT\">\r\n                        <option repeat.for=\"item of MSTR_LIST\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>-->\r\n                    </td>\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Alias</td>\r\n                    <td>\r\n                      <div>\r\n                        <input value.bind=\"EMPLOYEE_ALIAS\" style=\"width:260px;padding-left: 3px; text-transform:uppercase; \"  readonly.bind=\"_disableEditContract\" focus.trigger=\"onfocusAlias()\" blur.trigger=\"lostfocusAlias()\" change.delegate=\"onchangeAlias()\"/>\r\n                        <div style=\"position: absolute;z-index: 999;\" show.bind=\"menuAliasShow\">\r\n                          <a repeat.for=\"item of ALIAS_ARRAY\" style=\"width:260px;\" value.bind=\"item\" class=\"list-group-item\" click.trigger=\"alias_change(item)\" >${item}</a>\r\n                        </div>\r\n                      </div>\r\n\r\n                      <!--<select value.bind=\"ALIAS_NAME1\" style=\"width:260px;\" disabled.bind=\"_disableEditContract\">\r\n                        <option repeat.for=\"item of ALIAS\" value.bind=\"item\">\r\n                          ${item}\r\n                        </option>\r\n                      </select>-->\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Company Name</td>\r\n                    <td>\r\n                      <input value.bind=\"COMPANY_NAME1\" style=\"width: 260px;padding-left: 3px;\" readonly.bind=\"true\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:40px\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Division</td>\r\n                    <td>\r\n                      <select value.bind=\"DIVISION1\" style=\"width:260px;\" change.delegate=\"division_change()\" disabled.bind=\"_disableEditContract\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of DIVISION\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value.bind=\"DIVISION_NAME1\" style=\"width:260px; padding-left:3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Job</td>\r\n                    <td>\r\n                      <select value.bind=\"JOB1\" style=\"width:260px;\"  change.delegate=\"job_change()\"  disabled.bind=\"_disableEditContract\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of JOB\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value.bind=\"JOB_NAME1\" style=\"width:260px; padding-left: 3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:40px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Job Group</td>\r\n                    <td>\r\n                      <input value.bind=\"JOB_GRP_NAME1\" style=\"width: 260px; padding-left: 3px;\" readonly.bind=\"true\"/>\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract Start Date</td>\r\n                    <td>\r\n                      <input id=\"dtPicker1\" value.bind=\"CONTRACT_START_DT1\"  style=\"width: 80px; text-align:center;\" readonly.bind=\"_disableEditContract\"  change.delegate=\"checkDate()\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\"/>\r\n                      <input value.bind=\"CONTRACT_START_DT1\"  style=\"width: 80px; text-align:center;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:95px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract End Date</td>\r\n                    <td>\r\n                      <input id=\"dtPicker2\" value.bind=\"CONTRACT_END_DT1\" style=\"width: 80px; text-align:center;\"  readonly.bind=\"_disableEditContract\" change.delegate=\"checkDate()\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\"/>\r\n                      <input value.bind=\"CONTRACT_END_DT1\" style=\"width: 80px; text-align:center;\"   readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:100px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Duration Months</td>\r\n                    <td>\r\n                      <input readonly.bind=\"true\" value.bind=\"DURATION_MONTHS1\" style=\"width: 50px; text-align: center;\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n      <br/>\r\n      <br/>\r\n      <div style=\"margin-left:100px;\">\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('create')\" disabled.bind=\"_disableCreateContract || !_disableCancelContract\">NEW RECORD</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('save')\" disabled.bind=\"_disableCancelContract || _cache_contract.CONTRACT_STATUS!='ACTIVE'\">SAVE</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('cancel')\" disabled.bind=\"_disableRefreshContract\">CANCEL</button>&nbsp;&nbsp;\r\n      </div>\r\n      <div style=\"margin-left:25%;\">\r\n      <br/>\r\n      <table class= \"table-bordered\">\r\n        <tr>\r\n            <td>\r\n                CREATED BY:\r\n            </td>\r\n            <td>\r\n                ${CREATED_BY1}\r\n            </td>\r\n            <td>\r\n                LAST UPDATED BY:\r\n            </td>\r\n            <td>\r\n                ${LAST_UPDATED_BY1}\r\n            </td>\r\n        </tr>\r\n      </table>\r\n      </div>\r\n</div>\r\n\r\n</template>\r\n"; });
+define('text!ppid/contract/contract_search.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>CONTRACT TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    GLOBAL ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    LAST NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    GIVEN NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    MIDDLE NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rCONTRACT_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_ID\" searchable=\"_sGLOBAL_ID\"   keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGIVEN_NAME\" searchable=\"_sGIVEN_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                  <input class=\"input-sm form-control\" value.bind=\"_bCONTRACT_STATUS\" searchable=\"_sCONTRACT_STATUS\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\"  click.delegate=\"$parent.selectedContract(item)\">\r\n                <td>\r\n                    ${item.GLOBAL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.LAST_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.GIVEN_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.MIDDLE_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.CONTRACT_STATUS}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>\r\n"; });
+define('text!ppid/talent_search/results_output.html', ['module'], function(module) { module.exports = "<template>\r\n  <div class=\"tab-content\">\r\n      <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1024px;height:120px;\"><br/>\r\n        <br/>\r\n        <br/>\r\n        <br/>\r\n\r\n      <div style=\"margin-left:25%;\">\r\n        <br/>\r\n        <br/>\r\n      <table class= \"table-bordered\">\r\n        <tr>\r\n            <td>\r\n                CREATED BY:\r\n            </td>\r\n            <td>\r\n            </td>\r\n            <td>\r\n                LAST UPDATED BY:\r\n            </td>\r\n            <td>\r\n            </td>\r\n            </tr>\r\n      </table>\r\n      </div>\r\n\r\n      </div>\r\n    </div>\r\n</template>\r\n"; });
+define('text!ppid/talent_search/talent_search.html', ['module'], function(module) { module.exports = "<template>\r\n  <require from=\"ppid/talent_search/results_output\"></require>  \r\n  <br/>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 400px;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n        <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">SEARCH</strong>\r\n      </ul>\r\n      <div class=\"col-md-6\">\r\n        <strong>General Info</strong>\r\n        <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n          <tbody >\r\n              <tr>\r\n                <td style=\"vertical-align: top;\">\r\n                  <table>\r\n                       <tr>\r\n                          <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Name (Group, Individual)</td>\r\n                          <td>\r\n                           <input value.bind=\"_NAME\" style=\"width: 260px;\" />\r\n                         </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Age</td>\r\n                        <td>\r\n                            <input value.bind=\"_AGE\" style=\"width: 90px;\" />\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Citizenship</td>\r\n                        <td>\r\n                          <select value.bind=\"_CITIZENSHIP\" style=\"width:260px;\">\r\n                            <option repeat.for=\"item of _CITIZENSHIP_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                            </option>\r\n                        </select>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Religion</td>\r\n                        <td>\r\n                          <select value.bind=\"_RELIGION\" style=\"width:260px;\">\r\n                            <option repeat.for=\"item of _RELIGION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                            </option>\r\n                        </select>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Gender</td>\r\n                        <td>\r\n                          <select value.bind=\"_GENDER\" style=\"width:260px;\">\r\n                            <option repeat.for=\"item of _GENDER_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                            </option>\r\n                        </select>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Country</td>\r\n                        <td>\r\n                          <select value.bind=\"_COUNTRY\" style=\"width:260px;\">\r\n                            <option repeat.for=\"item of _COUNTRY_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                            </option>\r\n                        </select>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Location</td>\r\n                        <td>\r\n                          <select value.bind=\"_LOCATION\" style=\"width:260px;\">\r\n                            <option repeat.for=\"item of _LOCATION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                            </option>\r\n                        </select>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Talent Supplier</td>\r\n                        <td>\r\n                            <input value.bind=\"_TALENT_SUPPLIER\" style=\"width: 260px;\" />\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Talent Handler</td>\r\n                        <td>\r\n                            <input value.bind=\"_TALENT_HANDLER\" style=\"width: 260px;\" />\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Interest</td>\r\n                        <td>\r\n                          <select value.bind=\"_INTEREST\" style=\"width:260px;\">\r\n                            <option repeat.for=\"item of _INTEREST_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                            </option>\r\n                        </select>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Skill Talent</td>\r\n                        <td>\r\n                          <select value.bind=\"_SKILL_TALENT\" style=\"width:260px;\">\r\n                            <option repeat.for=\"item of _SKILL_TALENT_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                            </option>\r\n                        </select>\r\n                        </td>\r\n                      </tr>\r\n                    </table>\r\n                </td>\r\n              </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <div class=\"col-md-6\">\r\n        <strong>Characteristics</strong>\r\n        <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n          <tbody>\r\n              <tr>\r\n                <td style=\"vertical-align: top;\">\r\n                  <table>\r\n                    <tr>\r\n                      <td>Height</td>\r\n                      <td>\r\n                          <input value.bind=\"_HEIGHT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Weight</td>\r\n                      <td>\r\n                          <input value.bind=\"_WEIGHT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Built</td>\r\n                      <td>\r\n                          <input value.bind=\"_BUILT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Eye Color</td>\r\n                      <td>\r\n                          <input value.bind=\"_EYE_COLOR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Hair Color</td>\r\n                      <td>\r\n                          <input value.bind=\"_HAIR_COLOR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Skintone</td>\r\n                      <td>\r\n                          <input value.bind=\"_SKINTONE\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Vital Statistics</td>\r\n                      <td>\r\n                          <input value.bind=\"_VITAL_STATISTICS\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Specific Characteristics Keyword</td>\r\n                      <td>\r\n                          <input value.bind=\"_SPECIFIC_CHAR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Talent Type</td>\r\n                      <td>\r\n                          <input value.bind=\"_TALENT_TYPE\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                  </table>\r\n                </td>\r\n              </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"search_on()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n  </div>\r\n</template>\r\n"; });
 //# sourceMappingURL=app-bundle.js.map

@@ -31,7 +31,7 @@ export class mainpage {
         { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
         { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
-        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
+        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FEE CAPTURE SYSTEM' },
         { ref: 'UTILIZATION', desc: 'UTILIZATION'}
     ];
     _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING'];
@@ -178,7 +178,7 @@ export class mainpage {
     applicationClick(item)
     {
         // alert(item);
-        if (item.APPLICATION_DESC == 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM')
+        if (item.APPLICATION_DESC == 'PROGRAM PERSONNEL FEE CAPTURE SYSTEM')
         {
             this._roles= this._cache_obj._ACCESS.ROLES.filter((all) => all.APPLICATION_ID == item.APPLICATION_ID);
             this._application_on = false;
@@ -218,9 +218,9 @@ export class mainpage {
         var varFound = this._cache_obj._ACCESS.APPLICATION.filter(all => filterMenu.includes(all.APPLICATION_DESC));
         if (varFound.length == 1)
         {
-            if (varFound == 'PROGRAM BUDGET TEMPLATE')
+            if (varFound[0].APPLICATION_DESC == 'PROGRAM BUDGET TEMPLATE')
                 this.router.navigateToRoute('mainview');
-            else if (varFound == 'PROGRAM PERSONNEL INFORMATION DATABASE')
+            else if (varFound[0].APPLICATION_DESC == 'PROGRAM PERSONNEL INFORMATION DATABASE')
                 this.router.navigateToRoute('ppid');
             else
                 this.router.navigateToRoute('actual_cost');
