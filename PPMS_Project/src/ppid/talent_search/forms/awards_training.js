@@ -2,7 +2,7 @@ import toastr from "toastr";
 import {inject} from 'aurelia-framework';
 import {obj_personnel} from '../obj_personnel';
 import {DialogService} from 'aurelia-dialog';
-import {EntityManager,EntityQuery} from 'entity-manager-factory';
+import {EntityManager,EntityQuery} from '../../entity-manager-factory';
 
 @inject(DialogService, obj_personnel, toastr)
 export class awards_training //Experience, awards, seminar, and training.

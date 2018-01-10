@@ -24,7 +24,7 @@
 							<td style="vertical-align: top;">
 								<table>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Country<label style="color: red;"><label style="color: red;">*</label></label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Country*</td>
 										<td>
 											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.country_cd" disabled.bind="obj_personnel.editing_status=='EDIT' || _disableForm" tabindex="1">
 												<option value=""></option>
@@ -33,13 +33,13 @@
 										</td>
 									</tr>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left" >Surname<label style="color: red;">*</label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left" >Surname*</td>
 										<td>
 											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.last_name" disabled.bind="_disableForm" tabindex="3" />
 										</td>
 									</tr>
 									<tr style="height:35px;">
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Gender<label style="color: red;">*</label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Gender*</td>
 										<td>
 											<label repeat.for="g of gender" style="margin-left: 10px; margin-right: 10px;">
 												<input type="radio" name="_gender" value.bind="g" checked.bind="selectedGender" disabled.bind="_disableForm" tabindex="6" />${g}
@@ -127,7 +127,7 @@
 										</td>
 									</tr>									
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name<label style="color: red;">*</label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name*</td>
 										<td>
 											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.given_name" disabled.bind="_disableForm" tabindex="4" />
 										</td>
@@ -139,13 +139,13 @@
 										</td>
 									</tr>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Birth date<label style="color: red;">*</label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Birth date*</td>
 										<td>
 											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" id="birthDate" value.bind="obj_personnel.HEADER.birth_dt" disabled.bind="_disableForm" tabindex="10" />
 										</td>
 									</tr>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Religion<label style="color: red;">*</label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Religion*</td>
 										<td>
 											<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.HEADER.religion_cd" disabled.bind="_disableForm" tabindex="13">
 												<option></option>
@@ -203,13 +203,13 @@
 							<td style="vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;" >
 								<table style="margin: 0px; padding: 0px;">												
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">TIN<label style="color: red;">*</label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">TIN*</td>
 										<td>
 											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.tin" disabled.bind="obj_personnel.editing_status=='EDIT' || _disableForm" tabindex="2" id="_tin" keypress.trigger="DigitOnly($event)" keyup.trigger="mask('_tin', '___-___-___-___')" />											
 										</td>
 									</tr>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left" >Middle Name<label style="color: red;">*</label></td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left" >Middle Name*</td>
 										<td>
 											<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px;" type="text"  value.bind="obj_personnel.HEADER.middle_name" disabled.bind="_disableForm" tabindex="5" />
 										</td>
@@ -284,7 +284,7 @@
 				</table>
 				<div>
 					<h5>
-						( <strong>Note</strong> : <label style="color: red;">*</label> is required )
+						( <strong>Note</strong> : * is required )
 					</h5>
 				</div>
 				<div>

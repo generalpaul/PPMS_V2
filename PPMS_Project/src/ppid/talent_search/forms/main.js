@@ -3,14 +3,14 @@ import toastr from "toastr";
 import {inject} from 'aurelia-framework';
 import {obj_personnel} from '../obj_personnel';
 import {DialogService} from 'aurelia-dialog';
-import {EntityManager,EntityQuery} from 'entity-manager-factory';
+import {EntityManager,EntityQuery} from '../../entity-manager-factory';
 import breeze from 'breeze-client';
 import {ppid_search} from "../modals/ppid_search";
 import moment from 'moment';
-import {fnSerializeCode} from "helpers";
+import {fnSerializeCode} from "../../helpers";
 import { cache_obj } from '../../cache_obj';
-import {input_mask} from "helpers";
-import {isDigit} from "helpers";
+import {input_mask} from "../../helpers";
+import {isDigit} from "../../helpers";
 import settings from 'settings';
 
 @inject(DialogService, obj_personnel, toastr, cache_obj)

@@ -2,12 +2,12 @@ import toastr from "toastr";
 import {inject} from 'aurelia-framework';
 import {obj_personnel} from '../obj_personnel';
 import {DialogService} from 'aurelia-dialog';
-import {EntityManager,EntityQuery} from 'entity-manager-factory';
+import {EntityManager,EntityQuery} from '../../entity-manager-factory';
 import breeze from 'breeze-client';
 import {ppid_search} from "../modals/ppid_search";
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
-import {isDigit} from "helpers";
+import {isDigit} from "../../helpers";
 import settings from 'settings';
 
 @inject(DialogService, obj_personnel, toastr)

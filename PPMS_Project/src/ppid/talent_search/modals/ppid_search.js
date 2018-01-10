@@ -1,10 +1,10 @@
 import {inject,ObserverLocator,bindable} from 'aurelia-framework';
 import {DialogController} from 'aurelia-dialog';
 import {MultiObserver} from 'multi-observer'; 
-import {getLookups} from 'masterfiles';
+import {getLookups} from '../.././masterfiles';
 import breeze from 'breeze-client';
-import {EntityManager, EntityQuery} from 'entity-manager-factory';
-import {getFilter} from 'helpers';
+import {EntityManager, EntityQuery} from '../../entity-manager-factory';
+import {getFilter} from '../../helpers';
 import {obj_personnel} from '../obj_personnel';
 import toastr from "toastr";
 
