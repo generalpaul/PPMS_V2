@@ -28,11 +28,11 @@ export class mainpage {
     headerVisible = false;
     _application = [];
     _application_desc = [
-        { order_no: 1, ref: "PPI MAINTENANCE", desc: "PROGRAM PERSONNEL INFORMATION"},        
-        { order_no: 2, ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
-        { order_no: 3, ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
-        { order_no: 4, ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
-        { order_no: 5, ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
+        { order_no: 1, ref: "PPI MAINTENANCE", desc: "PROGRAM PERSONNEL INFORMATION"},                
+        { order_no: 2, ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
+        { order_no: 3, ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
+        { order_no: 4, ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
+        { order_no: 5, ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { order_no: 6, ref: 'UTILIZATION', desc: 'UTILIZATION'},
         // { ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' },
         // { ref: "PPID_GROUP", desc: 'PROGRAM PERSONNEL INFORMATION DATABASE GROUP'}
