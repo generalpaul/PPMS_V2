@@ -1,13 +1,13 @@
 import toastr from "toastr";
 import {inject} from 'aurelia-framework';
 import {obj_personnel} from '../obj_personnel';
-import {EntityManager,EntityQuery} from '../../entity-manager-factory';
+import {EntityManager,EntityQuery} from 'entity-manager-factory';
 import breeze from 'breeze-client';
 import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
 import moment from 'moment';
-import {getLookups} from '../../masterfiles';
-import {isDigit} from "../../helpers";
+import {getLookups} from 'masterfiles';
+import {isDigit} from "helpers";
 import settings from 'settings';
 
 

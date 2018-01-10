@@ -771,13 +771,19 @@ export class company_info_main{
 		var query = EntityQuery().from("COMPANY_SPECIFIC_INDEX")
 					.where("COMPANY_SPECIFIC_ID", "==", company_id).take(1);
 		EntityManager().executeQuery(query).then((s)=>{
-			LastID = s.results[0].COMPANY_INDEX;
-			var lastYear = LastID.toString().substring(0,2);
-			if(lastYear != currentYear && this.obj_personnel.COMPANY_SPECIFIC.model.id_no == "000000"){
-				LastID = currentYear + "0001";		
-			}else{
+			
+
+			if(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8){
 				LastID = this.obj_personnel.COMPANY_SPECIFIC.model.id_no;
+			}else{				
+				LastID = s.results[0].COMPANY_INDEX;
+				var lastYear = LastID.toString().substring(0,2);
+
+				if(lastYear != currentYear){
+					LastID = currentYear + "0001";		
+				}
 			}
+			
 
 			query = EntityQuery().from("GLOBAL_COMPANY_MSTR")
 					.orderByDesc("GLOBAL_COMPANY_ID").take(1);
