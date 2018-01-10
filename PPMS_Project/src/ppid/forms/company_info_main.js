@@ -438,7 +438,7 @@ export class company_info_main{
 				this._disableTabsInput = false;
 				this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = global_company.global_company_id;
 				this.obj_personnel.COMPANY_SPECIFIC.model.id_no = global_company.id_no;
-				console.log(global_company.start_dt);
+				// console.log(global_company.start_dt);
 				if(moment(global_company.start_dt).isValid()){
 					var startDt = moment.utc(global_company.start_dt).format("MM/DD/YYYY");
 					if(startDt != "01/01/0001")
@@ -773,8 +773,10 @@ export class company_info_main{
 		EntityManager().executeQuery(query).then((s)=>{
 			LastID = s.results[0].COMPANY_INDEX;
 			var lastYear = LastID.toString().substring(0,2);
-			if(lastYear != currentYear){
+			if(lastYear != currentYear && this.obj_personnel.COMPANY_SPECIFIC.model.id_no == "000000"){
 				LastID = currentYear + "0001";		
+			}else{
+				LastID = this.obj_personnel.COMPANY_SPECIFIC.model.id_no;
 			}
 
 			query = EntityQuery().from("GLOBAL_COMPANY_MSTR")
@@ -813,9 +815,11 @@ export class company_info_main{
 				EntityManager().addEntity(entity);
 				EntityManager().saveChanges().then((s3)=>{
 					settings.isNavigating = false;
-					toastr.success("", "Record saved.");
-					this.updateCompanyIndex(company_id, LastID);
+					toastr.success("", "Record saved.");					
 					this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
+					if(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8){
+						this.updateCompanyIndex(company_id, LastID);	
+					}
 				}, (e3)=>{
 					settings.isNavigating = false;
 					if(entity != null){
@@ -850,6 +854,7 @@ export class company_info_main{
   		dateToday = new moment(new Date()).add(8, 'hours');
   		dateToday = new Date(dateToday);
 
+  		var company_id = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
 		var lstart_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.start_dt);
   		var lend_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.end_dt); 
   		var lkapamilya_dt = this.convertToGMT8(this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt);
@@ -861,6 +866,10 @@ export class company_info_main{
 		var query = EntityQuery().from("GLOBAL_COMPANY_MSTR")
 					.where("GLOBAL_COMPANY_ID", "==", global_company_id);
 		EntityManager().executeQuery(query).then((s)=>{
+
+			if(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8){
+				s.results[0].ID_NO = this.obj_personnel.COMPANY_SPECIFIC.model.id_no;
+			}
 
 			s.results[0].START_DT = lstart_dt;
 			s.results[0].END_DT = lend_dt;
@@ -1112,15 +1121,18 @@ export class company_info_main{
 		var query = EntityQuery().from("COMPANY_SPECIFIC_INDEX")
 					.where("COMPANY_SPECIFIC_ID", "==", company_id);
 		EntityManager().executeQuery(query).then((s)=>{
-			s.results[0].COMPANY_INDEX = lastIndex+1;
-			EntityManager().saveChanges().then((s1)=>{
-				//Do nothing.
-				console.log("index was updated.");
-				settings.isNavigating = false;
-			},(e1)=>{
-				settings.isNavigating = false;
-				toastr.error(e1, "Error in updating company specific index.");
-			});
+			if(s.results.length>0){
+				var company_index = parseInt(s.results[0].COMPANY_INDEX.toString());
+				s.results[0].COMPANY_INDEX = company_index+1;
+				EntityManager().saveChanges().then((s1)=>{
+					//Do nothing.
+					console.log("index was updated.");
+					settings.isNavigating = false;
+				},(e1)=>{
+					settings.isNavigating = false;
+					toastr.error(e1, "Error in updating company specific index.");
+				});
+			}
 		}, (e)=>{
 			settings.isNavigating = false;
 			toastr.clear();
@@ -1133,7 +1145,7 @@ export class company_info_main{
 	}
 
 	btnEdit_accreditation(item){
-		console.log(item);
+		// console.log(item);
 		this.accreditation_status = "EDIT";
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_id = item.accreditation_id;
 		this.obj_personnel.COMPANY_SPECIFIC.model.a_job_grp_id = item.job_grp_id;
