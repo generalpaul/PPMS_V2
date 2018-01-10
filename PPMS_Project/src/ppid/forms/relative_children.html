@@ -13,13 +13,13 @@
 					<td>
 						<table>
 							<tr>
-								<td style="width: 120px; vertical-align: middle;" class="text-left">Last Name*</td>
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Last Name<label style="color: red;">*</label></td>
 								<td>
 									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
 								</td>
 							</tr>
 							<tr>
-								<td style="width: 120px; vertical-align: middle;" class="text-left">Birth Date*</td>
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Birth Date<label style="color: red;">*</label></td>
 								<td>
 									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="children_birth_dt" tabindex="4" value.bind="obj_personnel.RELATIVE.children.model.birth_dt" disabled.bind="_disableForm" />
 								</td>
@@ -29,7 +29,7 @@
 					<td>
 						<table>
 							<tr>
-								<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name*</td>
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name<label style="color: red;">*</label></td>
 								<td>
 									<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="2" value.bind="obj_personnel.RELATIVE.children.model.given_name" disabled.bind="_disableForm" />
 								</td>
@@ -62,7 +62,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td style="width: 120px; vertical-align: middle;" class="text-left">Relationship*</td>
+								<td style="width: 120px; vertical-align: middle;" class="text-left">Relationship<label style="color: red;">*</label></td>
 								<td>
 									<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" tabindex="5" value.bind="obj_personnel.RELATIVE.children.model.relative_cd" disabled.bind="_disableForm" >
 										<option value=""></option>

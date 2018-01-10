@@ -1,3 +1,11 @@
+export function OrderByNo(a, b){
+  if(a.ORDER_NO > b.ORDER_NO)
+    return 1;
+  if(a.ORDER_NO < b.ORDER_NO)
+    return -1;
+  return 0;
+}
+
 export function OrderByDate(a, b){  
     if(a.date > b.date)
       return 1;
