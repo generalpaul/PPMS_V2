@@ -12,7 +12,7 @@
 				<td colspan="2" style="vertical-align: top;">
 					<table style="width:100%;">
 						<tr>							
-							<td style="width: 120px; vertical-align: middle;" class="text-left">Award*</td>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Award<label style="color: red;">*</label></td>
 							<td>
 								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.AWARD.model.award_cd" disabled.bind="_disableForm" tabindex="1">
 									<option value=""></option>
@@ -21,13 +21,13 @@
 							</td>
 						</tr>
 						<tr>
-							<td style="width: 120px; vertical-align: middle;" class="text-left">Project Name*</td>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Project Name<label style="color: red;">*</label></td>
 							<td>
 								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" disabled.bind="_disableForm" tabindex="3" value.bind="obj_personnel.AWARD.model.project_name">
 							</td>							
 						</tr>
 						<tr>
-							<td style="width: 120px; vertical-align: top;" class="text-left">Remarks*</td>
+							<td style="width: 120px; vertical-align: top;" class="text-left">Remarks<label style="color: red;">*</label></td>
 							<td>
 								<textarea style="overflow-y: scroll; resize: vertical; width: 100%;" disabled.bind="_disableForm" tabindex="5" value.bind="obj_personnel.AWARD.model.remarks" ></textarea>
 							</td>
@@ -37,7 +37,7 @@
 				<td colspan="1" style="vertical-align: top;">
 					<table style="width: 100%;">
 						<tr>
-							<td style="width: 120px; vertical-align: middle;" class="text-left">Award Giving Body*</td>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Award Giving Body<label style="color: red;">*</label></td>
 							<td>
 								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.AWARD.model.award_body_cd" disabled.bind="_disableForm" tabindex="2">
 									<option value=""></option>
@@ -46,7 +46,7 @@
 							</td>
 						</tr>						
 						<tr>
-							<td style="width: 120px; vertical-align: middle;" class="text-left">Date Received*</td>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Date Received<label style="color: red;">*</label></td>
 							<td>
 								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="4" id="award_receive_dt" disabled.bind="_disableForm" value.bind="obj_personnel.AWARD.model.receive_dt">
 							</td>							

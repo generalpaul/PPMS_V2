@@ -21,7 +21,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td style="width: 120px; vertical-align: middle;" class="text-left">Tax Exemption*</td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">Tax Exemption<label style="color: red;">*</label></td>
 										<td>
 											<select style="border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.tax_exempt_cd" tabindex="1"  >
 												<option repeat.for="item of obj_personnel.TAX_EXEMPT" value.bind="item.value">${item.text}</option>
@@ -189,7 +189,7 @@
 							<td colspan="2">
 								<table>
 									<tr>															 			
-										<td style="width: 120px; vertical-align: middle;" class="text-left">VAT Classification*</td>
+										<td style="width: 120px; vertical-align: middle;" class="text-left">VAT Classification<label style="color: red;">*</label></td>
 										<td>
 											<select style="border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;" value.bind="obj_personnel.GOVERNMENT_INFO.vat_stat_cd" tabindex="11" disabled.bind="_disableOtherGovernmentInfo" >
 												<option repeat.for="item of obj_personnel.VAT_STAT" value.bind="item.value">${item.text}</option>

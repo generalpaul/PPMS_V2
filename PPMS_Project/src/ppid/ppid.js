@@ -13,7 +13,13 @@ export class ppid
 {
 	obj_personnel = null;
 	global_indiv_id="";
-	
+	// modules = [
+	// 	"PPID Header",
+	// 	"ContactInfo",
+	// 	"Government Info",
+	// 	"Company Specific",
+	// 	""
+	// ];
 	
 	constructor(dialogService, obj_personnel){
 		this.dialogService=dialogService;

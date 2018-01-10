@@ -12,7 +12,7 @@
 				<td colspan="2">
 					<table style="width: 100%;">
 						<tr>
-							<td style="width: 120px; vertical-align: middle;" class="text-left">Exam*</td>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Exam<label style="color: red;">*</label></td>
 							<td>
 								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.GOVERNMENT_EXAM.model.exam_cd" disabled.bind="_disableForm" tabindex="1">
 									<option value=""></option>
@@ -31,13 +31,13 @@
 				<td colspan="1" style="vertical-align: top;">
 					<table>
 						<tr>
-							<td style="width: 120px; vertical-align: middle;" class="text-left">Rating/Grade (%)*</td>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Rating/Grade (%)<label style="color: red;">*</label></td>
 							<td>
 								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" value.bind="obj_personnel.GOVERNMENT_EXAM.model.rating_grade" tabindex="2" disabled.bind="_disableForm" keypress.trigger="DigitOnly($event)" />
 							</td>
 						</tr>
 						<tr>
-							<td style="width: 120px; vertical-align: middle;" class="text-left">Date*</td>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Date<label style="color: red;">*</label></td>
 							<td>
 								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" id="exam_dt" value.bind="obj_personnel.GOVERNMENT_EXAM.model.exam_dt" tabindex="4" disabled.bind="_disableForm" />
 							</td>

@@ -8,7 +8,7 @@ import { DialogService } from 'aurelia-dialog';
 // import  jquery from "jquery";
 import { generateID } from './entity-manager-factory';
 //import {handle, Dispatcher} from 'aurelia-flux';
-import { checkCookie, setCookie, removeCookie, getCookie } from './helpers';
+import { checkCookie, setCookie, removeCookie, getCookie, OrderByNo} from './helpers';
 //import { MultiObserver } from 'multi-observer';
 import settings from './settings';
 import { Router } from 'aurelia-router';
@@ -28,12 +28,12 @@ export class mainpage {
     headerVisible = false;
     _application = [];
     _application_desc = [
-        { ref: "PPI MAINTENANCE", desc: "PROGRAM PERSONNEL INFORMATION"},        
-        { ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
-        { ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
-        { ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
-        { ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
-        { ref: 'UTILIZATION', desc: 'UTILIZATION'},
+        { order_no: 1, ref: "PPI MAINTENANCE", desc: "PROGRAM PERSONNEL INFORMATION"},        
+        { order_no: 2, ref: 'PPCD', desc: 'PROGRAM PERSONNEL CONTRACT DATABASE' },
+        { order_no: 3, ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
+        { order_no: 4, ref: 'TDB', desc: 'PART-TIMER INFORMATION DATABASE' },
+        { order_no: 5, ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
+        { order_no: 6, ref: 'UTILIZATION', desc: 'UTILIZATION'},
         // { ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' },
         // { ref: "PPID_GROUP", desc: 'PROGRAM PERSONNEL INFORMATION DATABASE GROUP'}
         
@@ -87,6 +87,12 @@ export class mainpage {
                             for (var j = 0; j < this._application_desc.length; j++) {
                                 if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {
                                     this._application[i].APPLICATION_DESC = this._application_desc[j].desc;
+                                    this._application[i].ORDER_NO = this._application_desc[j].order_no;
+                                }else{
+                                    var doesExist = this._application_desc.some((x)=>x.desc == this._application[i].APPLICATION_DESC);
+                                    if(!doesExist){
+                                        this._application[i].ORDER_NO = 7;  
+                                    }
                                 }
                             }
                             if (this._remove.includes(this._application[i].APPLICATION_DESC))
@@ -104,8 +110,11 @@ export class mainpage {
                                // this._ppfcs_modules.push(this._application[i]);
                             }
                         }
-                        console.log(this._ppi_modules);
+                        
 
+
+                        console.log(this._application);
+                        this._application.sort(OrderByNo);
                         this.fnCheckAccess();
                     });
                 }
@@ -117,6 +126,12 @@ export class mainpage {
                         for (var j = 0; j < this._application_desc.length; j++) {
                             if (this._application_desc[j].ref == this._application[i].APPLICATION_DESC) {
                                 this._application[i].APPLICATION_DESC = this._application_desc[j].desc;
+                                this._application[i].ORDER_NO = this._application_desc[j].order_no;
+                            }else{
+                                var doesExist = this._application_desc.some((x)=>x.desc == this._application[i].APPLICATION_DESC);
+                                if(!doesExist){
+                                    this._application[i].ORDER_NO = 7;  
+                                }
                             }
                         }
 
@@ -136,6 +151,8 @@ export class mainpage {
                     }
 
 
+                    console.log(this._application);
+                    this._application.sort(OrderByNo);
 
                     this.fnCheckAccess();
                 }
