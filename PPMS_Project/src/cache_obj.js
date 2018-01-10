@@ -30,6 +30,6 @@ export class cache_obj{
         contract_dialog: []
 
     };
-    version="1.0";
+    version="1.1";
     
 }

@@ -254,7 +254,7 @@ export class MainHeaderCustomElement {
     // this._cache_budget.CALLER.VALUE1=this._cache_budget.HEADER.BDGT_TMPL_ID; 
     // this._cache_budget.CALLER.ACTION='budget.dialog';
 
-
+    settings.isNavigating = true;
     this._cache_obj.OBSERVERS.budget_dialog.forEach((all)=>{
       all(this._cache_budget.HEADER.BDGT_TMPL_ID);
     });
