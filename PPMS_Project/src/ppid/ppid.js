@@ -1,11 +1,11 @@
-import {checkCookie,setCookie,removeCookie} from '.././helpers';
+import {checkCookie,setCookie,removeCookie} from 'helpers';
 import toastr from "toastr";
 import {inject} from 'aurelia-framework';
 import {obj_personnel} from './obj_personnel';
 import {DialogService} from 'aurelia-dialog';
 import {ppid_search} from "./modals/ppid_search";
-import {EntityManager,EntityQuery} from '../entity-manager-factory'; 
-import {getLookups} from '../masterfiles';
+import {EntityManager,EntityQuery} from 'entity-manager-factory'; 
+import {getLookups} from 'masterfiles';
 import settings from 'settings';
 
 @inject(DialogService, obj_personnel)
