@@ -20,5 +20,5 @@
             </table>  
               <button class="btn btn-xs customButton" if.bind="_enableAdd" click.delegate="fnAddGuest()" disabled.bind="_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'">Add Guest</button>
               <button class="btn btn-xs customButton" if.bind="_enableRemove"click.delegate="fnRemoveGuest()" disabled.bind="_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'">Remove Guest</button>
-              <button class="btn btn-xs customButton" click.delegate="saveGuest()" disabled.bind="_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'">Save</button>
+              <button class="btn btn-xs customButton" click.delegate="saveGuest(0)" disabled.bind="_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'">Save</button>
 </template>

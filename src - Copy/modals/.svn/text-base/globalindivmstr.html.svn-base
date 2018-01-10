@@ -1,0 +1,85 @@
+<template>
+<require from="converters/take"></require>
+<require from="converters/sorttext"></require>
+<require from="tools/gridpaging"></require>
+<table>
+    <tr>
+        <td><div style="height:350px; overflow: auto;width:550px;">
+<table class="table table-hover table-condensed table-bordered table-striped ">
+        <thead class="table-default">
+            <tr>
+                <td class="colorCell2" style="width:140px">GLOBAL ID</td>
+                <td class="colorCell2">PERSONNEL NAME</td>
+            </tr>
+            <tr ref="_rGROUP_TITLE">
+                <td class="colorCell2" style="width:140px">
+                    <input class="input-sm form-control" value.bind="_bGLOBAL_INDIV_ID" searchable="_sGLOBAL_INDIV_ID" keyup.delegate="fnKeyup($event,'')" style="width:140px"/>
+                </td>
+                <td class="colorCell2" >
+                    <input class="input-sm form-control" value.bind="_bPERSONNEL_NAME" searchable="_sPERSONNEL_NAME" keyup.delegate="fnKeyup($event,'')" />
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex" click.delegate="$parent.selectedTalent(item)">
+                <td>${item.GLOBAL_INDIV_ID}</td>
+                <td>${item.PERSONNEL_NAME}</td>
+            </tr>
+        </tbody>
+</table>
+</div>
+<gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex" divby.bind="10"></gridpaging>
+</td>
+        <td style="vertical-align:top;">
+
+
+<div style="height:350px; overflow: auto;">
+<table class="table table-hover table-condensed table-bordered table-striped ">
+        <thead class="table-default">
+            <tr>
+                <td colspan=3 class="colorCell2" >
+                    SELECTED
+                </td>
+            </tr>
+            <tr>
+                <td class="colorCell2"  style="width:140px">
+                    GLOBAL ID
+                </td>
+                <td colspan=2 class="colorCell2" >
+                    PERSONNEL NAME
+                </td>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="item of varFilterArraySelected">
+                <td style="width:140px">
+                    ${item.GLOBAL_INDIV_ID}
+                </td>
+                <td>
+                    ${item.PERSONNEL_NAME}
+                </td>
+                 <td>
+                    <button click.delegate="$parent.deleteSelected($index)">X</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+ </div>
+
+        </td>
+    </tr>
+    <tr>
+        <td colspan=2>
+    <div style="width:100%;text-align:center;">
+        <button style="width:20%;" click.delegate="SelectingDone()">DONE</button>
+        <button style="width:20%;" click.delegate="ClearSearch()">CLEAR SEARCH</button>
+    </div>
+        </td>
+    </tr>
+</table>
+
+    
+
+</template>
+

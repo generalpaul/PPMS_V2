@@ -1,0 +1,641 @@
+import {initializeBreeze,generateID} from './entity-manager-factory';
+import {loadMasterfiles, loadTables, loadLookups, getLookups} from './masterfiles';
+import toastr from "toastr";
+import {inject} from 'aurelia-framework';
+import {substringMatcher} from 'helpers';
+import typeahead from 'typeahead';
+import _ from 'underscore';
+import {EntityManager, EntityQuery} from './entity-manager-factory';
+//import {handle, Dispatcher} from 'aurelia-flux';  
+import { MultiObserver }from 'multi-observer';
+import {  objBudget } from 'objBudget';
+import {checkCookie,setCookie,removeCookie} from './helpers';
+
+@inject(MultiObserver,objBudget)
+export class group_individual {
+
+	modalTalentManager;
+	modalIndivMstr;
+	grpMembers = [];
+	//_dispatcher;
+	_signal = null;
+	_GLOBAL_GRP_ID = "";
+	_GROUP_NAME = "";
+	isDisableSave = true;
+	showingLogout="hidden";
+	_user="";
+	_objBudget;
+	constructor(multiObserver,objBudget) {
+
+		this._objBudget=objBudget;
+
+		// multiObserver.observe(
+		// 	[
+		// 		[this._objBudget.CALLER, 'ACTION'],[this._objBudget.CALLER, 'ACTION_CALLER']
+		// 	], (newValue, oldValue) => {
+
+		// 		if(this._objBudget.CALLER.ACTION=='')
+  //           		 return;
+
+		// 		if(this._objBudget.CALLER.ACTION == 'pass.value')
+		// 		{
+		// 			this.PassedGlobalIndiv(this._objBudget.CALLER.ACTION,this._objBudget.CALLER.VALUE1);
+		// 		}
+		// 		else if(this._objBudget.CALLER.ACTION == 'login.passed')
+		// 		{
+		// 			this.LoginReady(this._objBudget.CALLER.ACTION,this._objBudget.CALLER.VALUE1);
+		// 		}
+		// 		else if(this._objBudget.CALLER.ACTION == 'pass.group')
+		// 		{
+		// 			this.PassedGroup(this._objBudget.CALLER.ACTION,this._objBudget.CALLER.VALUE1);
+		// 		}
+		// 		else
+		// 		{
+		// 			return;
+		// 		}
+				
+		// 		//this._objBudget.CALLER.ACTION='';
+
+		// 	});
+
+		
+
+		this._objBudget.OBSERVERS.pass_value.push((val) => {
+			this.PassedGlobalIndiv(val);
+		});
+
+		this._objBudget.OBSERVERS.login_passed.push((val) => {
+			this.LoginReady(val);
+		});
+
+		this._objBudget.OBSERVERS.pass_group.push((val) => {
+			this.PassedGroup(val);
+		});
+
+
+
+		//this._dispatcher = Dispatcher;
+		this.modalTalentManager = {
+			title: 'Talent Managers',
+			content: 'modals/talentmanagergroups',
+			value: "",
+			id: generateID(),
+			buttonTitle: "Find Talent Manager",
+			cleardispatch: "clear_talentmanager_modal"
+			
+		};
+
+
+		this.modalIndivMstr = {
+			title: 'Talent Managers',
+			content: 'modals/globalindivmstr',
+			value: "",
+			id: generateID(),
+			buttonTitle: "Search Talent",
+			cleardispatch: "clear_indiv_modal"
+		};
+
+		this.modalLogin = {
+			title: 'LOG-IN',
+			content: 'modals/login',
+			value: "",
+			id: generateID(),
+			buttonTitle: "Log In",
+			cleardispatch: "clear_login_modal",
+			width:500
+		};
+
+		toastr.options = {
+			"closeButton": true,
+			"debug": false,
+			"positionClass": "toast-bottom-right",
+			"onclick": null,
+			"showDuration": "300",
+			"hideDuration": "1000",
+			//"timeOut": "300000",
+			//"extendedTimeOut": "1000",
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		};
+
+
+
+		initializeBreeze().then(() => {
+			this._toastr = toastr;
+			toastr.info("Masterfiles...", "Loading..");
+			loadMasterfiles().then(() => {
+				loadLookups().then(() => {
+
+					this._objBudget.OBSERVERS.init_modal.forEach((all) => {
+						all();
+					});
+
+					if (checkCookie("PPMS_USER") != "") {
+
+						var varCookie = checkCookie("PPMS_USER");
+						var varSplitCookie = varCookie.split('^');
+						//this._user = varSplitCookie[0];
+
+						this._user = {
+							USER_ID: varSplitCookie[0],
+							COMPANY_ID: varSplitCookie[1],
+							Is_HR: varSplitCookie[2],
+							Is_Branch: varSplitCookie[0]
+						};
+						this._objBudget.USER = this._user;
+
+				
+
+						// this._objBudget.OBSERVERS.open_modal.forEach((all) => {
+						// 	all(this.modalLogin.id, true);
+						// });
+
+						this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+							all(this.modalLogin.id, false);
+						});
+
+
+						this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+							//console.log(this.modalTalentManager.id);
+							all(this.modalTalentManager.id, true);
+						});
+
+					
+
+						this.showingLogout = "visible";
+
+						return;
+					}
+
+					//console.log(getLookups().GLOBAL_ALIAS_TRX);
+
+					//  var varResult = [];
+					// // var varResultId = [];
+
+					// _.each(getLookups().GLOBAL_GRP_MSTR, (all) => {
+					// 	varResult.push(all.GROUP_NAME + ' - ' + all.GLOBAL_GRP_ID);
+					// 	//varResultId.push(all.GLOBAL_GRP_ID);
+
+					// });
+
+					// $('#idTalentManager').typeahead({
+					// 	hint: true,
+					// 	highlight: true,
+					// 	minLength: 2,
+					// 	limit: 10
+					// }, {
+					// 	source: substringMatcher(varResult)
+					// });
+
+					// $('#idTalentManager').trigger('selected', (id,val)=>{
+					// 	console.log(id);
+					// 	console.log(val);
+
+					// } );
+
+					
+					//{"id": id, "value": value}
+					// $('#idTalentId').typeahead({
+					// 	hint: true,
+					// 	highlight: true,
+					// 	minLength: 2,
+					// 	limit: 10
+					// }, {
+					// 	source: substringMatcher(varResultId)
+					// });
+
+					
+					//this._objBudget.CALLER.ACTION='init.modal';
+
+					this._objBudget.OBSERVERS.init_modal.forEach((all) => {
+						all();
+					});
+
+					this._objBudget.OBSERVERS.open_modal.forEach((all) => {
+						all(this.modalLogin.id, true);
+					});
+
+					this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+						all(this.modalLogin.id,true);
+					});
+
+
+
+					// setTimeout(() => {
+					// 		this._objBudget.CALLER.VALUE1=this.modalLogin.id;
+					// 		this._objBudget.CALLER.VALUE2=true;
+					// 		this._objBudget.CALLER.ACTION='open.modal';
+					// }, 200);
+
+					// setTimeout(() => {
+					// 		this._objBudget.CALLER.ACTION='';
+					// 		this._objBudget.CALLER.ACTION='enable.modal.button';
+					// }, 400);
+
+					
+					
+					
+
+
+					// this._dispatcher.dispatch('init.modal');
+					// this._dispatcher.dispatch('open.modal', this.modalLogin.id, true);
+					// this._dispatcher.dispatch('enable.modal.button', this.modalLogin.id, true);
+
+
+
+				});
+			});
+		});
+	}
+
+	//passed global indivs
+	//@handle('pass.value')
+	PassedGlobalIndiv(value) {
+
+
+		this._GLOBAL_GRP_ID = value.GLOBAL_GRP_ID;
+		this._GROUP_NAME = value.GROUP_NAME;
+
+		this.getGlobalIndivsFromGrpIndiv();
+
+
+		this._objBudget.OBSERVERS.enable_modal_button.forEach((all)=>{
+			all(this.modalIndivMstr.id, true);
+		});
+
+		this._objBudget.OBSERVERS.close_modal.forEach((all) => {
+			all(this.modalTalentManager.id);
+		});
+
+		// this._objBudget.CALLER.VALUE1=this.modalIndivMstr.id;
+		// this._objBudget.CALLER.VALUE2=true;
+
+
+		// setTimeout(() => {
+		// 	this._objBudget.CALLER.ACTION='';
+		// 	this._objBudget.CALLER.ACTION = 'enable.modal.button';
+		// }, 200);
+		
+		// setTimeout(() => {
+		// 	this._objBudget.CALLER.ACTION='';
+		// 	this._objBudget.CALLER.VALUE1 = this.modalTalentManager.id;
+		// 	this._objBudget.CALLER.ACTION = 'close.modal';
+		// }, 400);
+
+		// this._dispatcher.dispatch('enable.modal.button', this.modalIndivMstr.id, true);
+		// this._dispatcher.dispatch('close.modal', this.modalTalentManager.id);
+
+		this.isDisableSave=false;
+	}
+
+	//@handle('login.passed')
+	LoginReady(user) {
+			this._user=user;
+			setCookie("PPMS_USER", user.USER_ID+"^"+user.COMPANY_ID+"^"+user.Is_HR+"^"+user.Is_Branch, 30);
+			toastr.success("Let's Start...", "Success");
+			
+			// this._objBudget.CALLER.VALUE1 = this.modalTalentManager.id;
+			// this._objBudget.CALLER.VALUE2 = true;
+			// this._objBudget.CALLER.ACTION = 'enable.modal.button';
+
+			// setTimeout(() => {
+			// 	this._objBudget.CALLER.ACTION='';
+			// 	this._objBudget.CALLER.VALUE1=this.modalLogin.id;
+			// 	this._objBudget.CALLER.VALUE2=false;
+
+			// 	this._objBudget.CALLER.ACTION='enable.modal.button';			
+			// }, 200);
+			
+			// setTimeout(() => {
+			// 	this._objBudget.CALLER.ACTION='';
+			// 	this._objBudget.CALLER.ACTION='close.modal';
+			// }, 400);
+
+
+			this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+				all(this.modalTalentManager.id, true);
+			});
+
+			this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+				all(this.modalLogin.id, false);
+			});
+
+			this._objBudget.OBSERVERS.close_modal.forEach((all) => {
+				all(this.modalLogin.id);
+			});
+
+			// this._dispatcher.dispatch('enable.modal.button', this.modalTalentManager.id, true);
+			// this._dispatcher.dispatch('enable.modal.button', this.modalLogin.id, false);
+			// this._dispatcher.dispatch('close.modal', this.modalLogin.id);
+
+
+			this.showingLogout="visible";
+	}
+
+	logout(){
+			this.clear();
+
+			// this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+			// this._objBudget.CALLER.VALUE2 = true;
+			// this._objBudget.CALLER.ACTION = 'open.modal';
+
+			// setTimeout(() => {
+			// 	this._objBudget.CALLER.ACTION='';
+			// 	this._objBudget.CALLER.VALUE1 = this.modalLogin.id;
+			// 	this._objBudget.CALLER.VALUE2 = true;
+			// 	this._objBudget.CALLER.ACTION = 'enable.modal.button';
+			// }, 100);
+
+			// setTimeout(() => {
+			// 	this._objBudget.CALLER.ACTION='';
+			// 	this._objBudget.CALLER.VALUE1 = this.modalTalentManager.id;
+			// 	this._objBudget.CALLER.VALUE2 = false;
+			// 	this._objBudget.CALLER.ACTION = 'enable.modal.button';
+			// }, 200);
+
+			// setTimeout(() => {
+			// 	this._objBudget.CALLER.ACTION='';
+			// 	this._objBudget.CALLER.VALUE1 = this.modalIndivMstr.id;
+			// 	this._objBudget.CALLER.VALUE2 = false;
+			// 	this._objBudget.CALLER.ACTION = 'enable.modal.button';
+			// }, 300);
+
+			// setTimeout(() => {
+			// 	this._objBudget.CALLER.ACTION='';
+			// 	this._objBudget.CALLER.ACTION = 'clear.log';
+			// }, 400);
+
+			this._objBudget.OBSERVERS.open_modal.forEach((all) => {
+				all(this.modalLogin.id, true);
+			});
+
+			this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+				all(this.modalLogin.id, false);
+			});
+
+			this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+				all(this.modalTalentManager.id, false);
+			});
+
+			this._objBudget.OBSERVERS.enable_modal_button.forEach((all) => {
+				all(this.modalIndivMstr.id, false);
+			});
+			
+			this._objBudget.OBSERVERS.clear_log.forEach((all) => {
+				all();
+			});
+
+
+			// this._dispatcher.dispatch('open.modal', this.modalLogin.id, true);
+			// this._dispatcher.dispatch('enable.modal.button', this.modalLogin.id, true);
+			// this._dispatcher.dispatch('enable.modal.button', this.modalTalentManager.id, false);
+			// this._dispatcher.dispatch('enable.modal.button', this.modalIndivMstr.id, false);
+			// this._dispatcher.dispatch('clear.log');
+
+			this._objBudget.USER = {};
+			removeCookie();
+
+			this.showingLogout="hidden";
+			
+	}
+
+	getGlobalIndivsFromGrpIndiv(){
+		this.grpMembers=[];
+		var tmpIndivs = [];
+		var _query = EntityQuery().from('GRP_INDIV_MSTR').where("GLOBAL_GRP_ID", "==", this._GLOBAL_GRP_ID);
+		EntityManager().executeQuery(_query).then((success) => {
+			success.results.forEach((all) => {
+				
+				getLookups().GLOBAL_INDIV_WITH_ALIAS.forEach((item)=>{
+
+					if(item.GLOBAL_INDIV_ID==all.GLOBAL_INDIV_ID)
+					{
+						tmpIndivs.push({
+							GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
+							GLOBAL_GRP_ID: all.GLOBAL_GRP_ID,
+							PERSONNEL_NAME: item.PERSONNEL_NAME,
+							GRP_INDIV_ID: all.GRP_INDIV_ID,
+							STATUS_CD: all.STATUS_CD
+						});
+
+					}
+				});
+
+				// console.log(success.results);
+				// 		console.log(tmpIndivs);
+
+				if(success.results.length==tmpIndivs.length)				
+				{
+					this.grpMembers=tmpIndivs;
+					this._signal = generateID();
+					toastr.success("Refreshed..", "Data Reloaded..");
+				}
+
+				// var _getIndiv = EntityQuery().from('GLOBAL_INDIV_MSTR').where("GLOBAL_INDIV_ID", "==", all.GLOBAL_INDIV_ID);
+				// EntityManager().executeQuery(_getIndiv).then((successIndiv) => {
+
+				// 	_.each(successIndiv.results, (singleIndiv) => {
+
+				// 		tmpIndivs.push({
+				// 			GLOBAL_INDIV_ID: all.GLOBAL_INDIV_ID,
+				// 			GLOBAL_GRP_ID: all.GLOBAL_GRP_ID,
+				// 			PERSONNEL_NAME: singleIndiv.LAST_NAME + ', ' + singleIndiv.GIVEN_NAME + ' ' + singleIndiv.MIDDLE_NAME,
+				// 			GRP_INDIV_ID: all.GRP_INDIV_ID,
+				// 			STATUS_CD: all.STATUS_CD
+				// 		});
+						
+					
+				// 		if(success.results.length==tmpIndivs.length)				
+				// 		{
+				// 			this.grpMembers=tmpIndivs;
+				// 			this._signal = generateID();
+				// 			toastr.success("Refreshed..", "Data Reloaded..");
+				// 		}
+
+				// 	});
+				// });
+		
+			});
+
+			
+		});
+
+	}
+	//passed grp indiv mstr
+	//@handle('pass.group')
+	PassedGroup(value) {
+
+
+		var tmpgrpMembers=this.grpMembers;
+		var varExists = false;
+		value.forEach((val) => {
+
+			varExists = false;
+			
+			tmpgrpMembers.forEach((indiv) => {
+				if (val.GLOBAL_INDIV_ID == indiv.GLOBAL_INDIV_ID) {
+					indiv.STATUS_CD = "ACTV";
+					varExists = true;
+				}
+			});
+
+
+			if (!varExists) {
+				tmpgrpMembers.push({
+					GLOBAL_INDIV_ID: val.GLOBAL_INDIV_ID,
+					GLOBAL_GRP_ID: this._GLOBAL_GRP_ID,
+					PERSONNEL_NAME: val.PERSONNEL_NAME,
+					STATUS_CD: "ACTV"
+				});
+			}
+
+		});
+
+
+		tmpgrpMembers.forEach((all) => {
+			if (all.STATUS_CD == "" || all.STATUS_CD === undefined)
+			{
+				all.STATUS_CD = "";
+			}
+		});
+
+		this.grpMembers=tmpgrpMembers;
+
+		this._signal = generateID();
+		
+		// this._objBudget.CALLER.VALUE1 = this.modalIndivMstr.id;
+		// this._objBudget.CALLER.ACTION = 'close.modal';
+
+
+		this._objBudget.OBSERVERS.close_modal.forEach((all)=>{
+			all(this.modalIndivMstr.id);
+		});
+
+		//this._dispatcher.dispatch('close.modal', this.modalIndivMstr.id);
+	}
+
+	saveGroupIndiv() {
+
+		//get existing entites
+		var getQueryEntities = EntityQuery().from('GRP_INDIV_MSTR').where("GLOBAL_GRP_ID", "==", this._GLOBAL_GRP_ID);
+		EntityManager().executeQuery(getQueryEntities).then((successEnties)=> {
+
+			//get max grp indiv id
+			var getMax = EntityQuery().from('GRP_INDIV_MSTR').orderByDesc('GRP_INDIV_ID').take(1);
+			EntityManager().executeQuery(getMax).then((successMax) => {
+				var getMax = 1;
+
+				if (successMax.results.length > 0)
+					getMax = successMax.results[0].GRP_INDIV_ID + 1;
+
+				this.grpMembers.forEach((indiv) => {
+
+					
+					if (indiv.GRP_INDIV_ID === undefined) {
+						
+						var varInsert = EntityManager().createEntity('GRP_INDIV_MSTR', {
+							GLOBAL_INDIV_ID: indiv.GLOBAL_INDIV_ID,
+							GLOBAL_GRP_ID: indiv.GLOBAL_GRP_ID,
+							CREATED_BY: this._user.USER_ID, 
+							STATUS_CD: "ACTV",
+							CREATED_DT: new Date(Date.now()),
+							GRP_INDIV_ID: getMax
+						});
+						
+						++getMax;
+						
+						EntityManager().addEntity(varInsert);
+					} 
+					else 
+					{
+						
+						successEnties.results.forEach((existingIndiv) => {
+							if(existingIndiv.GLOBAL_INDIV_ID==indiv.GLOBAL_INDIV_ID)
+							{
+								if (indiv.STATUS_CD == "INACTV" && existingIndiv.STATUS_CD != "INACTV") {
+									existingIndiv.STATUS_CD = "INACTV";
+									existingIndiv.LAST_UPDATED_DT = Date.now();
+									existingIndiv.LAST_UPDATED_BY = this._user.USER_ID;
+									
+
+								} else if (indiv.STATUS_CD != existingIndiv.STATUS_CD) {
+									existingIndiv.STATUS_CD = indiv.STATUS_CD;
+									existingIndiv.LAST_UPDATED_DT = Date.now();
+									existingIndiv.LAST_UPDATED_BY = this._user.USER_ID;
+									
+								}	
+							}
+						});
+						
+					}
+				});
+
+				EntityManager().saveChanges().then((success) => {
+					toastr.success("Succesfully Saved", "Talent Manager Group");
+
+					setTimeout(() => {
+							this.getGlobalIndivsFromGrpIndiv();
+					}, 1000);
+
+					
+				}, (fail) => {
+					console.log(fail);
+					toastr.error("Error Occured", fail);
+				});
+
+				
+				
+			});
+
+
+		});
+
+		
+	}
+
+	addIndividual() {
+		this.grpMembers.push({});
+	}
+
+	deleteItem(item) { //item
+		var isFound = this.grpMembers.find((_item) => {
+			if (_item.GLOBAL_INDIV_ID == item.GLOBAL_INDIV_ID) {
+				item.STATUS_CD = "INACTV";
+				return true;
+			}
+		});
+		this._signal = generateID();
+	}
+
+	clear(){
+		this.grpMembers=[];		
+		this._GLOBAL_GRP_ID = "";
+		this._GROUP_NAME = "";
+
+		// this._objBudget.CALLER.VALUE1 = this.modalIndivMstr.id;
+		// this._objBudget.CALLER.VALUE2 = false;
+		// this._objBudget.CALLER.ACTION = 'enable.modal.button';
+
+
+		this._objBudget.OBSERVERS.enable_modal_button.forEach((all)=>{
+			all(this.modalIndivMstr.id,false);
+		});
+
+		//this._dispatcher.dispatch('enable.modal.button', this.modalIndivMstr.id, false);
+
+		// setTimeout(() => {
+		// 	this._objBudget.CALLER.ACTION = 'clear.indiv.modal';
+		// }, 200);
+
+		this._objBudget.OBSERVERS.clear_indiv_modal.forEach((all) => {
+			all();
+		});
+
+		//this._dispatcher.dispatch('clear.indiv.modal');
+		
+		this.isDisableSave=true;
+
+	}
+}

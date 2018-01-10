@@ -98,6 +98,33 @@ export class MainHeaderCustomElement {
        }
     });
 
+
+    this._cache_budget.OBSERVERS.verify_copied_budget.push(() => {
+        toastr.info("Verifying copied template..", "Budget Template");
+
+        $.post(settings.serviceNameBase + "/Home/Compare_Copied_Template", {
+            "BDGT_TMPL_COPIED": this._cache_budget.tmp_bdgt_copied,
+            "BDGT_TMPL_NEW": this._cache_budget.HEADER.BDGT_TMPL_ID
+        }).done((response) => {
+           
+           if(response!="True")
+           {
+              alert("There is a problem on copying the template. Please check after loading..")
+           }
+           else
+           {
+              //toastr.clear();
+              // toastr.success("Copy template successful.", "Budget Template");
+               alert("Copy template successful. Please check..")
+           }
+
+           this.fnBudget('refresh');
+        });
+
+    });
+    
+
+
     this._toastr = toastr;
     
     
@@ -603,7 +630,7 @@ export class MainHeaderCustomElement {
         if(varUseReport!="")
         {
            // var popup = window.open("http://absppms:8080/ReportServer/Pages/ReportViewer.aspx?%2fPPID+Reports%2fBudget_Print&rs:Command=Render&Actual_Cost_id="+this._cache_budget.HEADER.BDGT_TMPL_ID+"&isConfidential="+this._cache_obj.ALLOW_PASS_CONFIDENTIAL+"", "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
-            var popup = window.open(settings.actualCostWebUrl+"/report/Budget_"+varUseReport+"_Report.aspx?BDID="+this._cache_obj.HEADER.BDGT_TMPL_ID+"&ConcealConfidentialBudgetAmt="+this._cache_obj.ALLOW_PASS_CONFIDENTIAL+"&USER_ACCOUNT="+this._user+"&COMPANY_ID="+this._COMPANY_ID, "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
+            var popup = window.open(settings.actualCostWebUrl+"/report/Budget_"+varUseReport+"_Report.aspx?BDID="+this._cache_budget.HEADER.BDGT_TMPL_ID+"&ConcealConfidentialBudgetAmt="+this._cache_obj.ALLOW_PASS_CONFIDENTIAL+"&USER_ACCOUNT="+this._user+"&COMPANY_ID="+this._COMPANY_ID, "popupWindow", "width=1280px,height=1024px,scrollbars=yes,directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,addressbar=0,fullscreen=false");
            popup.moveTo(0, 0);
         }
         
@@ -614,10 +641,11 @@ export class MainHeaderCustomElement {
       {
         
 
-                this.dialogService.open({ viewModel: confirm_dialog, model: 'Copy Template?' }).whenClosed(response => {
+          this.dialogService.open({ viewModel: confirm_dialog, model: 'Copy Template?' }).whenClosed(response => {
           if (!response.wasCancelled) {
              //console.log(response.output);
 
+              this._cache_budget.tmp_bdgt_copied  = this._cache_budget.HEADER.BDGT_TMPL_ID;
 
               var varGetHeader = EntityQuery().from('BDGT_TMPL_HDR').where('BDGT_TMPL_ID', '==', this._cache_budget.HEADER.BDGT_TMPL_ID);
 

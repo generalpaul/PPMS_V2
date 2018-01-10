@@ -250,7 +250,7 @@ export class NavBar {
 
 
     fnLogin() {
-
+       // console.log(this.dialogService);
         if (this.dialogService.controllers.length > 0) {
             for (var i = this.dialogService.controllers.length - 1; i >= 0; i--) {
                 this.dialogService.controllers[i].close();

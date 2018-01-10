@@ -40,7 +40,7 @@ export class GuestCustomElement {
     });
 
     this._cache_budget.OBSERVERS.copy_template_guest.push(() => {
-      this.fnCallCopy();
+      this.fnCallCopyGuest();
     });
 
     this._cache_budget.OBSERVERS.reset_all.push(() => {
@@ -127,11 +127,11 @@ export class GuestCustomElement {
   }
 
  //@handle('copy.template')
- fnCallCopy()
+ fnCallCopyGuest()
  {
    // console.log('passed');
   //if (use=="GUEST") {
-    this.saveGuest();
+    this.saveGuest(1);
   //}
 }
 
@@ -203,10 +203,10 @@ export class GuestCustomElement {
     this._signal = generateID();
   }
 
-  saveGuest(){
+  saveGuest(tag){
 
 
-      if (this._cache_budget.GUEST.length > 0) {
+    if (this._cache_budget.GUEST.length > 0) {
           if (this._cache_budget.GUEST[0].PYMNT_TERM_CD == "" || this._cache_budget.GUEST[0] == undefined || this._cache_budget.GUEST[0] == null) {
         toastr.error("<strong>Payment Term not defined</strong><br /><br />Saving cancelled.", "Problem occured");
         return;
@@ -222,7 +222,6 @@ export class GuestCustomElement {
         getMax = successMax.results[0].BDGT_TMPL_GUEST_DTL_ID + 1;
 
 
-      //console.log(this._cache_budget.HEADER.BDGT_TMPL_ID);
       var _query = EntityQuery().from('BDGT_TMPL_GUEST_DTL').where('BDGT_TMPL_ID', '==', this._cache_budget.HEADER.BDGT_TMPL_ID);
       EntityManager().executeQuery(_query).then((found) => {
 
@@ -266,12 +265,15 @@ export class GuestCustomElement {
           {
             if (found.results.length > 0)
               found.results[0].entityAspect.setDeleted();
+
           }
 
 
           EntityManager().saveChanges().then((success) => {
             this.fnCheckBudget(this._cache_budget.HEADER.BDGT_TMPL_ID);
             toastr.success("Succesfully Saved", "GUEST");
+            
+            if(tag==1) { this.fnVerifyCopyOfBudget(); }
 
           }, (fail) => {
 
@@ -280,9 +282,12 @@ export class GuestCustomElement {
               if (errors.length > 0)
                 console.log(errors);
             });
-            console.log(fail);
+            
             toastr.error("Error Occured",
               fail);
+
+              if(tag==1) { this.fnVerifyCopyOfBudget(); }
+
           });
 
         });
@@ -290,6 +295,13 @@ export class GuestCustomElement {
 
     });
 
+  }
+
+  fnVerifyCopyOfBudget()
+  {
+       this._cache_budget.OBSERVERS.verify_copied_budget.forEach((all)=>{
+                 all();
+       });  
   }
 
   fnRegularBlurEvt(item, index) {

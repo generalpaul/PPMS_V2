@@ -1,0 +1,36 @@
+<template>
+<require from="converters/take"></require>
+<require from="converters/sorttext"></require>
+<require from="tools/gridpaging"></require>
+<table class="table table-hover table-condensed table-bordered table-striped ">
+        <thead class="table-default">
+            <tr>
+                <td class="colorCell2">
+                    PROGRAM CODE
+                </td>
+                <td class="colorCell2">
+                    PROGRAM NAME
+                </td>
+            </tr>
+            <tr ref="_rBUDGET_TITLE">
+                <td class="colorCell2">
+                    <input class="input-sm form-control" value.bind="_bPROGRAM_CD" searchable="_sPROGRAM_CD" />
+                </td>
+                <td class="colorCell2">
+                    <input class="input-sm form-control" value.bind="_bPROGRAM_TITLE" searchable="_sPROGRAM_TITLE" />
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:20:pageindex" click.delegate="$parent.selectedProgram(item)">
+                <td>
+                    ${item.PROGRAM_CD}
+                </td>
+                <td>
+                    ${item.PROGRAM_TITLE}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+       <gridpaging to.bind="varFilterArrayLength" pageindex.two-way="pageindex"  divby.bind="20"></gridpaging>
+</template>

@@ -3,4 +3,9 @@ PPMS_Project/wwwroot/scripts/app-bundle.js
 PPMS_Project/wwwroot/scripts/app-bundle.js
 PPMS_Project/wwwroot/scripts/app-bundle.js.map
 PPMS_Project/wwwroot/scripts/app-bundle.js
-PPMS_Project/src/ppid/ppid.js
+PPMS_Project/aurelia_project/aurelia.json
+*.json
+PPMS_Project/src/mainpage.js
+*.html
+*.js
+PPMS_Project/src/mainpage.js

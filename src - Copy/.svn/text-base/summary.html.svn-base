@@ -1,0 +1,49 @@
+<template>
+			<table class= "table-hover table-condensed table-bordered table-striped" style="margin-left:50px;margin-top:40px;margin-botton:20px;">
+					<tr>
+						<td style="width:150px;">
+							<strong>CLASSIFICATION</strong>
+						</td>	
+						<td style="width:150px;text-align:center;">
+							<strong>TOTAL PROGRAM</strong>
+						</td>	
+					</tr>
+						<tr>
+						<td>
+							MAINSTAY
+						</td>	
+						<td style="text-align:right;">
+							${_INPUT_AMT_MAINSTAY}				
+						</td>	
+					</tr>
+					</tr>
+						<tr>
+						<td>
+							STAFF
+						</td>	
+						<td style="text-align:right;">
+							${_INPUT_AMT_STAFF}				
+						</td>	
+					</tr>
+
+					</tr>
+						<tr>
+						<td>
+							GUEST
+						</td>	
+						<td style="text-align:right;">
+							${_INPUT_AMT_GUEST}				
+						</td>	
+					</tr>
+					</tr>
+						<tr>
+						<td>
+							<strong>TOTAL</strong>
+						</td>	
+						<td style="text-align:right;border-top-width:3px;">
+							<strong>${_INPUT_AMT_TOTAL}</strong>
+						</td>	
+					</tr>					
+			</table>
+            <br/>
+</template>

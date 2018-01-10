@@ -29,6 +29,9 @@ export class cache_budget{
         reset_summary:[],//0
         budget_loaded: [],
         disable_search_personnel: [],
-        pass_job: []
+        pass_job: [],
+        verify_copied_budget:[]
     };
+
+    tmp_bdgt_copied="";
 }

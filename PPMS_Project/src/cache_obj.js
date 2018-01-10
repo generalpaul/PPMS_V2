@@ -27,7 +27,9 @@ export class cache_obj{
         clear_budget_modal: [],
         budget_dialog: [],
         pass_program: [],
-        contract_dialog: [],
+        contract_dialog: []
 
     };
+    version="1.0";
+    
 }
