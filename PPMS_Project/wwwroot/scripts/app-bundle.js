@@ -855,6 +855,7 @@ define('helpers',["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.OrderByNo = OrderByNo;
   exports.OrderByDate = OrderByDate;
   exports.isDigit = isDigit;
   exports.input_mask = input_mask;
@@ -871,6 +872,12 @@ define('helpers',["exports"], function (exports) {
   } : function (obj) {
     return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   };
+
+  function OrderByNo(a, b) {
+    if (a.ORDER_NO > b.ORDER_NO) return 1;
+    if (a.ORDER_NO < b.ORDER_NO) return -1;
+    return 0;
+  }
 
   function OrderByDate(a, b) {
     if (a.date > b.date) return 1;
@@ -3498,6 +3505,1116 @@ define('ppfcs/cache_budget',["exports"], function (exports) {
         this.tmp_bdgt_copied = "";
     };
 });
+define('ppid/obj_personnel',["exports"], function (exports) {
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var obj_personnel = exports.obj_personnel = function obj_personnel() {
+		_classCallCheck(this, obj_personnel);
+
+		this.global_indiv_id = "";
+		this.editing_status = "";
+		this.HEADER = {
+			citizenship: [],
+			group: []
+		};
+		this.GROUP_INFO = {
+			model: {},
+			members: []
+		};
+		this.CONTACT = {
+			status: "",
+			modelAddress: {},
+			statusContact: "Add",
+			modelContact: {},
+			modelInternet: {},
+			address: [],
+			contact: [],
+			email: [],
+			website: []
+		};
+		this.EDUCATIONAL_ACHIEVEMENT = {
+			status: "",
+			model: {},
+			list: []
+		};
+		this.CHARACTERISTIC = [];
+		this.SKILLS = {
+			model: {},
+			list: []
+		};
+		this.LANGUAGE_DIALECT = {
+			model: {},
+			list: []
+		};
+		this.MEDICAL_RECORD = {
+			model: {},
+			list: []
+		};
+		this.RELATIVE = {
+			parents: {
+				mother: {},
+				father: {}
+			},
+			siblings: {
+				model: {},
+				list: []
+			},
+			spouse: {},
+			emergency_contact: {
+				model: {},
+				list: []
+			}
+		};
+		this.WORK_EXPERIENCE = {
+			model: {},
+			list: []
+		};
+		this.AWARD = {
+			model: {},
+			list: []
+		};
+		this.SEMINARS = [];
+		this.GOVERNMENT_INFO = {
+			modelTaxAffidavit: {},
+			modelPermit: {},
+			tax_affidavit: [],
+			permits: []
+		};
+		this.GOVERNMENT_EXAM = {
+			model: {},
+			list: []
+		};
+		this.CRIMINAL_RECORD = {
+			civil: {
+				model: {},
+				list: []
+			},
+			administrative: {
+				model: {},
+				list: []
+			}
+		};
+		this.COMPANY_SPECIFIC = {
+			model: {
+				personnel_bank: {}
+			},
+			list: []
+		};
+		this.ENDORSEMENT = [];
+		this.IMAGE_BRANDING = [];
+		this.QUESTION_ANSWER = [];
+		this.CHARACTER_REF = {
+			model: {},
+			list: []
+		};
+		this.USER = {};
+		this.OBSERVERS = {
+			ppid_dialog: [],
+			group_dialog: [],
+			tab_changed: [],
+			clear_ppid: [],
+			clear_log: [],
+			clear_login_modal: [],
+			maintab_contact_clicked: [],
+			maintab_education_clicked: [],
+			maintab_skills_clicked: [],
+			maintab_language_clicked: [],
+			company_tab_changed: [],
+			govinfo_tab_changed: [],
+			relative_tab_changed: [],
+			award_training_tab_changed: []
+
+		};
+		this.STATUS = [];
+		this.CIVIL_STATUS = [];
+		this.CITIZENSHIP = [];
+		this.RELIGION = [];
+		this.COUNTRY = [];
+		this.REGION = [];
+		this.GROUP = [];
+		this.LOCATIONS = [];
+		this.CONTACT_TYPE = [];
+		this.LEVEL = [];
+		this.YEAR = [];
+		this.SCHOOLS = [];
+		this.LANGUAGE = [];
+		this.POSITION = [];
+		this.AWARD_HEAD = [];
+		this.AWARD_BODY = [];
+		this.TRAINING = [];
+		this.TAX_EXEMPT = [];
+		this.INPUT_TAX = [];
+		this.PERMIT = [];
+		this.VAT_STAT = [];
+		this.EXAM = [];
+		this.CASE_STAT = [];
+		this.VIOLATION = [];
+		this.PROFESSIONAL_TYPE = [];
+		this.CESSATION = [];
+		this.TARGET_MARKET = [];
+		this.COMPANY = [];
+		this.DIVISION = [];
+		this.LOCATIONS_RNG = [];
+		this.CATEGORY = [];
+		this.JOB_GROUP = [];
+		this.JOB = [];
+		this.PAYROLL_GROUP = [];
+		this.BANK = [];
+		this.PROVINCE = [];
+		this.RELATIONSHIP = [];
+		this.INACTIVE_REASON = [];
+		this.SKILL_TALENT = [];
+		this.RATING = [];
+		this.LANGUAGE_RATING = [];
+	};
+});
+define('ppid/ppid',['exports', 'helpers', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', 'entity-manager-factory', 'masterfiles', 'settings'], function (exports, _helpers, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _entityManagerFactory, _masterfiles, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ppid = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var ppid = exports.ppid = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel), _dec(_class = function () {
+		function ppid(dialogService, obj_personnel) {
+			_classCallCheck(this, ppid);
+
+			this.obj_personnel = null;
+			this.global_indiv_id = "";
+
+			this.dialogService = dialogService;
+			this.obj_personnel = obj_personnel;
+
+			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
+			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_skills_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_language_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.relative_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.govinfo_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.company_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.award_training_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
+			this.obj_personnel.global_indiv_id = "";
+			this.obj_personnel.HEADER = {
+				citizenship: [],
+				group: []
+			};
+			this.LoadDropdown();
+
+			this.LoginPassed(this.obj_personnel.USER);
+		}
+
+		ppid.prototype.LoadDropdown = function LoadDropdown() {
+			var _this = this;
+
+			_settings2.default.isNavigating = true;
+
+			var maxYear = new Date().getFullYear();
+			var leastYear = 1960;
+			var tmpYear = [];
+			do {
+				tmpYear.push({
+					value: leastYear,
+					text: leastYear
+				});
+				leastYear++;
+			} while (leastYear <= maxYear);
+			this.obj_personnel.YEAR = tmpYear;
+
+			if ((0, _masterfiles.getLookups)() != null) {
+				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
+				this.obj_personnel.LOCATIONS.shift();
+
+				this.obj_personnel.CIVIL_STATUS.length = 0;
+				this.obj_personnel.RELIGION.length = 0;
+				this.obj_personnel.CITIZENSHIP.length = 0;
+				this.obj_personnel.CONTACT_TYPE.length = 0;
+				this.obj_personnel.LEVEL.length = 0;
+				this.obj_personnel.LANGUAGE.length = 0;
+				this.obj_personnel.STATUS.length = 0;
+				this.obj_personnel.POSITION.length = 0;
+				this.obj_personnel.AWARD_HEAD.length = 0;
+				this.obj_personnel.TRAINING.length = 0;
+				this.obj_personnel.TAX_EXEMPT.length = 0;
+				this.obj_personnel.INPUT_TAX.length = 0;
+				this.obj_personnel.PERMIT.length = 0;
+				this.obj_personnel.VAT_STAT.length = 0;
+				this.obj_personnel.EXAM.length = 0;
+				this.obj_personnel.CASE_STAT.length = 0;
+				this.obj_personnel.VIOLATION.length = 0;
+				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
+				this.obj_personnel.CESSATION.length = 0;
+				this.obj_personnel.TARGET_MARKET.length = 0;
+				this.obj_personnel.INACTIVE_REASON.length = 0;
+				this.obj_personnel.RATING.length = 0;
+
+				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
+					switch (item.REF_GRP_CD) {
+						case "CIVIL_STATUS":
+							_this.obj_personnel.CIVIL_STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "RELIGION_CD":
+							_this.obj_personnel.RELIGION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CITIZENSHIP_CD":
+							_this.obj_personnel.CITIZENSHIP.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CONTACT_TYPE_CD":
+							_this.obj_personnel.CONTACT_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LEVEL_CD":
+							_this.obj_personnel.LEVEL.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LANG_DIALECT_CD":
+							_this.obj_personnel.LANGUAGE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "STATUS_CD":
+							_this.obj_personnel.STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "POSITION_CD":
+							_this.obj_personnel.POSITION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "AWARD_CD":
+							_this.obj_personnel.AWARD_HEAD.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TRNG_CD":
+							_this.obj_personnel.TRAINING.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TAX_EXEMPT_CD":
+							_this.obj_personnel.TAX_EXEMPT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "INPUT_TAX_CD":
+							_this.obj_personnel.INPUT_TAX.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PERMIT_CD":
+							_this.obj_personnel.PERMIT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VAT_STAT_CD":
+							_this.obj_personnel.VAT_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "EXAM_CD":
+							_this.obj_personnel.EXAM.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CASE_STAT_CD":
+							_this.obj_personnel.CASE_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VIOLATION_CD":
+							_this.obj_personnel.VIOLATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PROFESSIONAL_TYPE_CD":
+							_this.obj_personnel.PROFESSIONAL_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CESSATION_CODE":
+							_this.obj_personnel.CESSATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TARGET_MARKET_CD":
+							_this.obj_personnel.TARGET_MARKET.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "INACTIVE_REASON":
+							_this.obj_personnel.INACTIVE_REASON.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "RATING_CD":
+							_this.obj_personnel.RATING.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+					}
+				});
+
+				this.obj_personnel.GROUP.length = 0;
+				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
+					_this.obj_personnel.GROUP.push({
+						value: item.GLOBAL_GRP_ID,
+						text: item.GROUP_NAME
+					});
+				});
+
+				this.obj_personnel.COMPANY.length = 0;
+				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
+					_this.obj_personnel.COMPANY.push({
+						id: item.COMPANY_ID,
+						value: item.COMPANY_CD,
+						text: item.COMPANY_NAME
+					});
+				});
+				this.obj_personnel.COMPANY.shift();
+
+				this.obj_personnel.GROUP.sort(this.OrderByText);
+				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
+				this.obj_personnel.RELIGION.sort(this.OrderByText);
+				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
+				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
+				this.obj_personnel.LEVEL.sort(this.OrderByText);
+				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
+				this.obj_personnel.STATUS.sort(this.OrderByText);
+				this.obj_personnel.POSITION.sort(this.OrderByText);
+				this.obj_personnel.AWARD_HEAD.sort(this.OrderByText);
+				this.obj_personnel.TRAINING.sort(this.OrderByText);
+				this.obj_personnel.PERMIT.sort(this.OrderByText);
+				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
+				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
+				this.obj_personnel.EXAM.sort(this.OrderByText);
+				this.obj_personnel.VIOLATION.sort(this.OrderByText);
+				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
+				this.obj_personnel.CESSATION.sort(this.OrderByText);
+				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
+				this.obj_personnel.COMPANY.sort(this.OrderByText);
+				this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
+				_settings2.default.isNavigating = false;
+			}
+
+			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.COUNTRY_CD,
+						text: result.COUNTRY_NAME
+					});
+				});
+				_this.obj_personnel.COUNTRY = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading country dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.REGION_CD,
+						text: result.REGION_DESC,
+						group: result.COUNTRY_CD
+					});
+				});
+				_this.obj_personnel.REGION = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading region dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						school_cd: result.SCHOOL_CD,
+						school_name: result.SCHOOL_NAME,
+						school_addr: result.SCHOOL_ADDR
+					});
+				});
+				_this.obj_personnel.SCHOOLS = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading schools dropdown.");
+				console.log(failed);
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.LOCATION_CD,
+						text: result.LOCATION_NAME
+					});
+				});
+				_this.obj_personnel.LOCATIONS_RNG = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.PAYROLL_GRP_ID,
+						value: result.PAYROLL_GRP_CD,
+						text: result.PAYROLL_GRP_DESC
+					});
+				});
+				_this.obj_personnel.PAYROLL_GROUP = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.BANK_ID,
+						short_nm: result.BANK_SHORT_NAME,
+						bank_cd: result.BANK_CD,
+						long_nm: result.BANK_LONG_NAME
+					});
+				});
+				_this.obj_personnel.BANK = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Bank dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PROVINCE_MSTR").orderBy("PROVINCE_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (r) {
+					tmp.push({
+						text: r.PROVINCE_DESC,
+						value: r.PROVINCE_CD,
+						group: r.REGION_CD
+					});
+				});
+				_this.obj_personnel.PROVINCE = tmp;
+			}, function (error) {
+				_toastr2.default.error(error, "Error in loading Province dropdown.");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_MSTR").orderBy("RELATIVE_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+
+				_.each(s.results, function (res) {
+
+					var relationship = {
+						value: res.RELATIVE_CD,
+						text: res.RELATIVE_DESC,
+						group: res.RELATIONSHIP_CD
+					};
+					tmp.push(relationship);
+				});
+				_this.obj_personnel.RELATIONSHIP = tmp;
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("AWARD_BODY_MSTR").orderBy("SPONSOR_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+				_.each(s.results, function (res) {
+					var award_body = {
+						value: res.AWARD_BODY_CD,
+						text: res.SPONSOR_NAME
+					};
+					tmp.push(award_body);
+				});
+				_this.obj_personnel.AWARD_BODY = tmp;
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("SKILL_TALENT_MSTR").orderBy("SKILL_TALENT_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+				_.each(s.results, function (res) {
+					var skill_talent = {
+						value: res.SKILL_TALENT_CD,
+						text: res.SKILL_TALENT_DESC,
+						group: res.SKILL_TALENT_TYPE_CD
+					};
+					tmp.push(skill_talent);
+				});
+				_this.obj_personnel.SKILL_TALENT = tmp;
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RATING_MSTR").orderBy("RATING_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+				_.each(s.results, function (res) {
+					var rating_mstr = {
+						value: res.RATING_CD,
+						text: res.RATING_DESC
+					};
+					tmp.push(rating_mstr);
+				});
+				_this.obj_personnel.LANGUAGE_RATING = tmp;
+			});
+		};
+
+		ppid.prototype.OrderByText = function OrderByText(a, b) {
+			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
+			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
+			return 0;
+		};
+
+		ppid.prototype.changeTab = function changeTab(tabNumber) {
+			var _this2 = this;
+
+			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
+
+			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
+				all(tabNumber, _this2.obj_personnel.global_indiv_id);
+			});
+		};
+
+		ppid.prototype.FindUsers = function FindUsers() {
+			this.dialogService.open({
+				viewModel: _ppid_search.ppid_search
+			}).whenClosed(function (response) {
+				if (!response.wasCancelled) {} else {}
+			});
+		};
+
+		ppid.prototype.AddUsers = function AddUsers() {
+			alert('AddUsers function under maintenance.');
+		};
+
+		ppid.prototype.LoginPassed = function LoginPassed(user) {};
+
+		return ppid;
+	}()) || _class);
+});
+define('ppid/ppid_group',['exports', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', './modals/DialogBox', '../entity-manager-factory', '../masterfiles', 'settings'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _DialogBox, _entityManagerFactory, _masterfiles, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ppid_group = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var ppid_group = exports.ppid_group = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
+		function ppid_group(obj_personnel, toastr, DialogService) {
+			_classCallCheck(this, ppid_group);
+
+			this.obj_personnel = null;
+
+			this.obj_personnel = obj_personnel;
+			this.DialogService = DialogService;
+
+			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
+			this.obj_personnel.OBSERVERS.group_dialog.length = 0;
+			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_skills_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_language_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.relative_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.govinfo_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.company_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.award_training_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
+			this.obj_personnel.global_indiv_id = "";
+			this.obj_personnel.HEADER = {
+				citizenship: [],
+				group: []
+			};
+			this.obj_personnel.GROUP_INFO = {
+				model: {},
+				members: []
+			};
+
+			this.LoadDropdown();
+		}
+
+		ppid_group.prototype.LoadDropdown = function LoadDropdown() {
+			var _this = this;
+
+			_settings2.default.isNavigating = true;
+
+			var maxYear = new Date().getFullYear();
+			var leastYear = 1960;
+			var tmpYear = [];
+			do {
+				tmpYear.push({
+					value: leastYear,
+					text: leastYear
+				});
+				leastYear++;
+			} while (leastYear <= maxYear);
+			this.obj_personnel.YEAR = tmpYear;
+
+			if ((0, _masterfiles.getLookups)() != null) {
+				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
+				this.obj_personnel.LOCATIONS.shift();
+
+				this.obj_personnel.CIVIL_STATUS.length = 0;
+				this.obj_personnel.RELIGION.length = 0;
+				this.obj_personnel.CITIZENSHIP.length = 0;
+				this.obj_personnel.CONTACT_TYPE.length = 0;
+				this.obj_personnel.LEVEL.length = 0;
+				this.obj_personnel.LANGUAGE.length = 0;
+				this.obj_personnel.STATUS.length = 0;
+				this.obj_personnel.POSITION.length = 0;
+				this.obj_personnel.AWARD_HEAD.length = 0;
+				this.obj_personnel.TRAINING.length = 0;
+				this.obj_personnel.TAX_EXEMPT.length = 0;
+				this.obj_personnel.INPUT_TAX.length = 0;
+				this.obj_personnel.PERMIT.length = 0;
+				this.obj_personnel.VAT_STAT.length = 0;
+				this.obj_personnel.EXAM.length = 0;
+				this.obj_personnel.CASE_STAT.length = 0;
+				this.obj_personnel.VIOLATION.length = 0;
+				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
+				this.obj_personnel.CESSATION.length = 0;
+				this.obj_personnel.TARGET_MARKET.length = 0;
+				this.obj_personnel.INACTIVE_REASON.length = 0;
+				this.obj_personnel.RATING.length = 0;
+
+				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
+					switch (item.REF_GRP_CD) {
+						case "CIVIL_STATUS":
+							_this.obj_personnel.CIVIL_STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "RELIGION_CD":
+							_this.obj_personnel.RELIGION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CITIZENSHIP_CD":
+							_this.obj_personnel.CITIZENSHIP.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CONTACT_TYPE_CD":
+							_this.obj_personnel.CONTACT_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LEVEL_CD":
+							_this.obj_personnel.LEVEL.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LANG_DIALECT_CD":
+							_this.obj_personnel.LANGUAGE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "STATUS_CD":
+							_this.obj_personnel.STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "POSITION_CD":
+							_this.obj_personnel.POSITION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "AWARD_CD":
+							_this.obj_personnel.AWARD_HEAD.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TRNG_CD":
+							_this.obj_personnel.TRAINING.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TAX_EXEMPT_CD":
+							_this.obj_personnel.TAX_EXEMPT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "INPUT_TAX_CD":
+							_this.obj_personnel.INPUT_TAX.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PERMIT_CD":
+							_this.obj_personnel.PERMIT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VAT_STAT_CD":
+							_this.obj_personnel.VAT_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "EXAM_CD":
+							_this.obj_personnel.EXAM.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CASE_STAT_CD":
+							_this.obj_personnel.CASE_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VIOLATION_CD":
+							_this.obj_personnel.VIOLATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PROFESSIONAL_TYPE_CD":
+							_this.obj_personnel.PROFESSIONAL_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CESSATION_CODE":
+							_this.obj_personnel.CESSATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TARGET_MARKET_CD":
+							_this.obj_personnel.TARGET_MARKET.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "INACTIVE_REASON":
+							_this.obj_personnel.INACTIVE_REASON.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "RATING_CD":
+							_this.obj_personnel.RATING.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+					}
+				});
+
+				this.obj_personnel.GROUP.length = 0;
+				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
+					_this.obj_personnel.GROUP.push({
+						value: item.GLOBAL_GRP_ID,
+						text: item.GROUP_NAME
+					});
+				});
+
+				this.obj_personnel.COMPANY.length = 0;
+				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
+					_this.obj_personnel.COMPANY.push({
+						id: item.COMPANY_ID,
+						value: item.COMPANY_CD,
+						text: item.COMPANY_NAME
+					});
+				});
+				this.obj_personnel.COMPANY.shift();
+
+				this.obj_personnel.GROUP.sort(this.OrderByText);
+				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
+				this.obj_personnel.RELIGION.sort(this.OrderByText);
+				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
+				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
+				this.obj_personnel.LEVEL.sort(this.OrderByText);
+				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
+				this.obj_personnel.STATUS.sort(this.OrderByText);
+				this.obj_personnel.POSITION.sort(this.OrderByText);
+				this.obj_personnel.AWARD_HEAD.sort(this.OrderByText);
+				this.obj_personnel.TRAINING.sort(this.OrderByText);
+				this.obj_personnel.PERMIT.sort(this.OrderByText);
+				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
+				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
+				this.obj_personnel.EXAM.sort(this.OrderByText);
+				this.obj_personnel.VIOLATION.sort(this.OrderByText);
+				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
+				this.obj_personnel.CESSATION.sort(this.OrderByText);
+				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
+				this.obj_personnel.COMPANY.sort(this.OrderByText);
+				this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
+				_settings2.default.isNavigating = false;
+			}
+
+			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.COUNTRY_CD,
+						text: result.COUNTRY_NAME
+					});
+				});
+				_this.obj_personnel.COUNTRY = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading country dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.REGION_CD,
+						text: result.REGION_DESC,
+						group: result.COUNTRY_CD
+					});
+				});
+				_this.obj_personnel.REGION = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading region dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						school_cd: result.SCHOOL_CD,
+						school_name: result.SCHOOL_NAME,
+						school_addr: result.SCHOOL_ADDR
+					});
+				});
+				_this.obj_personnel.SCHOOLS = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading schools dropdown.");
+				console.log(failed);
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.LOCATION_CD,
+						text: result.LOCATION_NAME
+					});
+				});
+				_this.obj_personnel.LOCATIONS_RNG = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.PAYROLL_GRP_ID,
+						value: result.PAYROLL_GRP_CD,
+						text: result.PAYROLL_GRP_DESC
+					});
+				});
+				_this.obj_personnel.PAYROLL_GROUP = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.BANK_ID,
+						short_nm: result.BANK_SHORT_NAME,
+						bank_cd: result.BANK_CD,
+						long_nm: result.BANK_LONG_NAME
+					});
+				});
+				_this.obj_personnel.BANK = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Bank dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PROVINCE_MSTR").orderBy("PROVINCE_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (r) {
+					tmp.push({
+						text: r.PROVINCE_DESC,
+						value: r.PROVINCE_CD,
+						group: r.REGION_CD
+					});
+				});
+				_this.obj_personnel.PROVINCE = tmp;
+			}, function (error) {
+				_toastr2.default.error(error, "Error in loading Province dropdown.");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_MSTR").orderBy("RELATIVE_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+
+				_.each(s.results, function (res) {
+
+					var relationship = {
+						value: res.RELATIVE_CD,
+						text: res.RELATIVE_DESC,
+						group: res.RELATIONSHIP_CD
+					};
+					tmp.push(relationship);
+				});
+				_this.obj_personnel.RELATIONSHIP = tmp;
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("AWARD_BODY_MSTR").orderBy("SPONSOR_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+				_.each(s.results, function (res) {
+					var award_body = {
+						value: res.AWARD_BODY_CD,
+						text: res.SPONSOR_NAME
+					};
+					tmp.push(award_body);
+				});
+				_this.obj_personnel.AWARD_BODY = tmp;
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("SKILL_TALENT_MSTR").orderBy("SKILL_TALENT_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+				_.each(s.results, function (res) {
+					var skill_talent = {
+						value: res.SKILL_TALENT_CD,
+						text: res.SKILL_TALENT_DESC,
+						group: res.SKILL_TALENT_TYPE_CD
+					};
+					tmp.push(skill_talent);
+				});
+				_this.obj_personnel.SKILL_TALENT = tmp;
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RATING_MSTR").orderBy("RATING_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+				_.each(s.results, function (res) {
+					var rating_mstr = {
+						value: res.RATING_CD,
+						text: res.RATING_DESC
+					};
+					tmp.push(rating_mstr);
+				});
+				_this.obj_personnel.LANGUAGE_RATING = tmp;
+			});
+		};
+
+		ppid_group.prototype.OrderByText = function OrderByText(a, b) {
+			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
+			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
+			return 0;
+		};
+
+		ppid_group.prototype.changeTab = function changeTab(tabNumber) {
+			var _this2 = this;
+
+			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
+
+			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
+				all(tabNumber, _this2.obj_personnel.global_indiv_id);
+			});
+		};
+
+		return ppid_group;
+	}()) || _class);
+});
 define('modals/budget',['exports', '../masterfiles', 'multi-observer', 'aurelia-framework', '../helpers', 'underscore', 'jquery', '../entity-manager-factory', 'toastr', 'cache_obj', 'aurelia-dialog', 'breeze-client'], function (exports, _masterfiles, _multiObserver, _aureliaFramework, _helpers, _underscore, _jquery, _entityManagerFactory, _toastr, _cache_obj, _aureliaDialog, _breezeClient) {
 	'use strict';
 
@@ -5614,1116 +6731,6 @@ define('modals/talentmanagergroups',['exports', '../masterfiles', 'multi-observe
 		return talentmanagergroups;
 	}()) || _class);
 });
-define('ppid/obj_personnel',["exports"], function (exports) {
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var obj_personnel = exports.obj_personnel = function obj_personnel() {
-		_classCallCheck(this, obj_personnel);
-
-		this.global_indiv_id = "";
-		this.editing_status = "";
-		this.HEADER = {
-			citizenship: [],
-			group: []
-		};
-		this.GROUP_INFO = {
-			model: {},
-			members: []
-		};
-		this.CONTACT = {
-			status: "",
-			modelAddress: {},
-			statusContact: "Add",
-			modelContact: {},
-			modelInternet: {},
-			address: [],
-			contact: [],
-			email: [],
-			website: []
-		};
-		this.EDUCATIONAL_ACHIEVEMENT = {
-			status: "",
-			model: {},
-			list: []
-		};
-		this.CHARACTERISTIC = [];
-		this.SKILLS = {
-			model: {},
-			list: []
-		};
-		this.LANGUAGE_DIALECT = {
-			model: {},
-			list: []
-		};
-		this.MEDICAL_RECORD = {
-			model: {},
-			list: []
-		};
-		this.RELATIVE = {
-			parents: {
-				mother: {},
-				father: {}
-			},
-			siblings: {
-				model: {},
-				list: []
-			},
-			spouse: {},
-			emergency_contact: {
-				model: {},
-				list: []
-			}
-		};
-		this.WORK_EXPERIENCE = {
-			model: {},
-			list: []
-		};
-		this.AWARD = {
-			model: {},
-			list: []
-		};
-		this.SEMINARS = [];
-		this.GOVERNMENT_INFO = {
-			modelTaxAffidavit: {},
-			modelPermit: {},
-			tax_affidavit: [],
-			permits: []
-		};
-		this.GOVERNMENT_EXAM = {
-			model: {},
-			list: []
-		};
-		this.CRIMINAL_RECORD = {
-			civil: {
-				model: {},
-				list: []
-			},
-			administrative: {
-				model: {},
-				list: []
-			}
-		};
-		this.COMPANY_SPECIFIC = {
-			model: {
-				personnel_bank: {}
-			},
-			list: []
-		};
-		this.ENDORSEMENT = [];
-		this.IMAGE_BRANDING = [];
-		this.QUESTION_ANSWER = [];
-		this.CHARACTER_REF = {
-			model: {},
-			list: []
-		};
-		this.USER = {};
-		this.OBSERVERS = {
-			ppid_dialog: [],
-			group_dialog: [],
-			tab_changed: [],
-			clear_ppid: [],
-			clear_log: [],
-			clear_login_modal: [],
-			maintab_contact_clicked: [],
-			maintab_education_clicked: [],
-			maintab_skills_clicked: [],
-			maintab_language_clicked: [],
-			company_tab_changed: [],
-			govinfo_tab_changed: [],
-			relative_tab_changed: [],
-			award_training_tab_changed: []
-
-		};
-		this.STATUS = [];
-		this.CIVIL_STATUS = [];
-		this.CITIZENSHIP = [];
-		this.RELIGION = [];
-		this.COUNTRY = [];
-		this.REGION = [];
-		this.GROUP = [];
-		this.LOCATIONS = [];
-		this.CONTACT_TYPE = [];
-		this.LEVEL = [];
-		this.YEAR = [];
-		this.SCHOOLS = [];
-		this.LANGUAGE = [];
-		this.POSITION = [];
-		this.AWARD_HEAD = [];
-		this.AWARD_BODY = [];
-		this.TRAINING = [];
-		this.TAX_EXEMPT = [];
-		this.INPUT_TAX = [];
-		this.PERMIT = [];
-		this.VAT_STAT = [];
-		this.EXAM = [];
-		this.CASE_STAT = [];
-		this.VIOLATION = [];
-		this.PROFESSIONAL_TYPE = [];
-		this.CESSATION = [];
-		this.TARGET_MARKET = [];
-		this.COMPANY = [];
-		this.DIVISION = [];
-		this.LOCATIONS_RNG = [];
-		this.CATEGORY = [];
-		this.JOB_GROUP = [];
-		this.JOB = [];
-		this.PAYROLL_GROUP = [];
-		this.BANK = [];
-		this.PROVINCE = [];
-		this.RELATIONSHIP = [];
-		this.INACTIVE_REASON = [];
-		this.SKILL_TALENT = [];
-		this.RATING = [];
-		this.LANGUAGE_RATING = [];
-	};
-});
-define('ppid/ppid',['exports', 'helpers', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', 'entity-manager-factory', 'masterfiles', 'settings'], function (exports, _helpers, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _entityManagerFactory, _masterfiles, _settings) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.ppid = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _settings2 = _interopRequireDefault(_settings);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var ppid = exports.ppid = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel), _dec(_class = function () {
-		function ppid(dialogService, obj_personnel) {
-			_classCallCheck(this, ppid);
-
-			this.obj_personnel = null;
-			this.global_indiv_id = "";
-
-			this.dialogService = dialogService;
-			this.obj_personnel = obj_personnel;
-
-			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
-			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_skills_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_language_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.relative_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.govinfo_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.company_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.award_training_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
-			this.obj_personnel.global_indiv_id = "";
-			this.obj_personnel.HEADER = {
-				citizenship: [],
-				group: []
-			};
-			this.LoadDropdown();
-
-			this.LoginPassed(this.obj_personnel.USER);
-		}
-
-		ppid.prototype.LoadDropdown = function LoadDropdown() {
-			var _this = this;
-
-			_settings2.default.isNavigating = true;
-
-			var maxYear = new Date().getFullYear();
-			var leastYear = 1960;
-			var tmpYear = [];
-			do {
-				tmpYear.push({
-					value: leastYear,
-					text: leastYear
-				});
-				leastYear++;
-			} while (leastYear <= maxYear);
-			this.obj_personnel.YEAR = tmpYear;
-
-			if ((0, _masterfiles.getLookups)() != null) {
-				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
-				this.obj_personnel.LOCATIONS.shift();
-
-				this.obj_personnel.CIVIL_STATUS.length = 0;
-				this.obj_personnel.RELIGION.length = 0;
-				this.obj_personnel.CITIZENSHIP.length = 0;
-				this.obj_personnel.CONTACT_TYPE.length = 0;
-				this.obj_personnel.LEVEL.length = 0;
-				this.obj_personnel.LANGUAGE.length = 0;
-				this.obj_personnel.STATUS.length = 0;
-				this.obj_personnel.POSITION.length = 0;
-				this.obj_personnel.AWARD_HEAD.length = 0;
-				this.obj_personnel.TRAINING.length = 0;
-				this.obj_personnel.TAX_EXEMPT.length = 0;
-				this.obj_personnel.INPUT_TAX.length = 0;
-				this.obj_personnel.PERMIT.length = 0;
-				this.obj_personnel.VAT_STAT.length = 0;
-				this.obj_personnel.EXAM.length = 0;
-				this.obj_personnel.CASE_STAT.length = 0;
-				this.obj_personnel.VIOLATION.length = 0;
-				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
-				this.obj_personnel.CESSATION.length = 0;
-				this.obj_personnel.TARGET_MARKET.length = 0;
-				this.obj_personnel.INACTIVE_REASON.length = 0;
-				this.obj_personnel.RATING.length = 0;
-
-				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
-					switch (item.REF_GRP_CD) {
-						case "CIVIL_STATUS":
-							_this.obj_personnel.CIVIL_STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "RELIGION_CD":
-							_this.obj_personnel.RELIGION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CITIZENSHIP_CD":
-							_this.obj_personnel.CITIZENSHIP.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CONTACT_TYPE_CD":
-							_this.obj_personnel.CONTACT_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LEVEL_CD":
-							_this.obj_personnel.LEVEL.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LANG_DIALECT_CD":
-							_this.obj_personnel.LANGUAGE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "STATUS_CD":
-							_this.obj_personnel.STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "POSITION_CD":
-							_this.obj_personnel.POSITION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "AWARD_CD":
-							_this.obj_personnel.AWARD_HEAD.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TRNG_CD":
-							_this.obj_personnel.TRAINING.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TAX_EXEMPT_CD":
-							_this.obj_personnel.TAX_EXEMPT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "INPUT_TAX_CD":
-							_this.obj_personnel.INPUT_TAX.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PERMIT_CD":
-							_this.obj_personnel.PERMIT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VAT_STAT_CD":
-							_this.obj_personnel.VAT_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "EXAM_CD":
-							_this.obj_personnel.EXAM.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CASE_STAT_CD":
-							_this.obj_personnel.CASE_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VIOLATION_CD":
-							_this.obj_personnel.VIOLATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PROFESSIONAL_TYPE_CD":
-							_this.obj_personnel.PROFESSIONAL_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CESSATION_CODE":
-							_this.obj_personnel.CESSATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TARGET_MARKET_CD":
-							_this.obj_personnel.TARGET_MARKET.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "INACTIVE_REASON":
-							_this.obj_personnel.INACTIVE_REASON.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "RATING_CD":
-							_this.obj_personnel.RATING.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-					}
-				});
-
-				this.obj_personnel.GROUP.length = 0;
-				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
-					_this.obj_personnel.GROUP.push({
-						value: item.GLOBAL_GRP_ID,
-						text: item.GROUP_NAME
-					});
-				});
-
-				this.obj_personnel.COMPANY.length = 0;
-				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
-					_this.obj_personnel.COMPANY.push({
-						id: item.COMPANY_ID,
-						value: item.COMPANY_CD,
-						text: item.COMPANY_NAME
-					});
-				});
-				this.obj_personnel.COMPANY.shift();
-
-				this.obj_personnel.GROUP.sort(this.OrderByText);
-				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
-				this.obj_personnel.RELIGION.sort(this.OrderByText);
-				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
-				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
-				this.obj_personnel.LEVEL.sort(this.OrderByText);
-				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
-				this.obj_personnel.STATUS.sort(this.OrderByText);
-				this.obj_personnel.POSITION.sort(this.OrderByText);
-				this.obj_personnel.AWARD_HEAD.sort(this.OrderByText);
-				this.obj_personnel.TRAINING.sort(this.OrderByText);
-				this.obj_personnel.PERMIT.sort(this.OrderByText);
-				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
-				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
-				this.obj_personnel.EXAM.sort(this.OrderByText);
-				this.obj_personnel.VIOLATION.sort(this.OrderByText);
-				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
-				this.obj_personnel.CESSATION.sort(this.OrderByText);
-				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
-				this.obj_personnel.COMPANY.sort(this.OrderByText);
-				this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
-				_settings2.default.isNavigating = false;
-			}
-
-			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.COUNTRY_CD,
-						text: result.COUNTRY_NAME
-					});
-				});
-				_this.obj_personnel.COUNTRY = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading country dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.REGION_CD,
-						text: result.REGION_DESC,
-						group: result.COUNTRY_CD
-					});
-				});
-				_this.obj_personnel.REGION = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading region dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						school_cd: result.SCHOOL_CD,
-						school_name: result.SCHOOL_NAME,
-						school_addr: result.SCHOOL_ADDR
-					});
-				});
-				_this.obj_personnel.SCHOOLS = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading schools dropdown.");
-				console.log(failed);
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.LOCATION_CD,
-						text: result.LOCATION_NAME
-					});
-				});
-				_this.obj_personnel.LOCATIONS_RNG = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.PAYROLL_GRP_ID,
-						value: result.PAYROLL_GRP_CD,
-						text: result.PAYROLL_GRP_DESC
-					});
-				});
-				_this.obj_personnel.PAYROLL_GROUP = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.BANK_ID,
-						short_nm: result.BANK_SHORT_NAME,
-						bank_cd: result.BANK_CD,
-						long_nm: result.BANK_LONG_NAME
-					});
-				});
-				_this.obj_personnel.BANK = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Bank dropdown");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("PROVINCE_MSTR").orderBy("PROVINCE_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (r) {
-					tmp.push({
-						text: r.PROVINCE_DESC,
-						value: r.PROVINCE_CD,
-						group: r.REGION_CD
-					});
-				});
-				_this.obj_personnel.PROVINCE = tmp;
-			}, function (error) {
-				_toastr2.default.error(error, "Error in loading Province dropdown.");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_MSTR").orderBy("RELATIVE_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-
-				_.each(s.results, function (res) {
-
-					var relationship = {
-						value: res.RELATIVE_CD,
-						text: res.RELATIVE_DESC,
-						group: res.RELATIONSHIP_CD
-					};
-					tmp.push(relationship);
-				});
-				_this.obj_personnel.RELATIONSHIP = tmp;
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("AWARD_BODY_MSTR").orderBy("SPONSOR_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-				_.each(s.results, function (res) {
-					var award_body = {
-						value: res.AWARD_BODY_CD,
-						text: res.SPONSOR_NAME
-					};
-					tmp.push(award_body);
-				});
-				_this.obj_personnel.AWARD_BODY = tmp;
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("SKILL_TALENT_MSTR").orderBy("SKILL_TALENT_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-				_.each(s.results, function (res) {
-					var skill_talent = {
-						value: res.SKILL_TALENT_CD,
-						text: res.SKILL_TALENT_DESC,
-						group: res.SKILL_TALENT_TYPE_CD
-					};
-					tmp.push(skill_talent);
-				});
-				_this.obj_personnel.SKILL_TALENT = tmp;
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RATING_MSTR").orderBy("RATING_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-				_.each(s.results, function (res) {
-					var rating_mstr = {
-						value: res.RATING_CD,
-						text: res.RATING_DESC
-					};
-					tmp.push(rating_mstr);
-				});
-				_this.obj_personnel.LANGUAGE_RATING = tmp;
-			});
-		};
-
-		ppid.prototype.OrderByText = function OrderByText(a, b) {
-			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
-			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
-			return 0;
-		};
-
-		ppid.prototype.changeTab = function changeTab(tabNumber) {
-			var _this2 = this;
-
-			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
-
-			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
-				all(tabNumber, _this2.obj_personnel.global_indiv_id);
-			});
-		};
-
-		ppid.prototype.FindUsers = function FindUsers() {
-			this.dialogService.open({
-				viewModel: _ppid_search.ppid_search
-			}).whenClosed(function (response) {
-				if (!response.wasCancelled) {} else {}
-			});
-		};
-
-		ppid.prototype.AddUsers = function AddUsers() {
-			alert('AddUsers function under maintenance.');
-		};
-
-		ppid.prototype.LoginPassed = function LoginPassed(user) {};
-
-		return ppid;
-	}()) || _class);
-});
-define('ppid/ppid_group',['exports', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', './modals/DialogBox', '../entity-manager-factory', '../masterfiles', 'settings'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _DialogBox, _entityManagerFactory, _masterfiles, _settings) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.ppid_group = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _settings2 = _interopRequireDefault(_settings);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var ppid_group = exports.ppid_group = (_dec = (0, _aureliaFramework.inject)(_obj_personnel.obj_personnel, _toastr2.default, _aureliaDialog.DialogService), _dec(_class = function () {
-		function ppid_group(obj_personnel, toastr, DialogService) {
-			_classCallCheck(this, ppid_group);
-
-			this.obj_personnel = null;
-
-			this.obj_personnel = obj_personnel;
-			this.DialogService = DialogService;
-
-			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
-			this.obj_personnel.OBSERVERS.group_dialog.length = 0;
-			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_skills_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_language_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.relative_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.govinfo_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.company_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.award_training_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
-			this.obj_personnel.global_indiv_id = "";
-			this.obj_personnel.HEADER = {
-				citizenship: [],
-				group: []
-			};
-			this.obj_personnel.GROUP_INFO = {
-				model: {},
-				members: []
-			};
-
-			this.LoadDropdown();
-		}
-
-		ppid_group.prototype.LoadDropdown = function LoadDropdown() {
-			var _this = this;
-
-			_settings2.default.isNavigating = true;
-
-			var maxYear = new Date().getFullYear();
-			var leastYear = 1960;
-			var tmpYear = [];
-			do {
-				tmpYear.push({
-					value: leastYear,
-					text: leastYear
-				});
-				leastYear++;
-			} while (leastYear <= maxYear);
-			this.obj_personnel.YEAR = tmpYear;
-
-			if ((0, _masterfiles.getLookups)() != null) {
-				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
-				this.obj_personnel.LOCATIONS.shift();
-
-				this.obj_personnel.CIVIL_STATUS.length = 0;
-				this.obj_personnel.RELIGION.length = 0;
-				this.obj_personnel.CITIZENSHIP.length = 0;
-				this.obj_personnel.CONTACT_TYPE.length = 0;
-				this.obj_personnel.LEVEL.length = 0;
-				this.obj_personnel.LANGUAGE.length = 0;
-				this.obj_personnel.STATUS.length = 0;
-				this.obj_personnel.POSITION.length = 0;
-				this.obj_personnel.AWARD_HEAD.length = 0;
-				this.obj_personnel.TRAINING.length = 0;
-				this.obj_personnel.TAX_EXEMPT.length = 0;
-				this.obj_personnel.INPUT_TAX.length = 0;
-				this.obj_personnel.PERMIT.length = 0;
-				this.obj_personnel.VAT_STAT.length = 0;
-				this.obj_personnel.EXAM.length = 0;
-				this.obj_personnel.CASE_STAT.length = 0;
-				this.obj_personnel.VIOLATION.length = 0;
-				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
-				this.obj_personnel.CESSATION.length = 0;
-				this.obj_personnel.TARGET_MARKET.length = 0;
-				this.obj_personnel.INACTIVE_REASON.length = 0;
-				this.obj_personnel.RATING.length = 0;
-
-				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
-					switch (item.REF_GRP_CD) {
-						case "CIVIL_STATUS":
-							_this.obj_personnel.CIVIL_STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "RELIGION_CD":
-							_this.obj_personnel.RELIGION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CITIZENSHIP_CD":
-							_this.obj_personnel.CITIZENSHIP.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CONTACT_TYPE_CD":
-							_this.obj_personnel.CONTACT_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LEVEL_CD":
-							_this.obj_personnel.LEVEL.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LANG_DIALECT_CD":
-							_this.obj_personnel.LANGUAGE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "STATUS_CD":
-							_this.obj_personnel.STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "POSITION_CD":
-							_this.obj_personnel.POSITION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "AWARD_CD":
-							_this.obj_personnel.AWARD_HEAD.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TRNG_CD":
-							_this.obj_personnel.TRAINING.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TAX_EXEMPT_CD":
-							_this.obj_personnel.TAX_EXEMPT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "INPUT_TAX_CD":
-							_this.obj_personnel.INPUT_TAX.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PERMIT_CD":
-							_this.obj_personnel.PERMIT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VAT_STAT_CD":
-							_this.obj_personnel.VAT_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "EXAM_CD":
-							_this.obj_personnel.EXAM.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CASE_STAT_CD":
-							_this.obj_personnel.CASE_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VIOLATION_CD":
-							_this.obj_personnel.VIOLATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PROFESSIONAL_TYPE_CD":
-							_this.obj_personnel.PROFESSIONAL_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CESSATION_CODE":
-							_this.obj_personnel.CESSATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TARGET_MARKET_CD":
-							_this.obj_personnel.TARGET_MARKET.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "INACTIVE_REASON":
-							_this.obj_personnel.INACTIVE_REASON.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "RATING_CD":
-							_this.obj_personnel.RATING.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-					}
-				});
-
-				this.obj_personnel.GROUP.length = 0;
-				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
-					_this.obj_personnel.GROUP.push({
-						value: item.GLOBAL_GRP_ID,
-						text: item.GROUP_NAME
-					});
-				});
-
-				this.obj_personnel.COMPANY.length = 0;
-				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
-					_this.obj_personnel.COMPANY.push({
-						id: item.COMPANY_ID,
-						value: item.COMPANY_CD,
-						text: item.COMPANY_NAME
-					});
-				});
-				this.obj_personnel.COMPANY.shift();
-
-				this.obj_personnel.GROUP.sort(this.OrderByText);
-				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
-				this.obj_personnel.RELIGION.sort(this.OrderByText);
-				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
-				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
-				this.obj_personnel.LEVEL.sort(this.OrderByText);
-				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
-				this.obj_personnel.STATUS.sort(this.OrderByText);
-				this.obj_personnel.POSITION.sort(this.OrderByText);
-				this.obj_personnel.AWARD_HEAD.sort(this.OrderByText);
-				this.obj_personnel.TRAINING.sort(this.OrderByText);
-				this.obj_personnel.PERMIT.sort(this.OrderByText);
-				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
-				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
-				this.obj_personnel.EXAM.sort(this.OrderByText);
-				this.obj_personnel.VIOLATION.sort(this.OrderByText);
-				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
-				this.obj_personnel.CESSATION.sort(this.OrderByText);
-				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
-				this.obj_personnel.COMPANY.sort(this.OrderByText);
-				this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
-				_settings2.default.isNavigating = false;
-			}
-
-			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.COUNTRY_CD,
-						text: result.COUNTRY_NAME
-					});
-				});
-				_this.obj_personnel.COUNTRY = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading country dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.REGION_CD,
-						text: result.REGION_DESC,
-						group: result.COUNTRY_CD
-					});
-				});
-				_this.obj_personnel.REGION = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading region dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						school_cd: result.SCHOOL_CD,
-						school_name: result.SCHOOL_NAME,
-						school_addr: result.SCHOOL_ADDR
-					});
-				});
-				_this.obj_personnel.SCHOOLS = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading schools dropdown.");
-				console.log(failed);
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.LOCATION_CD,
-						text: result.LOCATION_NAME
-					});
-				});
-				_this.obj_personnel.LOCATIONS_RNG = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.PAYROLL_GRP_ID,
-						value: result.PAYROLL_GRP_CD,
-						text: result.PAYROLL_GRP_DESC
-					});
-				});
-				_this.obj_personnel.PAYROLL_GROUP = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.BANK_ID,
-						short_nm: result.BANK_SHORT_NAME,
-						bank_cd: result.BANK_CD,
-						long_nm: result.BANK_LONG_NAME
-					});
-				});
-				_this.obj_personnel.BANK = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Bank dropdown");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("PROVINCE_MSTR").orderBy("PROVINCE_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (r) {
-					tmp.push({
-						text: r.PROVINCE_DESC,
-						value: r.PROVINCE_CD,
-						group: r.REGION_CD
-					});
-				});
-				_this.obj_personnel.PROVINCE = tmp;
-			}, function (error) {
-				_toastr2.default.error(error, "Error in loading Province dropdown.");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_MSTR").orderBy("RELATIVE_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-
-				_.each(s.results, function (res) {
-
-					var relationship = {
-						value: res.RELATIVE_CD,
-						text: res.RELATIVE_DESC,
-						group: res.RELATIONSHIP_CD
-					};
-					tmp.push(relationship);
-				});
-				_this.obj_personnel.RELATIONSHIP = tmp;
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("AWARD_BODY_MSTR").orderBy("SPONSOR_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-				_.each(s.results, function (res) {
-					var award_body = {
-						value: res.AWARD_BODY_CD,
-						text: res.SPONSOR_NAME
-					};
-					tmp.push(award_body);
-				});
-				_this.obj_personnel.AWARD_BODY = tmp;
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("SKILL_TALENT_MSTR").orderBy("SKILL_TALENT_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-				_.each(s.results, function (res) {
-					var skill_talent = {
-						value: res.SKILL_TALENT_CD,
-						text: res.SKILL_TALENT_DESC,
-						group: res.SKILL_TALENT_TYPE_CD
-					};
-					tmp.push(skill_talent);
-				});
-				_this.obj_personnel.SKILL_TALENT = tmp;
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RATING_MSTR").orderBy("RATING_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-				_.each(s.results, function (res) {
-					var rating_mstr = {
-						value: res.RATING_CD,
-						text: res.RATING_DESC
-					};
-					tmp.push(rating_mstr);
-				});
-				_this.obj_personnel.LANGUAGE_RATING = tmp;
-			});
-		};
-
-		ppid_group.prototype.OrderByText = function OrderByText(a, b) {
-			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
-			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
-			return 0;
-		};
-
-		ppid_group.prototype.changeTab = function changeTab(tabNumber) {
-			var _this2 = this;
-
-			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
-
-			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
-				all(tabNumber, _this2.obj_personnel.global_indiv_id);
-			});
-		};
-
-		return ppid_group;
-	}()) || _class);
-});
 define('tools/gridpaging',['exports', 'aurelia-framework', 'aurelia-binding', 'cache_obj'], function (exports, _aureliaFramework, _aureliaBinding, _cache_obj) {
 	'use strict';
 
@@ -6880,36 +6887,6 @@ define('tools/gridpaging',['exports', 'aurelia-framework', 'aurelia-binding', 'c
 		enumerable: true,
 		initializer: null
 	})), _class2)) || _class);
-});
-define('ppfcs/actual_cost/actual_cost',['exports', 'aurelia-framework', 'cache_obj', 'settings'], function (exports, _aureliaFramework, _cache_obj, _settings) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.actual_cost = undefined;
-
-    var _settings2 = _interopRequireDefault(_settings);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _dec, _class;
-
-    var actual_cost = exports.actual_cost = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj), _dec(_class = function actual_cost(cache_obj) {
-        _classCallCheck(this, actual_cost);
-
-        this._cache_obj = cache_obj;
-    }) || _class);
 });
 define('ppfcs/budget/guest',['exports', 'aurelia-framework', 'ppfcs/cache_budget', 'entity-manager-factory', 'masterfiles', 'helpers', 'typeahead', 'settings', 'underscore', 'numeral', 'toastr', 'multi-observer', '../../modals/paymentterm', 'aurelia-dialog', 'cache_obj'], function (exports, _aureliaFramework, _cache_budget, _entityManagerFactory, _masterfiles, _helpers, _typeahead, _settings, _underscore, _numeral, _toastr, _multiObserver, _paymentterm, _aureliaDialog, _cache_obj) {
   'use strict';
@@ -9854,6 +9831,36 @@ define('ppfcs/budget/summary',['exports', 'aurelia-framework', 'cache_obj', 'ppf
     initializer: null
   })), _class2)) || _class);
 });
+define('ppfcs/actual_cost/actual_cost',['exports', 'aurelia-framework', 'cache_obj', 'settings'], function (exports, _aureliaFramework, _cache_obj, _settings) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.actual_cost = undefined;
+
+    var _settings2 = _interopRequireDefault(_settings);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _dec, _class;
+
+    var actual_cost = exports.actual_cost = (_dec = (0, _aureliaFramework.inject)(_cache_obj.cache_obj), _dec(_class = function actual_cost(cache_obj) {
+        _classCallCheck(this, actual_cost);
+
+        this._cache_obj = cache_obj;
+    }) || _class);
+});
 define('ppid/contract/cache_contract',['exports'], function (exports) {
   'use strict';
 
@@ -11221,1255 +11228,6 @@ define('ppid/modals/ppid_search',['exports', 'aurelia-framework', 'aurelia-dialo
 
 		return ppid_search;
 	}()) || _class);
-});
-define('ppid/talent_search/cache_talent',['exports'], function (exports) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  var cache_talent = exports.cache_talent = function cache_talent() {
-    _classCallCheck(this, cache_talent);
-
-    this._CITIZENSHIP_POP = false;
-    this._RELIGION_POP = false;
-    this._CIVIL_STATUS_POP = false;
-    this._GENDER_POP = false;
-    this._COUNTRY_POP = false;
-    this._LOCATION_POP = false;
-    this._INTEREST_POP = false;
-    this._SKILL_TALENT_POP = false;
-    this._NAME_AND_OR = 2;
-    this._AGE_AND_OR = 0;
-    this._CITIZENSHIP_AND_OR = 2;
-    this._RELIGION_AND_OR = 2;
-    this._CIVIL_STATUS_AND_OR = 2;
-    this._GENDER_AND_OR = 2;
-    this._COUNTRY_AND_OR = 2;
-    this._LOCATION_AND_OR = 2;
-    this._TALENT_SUPPLIER_AND_OR = 2;
-    this._TALENT_HANDLER_AND_OR = 2;
-    this._INTEREST_AND_OR = 2;
-    this._SKILL_TALENT_AND_OR = 2;
-    this._HEIGHT_AND_OR = 2;
-    this._WEIGHT_AND_OR = 2;
-    this._BUILT_AND_OR = 2;
-    this._EYE_COLOR_AND_OR = 2;
-    this._HAIR_COLOR_AND_OR = 2;
-    this._SKINTONE_AND_OR = 2;
-    this._VITAL_STATISTICS_AND_OR = 2;
-    this._SPECIFIC_CHAR_AND_OR = 2;
-    this._TALENT_TYPE_AND_OR = 2;
-    this._NAME_RADIO_BUTTON = 1;
-    this._AGE_RADIO_BUTTON = 1;
-    this._CITIZENSHIP_RADIO_BUTTON = 1;
-    this._RELIGION_RADIO_BUTTON = 1;
-    this._CIVIL_STATUS_RADIO_BUTTON = 1;
-    this._GENDER_RADIO_BUTTON = 1;
-    this._COUNTRY_RADIO_BUTTON = 1;
-    this._LOCATION_RADIO_BUTTON = 1;
-    this._TALENT_SUPPLIER_RADIO_BUTTON = 1;
-    this._TALENT_HANDLER_RADIO_BUTTON = 1;
-    this._INTEREST_RADIO_BUTTON = 1;
-    this._SKILL_TALENT_RADIO_BUTTON = 1;
-    this._HEIGHT_RADIO_BUTTON = 1;
-    this._WEIGHT_RADIO_BUTTON = 1;
-    this._BUILT_RADIO_BUTTON = 1;
-    this._EYE_COLOR_RADIO_BUTTON = 1;
-    this._HAIR_COLOR_RADIO_BUTTON = 1;
-    this._SKINTONE_RADIO_BUTTON = 1;
-    this._VITAL_STATISTICS_RADIO_BUTTON = 1;
-    this._SPECIFIC_CHAR_RADIO_BUTTON = 1;
-    this._TALENT_TYPE_RADIO_BUTTON = 1;
-    this._HAS_FIRED = false;
-    this._CITIZENSHIP_ARR = [];
-    this._RELIGION_ARR = [];
-    this._CIVIL_STATUS_ARR = [];
-    this._GENDER_ARR = [{ ref: 'M', desc: 'MALE' }, { ref: 'F', desc: 'FEMALE' }];
-    this._COUNTRY_ARR = [];
-    this._LOCATION_ARR = [];
-    this._INTEREST_ARR = [];
-    this._SKILL_TALENT_ARR = [];
-    this.QUERY_VAL = [];
-    this.ALL_MSTR = [];
-  };
-});
-define('ppid/talent_search/obj_personnel',["exports"], function (exports) {
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var obj_personnel = exports.obj_personnel = function obj_personnel() {
-		_classCallCheck(this, obj_personnel);
-
-		this.global_indiv_id = "";
-		this.editing_status = "";
-		this.HEADER = {
-			citizenship: [],
-			group: []
-		};
-		this.CONTACT = {
-			status: "",
-			modelAddress: {},
-			statusContact: "Add",
-			modelContact: {},
-			modelInternet: {},
-			address: [],
-			contact: [],
-			email: [],
-			website: []
-		};
-		this.EDUCATIONAL_ACHIEVEMENT = {
-			status: "",
-			model: {},
-			list: []
-		};
-		this.CHARACTERISTIC = [];
-		this.SKILLS = [];
-		this.LANGUAGE_DIALECT = [];
-		this.MEDICAL_RECORD = {
-			model: {},
-			list: []
-		};
-		this.RELATIVE = {
-			parents: {
-				mother: {},
-				father: {}
-			},
-			siblings: {
-				model: {},
-				list: []
-			},
-			spouse: {},
-			emergency_contact: {
-				model: {},
-				list: []
-			}
-		};
-		this.WORK_EXPERIENCE = {
-			model: {},
-			list: []
-		};
-		this.AWARDS = [];
-		this.SEMINARS = [];
-		this.GOVERNMENT_INFO = {
-			modelTaxAffidavit: {},
-			modelPermit: {},
-			tax_affidavit: [],
-			permits: []
-		};
-		this.GOVERNMENT_EXAM = {
-			model: {},
-			list: []
-		};
-		this.CRIMINAL_RECORD = {
-			civil: {
-				model: {},
-				list: []
-			},
-			administrative: {
-				model: {},
-				list: []
-			}
-		};
-		this.COMPANY_SPECIFIC = {
-			model: {
-				personnel_bank: {}
-			},
-			list: []
-		};
-		this.ENDORSEMENT = [];
-		this.IMAGE_BRANDING = [];
-		this.QUESTION_ANSWER = [];
-		this.CHARACTER_REF = {
-			model: {},
-			list: []
-		};
-		this.USER = {};
-		this.OBSERVERS = {
-			ppid_dialog: [],
-			tab_changed: [],
-			clear_ppid: [],
-			clear_log: [],
-			clear_login_modal: [],
-			maintab_contact_clicked: [],
-			maintab_education_clicked: [],
-			company_tab_changed: [],
-			govinfo_tab_changed: [],
-			relative_tab_changed: []
-
-		};
-		this.STATUS = [];
-		this.CIVIL_STATUS = [];
-		this.CITIZENSHIP = [];
-		this.RELIGION = [];
-		this.COUNTRY = [];
-		this.REGION = [];
-		this.GROUP = [];
-		this.LOCATIONS = [];
-		this.CONTACT_TYPE = [];
-		this.LEVEL = [];
-		this.YEAR = [];
-		this.SCHOOLS = [];
-		this.LANGUAGE = [];
-		this.POSITION = [];
-		this.AWARD = [];
-		this.TRAINING = [];
-		this.TAX_EXEMPT = [];
-		this.INPUT_TAX = [];
-		this.PERMIT = [];
-		this.VAT_STAT = [];
-		this.EXAM = [];
-		this.CASE_STAT = [];
-		this.VIOLATION = [];
-		this.PROFESSIONAL_TYPE = [];
-		this.CESSATION = [];
-		this.TARGET_MARKET = [];
-		this.COMPANY = [];
-		this.DIVISION = [];
-		this.LOCATIONS_RNG = [];
-		this.CATEGORY = [];
-		this.JOB_GROUP = [];
-		this.JOB = [];
-		this.PAYROLL_GROUP = [];
-		this.BANK = [];
-		this.PROVINCE = [];
-		this.RELATIONSHIP = [];
-		this.INACTIVE_REASON = [];
-	};
-});
-define('ppid/talent_search/ppid',['exports', '.././helpers', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', '../entity-manager-factory', '../masterfiles', 'settings'], function (exports, _helpers, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _entityManagerFactory, _masterfiles, _settings) {
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.ppid = undefined;
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _settings2 = _interopRequireDefault(_settings);
-
-	function _interopRequireDefault(obj) {
-		return obj && obj.__esModule ? obj : {
-			default: obj
-		};
-	}
-
-	function _classCallCheck(instance, Constructor) {
-		if (!(instance instanceof Constructor)) {
-			throw new TypeError("Cannot call a class as a function");
-		}
-	}
-
-	var _dec, _class;
-
-	var ppid = exports.ppid = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel), _dec(_class = function () {
-		function ppid(dialogService, obj_personnel) {
-			_classCallCheck(this, ppid);
-
-			this.obj_personnel = null;
-			this.global_indiv_id = "";
-
-			this.dialogService = dialogService;
-			this.obj_personnel = obj_personnel;
-
-			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
-			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
-			this.obj_personnel.OBSERVERS.relative_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.govinfo_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.company_tab_changed.length = 0;
-			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
-			this.obj_personnel.global_indiv_id = "";
-			this.obj_personnel.HEADER = {
-				citizenship: [],
-				group: []
-			};
-			this.LoadDropdown();
-
-			this.LoginPassed(this.obj_personnel.USER);
-		}
-
-		ppid.prototype.LoadDropdown = function LoadDropdown() {
-			var _this = this;
-
-			_settings2.default.isNavigating = true;
-
-			var maxYear = new Date().getFullYear();
-			var leastYear = 1960;
-			var tmpYear = [];
-			do {
-				tmpYear.push({
-					value: leastYear,
-					text: leastYear
-				});
-				leastYear++;
-			} while (leastYear <= maxYear);
-			this.obj_personnel.YEAR = tmpYear;
-
-			if ((0, _masterfiles.getLookups)() != null) {
-				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
-				this.obj_personnel.LOCATIONS.shift();
-
-				this.obj_personnel.CIVIL_STATUS.length = 0;
-				this.obj_personnel.RELIGION.length = 0;
-				this.obj_personnel.CITIZENSHIP.length = 0;
-				this.obj_personnel.CONTACT_TYPE.length = 0;
-				this.obj_personnel.LEVEL.length = 0;
-				this.obj_personnel.LANGUAGE.length = 0;
-				this.obj_personnel.STATUS.length = 0;
-				this.obj_personnel.POSITION.length = 0;
-				this.obj_personnel.AWARD.length = 0;
-				this.obj_personnel.TRAINING.length = 0;
-				this.obj_personnel.TAX_EXEMPT.length = 0;
-				this.obj_personnel.INPUT_TAX.length = 0;
-				this.obj_personnel.PERMIT.length = 0;
-				this.obj_personnel.VAT_STAT.length = 0;
-				this.obj_personnel.EXAM.length = 0;
-				this.obj_personnel.CASE_STAT.length = 0;
-				this.obj_personnel.VIOLATION.length = 0;
-				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
-				this.obj_personnel.CESSATION.length = 0;
-				this.obj_personnel.TARGET_MARKET.length = 0;
-				this.obj_personnel.INACTIVE_REASON.length = 0;
-
-				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
-					switch (item.REF_GRP_CD) {
-						case "CIVIL_STATUS":
-							_this.obj_personnel.CIVIL_STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "RELIGION_CD":
-							_this.obj_personnel.RELIGION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CITIZENSHIP_CD":
-							_this.obj_personnel.CITIZENSHIP.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CONTACT_TYPE_CD":
-							_this.obj_personnel.CONTACT_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LEVEL_CD":
-							_this.obj_personnel.LEVEL.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "LANG_DIALECT_CD":
-							_this.obj_personnel.LANGUAGE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "STATUS_CD":
-							_this.obj_personnel.STATUS.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "POSITION_CD":
-							_this.obj_personnel.POSITION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "AWARD_CD":
-							_this.obj_personnel.AWARD.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TRNG_CD":
-							_this.obj_personnel.TRAINING.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TAX_EXEMPT_CD":
-							_this.obj_personnel.TAX_EXEMPT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "INPUT_TAX_CD":
-							_this.obj_personnel.INPUT_TAX.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PERMIT_CD":
-							_this.obj_personnel.PERMIT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VAT_STAT_CD":
-							_this.obj_personnel.VAT_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "EXAM_CD":
-							_this.obj_personnel.EXAM.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CASE_STAT_CD":
-							_this.obj_personnel.CASE_STAT.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "VIOLATION_CD":
-							_this.obj_personnel.VIOLATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "PROFESSIONAL_TYPE_CD":
-							_this.obj_personnel.PROFESSIONAL_TYPE.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "CESSATION_CODE":
-							_this.obj_personnel.CESSATION.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "TARGET_MARKET_CD":
-							_this.obj_personnel.TARGET_MARKET.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-							break;
-						case "INACTIVE_REASON":
-							_this.obj_personnel.INACTIVE_REASON.push({
-								value: item.REF_CD,
-								text: item.REF_DESC
-							});
-
-					}
-				});
-
-				this.obj_personnel.GROUP.length = 0;
-				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
-					_this.obj_personnel.GROUP.push({
-						value: item.GLOBAL_GRP_ID,
-						text: item.GROUP_NAME
-					});
-				});
-
-				this.obj_personnel.COMPANY.length = 0;
-				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
-					_this.obj_personnel.COMPANY.push({
-						id: item.COMPANY_ID,
-						value: item.COMPANY_CD,
-						text: item.COMPANY_NAME
-					});
-				});
-				this.obj_personnel.COMPANY.shift();
-
-				this.obj_personnel.GROUP.sort(this.OrderByText);
-				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
-				this.obj_personnel.RELIGION.sort(this.OrderByText);
-				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
-				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
-				this.obj_personnel.LEVEL.sort(this.OrderByText);
-				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
-				this.obj_personnel.STATUS.sort(this.OrderByText);
-				this.obj_personnel.POSITION.sort(this.OrderByText);
-				this.obj_personnel.AWARD.sort(this.OrderByText);
-				this.obj_personnel.TRAINING.sort(this.OrderByText);
-				this.obj_personnel.PERMIT.sort(this.OrderByText);
-				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
-				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
-				this.obj_personnel.EXAM.sort(this.OrderByText);
-				this.obj_personnel.VIOLATION.sort(this.OrderByText);
-				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
-				this.obj_personnel.CESSATION.sort(this.OrderByText);
-				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
-				this.obj_personnel.COMPANY.sort(this.OrderByText);
-				this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
-			}
-
-			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.COUNTRY_CD,
-						text: result.COUNTRY_NAME
-					});
-				});
-				_this.obj_personnel.COUNTRY = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading country dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.REGION_CD,
-						text: result.REGION_DESC,
-						group: result.COUNTRY_CD
-					});
-				});
-				_this.obj_personnel.REGION = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, 'Error in loading region dropdown.');
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						school_cd: result.SCHOOL_CD,
-						school_name: result.SCHOOL_NAME,
-						school_addr: result.SCHOOL_ADDR
-					});
-				});
-				_this.obj_personnel.SCHOOLS = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading schools dropdown.");
-				console.log(failed);
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						value: result.LOCATION_CD,
-						text: result.LOCATION_NAME
-					});
-				});
-				_this.obj_personnel.LOCATIONS_RNG = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.PAYROLL_GRP_ID,
-						value: result.PAYROLL_GRP_CD,
-						text: result.PAYROLL_GRP_DESC
-					});
-				});
-				_this.obj_personnel.PAYROLL_GROUP = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (result) {
-					tmp.push({
-						id: result.BANK_ID,
-						short_nm: result.BANK_SHORT_NAME,
-						bank_cd: result.BANK_CD,
-						long_nm: result.BANK_LONG_NAME
-					});
-				});
-				_this.obj_personnel.BANK = tmp;
-			}, function (failed) {
-				_toastr2.default.error(failed, "Error in loading Bank dropdown");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("PROVINCE_MSTR").orderBy("PROVINCE_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
-				var tmp = [];
-				_.each(success.results, function (r) {
-					tmp.push({
-						text: r.PROVINCE_DESC,
-						value: r.PROVINCE_CD,
-						group: r.REGION_CD
-					});
-				});
-				_this.obj_personnel.PROVINCE = tmp;
-			}, function (error) {
-				_toastr2.default.error(error, "Error in loading Province dropdown.");
-			});
-
-			_query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_MSTR").orderBy("RELATIVE_DESC");
-			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
-				var tmp = [];
-
-				_.each(s.results, function (res) {
-
-					var relationship = {
-						value: res.RELATIVE_CD,
-						text: res.RELATIVE_DESC,
-						group: res.RELATIONSHIP_CD
-					};
-
-					tmp.push(relationship);
-				});
-				_this.obj_personnel.RELATIONSHIP = tmp;
-			});
-
-			_settings2.default.isNavigating = false;
-		};
-
-		ppid.prototype.OrderByText = function OrderByText(a, b) {
-			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
-			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
-			return 0;
-		};
-
-		ppid.prototype.changeTab = function changeTab(tabNumber) {
-			var _this2 = this;
-
-			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
-
-			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
-				all(tabNumber, _this2.obj_personnel.global_indiv_id);
-			});
-		};
-
-		ppid.prototype.FindUsers = function FindUsers() {
-			this.dialogService.open({
-				viewModel: _ppid_search.ppid_search
-			}).whenClosed(function (response) {
-				if (!response.wasCancelled) {} else {}
-			});
-		};
-
-		ppid.prototype.AddUsers = function AddUsers() {
-			alert('AddUsers function under maintenance.');
-		};
-
-		ppid.prototype.LoginPassed = function LoginPassed(user) {};
-
-		return ppid;
-	}()) || _class);
-});
-define('ppid/talent_search/talent_search',['exports', 'aurelia-framework', 'entity-manager-factory', 'settings', 'moment', 'underscore', 'breeze-client', 'ppid/talent_search/cache_talent'], function (exports, _aureliaFramework, _entityManagerFactory, _settings, _moment, _underscore, _breezeClient, _cache_talent) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.talent_search = undefined;
-
-  var _settings2 = _interopRequireDefault(_settings);
-
-  var _moment2 = _interopRequireDefault(_moment);
-
-  var _underscore2 = _interopRequireDefault(_underscore);
-
-  var _breezeClient2 = _interopRequireDefault(_breezeClient);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  var _dec, _class;
-
-  var talent_search = exports.talent_search = (_dec = (0, _aureliaFramework.inject)(_cache_talent.cache_talent), _dec(_class = function () {
-    function talent_search(cache_talent) {
-      _classCallCheck(this, talent_search);
-
-      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
-        return;
-      }
-
-      this._CACHE_TALENT = cache_talent;
-
-      this.initialize();
-    }
-
-    talent_search.prototype.initialize = function initialize() {
-      var _this = this;
-
-      this._CACHE_TALENT._CITIZENSHIP_ARR = [];
-      this._CACHE_TALENT._RELIGION_ARR = [];
-      this._CACHE_TALENT._CIVIL_STATUS_ARR = [];
-      this._CACHE_TALENT._COUNTRY_ARR = [];
-      this._CACHE_TALENT._LOCATION_ARR = [];
-      this._CACHE_TALENT._INTEREST_ARR = [];
-      this._CACHE_TALENT._SKILL_TALENT_ARR = [];
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'CITIZENSHIP_CD').orderBy('REF_DESC')).then(function (found) {
-        found.results.forEach(function (all) {
-          _this._CACHE_TALENT._CITIZENSHIP_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
-        });
-      });
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'RELIGION_CD').orderBy('REF_DESC')).then(function (found) {
-        found.results.forEach(function (all) {
-          _this._CACHE_TALENT._RELIGION_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
-        });
-      });
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'CIVIL_STATUS').orderBy('REF_DESC')).then(function (found) {
-        found.results.forEach(function (all) {
-          _this._CACHE_TALENT._CIVIL_STATUS_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
-        });
-      });
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME')).then(function (found) {
-        found.results.forEach(function (all) {
-          _this._CACHE_TALENT._COUNTRY_ARR.push({ ref: all.COUNTRY_CD, desc: all.COUNTRY_NAME });
-        });
-      });
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('LOCATION_MSTR').orderBy('LOCATION_DESC')).then(function (found) {
-        found.results.forEach(function (all) {
-          _this._CACHE_TALENT._LOCATION_ARR.push({ ref: all.LOCATION_CD, desc: all.LOCATION_DESC });
-        });
-      });
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('INTEREST_MSTR').orderBy('INTEREST_DESC')).then(function (found) {
-        found.results.forEach(function (all) {
-          _this._CACHE_TALENT._INTEREST_ARR.push({ ref: all.INTEREST_CD, desc: all.INTEREST_DESC });
-        });
-      });
-
-      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('SKILL_TALENT_MSTR').orderBy('SKILL_TALENT_DESC')).then(function (found) {
-        found.results.forEach(function (all) {
-          _this._CACHE_TALENT._SKILL_TALENT_ARR.push({ ref: all.SKILL_TALENT_CD, desc: all.SKILL_TALENT_DESC });
-        });
-      });
-
-      this.getParttimeMstr();
-      this.getCountry();
-      this.getCitizenship();
-      this.getAlias();
-      this.getIndividual();
-      this.getGroup();
-      this.getInterest();
-      this.getSkillTalent();
-      this.getCharacteristics();
-    };
-
-    talent_search.prototype.getParttimeMstr = function getParttimeMstr() {
-      var _this2 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PARTTIME_MSTR').select('PARTTIME_ID, COUNTRY_BASE_CD, LOCATION_BASE_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this2._CACHE_TALENT.PARTTIME_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getCountry = function getCountry() {
-      var _this3 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').select('COUNTRY_CD, COUNTRY_NAME').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this3._CACHE_TALENT.COUNTRY_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getCitizenship = function getCitizenship() {
-      var _this4 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PT_CITIZENSHIP_TRX').select('PT_INDIV_ID, CITIZENSHIP_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this4._CACHE_TALENT.CITIZESHIP_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getAlias = function getAlias() {
-      var _this5 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PT_ALIAS_TRX').select('PARTTIME_ID, ALIAS_NAME').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this5._CACHE_TALENT.ALIAS_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getIndividual = function getIndividual() {
-      var _this6 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PT_INDIV_MSTR').select('PT_INDIV_ID,GIVEN_NAME,MIDDLE_NAME,LAST_NAME,BIRTH_DT,RELIGION_CD,GENDER,CIVIL_STATUS').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this6._CACHE_TALENT.INDIVIDUAL_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getGroup = function getGroup() {
-      var _this7 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PT_GRP_MSTR').select('PT_GRP_ID,GROUP_NAME,ESTABLISH_DT').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this7._CACHE_TALENT.GROUP_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getInterest = function getInterest() {
-      var _this8 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PT_INTEREST_TRX').select('PARTTIME_ID,INTEREST_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this8._CACHE_TALENT.INTEREST_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getSkillTalent = function getSkillTalent() {
-      var _this9 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PT_SKILL_TALENT_TRX').select('PARTTIME_ID,SKILL_TALENT_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this9._CACHE_TALENT.SKILL_TALENT_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.getCharacteristics = function getCharacteristics() {
-      var _this10 = this;
-
-      return new Promise(function (resolve) {
-        (0, _entityManagerFactory.EntityQuery)().from('PT_CHARACTERISTIC_TRX').select('PARTTIME_ID,CHARACTERISTIC_CD, ACTUAL_VALUE').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
-          _this10._CACHE_TALENT.CHARACTERISTICS_MSTR = success.results;
-          resolve(true);
-        });
-      });
-    };
-
-    talent_search.prototype.consolidate = function consolidate() {
-      var _this11 = this;
-
-      var imageName = "/styles/images/abslogo_BIG.png";
-      this._CACHE_TALENT.INDIVIDUAL_MSTR.forEach(function (all) {
-        var country = '',
-            location = '',
-            country_cd = '',
-            location_cd = '';
-        var alias = '';
-
-        var resultAddress = _this11._CACHE_TALENT.PARTTIME_MSTR.find(function (out) {
-          return out.PARTTIME_ID == all.PT_INDIV_ID;
-        });
-
-        if (resultAddress != undefined) {
-          country = resultAddress.COUNTRY_BASE_CD;
-          location = resultAddress.LOCATION_BASE_CD;
-
-          var countrName = _this11._CACHE_TALENT.COUNTRY_MSTR.find(function (out) {
-            return out.COUNTRY_CD == country;
-          });
-          if (countrName != undefined) {
-            country_cd = countrName.COUNTRY_NAME;
-          }
-        }
-
-        var aliasName = _this11._CACHE_TALENT.ALIAS_MSTR.filter(function (out) {
-          return out.PARTTIME_ID == all.PT_INDIV_ID;
-        });
-
-        if (aliasName.length > 0) {
-          aliasName.forEach(function (aliasItem) {
-            if (alias == "") {
-              alias = aliasItem.ALIAS_NAME;
-            } else {
-              alias += "\n" + aliasItem.ALIAS_NAME;
-            }
-          });
-        }
-
-        _this11._CACHE_TALENT.ALL_MSTR.push({
-          PT_INDIV_ID: all.PT_INDIV_ID,
-          GROUP_NAME: '',
-          GIVEN_NAME: all.GIVEN_NAME,
-          MIDDLE_NAME: all.MIDDLE_NAME,
-          LAST_NAME: all.LAST_NAME,
-          BIRTH_DT: all.BIRTH_DT,
-          RELIGION_CD: all.RELIGION_CD,
-          GENDER: all.GENDER,
-          SOURCE: 'PT_INDIV_MSTR',
-
-          CIVIL_STATUS: all.CIVIL_STATUS,
-          COUNTRY: country_cd,
-          COUNTRY_CD: country,
-          LOCATION: location,
-
-          PIC: imageName,
-          VIDEO: '',
-          ALIAS: alias.replace(/\n/g, "<br />")
-        });
-      });
-
-      this._CACHE_TALENT.GROUP_MSTR.forEach(function (all) {
-        var country = '',
-            location = '',
-            country_cd = '',
-            location_cd = '';
-        var alias = '';
-
-        var resultAddress = _this11._CACHE_TALENT.PARTTIME_MSTR.find(function (out) {
-          return out.PARTTIME_ID == all.PT_GRP_ID;
-        });
-
-        if (resultAddress != undefined) {
-          country = resultAddress.COUNTRY_BASE_CD;
-          location = resultAddress.LOCATION_BASE_CD;
-
-          var countrName = _this11._CACHE_TALENT.COUNTRY_MSTR.find(function (out) {
-            return out.COUNTRY_CD == country;
-          });
-          if (countrName != undefined) {
-            country_cd = countrName.COUNTRY_NAME;
-          }
-        }
-
-        var aliasName = _this11._CACHE_TALENT.ALIAS_MSTR.filter(function (out) {
-          return out.PARTTIME_ID == all.PT_GRP_ID;
-        });
-
-        if (aliasName.length > 0) {
-          aliasName.forEach(function (aliasItem) {
-            if (alias == "") {
-              alias = aliasItem.ALIAS_NAME;
-            } else {
-              alias += "\n" + aliasItem.ALIAS_NAME;
-            }
-          });
-        }
-
-        _this11._CACHE_TALENT.ALL_MSTR.push({
-          PT_INDIV_ID: all.PT_GRP_ID,
-          GROUP_NAME: all.GROUP_NAME,
-          GIVEN_NAME: '',
-          MIDDLE_NAME: '',
-          LAST_NAME: '',
-          BIRTH_DT: all.ESTABLISH_DT,
-          RELIGION_CD: '',
-          GENDER: '',
-          SOURCE: 'PT_GRP_MSTR',
-
-          CIVIL_STATUS: '',
-          COUNTRY: country_cd,
-          COUNTRY_CD: country,
-          LOCATION: location,
-
-          PIC: imageName,
-          VIDEO: '',
-          ALIAS: alias.replace(/\n/g, "<br />")
-        });
-      });
-    };
-
-    talent_search.prototype.search_on = function search_on() {
-      var _this12 = this;
-
-      this._CACHE_TALENT.QUERY_VAL = [];
-      this._CACHE_TALENT.ALL_MSTR = [];
-      var arrayVal = [];
-
-      var p1 = new Promise(function (resolve) {
-        _this12.consolidate();
-        arrayVal = _this12._CACHE_TALENT.ALL_MSTR;
-
-        if (_this12._CACHE_TALENT._NAME !== undefined && _this12._CACHE_TALENT._NAME != '') {
-          var name = _this12._CACHE_TALENT._NAME.toUpperCase();
-          arrayVal = arrayVal.filter(function (out) {
-            return out.GIVEN_NAME.toUpperCase().indexOf(name) != -1 || out.LAST_NAME.toUpperCase().indexOf(name) != -1 || out.MIDDLE_NAME.toUpperCase().indexOf(name) != -1 || out.GROUP_NAME.toUpperCase().indexOf(name) != -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._AGE != undefined && _this12._CACHE_TALENT._AGE != '') {
-          var date = new Date();
-          var x = date.getFullYear() - parseInt(_this12._CACHE_TALENT._AGE) - 1;
-          var y1 = date.getDate() + 1;
-          var y2 = date.getDate() - 1;
-          var z = date.getFullYear() - parseInt(_this12._CACHE_TALENT._AGE);
-          var mon = date.getMonth();
-          var bdStart = new Date(x, mon, y1);
-          var bdEnd = new Date(z, mon, y2);
-          arrayVal = arrayVal.filter(function (out) {
-            return out.BIRTH_DT >= bdStart && out.BIRTH_DT <= bdEnd;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._CITIZENSHIP !== undefined && _this12._CACHE_TALENT._CITIZENSHIP != '' && _this12._CACHE_TALENT._CITIZENSHIP_POP) {
-          if ($.isArray(_this12._CACHE_TALENT._CITIZENSHIP)) {
-            console.log("ARRAY");
-          } else {
-            console.log("TEXT");
-          }
-          console.log(_this12._CACHE_TALENT._CITIZENSHIP.length, _this12._CACHE_TALENT._CITIZENSHIP);
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CITIZESHIP_MSTR.filter(function (out) {
-            return out.CITIZENSHIP_CD == _this12._CACHE_TALENT._CITIZENSHIP;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PT_INDIV_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._RELIGION !== undefined && _this12._CACHE_TALENT._RELIGION != '' && _this12._CACHE_TALENT._RELIGION_POP) {
-          var religion = _this12._CACHE_TALENT._RELIGION;
-          arrayVal = arrayVal.filter(function (out) {
-            return out.RELIGION_CD == religion;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._CIVIL_STATUS !== undefined && _this12._CACHE_TALENT._CIVIL_STATUS != '' && _this12._CACHE_TALENT._CIVIL_STATUS_POP) {
-          var civil_status = _this12._CACHE_TALENT._CIVIL_STATUS;
-          arrayVal = arrayVal.filter(function (out) {
-            return out.CIVIL_STATUS == civil_status;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._GENDER !== undefined && _this12._CACHE_TALENT._GENDER != '' && _this12._CACHE_TALENT._GENDER_POP) {
-          var gender = _this12._CACHE_TALENT._GENDER;
-          arrayVal = arrayVal.filter(function (out) {
-            return out.GENDER == gender;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._COUNTRY !== undefined && _this12._CACHE_TALENT._COUNTRY != '' && _this12._CACHE_TALENT._COUNTRY_POP) {
-          var country = _this12._CACHE_TALENT._COUNTRY;
-          arrayVal = arrayVal.filter(function (out) {
-            return out.COUNTRY_CD == country;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._LOCATION !== undefined && _this12._CACHE_TALENT._LOCATION != '' && _this12._CACHE_TALENT._LOCATION_POP) {
-          var location = _this12._CACHE_TALENT._LOCATION;
-          arrayVal = arrayVal.filter(function (out) {
-            return out.LOCATION == location;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._INTEREST !== undefined && _this12._CACHE_TALENT._INTEREST != '' && _this12._CACHE_TALENT._INTEREST_POP) {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.INTEREST_MSTR.filter(function (out) {
-            return out.INTEREST_CD == _this12._CACHE_TALENT._INTEREST;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._SKILL_TALENT !== undefined && _this12._CACHE_TALENT._SKILL_TALENT != '' && _this12._CACHE_TALENT._SKILL_TALENT_POP) {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.SKILL_TALENT_MSTR.filter(function (out) {
-            return out.SKILL_TALENT_CD == _this12._CACHE_TALENT._SKILL_TALENT;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._HEIGHT !== undefined && _this12._CACHE_TALENT._HEIGHT != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "HEIGHT" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._HEIGHT.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._WEIGHT !== undefined && _this12._CACHE_TALENT._WEIGHT != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "WEIGHT" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._WEIGHT.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._BUILT !== undefined && _this12._CACHE_TALENT._BUILT != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "BUILT" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._BUILT.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._EYE_COLOR !== undefined && _this12._CACHE_TALENT._EYE_COLOR != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "EYE_COLOR" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._EYE_COLOR.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._HAIR_COLOR !== undefined && _this12._CACHE_TALENT._HAIR_COLOR != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "HAIR_COLOR" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._HAIR_COLOR.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._SKINTONE !== undefined && _this12._CACHE_TALENT._SKINTONE != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "SKINTONE" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._SKINTONE.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._VITAL_STATISTICS !== undefined && _this12._CACHE_TALENT._VITAL_STATISTICS != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "VITAL_STATS" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._VITAL_STATISTICS.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._SPECIFIC_CHAR !== undefined && _this12._CACHE_TALENT._SPECIFIC_CHAR != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "SPECIFIC_CHAR" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._SPECIFIC_CHAR.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        if (_this12._CACHE_TALENT._TALENT_TYPE !== undefined && _this12._CACHE_TALENT._TALENT_TYPE != '') {
-          var arrayVal2 = [];
-          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
-            return out.CHARACTERISTIC_CD == "TALENT_TYPE" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._TALENT_TYPE.toUpperCase()) > -1;
-          }).forEach(function (out) {
-            arrayVal2.push(out.PARTTIME_ID);
-          });
-          arrayVal = arrayVal.filter(function (out) {
-            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
-          });
-        }
-
-        _this12._CACHE_TALENT.QUERY_VAL = arrayVal;
-        _this12._CACHE_TALENT._HAS_FIRED = true;
-      });
-
-      console.log(this._CACHE_TALENT);
-    };
-
-    talent_search.prototype.talent_select = function talent_select(id, source) {
-      alert(id + "\n" + source);
-    };
-
-    talent_search.prototype.onClick = function onClick(variable, value) {
-      switch (variable) {
-        case 1:
-          this._CACHE_TALENT._CITIZENSHIP_POP = value;
-          break;
-        case 2:
-          this._CACHE_TALENT._RELIGION_POP = value;
-          break;
-        case 3:
-          this._CACHE_TALENT._CIVIL_STATUS_POP = value;
-          break;
-        case 4:
-          this._CACHE_TALENT._GENDER_POP = value;
-          break;
-        case 5:
-          this._CACHE_TALENT._COUNTRY_POP = value;
-          break;
-        case 6:
-          this._CACHE_TALENT._LOCATION_POP = value;
-          break;
-        case 7:
-          this._CACHE_TALENT._INTEREST_POP = value;
-          break;
-        case 8:
-          this._CACHE_TALENT._SKILL_TALENT_POP = value;
-          break;
-        default:
-          break;
-      }
-    };
-
-    return talent_search;
-  }()) || _class);
 });
 define('ppid/forms/awards',['exports', 'toastr', 'aurelia-framework', '../obj_personnel', '../../entity-manager-factory', 'breeze-client', 'aurelia-dialog', '../modals/DialogBox', 'moment', 'settings', '../../helpers'], function (exports, _toastr, _aureliaFramework, _obj_personnel, _entityManagerFactory, _breezeClient, _aureliaDialog, _DialogBox, _moment, _settings, _helpers) {
 	'use strict';
@@ -13944,12 +12702,16 @@ define('ppid/forms/company_info_main',['exports', 'toastr', 'aurelia-framework',
 			var currentYear = new Date().getFullYear().toString().substring(2, 4);
 			var query = (0, _entityManagerFactory.EntityQuery)().from("COMPANY_SPECIFIC_INDEX").where("COMPANY_SPECIFIC_ID", "==", company_id).take(1);
 			(0, _entityManagerFactory.EntityManager)().executeQuery(query).then(function (s) {
-				LastID = s.results[0].COMPANY_INDEX;
-				var lastYear = LastID.toString().substring(0, 2);
-				if (lastYear != currentYear && _this10.obj_personnel.COMPANY_SPECIFIC.model.id_no == "000000") {
-					LastID = currentYear + "0001";
-				} else {
+
+				if (company_id == 2 || company_id == 3 || company_id == 4 || company_id == 7 || company_id == 8) {
 					LastID = _this10.obj_personnel.COMPANY_SPECIFIC.model.id_no;
+				} else {
+					LastID = s.results[0].COMPANY_INDEX;
+					var lastYear = LastID.toString().substring(0, 2);
+
+					if (lastYear != currentYear) {
+						LastID = currentYear + "0001";
+					}
 				}
 
 				query = (0, _entityManagerFactory.EntityQuery)().from("GLOBAL_COMPANY_MSTR").orderByDesc("GLOBAL_COMPANY_ID").take(1);
@@ -23727,6 +22489,828 @@ define('ppid/forms/relative_spouse',['exports', 'toastr', 'aurelia-framework', '
 		return relative_spouse;
 	}()) || _class);
 });
+define('ppid/talent_search/cache_talent',['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var cache_talent = exports.cache_talent = function cache_talent() {
+    _classCallCheck(this, cache_talent);
+
+    this._CITIZENSHIP_POP = false;
+    this._RELIGION_POP = false;
+    this._CIVIL_STATUS_POP = false;
+    this._GENDER_POP = false;
+    this._COUNTRY_POP = false;
+    this._LOCATION_POP = false;
+    this._INTEREST_POP = false;
+    this._SKILL_TALENT_POP = false;
+    this._NAME_AND_OR = 2;
+    this._AGE_AND_OR = 0;
+    this._CITIZENSHIP_AND_OR = 2;
+    this._RELIGION_AND_OR = 2;
+    this._CIVIL_STATUS_AND_OR = 2;
+    this._GENDER_AND_OR = 2;
+    this._COUNTRY_AND_OR = 2;
+    this._LOCATION_AND_OR = 2;
+    this._TALENT_SUPPLIER_AND_OR = 2;
+    this._TALENT_HANDLER_AND_OR = 2;
+    this._INTEREST_AND_OR = 2;
+    this._SKILL_TALENT_AND_OR = 2;
+    this._HEIGHT_AND_OR = 2;
+    this._WEIGHT_AND_OR = 2;
+    this._BUILT_AND_OR = 2;
+    this._EYE_COLOR_AND_OR = 2;
+    this._HAIR_COLOR_AND_OR = 2;
+    this._SKINTONE_AND_OR = 2;
+    this._VITAL_STATISTICS_AND_OR = 2;
+    this._SPECIFIC_CHAR_AND_OR = 2;
+    this._TALENT_TYPE_AND_OR = 2;
+    this._NAME_RADIO_BUTTON = 1;
+    this._AGE_RADIO_BUTTON = 1;
+    this._CITIZENSHIP_RADIO_BUTTON = 1;
+    this._RELIGION_RADIO_BUTTON = 1;
+    this._CIVIL_STATUS_RADIO_BUTTON = 1;
+    this._GENDER_RADIO_BUTTON = 1;
+    this._COUNTRY_RADIO_BUTTON = 1;
+    this._LOCATION_RADIO_BUTTON = 1;
+    this._TALENT_SUPPLIER_RADIO_BUTTON = 1;
+    this._TALENT_HANDLER_RADIO_BUTTON = 1;
+    this._INTEREST_RADIO_BUTTON = 1;
+    this._SKILL_TALENT_RADIO_BUTTON = 1;
+    this._HEIGHT_RADIO_BUTTON = 1;
+    this._WEIGHT_RADIO_BUTTON = 1;
+    this._BUILT_RADIO_BUTTON = 1;
+    this._EYE_COLOR_RADIO_BUTTON = 1;
+    this._HAIR_COLOR_RADIO_BUTTON = 1;
+    this._SKINTONE_RADIO_BUTTON = 1;
+    this._VITAL_STATISTICS_RADIO_BUTTON = 1;
+    this._SPECIFIC_CHAR_RADIO_BUTTON = 1;
+    this._TALENT_TYPE_RADIO_BUTTON = 1;
+    this._HAS_FIRED = false;
+    this._CITIZENSHIP_ARR = [];
+    this._RELIGION_ARR = [];
+    this._CIVIL_STATUS_ARR = [];
+    this._GENDER_ARR = [{ ref: 'M', desc: 'MALE' }, { ref: 'F', desc: 'FEMALE' }];
+    this._COUNTRY_ARR = [];
+    this._LOCATION_ARR = [];
+    this._INTEREST_ARR = [];
+    this._SKILL_TALENT_ARR = [];
+    this.QUERY_VAL = [];
+    this.ALL_MSTR = [];
+  };
+});
+define('ppid/talent_search/obj_personnel',["exports"], function (exports) {
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var obj_personnel = exports.obj_personnel = function obj_personnel() {
+		_classCallCheck(this, obj_personnel);
+
+		this.global_indiv_id = "";
+		this.editing_status = "";
+		this.HEADER = {
+			citizenship: [],
+			group: []
+		};
+		this.CONTACT = {
+			status: "",
+			modelAddress: {},
+			statusContact: "Add",
+			modelContact: {},
+			modelInternet: {},
+			address: [],
+			contact: [],
+			email: [],
+			website: []
+		};
+		this.EDUCATIONAL_ACHIEVEMENT = {
+			status: "",
+			model: {},
+			list: []
+		};
+		this.CHARACTERISTIC = [];
+		this.SKILLS = [];
+		this.LANGUAGE_DIALECT = [];
+		this.MEDICAL_RECORD = {
+			model: {},
+			list: []
+		};
+		this.RELATIVE = {
+			parents: {
+				mother: {},
+				father: {}
+			},
+			siblings: {
+				model: {},
+				list: []
+			},
+			spouse: {},
+			emergency_contact: {
+				model: {},
+				list: []
+			}
+		};
+		this.WORK_EXPERIENCE = {
+			model: {},
+			list: []
+		};
+		this.AWARDS = [];
+		this.SEMINARS = [];
+		this.GOVERNMENT_INFO = {
+			modelTaxAffidavit: {},
+			modelPermit: {},
+			tax_affidavit: [],
+			permits: []
+		};
+		this.GOVERNMENT_EXAM = {
+			model: {},
+			list: []
+		};
+		this.CRIMINAL_RECORD = {
+			civil: {
+				model: {},
+				list: []
+			},
+			administrative: {
+				model: {},
+				list: []
+			}
+		};
+		this.COMPANY_SPECIFIC = {
+			model: {
+				personnel_bank: {}
+			},
+			list: []
+		};
+		this.ENDORSEMENT = [];
+		this.IMAGE_BRANDING = [];
+		this.QUESTION_ANSWER = [];
+		this.CHARACTER_REF = {
+			model: {},
+			list: []
+		};
+		this.USER = {};
+		this.OBSERVERS = {
+			ppid_dialog: [],
+			tab_changed: [],
+			clear_ppid: [],
+			clear_log: [],
+			clear_login_modal: [],
+			maintab_contact_clicked: [],
+			maintab_education_clicked: [],
+			company_tab_changed: [],
+			govinfo_tab_changed: [],
+			relative_tab_changed: []
+
+		};
+		this.STATUS = [];
+		this.CIVIL_STATUS = [];
+		this.CITIZENSHIP = [];
+		this.RELIGION = [];
+		this.COUNTRY = [];
+		this.REGION = [];
+		this.GROUP = [];
+		this.LOCATIONS = [];
+		this.CONTACT_TYPE = [];
+		this.LEVEL = [];
+		this.YEAR = [];
+		this.SCHOOLS = [];
+		this.LANGUAGE = [];
+		this.POSITION = [];
+		this.AWARD = [];
+		this.TRAINING = [];
+		this.TAX_EXEMPT = [];
+		this.INPUT_TAX = [];
+		this.PERMIT = [];
+		this.VAT_STAT = [];
+		this.EXAM = [];
+		this.CASE_STAT = [];
+		this.VIOLATION = [];
+		this.PROFESSIONAL_TYPE = [];
+		this.CESSATION = [];
+		this.TARGET_MARKET = [];
+		this.COMPANY = [];
+		this.DIVISION = [];
+		this.LOCATIONS_RNG = [];
+		this.CATEGORY = [];
+		this.JOB_GROUP = [];
+		this.JOB = [];
+		this.PAYROLL_GROUP = [];
+		this.BANK = [];
+		this.PROVINCE = [];
+		this.RELATIONSHIP = [];
+		this.INACTIVE_REASON = [];
+	};
+});
+define('ppid/talent_search/talent_search',['exports', 'aurelia-framework', 'entity-manager-factory', 'settings', 'moment', 'underscore', 'breeze-client', 'ppid/talent_search/cache_talent'], function (exports, _aureliaFramework, _entityManagerFactory, _settings, _moment, _underscore, _breezeClient, _cache_talent) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.talent_search = undefined;
+
+  var _settings2 = _interopRequireDefault(_settings);
+
+  var _moment2 = _interopRequireDefault(_moment);
+
+  var _underscore2 = _interopRequireDefault(_underscore);
+
+  var _breezeClient2 = _interopRequireDefault(_breezeClient);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var _dec, _class;
+
+  var talent_search = exports.talent_search = (_dec = (0, _aureliaFramework.inject)(_cache_talent.cache_talent), _dec(_class = function () {
+    function talent_search(cache_talent) {
+      _classCallCheck(this, talent_search);
+
+      if ((0, _entityManagerFactory.EntityManager)() === undefined) {
+        return;
+      }
+
+      this._CACHE_TALENT = cache_talent;
+
+      this.initialize();
+    }
+
+    talent_search.prototype.initialize = function initialize() {
+      var _this = this;
+
+      this._CACHE_TALENT._CITIZENSHIP_ARR = [];
+      this._CACHE_TALENT._RELIGION_ARR = [];
+      this._CACHE_TALENT._CIVIL_STATUS_ARR = [];
+      this._CACHE_TALENT._COUNTRY_ARR = [];
+      this._CACHE_TALENT._LOCATION_ARR = [];
+      this._CACHE_TALENT._INTEREST_ARR = [];
+      this._CACHE_TALENT._SKILL_TALENT_ARR = [];
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'CITIZENSHIP_CD').orderBy('REF_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CACHE_TALENT._CITIZENSHIP_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'RELIGION_CD').orderBy('REF_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CACHE_TALENT._RELIGION_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('REFERENCE_CD_MSTR').where('REF_GRP_CD', '==', 'CIVIL_STATUS').orderBy('REF_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CACHE_TALENT._CIVIL_STATUS_ARR.push({ ref: all.REF_CD, desc: all.REF_DESC });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CACHE_TALENT._COUNTRY_ARR.push({ ref: all.COUNTRY_CD, desc: all.COUNTRY_NAME });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('LOCATION_MSTR').orderBy('LOCATION_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CACHE_TALENT._LOCATION_ARR.push({ ref: all.LOCATION_CD, desc: all.LOCATION_DESC });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('INTEREST_MSTR').orderBy('INTEREST_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CACHE_TALENT._INTEREST_ARR.push({ ref: all.INTEREST_CD, desc: all.INTEREST_DESC });
+        });
+      });
+
+      (0, _entityManagerFactory.EntityManager)().executeQuery((0, _entityManagerFactory.EntityQuery)().from('SKILL_TALENT_MSTR').orderBy('SKILL_TALENT_DESC')).then(function (found) {
+        found.results.forEach(function (all) {
+          _this._CACHE_TALENT._SKILL_TALENT_ARR.push({ ref: all.SKILL_TALENT_CD, desc: all.SKILL_TALENT_DESC });
+        });
+      });
+
+      this.getParttimeMstr();
+      this.getCountry();
+      this.getCitizenship();
+      this.getAlias();
+      this.getIndividual();
+      this.getGroup();
+      this.getInterest();
+      this.getSkillTalent();
+      this.getCharacteristics();
+    };
+
+    talent_search.prototype.getParttimeMstr = function getParttimeMstr() {
+      var _this2 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PARTTIME_MSTR').select('PARTTIME_ID, COUNTRY_BASE_CD, LOCATION_BASE_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this2._CACHE_TALENT.PARTTIME_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getCountry = function getCountry() {
+      var _this3 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').select('COUNTRY_CD, COUNTRY_NAME').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this3._CACHE_TALENT.COUNTRY_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getCitizenship = function getCitizenship() {
+      var _this4 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PT_CITIZENSHIP_TRX').select('PT_INDIV_ID, CITIZENSHIP_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this4._CACHE_TALENT.CITIZESHIP_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getAlias = function getAlias() {
+      var _this5 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PT_ALIAS_TRX').select('PARTTIME_ID, ALIAS_NAME').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this5._CACHE_TALENT.ALIAS_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getIndividual = function getIndividual() {
+      var _this6 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PT_INDIV_MSTR').select('PT_INDIV_ID,GIVEN_NAME,MIDDLE_NAME,LAST_NAME,BIRTH_DT,RELIGION_CD,GENDER,CIVIL_STATUS').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this6._CACHE_TALENT.INDIVIDUAL_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getGroup = function getGroup() {
+      var _this7 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PT_GRP_MSTR').select('PT_GRP_ID,GROUP_NAME,ESTABLISH_DT').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this7._CACHE_TALENT.GROUP_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getInterest = function getInterest() {
+      var _this8 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PT_INTEREST_TRX').select('PARTTIME_ID,INTEREST_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this8._CACHE_TALENT.INTEREST_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getSkillTalent = function getSkillTalent() {
+      var _this9 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PT_SKILL_TALENT_TRX').select('PARTTIME_ID,SKILL_TALENT_CD').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this9._CACHE_TALENT.SKILL_TALENT_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.getCharacteristics = function getCharacteristics() {
+      var _this10 = this;
+
+      return new Promise(function (resolve) {
+        (0, _entityManagerFactory.EntityQuery)().from('PT_CHARACTERISTIC_TRX').select('PARTTIME_ID,CHARACTERISTIC_CD, ACTUAL_VALUE').using((0, _entityManagerFactory.EntityManager)()).execute().then(function (success) {
+          _this10._CACHE_TALENT.CHARACTERISTICS_MSTR = success.results;
+          resolve(true);
+        });
+      });
+    };
+
+    talent_search.prototype.consolidate = function consolidate() {
+      var _this11 = this;
+
+      var imageName = "/styles/images/abslogo_BIG.png";
+      this._CACHE_TALENT.INDIVIDUAL_MSTR.forEach(function (all) {
+        var country = '',
+            location = '',
+            country_cd = '',
+            location_cd = '';
+        var alias = '';
+
+        var resultAddress = _this11._CACHE_TALENT.PARTTIME_MSTR.find(function (out) {
+          return out.PARTTIME_ID == all.PT_INDIV_ID;
+        });
+
+        if (resultAddress != undefined) {
+          country = resultAddress.COUNTRY_BASE_CD;
+          location = resultAddress.LOCATION_BASE_CD;
+
+          var countrName = _this11._CACHE_TALENT.COUNTRY_MSTR.find(function (out) {
+            return out.COUNTRY_CD == country;
+          });
+          if (countrName != undefined) {
+            country_cd = countrName.COUNTRY_NAME;
+          }
+        }
+
+        var aliasName = _this11._CACHE_TALENT.ALIAS_MSTR.filter(function (out) {
+          return out.PARTTIME_ID == all.PT_INDIV_ID;
+        });
+
+        if (aliasName.length > 0) {
+          aliasName.forEach(function (aliasItem) {
+            if (alias == "") {
+              alias = aliasItem.ALIAS_NAME;
+            } else {
+              alias += "\n" + aliasItem.ALIAS_NAME;
+            }
+          });
+        }
+
+        _this11._CACHE_TALENT.ALL_MSTR.push({
+          PT_INDIV_ID: all.PT_INDIV_ID,
+          GROUP_NAME: '',
+          GIVEN_NAME: all.GIVEN_NAME,
+          MIDDLE_NAME: all.MIDDLE_NAME,
+          LAST_NAME: all.LAST_NAME,
+          BIRTH_DT: all.BIRTH_DT,
+          RELIGION_CD: all.RELIGION_CD,
+          GENDER: all.GENDER,
+          SOURCE: 'PT_INDIV_MSTR',
+
+          CIVIL_STATUS: all.CIVIL_STATUS,
+          COUNTRY: country_cd,
+          COUNTRY_CD: country,
+          LOCATION: location,
+
+          PIC: imageName,
+          VIDEO: '',
+          ALIAS: alias.replace(/\n/g, "<br />")
+        });
+      });
+
+      this._CACHE_TALENT.GROUP_MSTR.forEach(function (all) {
+        var country = '',
+            location = '',
+            country_cd = '',
+            location_cd = '';
+        var alias = '';
+
+        var resultAddress = _this11._CACHE_TALENT.PARTTIME_MSTR.find(function (out) {
+          return out.PARTTIME_ID == all.PT_GRP_ID;
+        });
+
+        if (resultAddress != undefined) {
+          country = resultAddress.COUNTRY_BASE_CD;
+          location = resultAddress.LOCATION_BASE_CD;
+
+          var countrName = _this11._CACHE_TALENT.COUNTRY_MSTR.find(function (out) {
+            return out.COUNTRY_CD == country;
+          });
+          if (countrName != undefined) {
+            country_cd = countrName.COUNTRY_NAME;
+          }
+        }
+
+        var aliasName = _this11._CACHE_TALENT.ALIAS_MSTR.filter(function (out) {
+          return out.PARTTIME_ID == all.PT_GRP_ID;
+        });
+
+        if (aliasName.length > 0) {
+          aliasName.forEach(function (aliasItem) {
+            if (alias == "") {
+              alias = aliasItem.ALIAS_NAME;
+            } else {
+              alias += "\n" + aliasItem.ALIAS_NAME;
+            }
+          });
+        }
+
+        _this11._CACHE_TALENT.ALL_MSTR.push({
+          PT_INDIV_ID: all.PT_GRP_ID,
+          GROUP_NAME: all.GROUP_NAME,
+          GIVEN_NAME: '',
+          MIDDLE_NAME: '',
+          LAST_NAME: '',
+          BIRTH_DT: all.ESTABLISH_DT,
+          RELIGION_CD: '',
+          GENDER: '',
+          SOURCE: 'PT_GRP_MSTR',
+
+          CIVIL_STATUS: '',
+          COUNTRY: country_cd,
+          COUNTRY_CD: country,
+          LOCATION: location,
+
+          PIC: imageName,
+          VIDEO: '',
+          ALIAS: alias.replace(/\n/g, "<br />")
+        });
+      });
+    };
+
+    talent_search.prototype.search_on = function search_on() {
+      var _this12 = this;
+
+      this._CACHE_TALENT.QUERY_VAL = [];
+      this._CACHE_TALENT.ALL_MSTR = [];
+      var arrayVal = [];
+
+      var p1 = new Promise(function (resolve) {
+        _this12.consolidate();
+        arrayVal = _this12._CACHE_TALENT.ALL_MSTR;
+
+        if (_this12._CACHE_TALENT._NAME !== undefined && _this12._CACHE_TALENT._NAME != '') {
+          var name = _this12._CACHE_TALENT._NAME.toUpperCase();
+          arrayVal = arrayVal.filter(function (out) {
+            return out.GIVEN_NAME.toUpperCase().indexOf(name) != -1 || out.LAST_NAME.toUpperCase().indexOf(name) != -1 || out.MIDDLE_NAME.toUpperCase().indexOf(name) != -1 || out.GROUP_NAME.toUpperCase().indexOf(name) != -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._AGE != undefined && _this12._CACHE_TALENT._AGE != '') {
+          var date = new Date();
+          var x = date.getFullYear() - parseInt(_this12._CACHE_TALENT._AGE) - 1;
+          var y1 = date.getDate() + 1;
+          var y2 = date.getDate() - 1;
+          var z = date.getFullYear() - parseInt(_this12._CACHE_TALENT._AGE);
+          var mon = date.getMonth();
+          var bdStart = new Date(x, mon, y1);
+          var bdEnd = new Date(z, mon, y2);
+          arrayVal = arrayVal.filter(function (out) {
+            return out.BIRTH_DT >= bdStart && out.BIRTH_DT <= bdEnd;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._CITIZENSHIP !== undefined && _this12._CACHE_TALENT._CITIZENSHIP != '' && _this12._CACHE_TALENT._CITIZENSHIP_POP) {
+          if ($.isArray(_this12._CACHE_TALENT._CITIZENSHIP)) {
+            console.log("ARRAY");
+          } else {
+            console.log("TEXT");
+          }
+          console.log(_this12._CACHE_TALENT._CITIZENSHIP.length, _this12._CACHE_TALENT._CITIZENSHIP);
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CITIZESHIP_MSTR.filter(function (out) {
+            return out.CITIZENSHIP_CD == _this12._CACHE_TALENT._CITIZENSHIP;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PT_INDIV_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._RELIGION !== undefined && _this12._CACHE_TALENT._RELIGION != '' && _this12._CACHE_TALENT._RELIGION_POP) {
+          var religion = _this12._CACHE_TALENT._RELIGION;
+          arrayVal = arrayVal.filter(function (out) {
+            return out.RELIGION_CD == religion;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._CIVIL_STATUS !== undefined && _this12._CACHE_TALENT._CIVIL_STATUS != '' && _this12._CACHE_TALENT._CIVIL_STATUS_POP) {
+          var civil_status = _this12._CACHE_TALENT._CIVIL_STATUS;
+          arrayVal = arrayVal.filter(function (out) {
+            return out.CIVIL_STATUS == civil_status;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._GENDER !== undefined && _this12._CACHE_TALENT._GENDER != '' && _this12._CACHE_TALENT._GENDER_POP) {
+          var gender = _this12._CACHE_TALENT._GENDER;
+          arrayVal = arrayVal.filter(function (out) {
+            return out.GENDER == gender;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._COUNTRY !== undefined && _this12._CACHE_TALENT._COUNTRY != '' && _this12._CACHE_TALENT._COUNTRY_POP) {
+          var country = _this12._CACHE_TALENT._COUNTRY;
+          arrayVal = arrayVal.filter(function (out) {
+            return out.COUNTRY_CD == country;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._LOCATION !== undefined && _this12._CACHE_TALENT._LOCATION != '' && _this12._CACHE_TALENT._LOCATION_POP) {
+          var location = _this12._CACHE_TALENT._LOCATION;
+          arrayVal = arrayVal.filter(function (out) {
+            return out.LOCATION == location;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._INTEREST !== undefined && _this12._CACHE_TALENT._INTEREST != '' && _this12._CACHE_TALENT._INTEREST_POP) {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.INTEREST_MSTR.filter(function (out) {
+            return out.INTEREST_CD == _this12._CACHE_TALENT._INTEREST;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._SKILL_TALENT !== undefined && _this12._CACHE_TALENT._SKILL_TALENT != '' && _this12._CACHE_TALENT._SKILL_TALENT_POP) {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.SKILL_TALENT_MSTR.filter(function (out) {
+            return out.SKILL_TALENT_CD == _this12._CACHE_TALENT._SKILL_TALENT;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._HEIGHT !== undefined && _this12._CACHE_TALENT._HEIGHT != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "HEIGHT" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._HEIGHT.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._WEIGHT !== undefined && _this12._CACHE_TALENT._WEIGHT != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "WEIGHT" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._WEIGHT.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._BUILT !== undefined && _this12._CACHE_TALENT._BUILT != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "BUILT" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._BUILT.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._EYE_COLOR !== undefined && _this12._CACHE_TALENT._EYE_COLOR != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "EYE_COLOR" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._EYE_COLOR.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._HAIR_COLOR !== undefined && _this12._CACHE_TALENT._HAIR_COLOR != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "HAIR_COLOR" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._HAIR_COLOR.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._SKINTONE !== undefined && _this12._CACHE_TALENT._SKINTONE != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "SKINTONE" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._SKINTONE.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._VITAL_STATISTICS !== undefined && _this12._CACHE_TALENT._VITAL_STATISTICS != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "VITAL_STATS" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._VITAL_STATISTICS.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._SPECIFIC_CHAR !== undefined && _this12._CACHE_TALENT._SPECIFIC_CHAR != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "SPECIFIC_CHAR" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._SPECIFIC_CHAR.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        if (_this12._CACHE_TALENT._TALENT_TYPE !== undefined && _this12._CACHE_TALENT._TALENT_TYPE != '') {
+          var arrayVal2 = [];
+          _this12._CACHE_TALENT.CHARACTERISTICS_MSTR.filter(function (out) {
+            return out.CHARACTERISTIC_CD == "TALENT_TYPE" && out.ACTUAL_VALUE.toUpperCase().indexOf(_this12._CACHE_TALENT._TALENT_TYPE.toUpperCase()) > -1;
+          }).forEach(function (out) {
+            arrayVal2.push(out.PARTTIME_ID);
+          });
+          arrayVal = arrayVal.filter(function (out) {
+            return arrayVal2.indexOf(out.PT_INDIV_ID) > -1;
+          });
+        }
+
+        _this12._CACHE_TALENT.QUERY_VAL = arrayVal;
+        _this12._CACHE_TALENT._HAS_FIRED = true;
+      });
+
+      console.log(this._CACHE_TALENT);
+    };
+
+    talent_search.prototype.talent_select = function talent_select(id, source) {
+      alert(id + "\n" + source);
+    };
+
+    talent_search.prototype.onClick = function onClick(variable, value) {
+      switch (variable) {
+        case 1:
+          this._CACHE_TALENT._CITIZENSHIP_POP = value;
+          break;
+        case 2:
+          this._CACHE_TALENT._RELIGION_POP = value;
+          break;
+        case 3:
+          this._CACHE_TALENT._CIVIL_STATUS_POP = value;
+          break;
+        case 4:
+          this._CACHE_TALENT._GENDER_POP = value;
+          break;
+        case 5:
+          this._CACHE_TALENT._COUNTRY_POP = value;
+          break;
+        case 6:
+          this._CACHE_TALENT._LOCATION_POP = value;
+          break;
+        case 7:
+          this._CACHE_TALENT._INTEREST_POP = value;
+          break;
+        case 8:
+          this._CACHE_TALENT._SKILL_TALENT_POP = value;
+          break;
+        default:
+          break;
+      }
+    };
+
+    return talent_search;
+  }()) || _class);
+});
 define('ppid/talent_search/modals/DialogBox',['exports', 'aurelia-framework', 'aurelia-dialog'], function (exports, _aureliaFramework, _aureliaDialog) {
 	'use strict';
 
@@ -32405,41 +31989,461 @@ define('ppid/talent_search/forms/relative_spouse',['exports', 'toastr', 'aurelia
 		return relative_spouse;
 	}()) || _class);
 });
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\r\n  <!--<link href=\"/styles/bootstrap.css\" rel=\"stylesheet\" />-->\r\n  <link rel=\"stylesheet\" href=\"/styles/styles.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/datepicker.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/toastr.css\">\r\n  <link href=\"/styles/font-awesome.min.css\" rel=\"stylesheet\" />\r\n  <require from='nav-bar'></require>\r\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\r\n  <!--<require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff\"></require>\r\n  <require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff2\"></require>-->\r\n  \r\n  <nav-bar router.bind=\"router\"></nav-bar>\r\n\r\n  <div class=\"page-host\">\r\n    <router-view></router-view>\r\n  </div>\r\n\r\n  <!--<router-view></router-view>-->\r\n</template>\r\n"; });
-define('text!blankpage.html', ['module'], function(module) { module.exports = "<template>\r\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\r\n      \r\n\r\n    </div>\r\n    \r\n\r\n</template>"; });
-define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\r\n  <section class=\"au-animate\">\r\n    <h2>${heading}</h2>\r\n    <div>\r\n      <div class=\"col-md-2\">\r\n        <ul class=\"well nav nav-pills nav-stacked\">\r\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\r\n            <a href.bind=\"row.href\">${row.title}</a>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n      <div class=\"col-md-10\" style=\"padding: 0\">\r\n        <router-view></router-view>\r\n      </div>\r\n    </div>\r\n  </section>\r\n</template>\r\n"; });
+define('ppid/talent_search/ppid',['exports', '.././helpers', 'toastr', 'aurelia-framework', './obj_personnel', 'aurelia-dialog', './modals/ppid_search', '../entity-manager-factory', '../masterfiles', 'settings'], function (exports, _helpers, _toastr, _aureliaFramework, _obj_personnel, _aureliaDialog, _ppid_search, _entityManagerFactory, _masterfiles, _settings) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ppid = undefined;
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _settings2 = _interopRequireDefault(_settings);
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : {
+			default: obj
+		};
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	var _dec, _class;
+
+	var ppid = exports.ppid = (_dec = (0, _aureliaFramework.inject)(_aureliaDialog.DialogService, _obj_personnel.obj_personnel), _dec(_class = function () {
+		function ppid(dialogService, obj_personnel) {
+			_classCallCheck(this, ppid);
+
+			this.obj_personnel = null;
+			this.global_indiv_id = "";
+
+			this.dialogService = dialogService;
+			this.obj_personnel = obj_personnel;
+
+			this.obj_personnel.OBSERVERS.ppid_dialog.length = 0;
+			this.obj_personnel.OBSERVERS.tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_contact_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.maintab_education_clicked.length = 0;
+			this.obj_personnel.OBSERVERS.relative_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.govinfo_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.company_tab_changed.length = 0;
+			this.obj_personnel.OBSERVERS.clear_ppid.length = 0;
+			this.obj_personnel.global_indiv_id = "";
+			this.obj_personnel.HEADER = {
+				citizenship: [],
+				group: []
+			};
+			this.LoadDropdown();
+
+			this.LoginPassed(this.obj_personnel.USER);
+		}
+
+		ppid.prototype.LoadDropdown = function LoadDropdown() {
+			var _this = this;
+
+			_settings2.default.isNavigating = true;
+
+			var maxYear = new Date().getFullYear();
+			var leastYear = 1960;
+			var tmpYear = [];
+			do {
+				tmpYear.push({
+					value: leastYear,
+					text: leastYear
+				});
+				leastYear++;
+			} while (leastYear <= maxYear);
+			this.obj_personnel.YEAR = tmpYear;
+
+			if ((0, _masterfiles.getLookups)() != null) {
+				this.obj_personnel.LOCATIONS = (0, _masterfiles.getLookups)().LOCATION_MSTR;
+				this.obj_personnel.LOCATIONS.shift();
+
+				this.obj_personnel.CIVIL_STATUS.length = 0;
+				this.obj_personnel.RELIGION.length = 0;
+				this.obj_personnel.CITIZENSHIP.length = 0;
+				this.obj_personnel.CONTACT_TYPE.length = 0;
+				this.obj_personnel.LEVEL.length = 0;
+				this.obj_personnel.LANGUAGE.length = 0;
+				this.obj_personnel.STATUS.length = 0;
+				this.obj_personnel.POSITION.length = 0;
+				this.obj_personnel.AWARD.length = 0;
+				this.obj_personnel.TRAINING.length = 0;
+				this.obj_personnel.TAX_EXEMPT.length = 0;
+				this.obj_personnel.INPUT_TAX.length = 0;
+				this.obj_personnel.PERMIT.length = 0;
+				this.obj_personnel.VAT_STAT.length = 0;
+				this.obj_personnel.EXAM.length = 0;
+				this.obj_personnel.CASE_STAT.length = 0;
+				this.obj_personnel.VIOLATION.length = 0;
+				this.obj_personnel.PROFESSIONAL_TYPE.length = 0;
+				this.obj_personnel.CESSATION.length = 0;
+				this.obj_personnel.TARGET_MARKET.length = 0;
+				this.obj_personnel.INACTIVE_REASON.length = 0;
+
+				(0, _masterfiles.getLookups)().REFERENCE_CD_MSTR.forEach(function (item) {
+					switch (item.REF_GRP_CD) {
+						case "CIVIL_STATUS":
+							_this.obj_personnel.CIVIL_STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "RELIGION_CD":
+							_this.obj_personnel.RELIGION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CITIZENSHIP_CD":
+							_this.obj_personnel.CITIZENSHIP.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CONTACT_TYPE_CD":
+							_this.obj_personnel.CONTACT_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LEVEL_CD":
+							_this.obj_personnel.LEVEL.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "LANG_DIALECT_CD":
+							_this.obj_personnel.LANGUAGE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "STATUS_CD":
+							_this.obj_personnel.STATUS.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "POSITION_CD":
+							_this.obj_personnel.POSITION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "AWARD_CD":
+							_this.obj_personnel.AWARD.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TRNG_CD":
+							_this.obj_personnel.TRAINING.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TAX_EXEMPT_CD":
+							_this.obj_personnel.TAX_EXEMPT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "INPUT_TAX_CD":
+							_this.obj_personnel.INPUT_TAX.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PERMIT_CD":
+							_this.obj_personnel.PERMIT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VAT_STAT_CD":
+							_this.obj_personnel.VAT_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "EXAM_CD":
+							_this.obj_personnel.EXAM.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CASE_STAT_CD":
+							_this.obj_personnel.CASE_STAT.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "VIOLATION_CD":
+							_this.obj_personnel.VIOLATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "PROFESSIONAL_TYPE_CD":
+							_this.obj_personnel.PROFESSIONAL_TYPE.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "CESSATION_CODE":
+							_this.obj_personnel.CESSATION.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "TARGET_MARKET_CD":
+							_this.obj_personnel.TARGET_MARKET.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+							break;
+						case "INACTIVE_REASON":
+							_this.obj_personnel.INACTIVE_REASON.push({
+								value: item.REF_CD,
+								text: item.REF_DESC
+							});
+
+					}
+				});
+
+				this.obj_personnel.GROUP.length = 0;
+				(0, _masterfiles.getLookups)().GLOBAL_GRP_MSTR.forEach(function (item) {
+					_this.obj_personnel.GROUP.push({
+						value: item.GLOBAL_GRP_ID,
+						text: item.GROUP_NAME
+					});
+				});
+
+				this.obj_personnel.COMPANY.length = 0;
+				(0, _masterfiles.getLookups)().COMPANY_MSTR.forEach(function (item) {
+					_this.obj_personnel.COMPANY.push({
+						id: item.COMPANY_ID,
+						value: item.COMPANY_CD,
+						text: item.COMPANY_NAME
+					});
+				});
+				this.obj_personnel.COMPANY.shift();
+
+				this.obj_personnel.GROUP.sort(this.OrderByText);
+				this.obj_personnel.CIVIL_STATUS.sort(this.OrderByText);
+				this.obj_personnel.RELIGION.sort(this.OrderByText);
+				this.obj_personnel.CITIZENSHIP.sort(this.OrderByText);
+				this.obj_personnel.CONTACT_TYPE.sort(this.OrderByText);
+				this.obj_personnel.LEVEL.sort(this.OrderByText);
+				this.obj_personnel.LANGUAGE.sort(this.OrderByText);
+				this.obj_personnel.STATUS.sort(this.OrderByText);
+				this.obj_personnel.POSITION.sort(this.OrderByText);
+				this.obj_personnel.AWARD.sort(this.OrderByText);
+				this.obj_personnel.TRAINING.sort(this.OrderByText);
+				this.obj_personnel.PERMIT.sort(this.OrderByText);
+				this.obj_personnel.TAX_EXEMPT.sort(this.OrderByText);
+				this.obj_personnel.INPUT_TAX.sort(this.OrderByText);
+				this.obj_personnel.EXAM.sort(this.OrderByText);
+				this.obj_personnel.VIOLATION.sort(this.OrderByText);
+				this.obj_personnel.PROFESSIONAL_TYPE.sort(this.OrderByText);
+				this.obj_personnel.CESSATION.sort(this.OrderByText);
+				this.obj_personnel.TARGET_MARKET.sort(this.OrderByText);
+				this.obj_personnel.COMPANY.sort(this.OrderByText);
+				this.obj_personnel.INACTIVE_REASON.sort(this.OrderByText);
+			}
+
+			var _query = (0, _entityManagerFactory.EntityQuery)().from('COUNTRY_MSTR').orderBy('COUNTRY_NAME').select('COUNTRY_CD, COUNTRY_NAME');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.COUNTRY_CD,
+						text: result.COUNTRY_NAME
+					});
+				});
+				_this.obj_personnel.COUNTRY = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading country dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from('REGION_MSTR').orderBy('REGION_DESC').select('REGION_CD, REGION_DESC, COUNTRY_CD');
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.REGION_CD,
+						text: result.REGION_DESC,
+						group: result.COUNTRY_CD
+					});
+				});
+				_this.obj_personnel.REGION = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, 'Error in loading region dropdown.');
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("SCHOOL_MSTR").orderBy("SCHOOL_NAME").select("SCHOOL_CD, SCHOOL_NAME, SCHOOL_ADDR");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						school_cd: result.SCHOOL_CD,
+						school_name: result.SCHOOL_NAME,
+						school_addr: result.SCHOOL_ADDR
+					});
+				});
+				_this.obj_personnel.SCHOOLS = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading schools dropdown.");
+				console.log(failed);
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RNG_LOCATION_MSTR").orderBy("LOCATION_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						value: result.LOCATION_CD,
+						text: result.LOCATION_NAME
+					});
+				});
+				_this.obj_personnel.LOCATIONS_RNG = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading RNG Locations dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PAYROLL_GRP_MSTR").orderBy("PAYROLL_GRP_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.PAYROLL_GRP_ID,
+						value: result.PAYROLL_GRP_CD,
+						text: result.PAYROLL_GRP_DESC
+					});
+				});
+				_this.obj_personnel.PAYROLL_GROUP = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Payroll Group dropdown.");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("BANK_MSTR").orderBy("BANK_SHORT_NAME");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (result) {
+					tmp.push({
+						id: result.BANK_ID,
+						short_nm: result.BANK_SHORT_NAME,
+						bank_cd: result.BANK_CD,
+						long_nm: result.BANK_LONG_NAME
+					});
+				});
+				_this.obj_personnel.BANK = tmp;
+			}, function (failed) {
+				_toastr2.default.error(failed, "Error in loading Bank dropdown");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("PROVINCE_MSTR").orderBy("PROVINCE_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (success) {
+				var tmp = [];
+				_.each(success.results, function (r) {
+					tmp.push({
+						text: r.PROVINCE_DESC,
+						value: r.PROVINCE_CD,
+						group: r.REGION_CD
+					});
+				});
+				_this.obj_personnel.PROVINCE = tmp;
+			}, function (error) {
+				_toastr2.default.error(error, "Error in loading Province dropdown.");
+			});
+
+			_query = (0, _entityManagerFactory.EntityQuery)().from("RELATIVE_MSTR").orderBy("RELATIVE_DESC");
+			(0, _entityManagerFactory.EntityManager)().executeQuery(_query).then(function (s) {
+				var tmp = [];
+
+				_.each(s.results, function (res) {
+
+					var relationship = {
+						value: res.RELATIVE_CD,
+						text: res.RELATIVE_DESC,
+						group: res.RELATIONSHIP_CD
+					};
+
+					tmp.push(relationship);
+				});
+				_this.obj_personnel.RELATIONSHIP = tmp;
+			});
+
+			_settings2.default.isNavigating = false;
+		};
+
+		ppid.prototype.OrderByText = function OrderByText(a, b) {
+			if (a.text.toUpperCase() < b.text.toUpperCase()) return -1;
+			if (a.text.toUpperCase() > b.text.toUpperCase()) return 1;
+			return 0;
+		};
+
+		ppid.prototype.changeTab = function changeTab(tabNumber) {
+			var _this2 = this;
+
+			if (this.obj_personnel.global_indiv_id == undefined || this.obj_personnel.global_indiv_id == null || this.obj_personnel.global_indiv_id.length == 0) return;
+
+			this.obj_personnel.OBSERVERS.tab_changed.forEach(function (all) {
+				all(tabNumber, _this2.obj_personnel.global_indiv_id);
+			});
+		};
+
+		ppid.prototype.FindUsers = function FindUsers() {
+			this.dialogService.open({
+				viewModel: _ppid_search.ppid_search
+			}).whenClosed(function (response) {
+				if (!response.wasCancelled) {} else {}
+			});
+		};
+
+		ppid.prototype.AddUsers = function AddUsers() {
+			alert('AddUsers function under maintenance.');
+		};
+
+		ppid.prototype.LoginPassed = function LoginPassed(user) {};
+
+		return ppid;
+	}()) || _class);
+});
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <!--<link href=\"/styles/bootstrap.css\" rel=\"stylesheet\" />-->\r\n  <link rel=\"stylesheet\" href=\"/styles/styles.css\">\r\n  <link rel=\"stylesheet\" href=\"/styles/datepicker.css\">\n  <link rel=\"stylesheet\" href=\"/styles/toastr.css\">\n  <link href=\"/styles/font-awesome.min.css\" rel=\"stylesheet\" />\n  <require from='nav-bar'></require>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <!--<require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff\"></require>\n  <require from=\"bootstrap/fonts/glyphicons-halflings-regular.woff2\"></require>-->\n  \n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div class=\"page-host\">\n    <router-view></router-view>\n  </div>\n\n  <!--<router-view></router-view>-->\n</template>\n"; });
+define('text!blankpage.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\n      \n\n    </div>\n    \n\r\n</template>"; });
+define('text!child-router.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h2>${heading}</h2>\n    <div>\n      <div class=\"col-md-2\">\n        <ul class=\"well nav nav-pills nav-stacked\">\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n            <a href.bind=\"row.href\">${row.title}</a>\n          </li>\n        </ul>\n      </div>\n      <div class=\"col-md-10\" style=\"padding: 0\">\n        <router-view></router-view>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!group_individual.html', ['module'], function(module) { module.exports = "<template>\r\n  <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n  <require from=\"converters/filtercustom\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;text-align:center\" class=\"text-center divBackground\" >\r\n  \t<table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:80%;\">\r\n     <tr>\r\n        <td style=\"width:50%;text-align:center;\" colspan=3><strong>TALENT LIST</strong></td>\r\n      </tr>\r\n  \t\t<tr>\r\n        <!-- class=\"typeahead\" -->\r\n        <td style=\"width:20%;\" class=\"text-left\">Global ID: ${_GLOBAL_GRP_ID}</td>\r\n        <!-- class=\"typeahead\" -->\r\n        <td style=\"width:45%;\"class=\"text-left\">Name: ${_GROUP_NAME}\r\n          <!-- <input id=\"idTalentManager\" class=\"typeahead\"/> -->\r\n        </td>\r\n        <td style=\"width:30%;\">\r\n          <!-- <modalcontainer to.bind=\"modalTalentManager\"></modalcontainer> -->\r\n          <input type=\"button\" class=\"btn btn-xs customButton\" value=\"Find Talent Manager\" style=\"padding-left:15px;padding-right:15px;\" click.delegate=\"findTalentManager()\" disabled.bind=\"disabledfindTM\" />\r\n\r\n          <button class=\"btn btn-xs customButton\" click.trigger=\"clear()\">Clear</button>\r\n          <button class=\"btn btn-xs customButton\" click.trigger=\"saveGroupIndiv()\"  disabled.bind=\"isDisableSave\" >Save</button>\r\n\r\n        </td>\r\n      </tr>\r\n     \r\n      <tr>\r\n        <td colspan=3 style=\"text-align:right;\">\r\n          <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstr\"></modalcontainer> -->\r\n          <input type=\"button\" class=\"btn btn-xs customButton\" value=\"Search Talent\" style=\"padding-left:15px;padding-right:15px;\" disabled.bind=\"disabledfindTalent\" click.delegate=\"findTalent()\"/>\r\n        </td>\r\n      </tr>\r\n      <tr>\r\n       <td colspan=3>\r\n         <table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:100%;\">\r\n          <thead>\r\n           <tr><td style=\"width:30%;\">GLOBAL ID</td><td style=\"width:60%;\">TALENTS</td><td></td></tr>\r\n         </thead>\r\n         <tbody>\r\n           <tr repeat.for=\"item of grpMembers | filtercustom:'STATUS_CD':'ACTV':_signal | sorttext:'PERSONNEL_NAME':'ascending'\">\r\n            <td style=\"width:20%;\">${item.GLOBAL_INDIV_ID}</td>\r\n            <td style=\"width:60%;\">${item.PERSONNEL_NAME}</td>\r\n            <td><button click.delegate=\"$parent.deleteItem(item)\">X</button>\r\n            </td>\r\n          </tr>\r\n\r\n        </tbody>\r\n      </table>\r\n    </td>\r\n  </tr>\r\n</table>\r\n\r\n<!-- <modalcontainer to.bind=\"modalLogin\"></modalcontainer> -->\r\n<!--<div style=\"margin-right:200px!important;\">\r\n    <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.delegate=\"fnLogin()\"/>\r\n    <input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\"> \r\n</div>-->\r\n<div>\r\n  <br/>\r\n  <br/>\r\n  <table class= \"table-bordered\">\r\n    <tr>\r\n      <td>\r\n        LOGGED AS:\r\n      </td>\r\n      <td>\r\n        <strong>${_cache_obj.USER.USER_ID}</strong> \r\n      </td>\r\n    </tr>\r\n  </table>\r\n</div>\r\n</div>\r\n\r\n</template>"; });
-define('text!mainpage.html', ['module'], function(module) { module.exports = "<template>\r\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\r\n    <!--<div class=\"panel panel-info\">...</div>-->\r\n    <center>\r\n      <div class=\"row\">\r\n        <div class=\"list-group\" style=\"padding-top:2%;margin-left:4%;margin-right:4%;\">\r\n          <a href=\"#\" class=\"list-group-item active\" style=\"background-color: #d9edf7; color: #31708f;   border: 1px solid #a4d4e6;\"> <!-- if.bind=\"headerVisible\" -->\r\n\r\n            <h3 style=\"margin-left:10px;margin-top:10px;margin-right:10px;\" class=\"list-group-item-heading\">PLEASE SELECT..</h3>\r\n          </a>\r\n          <!--<a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('mainview')\" if.bind=\"budgetAccess\" style=\" padding-top:15px;\">\r\n\r\n                      <h3 style=\"margin:0px;color: #31708f;\">\r\n                        BUDGET TEMPLATE\r\n                      </h3>\r\n\r\n        </a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('actual_cost')\"  if.bind=\"actualAccess\"><h3 style=\"margin:0px;color: #31708f;\">ACTUAL COST</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('group_individual')\" if.bind=\"talentgroupAccess\"><h3 style=\"margin:0px;color: #31708f;\">TALENT GROUP</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('buh')\"  if.bind=\"buhAccess\"><h3 style=\"margin:0px;color: #31708f;\">BUH</h3></a>-->\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _application\" click.trigger=\"applicationClick(item)\" if.bind=\"!_remove.includes(item.APPLICATION_DESC) && (_application_on && _ppi_off)\">\r\n            <h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC}</h3>\r\n          </a>\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _ppfcs_modules\" click.trigger=\"rolesClick(item, 'PPFCS')\" if.bind=\"!_application_on\">\r\n            <h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC.toUpperCase()}</h3>\r\n          </a>\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _ppi_modules\" click.trigger=\"rolesClick(item, 'PPI')\" if.bind=\"!_ppi_off\">\r\n            <h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC.toUpperCase()}</h3>\r\n          </a>\r\n\r\n          <!--<a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _roles\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.MODULE_NAME.toUpperCase()}</h3></a>-->\r\n          <a href=\"#\" class=\"list-group-item\" if.bind=\"!_application_on || !_ppi_off\" click.trigger=\"applicationOn()\">\r\n            <h3 style=\"margin:0px;color: #31708f;background-color:#d9edf7;\">BACK..</h3>\r\n          </a>\r\n\r\n          <!--<a href=\"#\" class=\"list-group-item\">IPS</a>-->\r\n\r\n\r\n        </div>\r\n\r\n        <div class=\"col-xs-0 col-md-4\"></div>\r\n      </div>\r\n    </center>\r\n    </div>\r\n    \r\n\r\n</template>"; });
+define('text!mainpage.html', ['module'], function(module) { module.exports = "<template>\r\n  <div class=\"divBackgroundMainPage text-center\" style=\"width:100%;height:780px;\">\r\n    <!--<div class=\"panel panel-info\">...</div>-->\r\n    <center>\r\n      <div class=\"row\">\r\n        <div class=\"list-group\" style=\"padding-top:2%;margin-left:4%;margin-right:4%;\">\r\n          <a href=\"#\" class=\"list-group-item active\" style=\"background-color: #d9edf7; color: #31708f;   border: 1px solid #a4d4e6;\" if.bind=\"headerVisible\"> <!-- if.bind=\"headerVisible\" -->\r\n\r\n            <h3 style=\"margin-left:10px;margin-top:10px;margin-right:10px;\" class=\"list-group-item-heading\">PLEASE SELECT..</h3>\r\n          </a>\r\n          <!--<a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('mainview')\" if.bind=\"budgetAccess\" style=\" padding-top:15px;\">\r\n\r\n                      <h3 style=\"margin:0px;color: #31708f;\">\r\n                        BUDGET TEMPLATE\r\n                      </h3>\r\n\r\n        </a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('actual_cost')\"  if.bind=\"actualAccess\"><h3 style=\"margin:0px;color: #31708f;\">ACTUAL COST</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('group_individual')\" if.bind=\"talentgroupAccess\"><h3 style=\"margin:0px;color: #31708f;\">TALENT GROUP</h3></a>\r\n                    <a href=\"#\" class=\"list-group-item\" click.delegate=\"navigateTo('buh')\"  if.bind=\"buhAccess\"><h3 style=\"margin:0px;color: #31708f;\">BUH</h3></a>-->\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _application\" click.trigger=\"applicationClick(item)\" if.bind=\"!_remove.includes(item.APPLICATION_DESC) && (_application_on && _ppi_off)\">\r\n            <h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC}</h3>\r\n          </a>\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _ppfcs_modules\" click.trigger=\"rolesClick(item, 'PPFCS')\" if.bind=\"!_application_on\">\r\n            <h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC.toUpperCase()}</h3>\r\n          </a>\r\n\r\n          <a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _ppi_modules\" click.trigger=\"rolesClick(item, 'PPI')\" if.bind=\"!_ppi_off\">\r\n            <h3 style=\"margin:0px;color: #31708f;\">${item.APPLICATION_DESC.toUpperCase()}</h3>\r\n          </a>\r\n\r\n          <!--<a href=\"#\" class=\"list-group-item\" repeat.for=\"item of _roles\" click.trigger=\"rolesClick(item)\" if.bind=\"!_application_on\"><h3 style=\"margin:0px;color: #31708f;\">${item.MODULE_NAME.toUpperCase()}</h3></a>-->\r\n          <a href=\"#\" class=\"list-group-item\" if.bind=\"!_application_on || !_ppi_off\" click.trigger=\"applicationOn()\">\r\n            <h3 style=\"margin:0px;color: #31708f;background-color:#d9edf7;\">BACK..</h3>\r\n          </a>\r\n\r\n          <!--<a href=\"#\" class=\"list-group-item\">IPS</a>-->\r\n\r\n\r\n        </div>\r\n\r\n        <div class=\"col-xs-0 col-md-4\"></div>\r\n      </div>\r\n    </center>\r\n    </div>\r\n    \r\n\r\n</template>"; });
 define('text!nav-bar.html', ['module'], function(module) { module.exports = "<template>\r\n  <nav class=\"navbar navbar-default navbar-fixed-top backroundTab\" role=\"navigation\" >\r\n    <div class=\"navbar-header\" style=\"background-color:#2191c0;margin-right:20px;margin-left:20px;\">\r\n      <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\r\n        <span class=\"sr-only\">Toggle Navigation</span>\r\n        <span class=\"icon-bar\"></span>\r\n        <span class=\"icon-bar\"></span>\r\n        <span class=\"icon-bar\"></span>\r\n      </button>\r\n      <a class=\"navbar-brand\" href=\"#\" >\r\n        <i class=\"fa fa-home\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\r\n        <span style=\"color:white\">${router.title} <span style=\"font-size:8px;\">v${_cache_obj.version}</span></span>\r\n      </a>\r\n\r\n    </div>\r\n\r\n    <div class=\"collapse navbar-collapse  .navbar-right\" id=\"bs-example-navbar-collapse-1\">\r\n      <!-- <ul class=\"nav navbar-nav\">\r\n        <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\r\n          <a if.bind=\"row.title!='PPMS'\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\r\n        </li>\r\n      </ul> -->\r\n      <!-- <img if.bind=\"_cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=hdpi.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/>\r\n\r\n      <form method=\"post\" enctype=\"multipart/form-data\" action=\"/ViewFile/Upload\">\r\n          <div>\r\n              <p>Upload one or more files using this form:</p>\r\n              <input type=\"file\" name=\"files\" />\r\n          </div>\r\n          <div>\r\n               <input type=\"submit\" value=\"Upload\" />\r\n          </div>\r\n      </form> -->\r\n      <ul class=\"nav navbar-nav\">\r\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"home()\" href=\"#\">HOME</a>\r\n         \r\n        </li>\r\n          \r\n        <!--<li  if.bind=\"_cache_obj.USER.USER_ID===undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" click.trigger=\"fnLogin()\" href=\"#\">LOG-IN</a>\r\n        </li>-->\r\n      </ul>\r\n      <ul class=\"nav navbar-nav\">\r\n        <li class=\"loader\" if.bind=\"router.isNavigating || settings.isNavigating\">\r\n          <i class=\"fa fa-spinner fa-spin fa-2x\" style=\"color:white;margin-top:0px;padding-top:0px;\"></i>\r\n        </li>\r\n      </ul>\r\n      <ul class=\"nav navbar-nav navbar-right\" style=\"background-color:#2191c0;height:50px;\"  if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n        <li style=\"color:white;font-size:13px;margin-top:16px;margin-right:20px;margin-left:20px;\">\r\n          ${_cache_obj.USER.USER_ID}\r\n        </li>\r\n        <li class=\"dropdown\">\r\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"  style=\"color:white;font-size:13px;\">PASSWORD<span class=\"caret\"></span></a>\r\n          <ul class=\"dropdown-menu\">\r\n            <li><a href=\"#\" click.trigger=\"changePassword()\">CHANGE PASSWORD</a></li>\r\n            <!--<li role=\"separator\" class=\"divider\"></li>-->\r\n            <!--<li><a href=\"#\">EMAIL PASSWORD</a></li>-->\r\n          </ul>\r\n        </li>\r\n        <li if.bind=\"_cache_obj.USER.USER_ID!==undefined\">\r\n          <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" style=\"color:white;font-size:13px;\" click.trigger=\"logout()\" href=\"#\">LOG-OUT</a>\r\n        </li>\r\n      </ul>\r\n    </div>\r\n  </nav>\r\n</template>\r\n"; });
-define('text!users.html', ['module'], function(module) { module.exports = "<template>\r\n  <require from=\"blur-image\"></require>\r\n\r\n  <section class=\"au-animate\">\r\n      <h2>${heading}</h2>\r\n      <div class=\"row au-stagger\">\r\n        <div class=\"col-sm-6 col-md-3 card-container au-animate\" repeat.for=\"user of users\">\r\n            <div class=\"card\">\r\n                <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\r\n                <div class=\"avatar\">\r\n                    <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\r\n                </div>\r\n                <div class=\"content\">\r\n                    <p class=\"name\">${user.login}</p>\r\n                    <p><a target=\"_blank\" class=\"btn btn-default\" href.bind=\"user.html_url\">Contact</a></p>\r\n                </div>\r\n            </div>\r\n        </div>\r\n      </div>\r\n  </section>\r\n</template>\r\n"; });
-define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\r\n  <section class=\"au-animate\">\r\n    <h2>${heading}</h2>\r\n\r\n    <form role=\"form\" submit.delegate=\"submit()\">\r\n      <div class=\"form-group\">\r\n        <label for=\"fn\">First Name</label>\r\n        <input type=\"text\" value.bind=\"firstName\" class=\"form-control\" id=\"fn\" placeholder=\"first name\">\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label for=\"ln\">Last Name</label>\r\n        <input type=\"text\" value.bind=\"lastName\" class=\"form-control\" id=\"ln\" placeholder=\"last name\">\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label>Full Name</label>\r\n        <p class=\"help-block\">${fullName | upper}</p>\r\n      </div>\r\n      <button type=\"submit\" class=\"btn btn-default\">Submit</button>\r\n    </form>\r\n  </section>\r\n</template>\r\n"; });
-define('text!modals/budget.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n     \r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>BUDGET TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    BUDGET ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM IO\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bBDGT_TMPL_ID\" searchable=\"_sBDGT_TMPL_ID\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_IO\" searchable=\"_sPROGRAM_IO\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bAPPR_STAT_CD\" searchable=\"_sAPPR_STAT_CD\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <!-- | sorttext:'PROGRAM_TITLE':'ascending'  -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedBudget(item)\">\r\n                <td>\r\n                    ${item.BDGT_TMPL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_TITLE}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_IO}\r\n                </td>\r\n                <td>\r\n                    ${item.APPR_STAT_CD}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
-define('text!modals/buh-program-dialog.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n  <!--<ux-dialog-header class=\"colorHeader\">\r\n        \r\n                    <h4 class=\"modal-title\">SELECT PROGRAMS</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PROGRAMS</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:420px; overflow: auto;\">\r\n  <table>\r\n    <tr>\r\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td class=\"colorCell2\" style=\"width:140px\">PROGRAM CODE</td>\r\n                        <td class=\"colorCell2\">PROGRAM TITLE</td>\r\n                    </tr>\r\n                    <tr ref=\"_rGROUP_TITLE\">\r\n                        <td class=\"colorCell2\" style=\"width:140px\">\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\r\n                        </td>\r\n                        <td class=\"colorCell2\" >\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                        </td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n                        <td>${item.PROGRAM_CD}</td>\r\n                        <td>${item.PROGRAM_TITLE}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n    </td>\r\n    <td style=\"vertical-align:top;\">\r\n\r\n\r\n        <div style=\"height:350px; overflow: auto;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td colspan=3 class=\"colorCell2\" >\r\n                            SELECTED\r\n                        </td>\r\n                    </tr>\r\n                    <tr>\r\n                        <td class=\"colorCell2\"  style=\"width:140px\">\r\n                            PROGRAM CODE\r\n                        </td>\r\n                        <td colspan=2 class=\"colorCell2\" >\r\n                            PROGRAM TITLE\r\n                        </td>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArraySelected\">\r\n                        <td style=\"width:140px\">\r\n                            ${item.PROGRAM_CD}\r\n                        </td>\r\n                        <td>\r\n                            ${item.PROGRAM_TITLE}\r\n                        </td>\r\n                        <td>\r\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n\r\n    </td>\r\n</tr>\r\n<tr>\r\n    <td colspan=2>\r\n        <div style=\"width:100%;text-align:center;\">\r\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\r\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\r\n        </div>\r\n    </td>\r\n</tr>\r\n</table>\r\n</div>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n</ux-dialog-footer>    \r\n\r\n</ux-dialog>\r\n</template>\r\n\r\n"; });
-define('text!modals/buh-search.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                GLOBAL ID (OPTIONAL)\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                FIRST NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                MIDDLE NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                LAST NAME\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n               E-MAIL\r\n             </td>\r\n           </tr>\r\n           <tr ref=\"_rBUH_SEARCH\">\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bOPTIONAL_GLOBAL_ID\" searchable=\"_sOPTIONAL_GLOBAL_ID\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bFIRST_NAME\" searchable=\"_sFIRST_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\" />\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n              <input class=\"input-sm form-control\" value.bind=\"_bEMAIL_ADDRESS\" searchable=\"_sEMAIL_ADDRESS\" />\r\n            </td>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <tr repeat.for=\"item of varFilterArray | sorttext:'LAST_NAME':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedBUH(item)\">\r\n            <td>\r\n              ${item.OPTIONAL_GLOBAL_ID}\r\n            </td>\r\n            <td>\r\n              ${item.FIRST_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.MIDDLE_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.LAST_NAME}\r\n            </td>\r\n            <td>\r\n              ${item.EMAIL_ADDRESS}\r\n            </td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </div>\r\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n  </ux-dialog-body>\r\n  <ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
-define('text!modals/change_password.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">CHANGE PASSWORD</span></ux-dialog-header>\r\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\r\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tNew Password:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n                  <input value.bind=\"_NEW_PASSWORD\"  type=\"password\" keyup.trigger=\"keyPressed($event)\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\" click.trigger=\"savePassword()\" value=\"SAVE\" class=\"btn customButton\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
-define('text!modals/confirm_dialog.html', ['module'], function(module) { module.exports = "<template>   \r\n          <!-- <modal showing.two-way=\"showing\"  mwidth.bind=\"_width\">\r\n              <modal-header title.bind=\"_setTitle\" close.call=\"closeModal()\"></modal-header>\r\n              <modal-body><div class=\"text-center\"><h4>${_message}</h3></div></modal-body>\r\n              <modal-footer>\r\n                  <button class=\"btn\" click.trigger=\"closeModal()\">Save</button>\r\n                  <au-button text=\"Continue\" click.call=\"confirm()\">Continue</au-button>\r\n                  <au-button text=\"Cancel\" click.call=\"closeModal()\">Close</au-button>\r\n                  \r\n              </modal-footer>\r\n          </modal> -->\r\n\r\n          <ux-dialog>\r\n         <!--<ux-dialog-header class=\"colorHeader\">\r\n      <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> \r\n                    <h4 class=\"modal-title\">LOG-IN</h4>\r\n</ux-dialog-header>-->\r\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">${_setTitle}</span></ux-dialog-header>\r\n\r\n          <ux-dialog-body>\r\n        <div class=\"text-center\"><h4>${_message}</h3></div>\r\n        </ux-dialog-body>\r\n\r\n        <ux-dialog-footer>\r\n                <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n                <button click.trigger=\"confirm()\">Ok</button>\r\n      </ux-dialog-footer>\r\n       </ux-dialog>\r\n</template>"; });
-define('text!modals/edit-person.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n      <h2>Edit first name</h2>\r\n      <input value.bind=\"person.firstName\" />\r\n    </ux-dialog-body>\r\n\r\n    <ux-dialog-footer>\r\n      <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n      <button click.trigger=\"controller.ok(person)\">Ok</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
-define('text!modals/globalindivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n  <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:420px; overflow: auto;\">\r\n  <table>\r\n    <tr>\r\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td class=\"colorCell2\" style=\"width:140px\">GLOBAL ID</td>\r\n                        <td class=\"colorCell2\">PERSONNEL NAME</td>\r\n                    </tr>\r\n                    <tr ref=\"_rGROUP_TITLE\">\r\n                        <td class=\"colorCell2\" style=\"width:140px\">\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\r\n                        </td>\r\n                        <td class=\"colorCell2\" >\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                        </td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n                        <td>${item.GLOBAL_INDIV_ID}</td>\r\n                        <td>${item.PERSONNEL_NAME}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n    </td>\r\n    <td style=\"vertical-align:top;\">\r\n\r\n\r\n        <div style=\"height:350px; overflow: auto;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td colspan=3 class=\"colorCell2\" >\r\n                            SELECTED\r\n                        </td>\r\n                    </tr>\r\n                    <tr>\r\n                        <td class=\"colorCell2\"  style=\"width:140px\">\r\n                            GLOBAL ID\r\n                        </td>\r\n                        <td colspan=2 class=\"colorCell2\" >\r\n                            PERSONNEL NAME\r\n                        </td>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArraySelected\">\r\n                        <td style=\"width:140px\">\r\n                            ${item.GLOBAL_INDIV_ID}\r\n                        </td>\r\n                        <td>\r\n                            ${item.PERSONNEL_NAME}\r\n                        </td>\r\n                        <td>\r\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n\r\n    </td>\r\n</tr>\r\n<tr>\r\n    <td colspan=2>\r\n        <div style=\"width:100%;text-align:center;\">\r\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\r\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\r\n        </div>\r\n    </td>\r\n</tr>\r\n</table>\r\n</div>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n</ux-dialog-footer>    \r\n\r\n</ux-dialog>\r\n</template>\r\n\r\n"; });
-define('text!modals/indivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n <ux-dialog>\r\n   <!--<ux-dialog-header class=\"colorHeader\">\r\n        \r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\r\n   <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<div style=\"height:420px; overflow: auto;\">\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    GLOBAL ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PERSONNEL NAME\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rGROUP_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedIndiv(item)\">\r\n                <td>\r\n                    ${item.GLOBAL_INDIV_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PERSONNEL_NAME}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n          </ux-dialog-body>\r\n\r\n  <ux-dialog-footer>\r\n      <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!--       <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n    </ux-dialog-footer>    \r\n     </ux-dialog>\r\n</template>\r\n\r\n"; });
-define('text!modals/job.html', ['module'], function(module) { module.exports = "<template>\r\n          <ux-dialog><!--         <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n            <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT JOB</h4>\r\n</ux-dialog-header>-->\r\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    JOB GROUP\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    JOB DESCRIPTION\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rJOB_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_GRP\" searchable=\"_sJOB_GRP\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_DESC\" searchable=\"_sJOB_DESC\" ref=\"refJobDesc\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n             <!-- | sorttext:'JOB_DESC':'ascending' -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedJob(item)\">\r\n                <td>\r\n                    ${item.JOB_GRP}\r\n                </td>\r\n                <td>\r\n                    ${item.JOB_DESC}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n       <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n   </ux-dialog-body>\r\n         <ux-dialog-footer>\r\n         <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n       </ux-dialog-footer>\r\n          </ux-dialog>\r\n          \r\n</template>"; });
-define('text!modals/login.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">LOG-IN</span></ux-dialog-header>\r\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\r\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tCOMPANY:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select value.bind=\"_COMPANY\" style=\"width:172px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"company of _companies\"  model.bind=\"company\">${company.COMPANY_NAME}</option>\r\n\t\t\t\t\t</select>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tUSER ID:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select  value.bind=\"_USER\" style=\"width:136px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"user of _user_content\"  model.bind=\"user\">${user.USER_ID}</option>\r\n\t\t\t\t\t</select> \r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tPASSWORD:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input value.bind=\"_PASSWORD\" type=\"password\" keyup.trigger=\"keyPressed($event)\"/> &nbsp;<a href=\"#\" click.trigger=\"resetPassword()\">Reset</a>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n          <tr if.bind=\"user_expired\">\r\n            <td>\r\n              NEW PASSWORD:\r\n            </td>\r\n            <td>\r\n              <input value.bind=\"_NEW_PASSWORD\" type=\"password\"/>\r\n            </td>\r\n          </tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\"  disabled.bind=\"disableLogButton\" click.trigger=\"tryLogin()\" value=\"LOG-IN\" class=\"btn customButton\" />\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<!-- <tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input type=\"text\" id=\"endDt\" placeholder=\"Start Date\">\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input type=\"text\" id=\"startDt\" placeholder=\"End Date\">\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\"  disabled.bind=\"disableLogButton\" click.trigger=\"validateDate()\" value=\"Validate\" class=\"btn customButton\" />\r\n\t\t\t\t</td>\r\n\t\t\t</tr> -->\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
-define('text!modals/modalcontainer.html', ['module'], function(module) { module.exports = "<template>   \r\n          <modal showing.two-way=\"showing\"  mwidth.bind=\"_width\">\r\n              <modal-header title.bind=\"_setTitle\" close.call=\"closeModal()\"></modal-header>\r\n              <modal-body content-view.bind=\"_setContent\"></modal-body>\r\n              \r\n              <modal-footer>\r\n                  <!-- <button class=\"btn\" click.trigger=\"closeModal()\">Save</button> -->\r\n                  <au-button text=\"Cancel\" click.call=\"closeModal()\">Close</au-button>\r\n                  <!-- <button class=\"btn\" click.trigger=\"hotest()\">Talent 11</button> -->\r\n              </modal-footer>\r\n          </modal>\r\n\r\n       <input type=\"button\" ref=\"btnRef\" class=\"btn btn-xs customButton\" click.delegate=\"showDialog()\" value.bind=\"_buttonTitle\" disabled.bind=\"_isDisableElement\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n</template>"; });
-define('text!modals/paymentterm.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n      <h4 class=\"modal-title\">SELECT PAYMENT TERM</h4>\r\n    </ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PAYMENT TERM</b></span></ux-dialog-header>\r\n\r\n    <ux-dialog-body>\r\n      <table keyup.delegate=\"fnKeyup($event,'')\"  class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <tbody>\r\n          <tr repeat.for=\"item of varFilterArray\" click.delegate=\"$parent.selectedTerm(item)\">\r\n            <td>\r\n              ${item.REF_DESC}\r\n            </td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n     <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n   </ux-dialog-footer>\r\n </ux-dialog>\r\n</template>"; });
-define('text!modals/program.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM CODE\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM NAME\r\n              </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" />\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" />\r\n              </td>\r\n            </tr>\r\n          </thead>\r\n          <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedProgram(item)\">\r\n              <td>\r\n                ${item.PROGRAM_CD}\r\n              </td>\r\n              <td>\r\n                ${item.PROGRAM_TITLE}\r\n              </td>\r\n            </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n      <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
-define('text!modals/talentmanagergroups.html', ['module'], function(module) { module.exports = "<template>\r\n    <ux-dialog>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sort\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n    <thead class=\"table-default\">\r\n        <tr>\r\n            <td class=\"colorCell2\">\r\n                GLOBAL ID\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                GROUP NAME\r\n            </td>\r\n        </tr>\r\n        <tr ref=\"_rGROUP_TITLE\">\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_GRP_ID\" searchable=\"_sGLOBAL_GRP_ID\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGROUP_NAME\" searchable=\"_sGROUP_NAME\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n        </tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr repeat.for=\"item of varFilterArray | sort:'GROUP_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n            <td>\r\n                ${item.GLOBAL_GRP_ID}\r\n            </td>\r\n            <td>\r\n                ${item.GROUP_NAME}\r\n            </td>\r\n        </tr>\r\n    </tbody>\r\n</table>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
-define('text!ppfcs/buh.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;width:800px;text-align:center;\" class=\"divBackground\">\r\n\t\t<table>\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>GLOBAL ID:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.OPTIONAL_GLOBAL_ID\" disabled.bind=\"_disableCells\" id=\"txtGlobalID\"/></td>\r\n\t\t\t\t<td class=\"text-right\"><label>E-Mail:</label></td>\r\n\t\t\t\t<td colspan=\"2\" class=\"text-left\"><input id=\"txtEmail\" value.bind=\"_objBUH.EMAIL_ADDRESS\"  disabled.bind=\"_disableCells\" style=\"width:250px;\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td><label>LAST NAME:</label></td>\r\n\t\t\t\t<td><input value.bind=\"_objBUH.LAST_NAME\" id=\"txtLastName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>FIRST NAME:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.FIRST_NAME\" id=\"txtFirstName\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t\t<td class=\"text-right\"><label>MIDDLE:</label></td>\r\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.MIDDLE_NAME\"  id=\"txtMiddle\" disabled.bind=\"_disableCells\" /></td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"7\" style=\"text-align:center;\"><br/>\r\n\t\t\t\t\t<input type=\"Button\" id=\"btnGlobalID\" value=\"Search\" click.delegate=\"fnCRUD('search')\" disabled.bind=\"_disableSearch\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnAdd\"  disabled.bind=\"_disableAdd\" value=\"Add\" click.delegate=\"fnCRUD('add')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnDelete\" disabled.bind=\"_disableDelete\"  value=\"Delete\" click.delegate=\"fnCRUD('delete')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnSave\" disabled.bind=\"_disableSave\" value=\"Save\" click.delegate=\"fnCRUD('save')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<input type=\"button\" id=\"btnCancel\" value=\"Cancel/Clear\" click.delegate=\"fnCRUD('cancel')\" class=\"btn btn-xs customButton\"/>\r\n\t\t\t\t\t<br/><br/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\r\n\t\t</table>\r\n\r\n\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\" >\r\n\t\t\t<thead>\r\n\t\t\t\t<tr><td class=\"colorCell\">PROGRAM ID</td>\r\n\t\t\t\t\t<td class=\"colorCell\">PROGRAM TITLE</td>\r\n\t\t\t\t\t<td class=\"colorCell\"><input type=\"button\" value=\"+\" disabled.bind=\"_disableGrid\" click.delegate=\"searchPrograms()\"/> </td>\r\n\t\t\t\t</tr>\r\n\t\t\t</thead>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr repeat.for=\"item of _objBUH.PROGRAMS\">\r\n\t\t\t\t\t<td>${item.PROGRAM_CD}</td>\r\n\t\t\t\t\t<td>${item.PROGRAM_TITLE}</td>\r\n\t\t\t\t\t<td><input type=\"button\" value=\"-\" disabled.bind=\"_disableGrid\" click.delegate=\"$parent.deleteSelected($index)\"/>\r\n\t\t\t\t\t</td> \r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>  \r\n\r\n\r\n\t\t<!--<input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n\t\t<input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\">--> \r\n\r\n\r\n\r\n\t\t<br/>\r\n\t\t<br/>\r\n\t\t<table class= \"table-bordered\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<strong>${_user.USER_ID}</strong> \r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\r\n\r\n\t</template>"; });
+define('text!users.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"blur-image\"></require>\n\n  <section class=\"au-animate\">\n      <h2>${heading}</h2>\n      <div class=\"row au-stagger\">\n        <div class=\"col-sm-6 col-md-3 card-container au-animate\" repeat.for=\"user of users\">\n            <div class=\"card\">\n                <canvas class=\"header-bg\" width=\"250\" height=\"70\" blur-image.bind=\"image\"></canvas>\n                <div class=\"avatar\">\n                    <img src.bind=\"user.avatar_url\" crossorigin ref=\"image\"/>\n                </div>\n                <div class=\"content\">\n                    <p class=\"name\">${user.login}</p>\n                    <p><a target=\"_blank\" class=\"btn btn-default\" href.bind=\"user.html_url\">Contact</a></p>\n                </div>\n            </div>\n        </div>\n      </div>\n  </section>\n</template>\n"; });
+define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate\">\n    <h2>${heading}</h2>\n\n    <form role=\"form\" submit.delegate=\"submit()\">\n      <div class=\"form-group\">\n        <label for=\"fn\">First Name</label>\n        <input type=\"text\" value.bind=\"firstName\" class=\"form-control\" id=\"fn\" placeholder=\"first name\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"ln\">Last Name</label>\n        <input type=\"text\" value.bind=\"lastName\" class=\"form-control\" id=\"ln\" placeholder=\"last name\">\n      </div>\n      <div class=\"form-group\">\n        <label>Full Name</label>\n        <p class=\"help-block\">${fullName | upper}</p>\n      </div>\n      <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n    </form>\n  </section>\n</template>\n"; });
+define('text!ppfcs/buh.html', ['module'], function(module) { module.exports = "<template>\n\t<div style=\"margin-left:10%!important;margin-right:10%!important;margin-top:3%;width:800px;text-align:center;\" class=\"divBackground\">\n\t\t<table>\n\t\t\t<tr>\n\t\t\t\t<td><label>GLOBAL ID:</label></td>\n\t\t\t\t<td><input value.bind=\"_objBUH.OPTIONAL_GLOBAL_ID\" disabled.bind=\"_disableCells\" id=\"txtGlobalID\"/></td>\n\t\t\t\t<td class=\"text-right\"><label>E-Mail:</label></td>\n\t\t\t\t<td colspan=\"2\" class=\"text-left\"><input id=\"txtEmail\" value.bind=\"_objBUH.EMAIL_ADDRESS\"  disabled.bind=\"_disableCells\" style=\"width:250px;\" /></td>\n\t\t\t</tr>\n\n\t\t\t<tr>\n\t\t\t\t<td><label>LAST NAME:</label></td>\n\t\t\t\t<td><input value.bind=\"_objBUH.LAST_NAME\" id=\"txtLastName\" disabled.bind=\"_disableCells\" /></td>\n\t\t\t\t<td class=\"text-right\"><label>FIRST NAME:</label></td>\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.FIRST_NAME\" id=\"txtFirstName\" disabled.bind=\"_disableCells\" /></td>\n\t\t\t\t<td class=\"text-right\"><label>MIDDLE:</label></td>\n\t\t\t\t<td class=\"text-left\"><input value.bind=\"_objBUH.MIDDLE_NAME\"  id=\"txtMiddle\" disabled.bind=\"_disableCells\" /></td>\n\t\t\t</tr>\n\n\t\t\t<tr>\n\t\t\t\t<td colspan=\"7\" style=\"text-align:center;\"><br/>\n\t\t\t\t\t<input type=\"Button\" id=\"btnGlobalID\" value=\"Search\" click.delegate=\"fnCRUD('search')\" disabled.bind=\"_disableSearch\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnAdd\"  disabled.bind=\"_disableAdd\" value=\"Add\" click.delegate=\"fnCRUD('add')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnDelete\" disabled.bind=\"_disableDelete\"  value=\"Delete\" click.delegate=\"fnCRUD('delete')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnSave\" disabled.bind=\"_disableSave\" value=\"Save\" click.delegate=\"fnCRUD('save')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<input type=\"button\" id=\"btnCancel\" value=\"Cancel/Clear\" click.delegate=\"fnCRUD('cancel')\" class=\"btn btn-xs customButton\"/>\n\t\t\t\t\t<br/><br/>\n\t\t\t\t</td>\n\t\t\t</tr>\t\n\t\t</table>\n\n\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\" >\n\t\t\t<thead>\n\t\t\t\t<tr><td class=\"colorCell\">PROGRAM ID</td>\n\t\t\t\t\t<td class=\"colorCell\">PROGRAM TITLE</td>\n\t\t\t\t\t<td class=\"colorCell\"><input type=\"button\" value=\"+\" disabled.bind=\"_disableGrid\" click.delegate=\"searchPrograms()\"/> </td>\n\t\t\t\t</tr>\n\t\t\t</thead>\n\t\t\t<tbody>\n\t\t\t\t<tr repeat.for=\"item of _objBUH.PROGRAMS\">\n\t\t\t\t\t<td>${item.PROGRAM_CD}</td>\n\t\t\t\t\t<td>${item.PROGRAM_TITLE}</td>\n\t\t\t\t\t<td><input type=\"button\" value=\"-\" disabled.bind=\"_disableGrid\" click.delegate=\"$parent.deleteSelected($index)\"/>\n\t\t\t\t\t</td> \n\t\t\t\t</tr>\n\t\t\t</tbody>\n\t\t</table>  \n\n\n\t\t<!--<input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\n\t\t<input type=\"button\" click.delegate=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\">--> \n\n\n\n\t\t<br/>\n\t\t<br/>\n\t\t<table class= \"table-bordered\">\n\t\t\t<tr>\n\t\t\t\t<td>\n\t\t\t\t\tLOGGED AS:\n\t\t\t\t</td>\n\t\t\t\t<td>\n\t\t\t\t\t<strong>${_user.USER_ID}</strong> \n\t\t\t\t</td>\n\t\t\t</tr>\n\t\t</table>\n\n\n\t</template>"; });
+define('text!tools/gridpaging.html', ['module'], function(module) { module.exports = "<template>\r\n\t<nav>\r\n        <ul class=\"pagination\">\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Previous\" click.delegate=\"endClick(0)\" if.bind=\"_currentIndex!=0 && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&laquo;</span>\r\n                </a>\r\n            </li>\r\n            <li repeat.for=\"item of _PagesShow\">\r\n                    <a style=\"cursor:pointer\" click.delegate=\"$parent.selectedClick($index)\" >${item}</a>\r\n            </li>\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Next\"  click.delegate=\"endClick(1)\" if.bind=\"_Pages.length-1>_currentIndex && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&raquo;</span>\r\n                </a>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</template>"; });
 define('text!ppid/ppid.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h4>PPID ~> Personnel</h4>\r\n\t<!-- <div style=\"background:#A2A2D0; width:100%; height:38px; padding:5px;\">\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"FindUsers()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"\" value=\"ADD NEW PROGRAM PERSONNEL\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<label hidden.bind=\"obj_personnel.global_indiv_id.length==0\">Global Id: ${obj_personnel.global_indiv_id}</label>\r\n\t</div> -->\r\n\t<require from=\"./forms/main\"></require>\r\n\t<require from=\"./forms/relative\"></require>\r\n\t<require from=\"./forms/awards_training\"></require>\r\n\t<require from=\"./forms/gov_info\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<!--<require from=\"converters/filtercustom\"></require>\r\n\t<require from=\"converters/sorttext\"></require>-->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Personnel Info</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"company_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"gov_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_character_ref\" aria-controls=\"relative_character_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(1)\">Relative</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#awards_training\" aria-controls=\"awards_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Awards, Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<main></main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_character_ref\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<relative></relative>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"awards_training\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<awards_training></awards_training>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info></gov_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!ppid/ppid_group.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<require from=\"./forms/group\"></require>\r\n\t<require from=\"./forms/awards_training\"></require>\r\n\t<require from=\"./forms/gov_info_group\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<h4>PPID ~> Group</h4>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#group_details\" aria-controls=\"group_details\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Group Info</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"company_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"gov_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\t\t\t\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#awards_training\" aria-controls=\"awards_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Awards, Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"group_details\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<group></group>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info_group></gov_info_group>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"awards_training\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<awards_training></awards_training>\r\n\t\t\t</div>\r\n\t\t</div>\r\n    </div>\r\n</template>"; });
-define('text!tools/gridpaging.html', ['module'], function(module) { module.exports = "<template>\r\n\t<nav>\r\n        <ul class=\"pagination\">\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Previous\" click.delegate=\"endClick(0)\" if.bind=\"_currentIndex!=0 && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&laquo;</span>\r\n                </a>\r\n            </li>\r\n            <li repeat.for=\"item of _PagesShow\">\r\n                    <a style=\"cursor:pointer\" click.delegate=\"$parent.selectedClick($index)\" >${item}</a>\r\n            </li>\r\n            <li>\r\n                <a style=\"cursor:pointer\" aria-label=\"Next\"  click.delegate=\"endClick(1)\" if.bind=\"_Pages.length-1>_currentIndex && _Pages[0].length>0\">\r\n                    <span aria-hidden=\"true\">&raquo;</span>\r\n                </a>\r\n            </li>\r\n        </ul>\r\n    </nav>\r\n</template>"; });
-define('text!ppfcs/budget/guest.html', ['module'], function(module) { module.exports = "<template>\r\n            <require from=\"converters/filtercustom\"></require>\r\n            <require from=\"converters/signals\"></require>\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:70%;\" ref=\"tblData\">\r\n                <thead>\r\n                    <tr><td class=\"colorCell\">PAY MODE</td>\r\n                        <td class=\"colorCell\">BUDGET</td>\r\n                        <td class=\"colorCell\">PAY MODE FACTOR</td>\r\n                        <td class=\"colorCell\">REMARKS</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of _cache_budget.GUEST | filtercustom:'visible':true:_signal\">\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:auto !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,$index)\"  focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/></td>\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:auto !important;\"/></td>\r\n                      <td>  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:auto !important;\"/></td>\r\n                      <td> <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea></td>\r\n                </tr>\r\n                </tbody>\r\n            </table>  \r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableAdd\" click.delegate=\"fnAddGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Add Guest</button>\r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableRemove\"click.delegate=\"fnRemoveGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Remove Guest</button>\r\n              <button class=\"btn btn-xs customButton\" click.delegate=\"saveGuest(0)\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button>\r\n</template>"; });
-define('text!ppfcs/budget/main-header.html', ['module'], function(module) { module.exports = "<template>\r\n    <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n    <!-- <require from=\"modals/confirm_dialog\"></require> -->\r\n\r\n    <require from=\"converters/datepattern\"></require>\r\n   \r\n     <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n            <tbody >\r\n                <tr>\r\n                    <td style=\"vertical-align: top;\">\r\n                        <table>\r\n                             <tr>\r\n                                <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Budget ID</td>\r\n                                <td>\r\n                                 <input value.bind=\"_cache_budget.HEADER.BDGT_TMPL_ID\" style=\"width: 80px;\" keyup.delegate=\"inputChanged($event,_cache_budget.HEADER.BDGT_TMPL_ID)\" readonly.bind=\"_disableBudgetId\"/>\r\n                                 <!-- <modalcontainer to.bind=\"modalBudget\"></modalcontainer> -->\r\n                                 <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"budgetDisabled\" click.trigger=\"fnDialogBudget()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                             </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td style=\"width: 120px;\">Program Name/CC</td>\r\n                                <td style=\"width: auto;\">\r\n                                    <input readonly=\"readonly\" value.bind=\"_cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE\"style=\"width: 250px;\"/>*\r\n                                    <!-- <modalcontainer to.bind=\"modalProgram\"></modalcontainer> -->\r\n                                    <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"programDisabled\" click.trigger=\"fnDialogProgram()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program IO/CC#</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.CHARGE_CD\" readonly=\"readonly\" /></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program Genre</td>\r\n                                <td>\r\n                                    <select value.bind=\"_cache_budget.HEADER.PROGRAM_GENRE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _PROGRAM_GENRE_MSTR\" value.bind=\"item.PROGRAM_GENRE_CD\">\r\n                                            ${item.PROGRAM_GENRE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Telecast Mode</td>\r\n                                <td>\r\n                                      <select value.bind=\"_cache_budget.HEADER.TELECAST_MODE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _TELECAST_MODE_MSTR\" value.bind=\"item.TELECAST_MODE_CD\">\r\n                                            ${item.TELECAST_MODE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Episode Type</td>\r\n                                <td>\r\n                                       <select value.bind=\"_cache_budget.HEADER.EPISODE_TYPE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _EPISODE_TYPE_MSTR\" value.bind=\"item.EPISODE_TYPE_CD\">\r\n                                            ${item.EPISODE_TYPE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                    </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>No. of Episodes</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.EPISODES\" class=\"col-md-3 text-right\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\"/>*</td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>No. of Taping days</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.TAPING_DAYS\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" class=\"col-md-3 text-right\"/>*</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n                        <table style=\"padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;\">\r\n                            <tr>\r\n                                <td class=\"text-center\" colspan=2><strong>Template Validity</strong></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Start Date</td>\r\n                                <td>\r\n                                    <input id=\"refFrom\"  readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_FROM\" blur.trigger=\"checkDate('refFrom')\"/>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>End Date</td>\r\n                                <td>\r\n                                    <!-- trigger does not accept '', set the string id w/out '' -->\r\n                                   <input id=\"refTo\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_TO\" blur.trigger=\"checkDate('refTo')\"/>*</td>\r\n                            </tr>\r\n                             <tr><td colspan=2 style=\"height:20px;\"></td></tr>\r\n                            <tr>\r\n                                <td>TV Station</td>\r\n                                <td>\r\n                                   <select disabled.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.STATION_ID\">\r\n                                        <option repeat.for=\"item of _STATIONS\" value.bind=\"item\">\r\n                                            ${item}\r\n                                        </option>\r\n                                    </select>(For <strong>RNG</strong>*)\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Status</td>\r\n                                <td>\r\n                                     <select value.bind=\"_cache_budget.HEADER.APPR_STAT_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _STATUS\" value.bind=\"item.REF_CD\">\r\n                                            ${item.REF_DESC}\r\n                                        </option>\r\n                                    </select>*\r\n                                     <!-- value.bind=\"options: EPISODE_MODE_LIST, EPISODE_MODE_SELECTED, optionsText: 'text'\" -->\r\n                                </td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>Remarks</td>\r\n                                <td rowspan=3>\r\n                                    <textarea readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.REMARKS\" style=\"width:200px!important;\" >\r\n                                    </textarea>\r\n                                </td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n\r\n                </tr>\r\n\r\n            </tbody>\r\n        </table>\r\n        <br/>\r\n        <br/>\r\n        <div style=\"margin-left:350px;\"><h5>( <strong>Note</strong> : * is required )</h2></div>\r\n        <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n        <div style=\"margin-left:100px;\">\r\n            <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('create')\" disabled.bind=\"_disableCreateBudget\" if.bind=\"!_disableCreateBudget\">CREATE BUDGET</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('cancel')\" disabled.bind=\"_disableCancelBudget\">CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.STATUS!='APPROVED'\" style=\"width:150px;\" click.delegate=\"fnBudget('refresh')\" disabled.bind=\"_disableRefreshBudget\">REFRESH</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-EXPIRED'\" style=\"width:150px;\" click.delegate=\"fnBudget('save')\" if.bind=\"!_disableSaveBudget\" disabled.bind=\"_disableSaveBudget\">SAVE BUDGET</button>\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('print')\" disabled.bind=\"_disablePrintBudget\" disabled.bind=\"!_disablePrintBudget\">PRINT BUDGET</button>\r\n        <button if.bind=\"_cache_budget.HEADER.APPR_STAT_CD=='APP-EXPIRED' || _cache_budget.HEADER.APPR_STAT_CD=='APP-CLOSED'\" class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('copy')\" disabled.bind=\"_disableCopyBudget\">COPY TEMPLATE</button>\r\n        <button if.bind=\"_cache_budget.STATUS=='APPROVED'\"  class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('close')\" disabled.bind=\"_disablePrintBudget\">SET AS CLOSED</button>\r\n         <!-- <confirm_dialog to.bind=\"modalConfirm\"></confirm_dialog> -->\r\n        </div>\r\n              <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n\r\n        \r\n \r\n</template>"; });
-define('text!ppfcs/budget/mainview.html', ['module'], function(module) { module.exports = " \r\n\r\n <template>\r\n\r\n <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n <require from=\"ppfcs/budget/main-header\"></require>\r\n <require from=\"ppfcs/budget/personnel\"></require>\r\n <require from=\"ppfcs/budget/guest\"></require>\r\n <require from=\"ppfcs/budget/summary\"></require>\r\n    <br/>\r\n      \r\n <!--stylemainstayft:20px;margin-right:20px;margin-bottom:10px;margin-top:10px;\"-->\r\n     <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 686px;\">\r\n          <!-- Nav tabs -->\r\n          <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n              <li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(0)\">Program Budget</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#regular\" aria-controls=\"regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(1)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\" >Regular</a>\r\n              </li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#semi_regular\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(2)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Semi-Regular</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#staff\" aria-controls=\"staff\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(3)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Staff</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#guest\" aria-controls=\"guest\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(4)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Guest</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#summary\" aria-controls=\"summary\" role=\"tab\" data-toggle=\"tab\"click.trigger=\"clickTab(5)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Budget Summary</a></li>\r\n          </ul>\r\n\r\n          <!-- Tab panes -->\r\n          <div class=\"tab-content\">\r\n              <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1024px;height:620px;\"><br/><main-header></main-header>\r\n                <br/>\r\n                <br/>\r\n                <br/>\r\n          <!--<div style=\"margin-left:40%;\">\r\n             <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n                   <input type=\"button\" click.trigger=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\"> \r\n          </div>-->\r\n\r\n              <div style=\"margin-left:25%;\">\r\n                <br/>\r\n                <br/>\r\n              <table class= \"table-bordered\">\r\n                <tr>\r\n                    <td>\r\n                        CREATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.CREATED_BY}\r\n                    </td>\r\n                    <td>\r\n                        LAST UPDATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.LAST_UPDATED_BY}\r\n                    </td>\r\n                    <!--<td>\r\n                        LOGGED AS:\r\n                    </td>\r\n                    <td>\r\n                        <strong>${_cache_budget.USER.USER_ID}</strong> \r\n                    </td>-->\r\n                    </tr>\r\n              </table>\r\n              </div>\r\n\r\n              </div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.REGULAR\" to-person-model.bind=\"{USE:'REGULAR'}\" ></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"semi_regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.SEMI_REGULAR\" to-person-model.bind=\"{USE:'SEMI_REGULAR'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"staff\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.STAFF\"to-person-model.bind=\"{USE:'STAFF'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"guest\"  style=\"width:1024px;\"><guest></guest></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"summary\" style=\"width:1024px;\">\r\n                <summary></summary>\r\n              </div>\r\n          </div>\r\n            \r\n      </div>\r\n      \r\n    \r\n   <!-- <div class=\"well\">\r\n        <div class=\"input-append date\" id=\"dp3\" data-date=\"12-02-2012\" data-date-format=\"dd-mm-yyyy\">\r\n        <input class=\"span2\" size=\"16\" type=\"text\" value=\"12-02-2012\" readonly=\"\">\r\n        <span class=\"add-on\"><i class=\"icon-calendar\"></i></span>\r\n        </div>\r\n    </div> -->\r\n\r\n\r\n </template>\r\n"; });
-define('text!ppfcs/budget/personnel.html', ['module'], function(module) { module.exports = "<template>\r\n  <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n  <require from=\"converters/number-format\"></require>\r\n  <require from=\"converters/filtercustom\"></require>\r\n  <require from=\"converters/signals\"></require>\r\n                <div style=\"overflow:scroll;height:600px !important; padding-left:10px;padding-top:10px;!important; \" scroll.trigger=\"scrollDiv()\" ref=\"divRegular\">\r\n                 <table class= \"table-hover table-condensed table-bordered table-striped\" style=\"position:absolute;z-index:1000;visibility:hidden;top:100px;\" ref=\"tblHeader\" scroll.trigger=\"scrollDiv()\" >\r\n                <thead>\r\n                    <tr>\r\n                      <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n              </table>\r\n              <table class= \"table-hover table-condensed table-bordered table-striped\" onload=\"myFunction()\"  ref=\"tblData\">\r\n                <thead>\r\n                    <tr>\r\n                        <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\"\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody repeat.for=\"item of _Personnel | filtercustom:'visible':true:_signal \">\r\n                    <tr>\r\n                      <td style=\"width:41px !important;\"> \r\n                        <input disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"text-center\" value.one-way=\"$index+1\" style=\"width:40px !important;color:gray;border:0px;\" click.trigger=\"$parent.focusTrigger($index)\"/>\r\n                        </td>\r\n                      <td style=\"width:5px !important;\">\r\n                        <button class=\"btn btn-xs \" click.trigger=\"$parent.collapse_expand(item)\">${item.ce_value}</button></td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"item.GLOBAL_ID\">${item.PERSONNEL_NAME}</td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"!item.GLOBAL_ID\"><input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.BLANK_PERSONNEL_NAME\"/></td>\r\n                      <td style=\"width:5px !important;\">\r\n                         <input readonly disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"jobclass\" value.bind=\"item.JOB_DESC\" style=\"width:120px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'JOB', $index, item.BDGT_TMPL_DTL_ID)\" focus.trigger=\"$parent.fnRegularFocus($index,'JOB')\" />\r\n                      </td>   \r\n                      <td style=\"width:100px !important;\">\r\n                         <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:90px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'TERM', $index)\" focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/>\r\n                      </td>\r\n                      <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                        <!-- ${item.CONFIDENTIAL_TMP}\r\n                        ${$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL} -->\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <!-- click.delegate=\"$parent.chkRemove(item)\" -->\r\n                      <td style=\"width:100px !important;\" class=\"text-center\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"type=\"checkbox\" checked.bind=\"item.REMOVE\" if.bind=\"item.BDGT_TMPL_DTL_ID && $parent.fnCheckExistingTalents(item.TALENTS,item)\"/>\r\n                          <button class=\"btn btn-xs\" click.trigger=\"$parent.removeRegular($index)\"  if.bind=\"!item.BDGT_TMPL_DTL_ID\">-</button>\r\n                      </td>\r\n                    </tr>\r\n                     <tr>\r\n                      <td colspan=9 style.bind=\"item.styleString\">\r\n                        <div>\r\n                         <table style=\"margin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                          <tr>\r\n                            <td>CATEGORY</td>\r\n                            <td>CONFIDENTIAL</td>\r\n                            <td>STAFF WORK</td>\r\n                            <td>REMARKS</td>\r\n                            <td>TALENT MANAGER</td>\r\n                            <!-- <td>TALENTS</td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\">IS POOL</td>\r\n                          </tr>\r\n                          <tr>\r\n                            <td>${item.CATEGORY_DESC}</td>\r\n                            <td class=\"text-center\">\r\n                               <!-- if.bind=\"$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL\" -->\r\n                               <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.CONFIDENTIAL_TMP\" />\r\n                            </td>\r\n                            <td>\r\n                              <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.STAFF_WORK_TMP\"/>\r\n                            </td>\r\n                            <td>\r\n                              <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea>\r\n                            </td>\r\n                            <td> \r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"!item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.showTalentMngr(item)\" >+</button>\r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.removeTalentMngr(item)\">-</button>\r\n                            </td>\r\n                           <!--  <td>\r\n                                 <table class=\"table-hover table-condensed table-bordered table-striped\">\r\n                                    <thead>\r\n                                      <tr>\r\n                                        <td>NAME</td> \r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.showTalents(item)\" >+</button>\r\n                                            \r\n                                        </td>\r\n                                      </tr>\r\n                                    </thead>\r\n                                    <tbody>\r\n                                      <tr repeat.for=\"itemTalent of item.TALENTS\">\r\n                                        <td>${itemTalent.PERSONNEL_NAME}</td>\r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.$parent.removeTalent($parent,itemTalent,$index)\">-</button></td>\r\n                                      </tr>\r\n                                    </tbody>\r\n                                 </table>\r\n                            </td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\"> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.POOL_RECORD_TMP\"/></td>\r\n                          </tr>\r\n                        </table>\r\n                        </div>\r\n                         <div if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" style=\"margin-left:20%;margin-top:5px;\">\r\n                              <table style=\"margin-topin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                              <tr>\r\n                              <td class=\"colorCell\">Talent Manager</td>\r\n                              <td class=\"colorCell\">Pay Factor</td>\r\n                              <td class=\"colorCell\">Contract</td>\r\n                              <td class=\"colorCell\">Rate</td>\r\n                              <td class=\"colorCell\">Remarks</td>\r\n                              </tr>\r\n                              <tr>\r\n                                   <td> ${item.TALENT_MANAGER.PERSONNEL_NAME}</td>\r\n                               <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input   disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"value.bind=\"item.TALENT_MANAGER.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                    <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.REMARKS\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                              </tr>\r\n\r\n                              </table>\r\n                          </div>  \r\n                      </td>\r\n                    </tr>\r\n               </tbody>\r\n            </table>\r\n            </div>\r\n           \r\n            <!-- ${_Personnel.length} -->\r\n            \r\n                \r\n               <div style=\"position:absolute;top:20px;left:0px;\">\r\n                <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrTalents\" ></modalcontainer>\r\n                <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrManager\" ></modalcontainer>\r\n                <modalcontainer to.bind=\"modalJob\"></modalcontainer> -->\r\n         <!--        <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrTalentsDisabled\" click.trigger=\"fnIndivMstrTalents()\" value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrManagerDisabled\"  click.trigger=\"fnIndivMstrManager()\"  value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isJobDisabled\"  click.trigger=\"fnModalJob()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/> -->\r\n\r\n               </div>   \r\n               <table>\r\n                <tr>\r\n                  <td>\r\n                    <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstr\"> --></modalcontainer>\r\n                     <input type=\"button\" class=\"btn btn-xs customButton\"  disabled.bind=\"isIndivMstrDisabled\"  click.trigger=\"fnIndivMstrManager()\" value=\"Search Personnel\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                  </td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"fnBlankPersonnelRegular()\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Blank Personnel</button></td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"savePersonnel(0)\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button></td>\r\n               \r\n               \r\n                <td if.bind=\"toPersonModel.USE=='REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                <td if.bind=\"toPersonModel.USE=='SEMI_REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Semi-Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_SEMI_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n               <td if.bind=\"toPersonModel.USE=='STAFF'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Staff) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_STAFF\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                </tr>\r\n                </table>\r\n\r\n</template>\r\n"; });
-define('text!ppfcs/budget/summary.html', ['module'], function(module) { module.exports = "<template>\r\n\t\t\t<table class= \"table-hover table-condensed table-bordered table-striped\" style=\"margin-left:50px;margin-top:40px;margin-botton:20px;\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"width:150px;\">\r\n\t\t\t\t\t\t\t<strong>CLASSIFICATION</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"width:150px;text-align:center;\">\r\n\t\t\t\t\t\t\t<strong>TOTAL PROGRAM</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tMAINSTAY\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_MAINSTAY}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tSTAFF\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_STAFF}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tGUEST\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_GUEST}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t<strong>TOTAL</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;border-top-width:3px;\">\r\n\t\t\t\t\t\t\t<strong>${_INPUT_AMT_TOTAL}</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\t\t\t\t\t\r\n\t\t\t</table>\r\n            <br/>\r\n</template>"; });
-define('text!ppid/contract/contract_form.html', ['module'], function(module) { module.exports = "<template>\r\n  <require from=\"converters/datepattern\"></require>\r\n  <br/>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:900px;height: 300px;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:880px;height:38px;\">\r\n        <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">UTILIZATION</strong>\r\n      </ul>\r\n      <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n        <tbody >\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Global ID</td>\r\n                    <td>\r\n                      <input value.bind=\"GLOBAL_ID1\" style=\"width: 160px;text-align:center\" readonly.bind=\"!_disableEditContract || _cache_contract. CONTRACT_STATUS!='ACTIVE'\"/>\r\n                      <input type=\"button\" class=\"btn btn-xs customButton\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\" disabled.bind='!_disableCancelContract' click.trigger=\"searchContract()\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:55px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract Status</td>\r\n                    <td>\r\n                      <select value.bind=\"CONTRACT_STATUS1\" style=\"width:260px;\" disabled.bind=\"_disableEditContract || _cache_contract.ISNEWCONTRACT\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of CONTRACT_STATUS\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value=\"EXPIRED\" style=\"width:260px; padding-left: 3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Personnel Name</td>\r\n                    <td>\r\n                      <div>\r\n                        <input value.bind=\"EMPLOYEE_NAME\" style=\"width:300px;padding-left: 3px;\"  readonly.bind=\"_disableEditContract || !_cache_contract.ISNEWCONTRACT\" focus.trigger=\"onfocusName()\" blur.trigger=\"lostfocusName()\" change.delegate=\"onchangeName()\"/>\r\n                        <div style=\"position: absolute;z-index: 999;\" show.bind=\"menuNameShow\">\r\n                          <a repeat.for=\"item of NAME_ARRAY\" style=\"width:300px;\" value.bind=\"item.ref\" class=\"list-group-item\" click.trigger=\"name_change(item.ref, item.desc)\" >${item.desc}</a>\r\n                        </div>\r\n                      </div>\r\n                      <!--<auto-complete items.bind=\"languages\"></auto-complete>-->\r\n                      <!--<select value.bind=\"MSTR_LIST1\" style=\"width:300px;\" change.delegate=\"name_change()\" disabled.bind=\"_disableEditContract || !_cache_contract.ISNEWCONTRACT\">\r\n                        <option repeat.for=\"item of MSTR_LIST\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>-->\r\n                    </td>\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Alias</td>\r\n                    <td>\r\n                      <div>\r\n                        <input value.bind=\"EMPLOYEE_ALIAS\" style=\"width:260px;padding-left: 3px; text-transform:uppercase; \"  readonly.bind=\"_disableEditContract\" focus.trigger=\"onfocusAlias()\" blur.trigger=\"lostfocusAlias()\" change.delegate=\"onchangeAlias()\"/>\r\n                        <div style=\"position: absolute;z-index: 999;\" show.bind=\"menuAliasShow\">\r\n                          <a repeat.for=\"item of ALIAS_ARRAY\" style=\"width:260px;\" value.bind=\"item\" class=\"list-group-item\" click.trigger=\"alias_change(item)\" >${item}</a>\r\n                        </div>\r\n                      </div>\r\n\r\n                      <!--<select value.bind=\"ALIAS_NAME1\" style=\"width:260px;\" disabled.bind=\"_disableEditContract\">\r\n                        <option repeat.for=\"item of ALIAS\" value.bind=\"item\">\r\n                          ${item}\r\n                        </option>\r\n                      </select>-->\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Company Name</td>\r\n                    <td>\r\n                      <input value.bind=\"COMPANY_NAME1\" style=\"width: 260px;padding-left: 3px;\" readonly.bind=\"true\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:40px\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Division</td>\r\n                    <td>\r\n                      <select value.bind=\"DIVISION1\" style=\"width:260px;\" change.delegate=\"division_change()\" disabled.bind=\"_disableEditContract\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of DIVISION\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value.bind=\"DIVISION_NAME1\" style=\"width:260px; padding-left:3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Job</td>\r\n                    <td>\r\n                      <select value.bind=\"JOB1\" style=\"width:260px;\"  change.delegate=\"job_change()\"  disabled.bind=\"_disableEditContract\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of JOB\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value.bind=\"JOB_NAME1\" style=\"width:260px; padding-left: 3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:40px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Job Group</td>\r\n                    <td>\r\n                      <input value.bind=\"JOB_GRP_NAME1\" style=\"width: 260px; padding-left: 3px;\" readonly.bind=\"true\"/>\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract Start Date</td>\r\n                    <td>\r\n                      <input id=\"dtPicker1\" value.bind=\"CONTRACT_START_DT1\"  style=\"width: 80px; text-align:center;\" readonly.bind=\"_disableEditContract\"  change.delegate=\"checkDate()\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\"/>\r\n                      <input value.bind=\"CONTRACT_START_DT1\"  style=\"width: 80px; text-align:center;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:95px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract End Date</td>\r\n                    <td>\r\n                      <input id=\"dtPicker2\" value.bind=\"CONTRACT_END_DT1\" style=\"width: 80px; text-align:center;\"  readonly.bind=\"_disableEditContract\" change.delegate=\"checkDate()\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\"/>\r\n                      <input value.bind=\"CONTRACT_END_DT1\" style=\"width: 80px; text-align:center;\"   readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:100px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Duration Months</td>\r\n                    <td>\r\n                      <input readonly.bind=\"true\" value.bind=\"DURATION_MONTHS1\" style=\"width: 50px; text-align: center;\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n      <br/>\r\n      <br/>\r\n      <div style=\"margin-left:100px;\">\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('create')\" disabled.bind=\"_disableCreateContract || !_disableCancelContract\">NEW RECORD</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('save')\" disabled.bind=\"_disableCancelContract || _cache_contract.CONTRACT_STATUS!='ACTIVE'\">SAVE</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('cancel')\" disabled.bind=\"_disableRefreshContract\">CANCEL</button>&nbsp;&nbsp;\r\n      </div>\r\n      <div style=\"margin-left:25%;\">\r\n      <br/>\r\n      <table class= \"table-bordered\">\r\n        <tr>\r\n            <td>\r\n                CREATED BY:\r\n            </td>\r\n            <td>\r\n                ${CREATED_BY1}\r\n            </td>\r\n            <td>\r\n                LAST UPDATED BY:\r\n            </td>\r\n            <td>\r\n                ${LAST_UPDATED_BY1}\r\n            </td>\r\n        </tr>\r\n      </table>\r\n      </div>\r\n</div>\r\n\r\n</template>\r\n"; });
-define('text!ppid/contract/contract_search.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>CONTRACT TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    GLOBAL ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    LAST NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    GIVEN NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    MIDDLE NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rCONTRACT_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_ID\" searchable=\"_sGLOBAL_ID\"   keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGIVEN_NAME\" searchable=\"_sGIVEN_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                  <input class=\"input-sm form-control\" value.bind=\"_bCONTRACT_STATUS\" searchable=\"_sCONTRACT_STATUS\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\"  click.delegate=\"$parent.selectedContract(item)\">\r\n                <td>\r\n                    ${item.GLOBAL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.LAST_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.GIVEN_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.MIDDLE_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.CONTRACT_STATUS}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>\r\n"; });
-define('text!ppfcs/actual_cost/actual_cost.html', ['module'], function(module) { module.exports = "<template>\r\n  <!--    <iframe src=\"http://localhost:15253\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe> -->\r\n  <iframe src=\"http://absppms2.corp.abscbn.com:8084\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe>\r\n  </template>"; });
-define('text!ppid/forms/awards.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\t\t\t\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Language / Dialect</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table style=\"width:100%;\">\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Award*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.AWARD.model.award_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.AWARD_HEAD\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Project Name*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\" tabindex=\"3\" value.bind=\"obj_personnel.AWARD.model.project_name\">\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Remarks*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical; width: 100%;\" disabled.bind=\"_disableForm\" tabindex=\"5\" value.bind=\"obj_personnel.AWARD.model.remarks\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Award Giving Body*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.AWARD.model.award_body_cd\" disabled.bind=\"_disableForm\" tabindex=\"2\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.AWARD_BODY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date Received*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" id=\"award_receive_dt\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.AWARD.model.receive_dt\">\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Award</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Award Giving Body</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date Received</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Project Name</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.AWARD.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.award_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.award_body_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.receive_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.project_name}</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.AWARD.list == null || obj_personnel.AWARD.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!modals/budget.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n     \r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>BUDGET TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    BUDGET ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PROGRAM IO\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bBDGT_TMPL_ID\" searchable=\"_sBDGT_TMPL_ID\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_IO\" searchable=\"_sPROGRAM_IO\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bAPPR_STAT_CD\" searchable=\"_sAPPR_STAT_CD\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <!-- | sorttext:'PROGRAM_TITLE':'ascending'  -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedBudget(item)\">\r\n                <td>\r\n                    ${item.BDGT_TMPL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_TITLE}\r\n                </td>\r\n                <td>\r\n                    ${item.PROGRAM_IO}\r\n                </td>\r\n                <td>\r\n                    ${item.APPR_STAT_CD}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
+define('text!modals/buh-program-dialog.html', ['module'], function(module) { module.exports = "<template>\n  <ux-dialog>\n  <!--<ux-dialog-header class=\"colorHeader\">\n        \n                    <h4 class=\"modal-title\">SELECT PROGRAMS</h4>\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PROGRAMS</b></span></ux-dialog-header>\n  <ux-dialog-body>\n  <require from=\"converters/take\"></require>\n  <require from=\"converters/sorttext\"></require>\n  <require from=\"tools/gridpaging\"></require>\n  <div style=\"height:420px; overflow: auto;\">\n  <table>\n    <tr>\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\n                <thead class=\"table-default\">\n                    <tr>\n                        <td class=\"colorCell2\" style=\"width:140px\">PROGRAM CODE</td>\n                        <td class=\"colorCell2\">PROGRAM TITLE</td>\n                    </tr>\n                    <tr ref=\"_rGROUP_TITLE\">\n                        <td class=\"colorCell2\" style=\"width:140px\">\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\n                        </td>\n                        <td class=\"colorCell2\" >\n                            <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" keyup.delegate=\"fnKeyup($event,'')\" />\n                        </td>\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\n                        <td>${item.PROGRAM_CD}</td>\n                        <td>${item.PROGRAM_TITLE}</td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\n    </td>\n    <td style=\"vertical-align:top;\">\n\n\n        <div style=\"height:350px; overflow: auto;\">\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\n                <thead class=\"table-default\">\n                    <tr>\n                        <td colspan=3 class=\"colorCell2\" >\n                            SELECTED\n                        </td>\n                    </tr>\n                    <tr>\n                        <td class=\"colorCell2\"  style=\"width:140px\">\n                            PROGRAM CODE\n                        </td>\n                        <td colspan=2 class=\"colorCell2\" >\n                            PROGRAM TITLE\n                        </td>\n\n                    </tr>\n                </thead>\n                <tbody>\n                    <tr repeat.for=\"item of varFilterArraySelected\">\n                        <td style=\"width:140px\">\n                            ${item.PROGRAM_CD}\n                        </td>\n                        <td>\n                            ${item.PROGRAM_TITLE}\n                        </td>\n                        <td>\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\n                        </td>\n                    </tr>\n                </tbody>\n            </table>\n        </div>\n\n    </td>\n</tr>\n<tr>\n    <td colspan=2>\n        <div style=\"width:100%;text-align:center;\">\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\n        </div>\n    </td>\n</tr>\n</table>\n</div>\n</ux-dialog-body>\n\n<ux-dialog-footer>\n<button click.trigger=\"controller.cancel()\">Cancel</button>\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\n</ux-dialog-footer>    \n\n</ux-dialog>\n</template>\n\n"; });
+define('text!modals/buh-search.html', ['module'], function(module) { module.exports = "<template>\n\n  <ux-dialog>\n    <ux-dialog-body>\n\n\n      <require from=\"converters/take\"></require>\n      <require from=\"converters/sorttext\"></require>\n      <require from=\"tools/gridpaging\"></require>\n      <div style=\"height:500px!important;overflow:auto;\">\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\n          <thead class=\"table-default\">\n            <tr>\n              <td class=\"colorCell2\">\n                GLOBAL ID (OPTIONAL)\n              </td>\n              <td class=\"colorCell2\">\n                FIRST NAME\n              </td>\n              <td class=\"colorCell2\">\n                MIDDLE NAME\n              </td>\n              <td class=\"colorCell2\">\n                LAST NAME\n              </td>\n              <td class=\"colorCell2\">\n               E-MAIL\n             </td>\n           </tr>\n           <tr ref=\"_rBUH_SEARCH\">\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bOPTIONAL_GLOBAL_ID\" searchable=\"_sOPTIONAL_GLOBAL_ID\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bFIRST_NAME\" searchable=\"_sFIRST_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\" />\n            </td>\n            <td class=\"colorCell2\">\n              <input class=\"input-sm form-control\" value.bind=\"_bEMAIL_ADDRESS\" searchable=\"_sEMAIL_ADDRESS\" />\n            </td>\n          </tr>\n        </thead>\n        <tbody>\n          <tr repeat.for=\"item of varFilterArray | sorttext:'LAST_NAME':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedBUH(item)\">\n            <td>\n              ${item.OPTIONAL_GLOBAL_ID}\n            </td>\n            <td>\n              ${item.FIRST_NAME}\n            </td>\n            <td>\n              ${item.MIDDLE_NAME}\n            </td>\n            <td>\n              ${item.LAST_NAME}\n            </td>\n            <td>\n              ${item.EMAIL_ADDRESS}\n            </td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\n  </ux-dialog-body>\n  <ux-dialog-footer>\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\n  </ux-dialog-footer>\n</ux-dialog>\n</template>"; });
+define('text!modals/change_password.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">CHANGE PASSWORD</span></ux-dialog-header>\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tNew Password:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n                  <input value.bind=\"_NEW_PASSWORD\"  type=\"password\" keyup.trigger=\"keyPressed($event)\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\" click.trigger=\"savePassword()\" value=\"SAVE\" class=\"btn customButton\"/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
+define('text!modals/confirm_dialog.html', ['module'], function(module) { module.exports = "<template>   \r\n          <!-- <modal showing.two-way=\"showing\"  mwidth.bind=\"_width\">\r\n              <modal-header title.bind=\"_setTitle\" close.call=\"closeModal()\"></modal-header>\r\n              <modal-body><div class=\"text-center\"><h4>${_message}</h3></div></modal-body>\r\n              <modal-footer>\r\n                  <button class=\"btn\" click.trigger=\"closeModal()\">Save</button>\r\n                  <au-button text=\"Continue\" click.call=\"confirm()\">Continue</au-button>\r\n                  <au-button text=\"Cancel\" click.call=\"closeModal()\">Close</au-button>\r\n                  \r\n              </modal-footer>\r\n          </modal> -->\r\n\r\n          <ux-dialog>\r\n         <!--<ux-dialog-header class=\"colorHeader\">\r\n      <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> \r\n                    <h4 class=\"modal-title\">LOG-IN</h4>\r\n</ux-dialog-header>-->\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">${_setTitle}</span></ux-dialog-header>\r\n\r\n          <ux-dialog-body>\r\n        <div class=\"text-center\"><h4>${_message}</h3></div>\r\n        </ux-dialog-body>\r\n\r\n        <ux-dialog-footer>\r\n                <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n                <button click.trigger=\"confirm()\">Ok</button>\r\n      </ux-dialog-footer>\r\n       </ux-dialog>\r\n</template>"; });
+define('text!modals/edit-person.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n      <h2>Edit first name</h2>\r\n      <input value.bind=\"person.firstName\" />\r\n    </ux-dialog-body>\r\n\r\n    <ux-dialog-footer>\r\n      <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n      <button click.trigger=\"controller.ok(person)\">Ok</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
+define('text!modals/globalindivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n  <ux-dialog>\r\n  <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:420px; overflow: auto;\">\r\n  <table>\r\n    <tr>\r\n        <td><div style=\"height:300px; overflow: auto;width:550px;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td class=\"colorCell2\" style=\"width:140px\">GLOBAL ID</td>\r\n                        <td class=\"colorCell2\">PERSONNEL NAME</td>\r\n                    </tr>\r\n                    <tr ref=\"_rGROUP_TITLE\">\r\n                        <td class=\"colorCell2\" style=\"width:140px\">\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" style=\"width:140px\"/>\r\n                        </td>\r\n                        <td class=\"colorCell2\" >\r\n                            <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                        </td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n                        <td>${item.GLOBAL_INDIV_ID}</td>\r\n                        <td>${item.PERSONNEL_NAME}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n        <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n    </td>\r\n    <td style=\"vertical-align:top;\">\r\n\r\n\r\n        <div style=\"height:350px; overflow: auto;\">\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n                <thead class=\"table-default\">\r\n                    <tr>\r\n                        <td colspan=3 class=\"colorCell2\" >\r\n                            SELECTED\r\n                        </td>\r\n                    </tr>\r\n                    <tr>\r\n                        <td class=\"colorCell2\"  style=\"width:140px\">\r\n                            GLOBAL ID\r\n                        </td>\r\n                        <td colspan=2 class=\"colorCell2\" >\r\n                            PERSONNEL NAME\r\n                        </td>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of varFilterArraySelected\">\r\n                        <td style=\"width:140px\">\r\n                            ${item.GLOBAL_INDIV_ID}\r\n                        </td>\r\n                        <td>\r\n                            ${item.PERSONNEL_NAME}\r\n                        </td>\r\n                        <td>\r\n                            <button click.delegate=\"$parent.deleteSelected($index)\">X</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n\r\n    </td>\r\n</tr>\r\n<tr>\r\n    <td colspan=2>\r\n        <div style=\"width:100%;text-align:center;\">\r\n            <button style=\"width:20%;\" click.delegate=\"SelectingDone()\">DONE</button>\r\n            <button style=\"width:20%;\" click.delegate=\"ClearSearch()\">CLEAR SEARCH</button>\r\n        </div>\r\n    </td>\r\n</tr>\r\n</table>\r\n</div>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!-- <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n</ux-dialog-footer>    \r\n\r\n</ux-dialog>\r\n</template>\r\n\r\n"; });
+define('text!modals/indivmstr.html', ['module'], function(module) { module.exports = "<template>\r\n <ux-dialog>\r\n   <!--<ux-dialog-header class=\"colorHeader\">\r\n        \r\n                    <h4 class=\"modal-title\">SELECT PERSONNEL(S)</h4>\r\n</ux-dialog-header>-->\n   <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<div style=\"height:420px; overflow: auto;\">\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    GLOBAL ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    PERSONNEL NAME\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rGROUP_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_INDIV_ID\" searchable=\"_sGLOBAL_INDIV_ID\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bPERSONNEL_NAME\" searchable=\"_sPERSONNEL_NAME\" keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PERSONNEL_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedIndiv(item)\">\r\n                <td>\r\n                    ${item.GLOBAL_INDIV_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.PERSONNEL_NAME}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n    <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n          </ux-dialog-body>\r\n\r\n  <ux-dialog-footer>\r\n      <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n<!--       <button click.trigger=\"controller.ok(person)\">Ok</button> -->\r\n    </ux-dialog-footer>    \r\n     </ux-dialog>\r\n</template>\r\n\r\n"; });
+define('text!modals/job.html', ['module'], function(module) { module.exports = "<template>\r\n          <ux-dialog><!--         <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n            <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">SELECT JOB</h4>\r\n</ux-dialog-header>-->\n            <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PERSONNEL(S)</b></span></ux-dialog-header>\r\n          <ux-dialog-body>\r\n          <require from=\"converters/take\"></require>\r\n<require from=\"converters/sorttext\"></require>\r\n<require from=\"tools/gridpaging\"></require>\r\n<table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    JOB GROUP\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    JOB DESCRIPTION\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rJOB_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_GRP\" searchable=\"_sJOB_GRP\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bJOB_DESC\" searchable=\"_sJOB_DESC\" ref=\"refJobDesc\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n             <!-- | sorttext:'JOB_DESC':'ascending' -->\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedJob(item)\">\r\n                <td>\r\n                    ${item.JOB_GRP}\r\n                </td>\r\n                <td>\r\n                    ${item.JOB_DESC}\r\n                </td>\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n       <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n   </ux-dialog-body>\r\n         <ux-dialog-footer>\r\n         <button click.trigger=\"controller.cancel()\">Cancel</button>\r\n       </ux-dialog-footer>\r\n          </ux-dialog>\r\n          \r\n</template>"; });
+define('text!modals/login.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n\t<ux-dialog>\r\n      <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-10px;font-size:15px;\">LOG-IN</span></ux-dialog-header>\r\n\r\n<!-- \t    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n                    <!--<h4 class=\"modal-title\">LOG-IN</h4>-->\r\n    \r\n\r\n\t<ux-dialog-body>\r\n\t<div style=\"width:450px;\">\r\n\t\t<table style=\"margin-left:70px;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tCOMPANY:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select value.bind=\"_COMPANY\" style=\"width:172px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"company of _companies\"  model.bind=\"company\">${company.COMPANY_NAME}</option>\r\n\t\t\t\t\t</select>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tUSER ID:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<select  value.bind=\"_USER\" style=\"width:136px;\">\r\n\t\t\t\t\t\t<option repeat.for=\"user of _user_content\"  model.bind=\"user\">${user.USER_ID}</option>\r\n\t\t\t\t\t</select> \r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\tPASSWORD:\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input value.bind=\"_PASSWORD\" type=\"password\" keyup.trigger=\"keyPressed($event)\"/> &nbsp;<a href=\"#\" click.trigger=\"resetPassword()\">Reset</a>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n          <tr if.bind=\"user_expired\">\r\n            <td>\r\n              NEW PASSWORD:\r\n            </td>\r\n            <td>\r\n              <input value.bind=\"_NEW_PASSWORD\" type=\"password\"/>\r\n            </td>\r\n          </tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\"  disabled.bind=\"disableLogButton\" click.trigger=\"tryLogin()\" value=\"LOG-IN\" class=\"btn customButton\" />\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<!-- <tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input type=\"text\" id=\"endDt\" placeholder=\"Start Date\">\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<input type=\"text\" id=\"startDt\" placeholder=\"End Date\">\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=2 class=\"text-center\">\r\n\t\t\t\t\t<input type=\"button\"  disabled.bind=\"disableLogButton\" click.trigger=\"validateDate()\" value=\"Validate\" class=\"btn customButton\" />\r\n\t\t\t\t</td>\r\n\t\t\t</tr> -->\r\n\t\t</table>\r\n\t\t\r\n\t</div>\r\n</ux-dialog-body>\r\n\r\n<!--<ux-dialog-footer>\r\n<button text=\"Cancel\" class=\"btn\" style=\"background-color: #e6e6e6;margin-bottom:5px;\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n</ux-dialog-footer>-->\r\n\r\n</ux-dialog>\r\n</template>"; });
+define('text!modals/modalcontainer.html', ['module'], function(module) { module.exports = "<template>   \r\n          <modal showing.two-way=\"showing\"  mwidth.bind=\"_width\">\r\n              <modal-header title.bind=\"_setTitle\" close.call=\"closeModal()\"></modal-header>\r\n              <modal-body content-view.bind=\"_setContent\"></modal-body>\r\n              \r\n              <modal-footer>\r\n                  <!-- <button class=\"btn\" click.trigger=\"closeModal()\">Save</button> -->\r\n                  <au-button text=\"Cancel\" click.call=\"closeModal()\">Close</au-button>\r\n                  <!-- <button class=\"btn\" click.trigger=\"hotest()\">Talent 11</button> -->\r\n              </modal-footer>\r\n          </modal>\r\n\r\n       <input type=\"button\" ref=\"btnRef\" class=\"btn btn-xs customButton\" click.delegate=\"showDialog()\" value.bind=\"_buttonTitle\" disabled.bind=\"_isDisableElement\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n</template>"; });
+define('text!modals/paymentterm.html', ['module'], function(module) { module.exports = "<template>\n  <ux-dialog>\n    <!--<ux-dialog-header class=\"colorHeader\">\n      <h4 class=\"modal-title\">SELECT PAYMENT TERM</h4>\n    </ux-dialog-header>-->\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SELECT PAYMENT TERM</b></span></ux-dialog-header>\n\n    <ux-dialog-body>\n      <table keyup.delegate=\"fnKeyup($event,'')\"  class=\"table table-hover table-condensed table-bordered table-striped \">\n        <tbody>\n          <tr repeat.for=\"item of varFilterArray\" click.delegate=\"$parent.selectedTerm(item)\">\n            <td>\n              ${item.REF_DESC}\n            </td>\n          </tr>\n        </tbody>\n      </table>\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\n    </ux-dialog-body>\n    <ux-dialog-footer>\n     <button click.trigger=\"controller.cancel()\">Cancel</button>\n   </ux-dialog-footer>\n </ux-dialog>\n</template>"; });
+define('text!modals/program.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <ux-dialog-body>\r\n\r\n      <require from=\"converters/take\"></require>\r\n      <require from=\"converters/sorttext\"></require>\r\n      <require from=\"tools/gridpaging\"></require>\r\n      <div style=\"height:500px!important;overflow:auto;\">\r\n        <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n          <thead class=\"table-default\">\r\n            <tr>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM CODE\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                PROGRAM NAME\r\n              </td>\r\n            </tr>\r\n            <tr ref=\"_rBUDGET_TITLE\">\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_CD\" searchable=\"_sPROGRAM_CD\" />\r\n              </td>\r\n              <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bPROGRAM_TITLE\" searchable=\"_sPROGRAM_TITLE\" />\r\n              </td>\r\n            </tr>\r\n          </thead>\r\n          <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | sorttext:'PROGRAM_TITLE':'ascending' | take:20:pageindex\" click.delegate=\"$parent.selectedProgram(item)\">\r\n              <td>\r\n                ${item.PROGRAM_CD}\r\n              </td>\r\n              <td>\r\n                ${item.PROGRAM_TITLE}\r\n              </td>\r\n            </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n    </ux-dialog-body>\r\n    <ux-dialog-footer>\r\n      <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n    </ux-dialog-footer>\r\n  </ux-dialog>\r\n</template>"; });
+define('text!modals/talentmanagergroups.html', ['module'], function(module) { module.exports = "<template>\r\n    <ux-dialog>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sort\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <table class=\"table table-hover table-condensed table-bordered table-striped \">\r\n    <thead class=\"table-default\">\r\n        <tr>\r\n            <td class=\"colorCell2\">\r\n                GLOBAL ID\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                GROUP NAME\r\n            </td>\r\n        </tr>\r\n        <tr ref=\"_rGROUP_TITLE\">\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_GRP_ID\" searchable=\"_sGLOBAL_GRP_ID\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n            <td class=\"colorCell2\">\r\n                <input class=\"input-sm form-control\" value.bind=\"_bGROUP_NAME\" searchable=\"_sGROUP_NAME\" keyup.delegate=\"fnKeyup($event,'')\"/>\r\n            </td>\r\n        </tr>\r\n    </thead>\r\n    <tbody>\r\n        <tr repeat.for=\"item of varFilterArray | sort:'GROUP_NAME':'ascending' | take:10:pageindex\" click.delegate=\"$parent.selectedTalent(item)\">\r\n            <td>\r\n                ${item.GLOBAL_GRP_ID}\r\n            </td>\r\n            <td>\r\n                ${item.GROUP_NAME}\r\n            </td>\r\n        </tr>\r\n    </tbody>\r\n</table>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\" divby.bind=\"10\"></gridpaging>\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n    <button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n  </ux-dialog-footer>\r\n</ux-dialog>\r\n</template>"; });
+define('text!ppfcs/actual_cost/actual_cost.html', ['module'], function(module) { module.exports = "<template>\r\n  <!--    <iframe src=\"http://localhost:15253\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe> -->\r\n  <iframe src=\"http://absppms2:8084\" style=\"width:100%;height:100%;border:0px;margin-top:20px;\"></iframe>\r\n  </template>"; });
+define('text!ppid/forms/awards.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\t\t\t\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Language / Dialect</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table style=\"width:100%;\">\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Award<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.AWARD.model.award_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.AWARD_HEAD\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Project Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\" tabindex=\"3\" value.bind=\"obj_personnel.AWARD.model.project_name\">\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Remarks<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical; width: 100%;\" disabled.bind=\"_disableForm\" tabindex=\"5\" value.bind=\"obj_personnel.AWARD.model.remarks\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Award Giving Body<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.AWARD.model.award_body_cd\" disabled.bind=\"_disableForm\" tabindex=\"2\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.AWARD_BODY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date Received<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" id=\"award_receive_dt\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.AWARD.model.receive_dt\">\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Award</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Award Giving Body</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date Received</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Project Name</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.AWARD.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.award_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.award_body_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.receive_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.project_name}</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.AWARD.list == null || obj_personnel.AWARD.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/awards_training.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./awards\"></require>\t\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t\r\n\t\t\t<li role=\"presentation\" class=\"active\" id=\"award\"><a href=\"#awards\" aria-controls=\"e_a_s_t_awards\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_AwardsTraining(0)\">Awards</a></li>\r\n\t\t\t<li role=\"presentation\" id=\"training\"><a href=\"#trainings\" aria-controls=\"e_a_s_t_seminar_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_AwardsTraining(1)\">Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"awards\" style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<awards></awards>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"trainings\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/company_info.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\t\r\n\t<require from=\"./company_info_main\"></require>\r\n\t<!-- <require from=\"./company_info_work_exp\"></require> -->\r\n\t<!-- <require from=\"./company_info_character_ref\"></require> -->\r\n\t<!-- <require from=\"./company_info_medical_rec\"></require> -->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\" id=\"company_tab_list\">\r\n\t\t\t<li role=\"presentation\" id=\"company_tab0\" class=\"active\" ><a href=\"#company_specific\" aria-controls=\"company_specific\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(0)\" >Company Specific</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" id=\"company_tab1\" ><a href=\"#company_work_exp\" aria-controls=\"company_work_exp\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(1)\" >Work Experience</a></li> -->\r\n\t\t\t<!-- <li role=\"presentation\" id=\"company_tab2\" ><a href=\"#company_char_ref\" aria-controls=\"company_char_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(2)\">Character reference</a></li> -->\r\n\t\t\t<!-- <li role=\"presentation\" id=\"company_tab3\" ><a href=\"#company_medical_rec\" aria-controls=\"company_medical_rec\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(3)\" >Medical Record</a></li> -->\r\n\t\t\t<li role=\"presentation\" id=\"company_tab4\" ><a href=\"#company_endorsement\" aria-controls=\"company_endorsement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(4)\" >Endorsement</a></li>\r\n\t\t\t<li role=\"presentation\" id=\"company_tab5\" ><a href=\"#company_branding\" aria-controls=\"company_branding\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_Company(5)\" >Image Branding / Target Market</a></li>\r\n\t\t</ul>\r\n\t\t\r\n\t\t<div class='tab-content' id=\"company_tabs\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"company_specific\"  style=\"height:550px; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<company_info_main></company_info_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_endorsement\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_branding\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_medical_rec\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\t\t\t\t\r\n\t\t\t\t<company_info_medical_rec></company_info_medical_rec>\r\n\t\t\t</div>  -->\r\n\r\n\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_work_exp\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<company_info_work_exp></company_info_work_exp>\r\n\t\t\t</div> -->\r\n\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_char_ref\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\t\t\t\t\t\t\t\r\n\t\t\t\t<company_info_character_ref></company_info_character_ref>\r\n\t\t\t</div>\t -->\r\n\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/company_info_character_ref.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Character Reference</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Name*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CHARACTER_REF.model.full_name\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Contact Number*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CHARACTER_REF.model.phone_no\" tabindex=\"4\" disabled.bind=\"_disableForm\" keypress.trigger=\"IsDigit($event)\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CHARACTER_REF.model.company_name\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Other Job</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CHARACTER_REF.model.job_other\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr >\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Job</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CHARACTER_REF.model.job_id\" tabindex=\"3\" disabled.bind=\"_disableForm\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" tabindex=\"3\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.CHARACTER_REF.model.job_id\">\r\n\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.JOB\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Company</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Contact Number</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Job</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Other Job</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CHARACTER_REF.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.full_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.company_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.phone_no}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.job_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.job_other}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CHARACTER_REF.list == null || obj_personnel.CHARACTER_REF.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
@@ -32447,32 +32451,37 @@ define('text!ppid/forms/company_info_main.html', ['module'], function(module) { 
 define('text!ppid/forms/company_info_medical_rec.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Medical Information</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Endorsed by*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.MEDICAL_RECORD.model.endorsed_by\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Results / Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none; width: 100%;\" value.bind=\"obj_personnel.MEDICAL_RECORD.model.result_remarks\" tabindex=\"3\" disabled.bind=\"_disableForm\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"med_exam_dt\" value.bind=\"obj_personnel.MEDICAL_RECORD.model.medical_exam_dt\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Fit to work*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2;\" type=\"checkbox\" id=\"fit_to_work_fl\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 250px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Endorsed By</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Medical Exam Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Fit to Work</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.MEDICAL_RECORD.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.endorsed_by}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.medical_exam_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" disabled checked.bind=\"item.fit_to_work_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.result_remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.MEDICAL_RECORD.list == null || obj_personnel.MEDICAL_RECORD.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/company_info_work_exp.html', ['module'], function(module) { module.exports = "<template>\t\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Work Experience</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer*</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.employer\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">From*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"startDt\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.start_dt\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Salary</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.salary\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">To*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"endDt\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.end_dt\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Position*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.position_cd\" tabindex=\"6\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.POSITION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Present</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" type=\"checkbox\" checked.bind=\"obj_personnel.WORK_EXPERIENCE.model.present_fl\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Free Lance</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 155px;\" type=\"checkbox\" checked.bind=\"obj_personnel.WORK_EXPERIENCE.model.freelance_fl\" tabindex=\"7\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Reason for leaving*</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none; width: 100%;\" value.bind=\"obj_personnel.WORK_EXPERIENCE.model.reason_for_leaving\" tabindex=\"8\" disabled.bind=\"_disableForm\" ></textarea>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  disabled.bind=\"_disableBtnAdd\" click.delegate=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.delegate=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"clearField()\" >Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 220px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Position</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Salary</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">is Present</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Free Lancer</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Reason for leaving</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.WORK_EXPERIENCE.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.employer}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.end_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.position}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.salary}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" checked.bind=\"item.present_fl==1\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" checked.bind=\"item.freelance_fl==1\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.reason_for_leaving}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.delegate=\"btnEdit(item)\" disabled.bind=\"_disableBtnEdit\" >-</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.delegate=\"btnRemove(item)\" disabled.bind=\"_disableBtnRemove\" >X</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.WORK_EXPERIENCE.list == null || obj_personnel.WORK_EXPERIENCE.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/gov_info.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./gov_info_main\"></require>\r\n\t<require from=\"./gov_info_exam_passed\"></require>\r\n\t<require from=\"./gov_info_criminal_rec\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" id=\"gov_tab0\" ><a href=\"#gov_info_main\" aria-controls=\"gov_info_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(0)\">Government Information</a></li>\r\n\t\t\t<li role=\"presentation\" id=\"gov_tab1\" ><a href=\"#gov_exam_passed\" aria-controls=\"gov_exam_passed\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(1)\" >Government Exam Passed</a></li>\r\n\t\t\t<li role=\"presentation\" id=\"gov_tab2\"><a href=\"#gov_criminal_rec\" aria-controls=\"gov_criminal_rec\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(2)\" >Criminal / Civil / Labor and administrative case</a></li>\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content' id=\"gov_info_tabs\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"gov_info_main\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_main></gov_info_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_exam_passed\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_exam_passed></gov_info_exam_passed>\t\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_criminal_rec\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_criminal_rec></gov_info_criminal_rec>\t\t\t\t\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/gov_info_criminal_rec.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Civil and Labor/Criminal Case</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Case Number*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.case_no\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start Date*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" disabled.bind=\"_disableFormCivil\" id=\"civil_start_dt\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status Code*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" disabled.bind=\"_disableFormCivil\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"2\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.case_stat_cd\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CASE_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Case Description*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical;\" tabindex=\"5\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.case_desc\"></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr style=\"height: 35px;\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Civil</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" disabled.bind=\"_disableFormCivil\" /> -->\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" tabindex=\"3\" disabled.bind=\"_disableFormCivil\" id=\"criminal_fl\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical;\" tabindex=\"6\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.remarks\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAddCivil\" click.trigger=\"btnAddCivil()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSaveCivil\" click.trigger=\"validateCivil()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearFieldCivil()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Case Number</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Civil/Criminal</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Case Description</td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CRIMINAL_RECORD.civil.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_no}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_stat_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.criminal_fl==\"1\"?\"Criminal\":\"Civil\"}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_desc}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEditCivil(item)\" disabled.bind=\"_disableTableCivil\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemoveCivil(item)\" disabled.bind=\"_disableTableCivil\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CRIMINAL_RECORD.civil.list == null || obj_personnel.CRIMINAL_RECORD.civil.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedByCivil}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedByCivil}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t\t<br/>\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Administrative Case</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<!-- <tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableFormAdministrative\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr> -->\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"1\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.global_company_id\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of ddCompany\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start Date*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" disabled.bind=\"_disableFormAdministrative\" id=\"admin_eff_start_dt\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.eff_start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Violation*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"2\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.violation_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.VIOLATION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End Date*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"5\" disabled.bind=\"_disableFormAdministrative\" id=\"admin_eff_end_dt\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.eff_end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" disabled.bind=\"_disableFormAdministrative\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"3\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.case_stat_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CASE_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical;\" tabindex=\"6\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.remarks\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAddAdministrative\" click.trigger=\"btnAddAdministrative()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSaveAdministrative\" click.trigger=\"validateAdministrative()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearFieldAdministrative()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Violation Code</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End Date</td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Company</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CRIMINAL_RECORD.administrative.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.violation_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_stat_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.eff_start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.eff_end_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.company_nm}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEditAdministrative(item)\" disabled.bind=\"_disableTableAdministrative\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btmRemoveAdministrative(item)\" disabled.bind=\"_disableTableAdministrative\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.list == null || obj_personnel.CRIMINAL_RECORD.administrative.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedByAdministrative}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedByAdministrative}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/gov_info_exam_passed.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Government Exam Passed</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Exam*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.exam_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.EXAM\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none; width: 100%;\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.remarks\" tabindex=\"3\" disabled.bind=\"_disableForm\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Rating/Grade (%)*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.rating_grade\" tabindex=\"2\" disabled.bind=\"_disableForm\" keypress.trigger=\"DigitOnly($event)\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"exam_dt\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.exam_dt\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 250px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Exam Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Rating/Grade (%)</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date Taken</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_EXAM.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.exam_nm}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.rating_grade}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.exam_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_EXAM.list == null || obj_personnel.GOVERNMENT_EXAM.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/gov_info_criminal_rec.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Civil and Labor/Criminal Case</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Case Number<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.case_no\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start Date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" disabled.bind=\"_disableFormCivil\" id=\"civil_start_dt\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status Code<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" disabled.bind=\"_disableFormCivil\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"2\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.case_stat_cd\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CASE_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Case Description<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical;\" tabindex=\"5\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.case_desc\"></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr style=\"height: 35px;\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Civil</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" disabled.bind=\"_disableFormCivil\" /> -->\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" tabindex=\"3\" disabled.bind=\"_disableFormCivil\" id=\"criminal_fl\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical;\" tabindex=\"6\" disabled.bind=\"_disableFormCivil\" value.bind=\"obj_personnel.CRIMINAL_RECORD.civil.model.remarks\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAddCivil\" click.trigger=\"btnAddCivil()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSaveCivil\" click.trigger=\"validateCivil()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearFieldCivil()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Case Number</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Civil/Criminal</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Case Description</td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CRIMINAL_RECORD.civil.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_no}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_stat_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.criminal_fl==\"1\"?\"Criminal\":\"Civil\"}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_desc}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEditCivil(item)\" disabled.bind=\"_disableTableCivil\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemoveCivil(item)\" disabled.bind=\"_disableTableCivil\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CRIMINAL_RECORD.civil.list == null || obj_personnel.CRIMINAL_RECORD.civil.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedByCivil}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedByCivil}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t\t<br/>\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Administrative Case</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<!-- <tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableFormAdministrative\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr> -->\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Company<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"1\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.global_company_id\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of ddCompany\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Start Date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" disabled.bind=\"_disableFormAdministrative\" id=\"admin_eff_start_dt\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.eff_start_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Violation<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"2\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.violation_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.VIOLATION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">End Date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"5\" disabled.bind=\"_disableFormAdministrative\" id=\"admin_eff_end_dt\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.eff_end_dt\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\t\t\t\t\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" disabled.bind=\"_disableFormAdministrative\" /> -->\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" tabindex=\"3\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.case_stat_cd\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CASE_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: vertical;\" tabindex=\"6\" disabled.bind=\"_disableFormAdministrative\" value.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.model.remarks\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAddAdministrative\" click.trigger=\"btnAddAdministrative()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSaveAdministrative\" click.trigger=\"validateAdministrative()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearFieldAdministrative()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Violation Code</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Start Date</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">End Date</td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Company</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CRIMINAL_RECORD.administrative.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.violation_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.case_stat_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.eff_start_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.eff_end_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.company_nm}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEditAdministrative(item)\" disabled.bind=\"_disableTableAdministrative\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btmRemoveAdministrative(item)\" disabled.bind=\"_disableTableAdministrative\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CRIMINAL_RECORD.administrative.list == null || obj_personnel.CRIMINAL_RECORD.administrative.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedByAdministrative}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedByAdministrative}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/gov_info_exam_passed.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Government Exam Passed</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Exam<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.exam_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.EXAM\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Remarks</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<textarea style=\"overflow-y: scroll; resize: none; width: 100%;\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.remarks\" tabindex=\"3\" disabled.bind=\"_disableForm\" ></textarea>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Rating/Grade (%)<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.rating_grade\" tabindex=\"2\" disabled.bind=\"_disableForm\" keypress.trigger=\"DigitOnly($event)\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"exam_dt\" value.bind=\"obj_personnel.GOVERNMENT_EXAM.model.exam_dt\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 250px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Exam Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Rating/Grade (%)</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date Taken</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_EXAM.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.exam_nm}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.rating_grade}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.exam_dt}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_EXAM.list == null || obj_personnel.GOVERNMENT_EXAM.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/gov_info_group.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./gov_info_group_main\"></require>\r\n\t<!-- <require from=\"./gov_info_exam_passed\"></require> -->\r\n\t<require from=\"./gov_info_criminal_rec\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" id=\"gov_tab0\" ><a href=\"#gov_info_main\" aria-controls=\"gov_info_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(0)\">Government Information</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" id=\"gov_tab1\" ><a href=\"#gov_exam_passed\" aria-controls=\"gov_exam_passed\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(1)\" >Government Exam Passed</a></li> -->\r\n\t\t\t<li role=\"presentation\" id=\"gov_tab2\"><a href=\"#gov_criminal_rec\" aria-controls=\"gov_criminal_rec\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_GovInfo(2)\" >Criminal / Civil / Labor and administrative case</a></li>\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content' id=\"gov_info_tabs\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"gov_info_main\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_group_main></gov_info_group_main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_exam_passed\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_exam_passed></gov_info_exam_passed>\t\t\t\t\r\n\t\t\t</div> -->\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_criminal_rec\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<gov_info_criminal_rec></gov_info_criminal_rec>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/gov_info_group_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 500px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table style=\"width: 100%\">\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Tax Information</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax ID Number(TIN)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled value.bind=\"obj_personnel.GOVERNMENT_INFO.tin\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Exemption*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.tax_exempt_cd\" tabindex=\"1\" disabled >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.TAX_EXEMPT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Type</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.input_tax_cd\" tabindex=\"2\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.INPUT_TAX\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" id=\"affidavit_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_TaxAffidavit()\" tabindex=\"5\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 120px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.tax_affidavit\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_TaxAffidavit(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.tax_affidavit == null || obj_personnel.GOVERNMENT_INFO.tax_affidavit.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Government permits</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t \t<table>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd\" disabled.bind=\"_disableForm\" tabindex=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PERMIT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"6\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"7\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"8\" id=\"expiry_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"9\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"\" tabindex=\"10\" />&nbsp;&nbsp; -->\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Permit()\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t \t\t\t\t<div style=\"height:120px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t \t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td class=\"colorCell\">Edit</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.permits\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.expiry_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.poi}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td>-</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Permit(item)\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.permits == null || obj_personnel.GOVERNMENT_INFO.permits.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t \t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t \t\t\t\t</div>\r\n\t\t\t\t\t\t\t \t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Other Government Info</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Classification*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_stat_cd\" tabindex=\"11\" disabled >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.VAT_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Registration Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"12\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_reg_dt\" id=\"vat_reg_dt\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">SSS Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"13\" value.bind=\"obj_personnel.GOVERNMENT_INFO.sss_no\" id=\"_sss\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_sss', '__-_______-_')\" placeholder=\"00-0000000-00\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">PAG-IBIG Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"14\" value.bind=\"obj_personnel.GOVERNMENT_INFO.pagibig_no\" id=\"_pagibig\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_pagibig', '____-____-____')\" placeholder=\"0000-0000-0000\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Philhealth</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"15\" value.bind=\"obj_personnel.GOVERNMENT_INFO.philhealth_no\" id=\"_philhealth\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_philhealth', '__-_________-_')\" placeholder=\"00-000000000-0\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">National ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"16\" value.bind=\"obj_personnel.GOVERNMENT_INFO.national_id\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Voter's ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"17\" value.bind=\"obj_personnel.GOVERNMENT_INFO.voters_id\" disabled />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<!-- <tr hidden.bind=\"!_disableOtherGovernmentInfo\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>\r\n\t\t\t\t\t\t\t\t\t\t\t\tNOTE:FORM WAS DISABLED, CALL HR ADMIN [ROMEL PALCES LOC. 4594 OR TRISH CRUZ LOC. 4356] IF YOU WISH TO CHANGE YOUR INFO.\r\n\t\t\t\t\t\t\t\t\t\t\t</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr> -->\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" tabindex=\"18\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/gov_info_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 500px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table style=\"width: 100%\">\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Tax Information</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax ID Number(TIN)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled value.bind=\"obj_personnel.GOVERNMENT_INFO.tin\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Exemption*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.tax_exempt_cd\" tabindex=\"1\"  >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.TAX_EXEMPT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Type</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.input_tax_cd\" tabindex=\"2\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.INPUT_TAX\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" id=\"affidavit_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_TaxAffidavit()\" tabindex=\"5\"  />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 120px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.tax_affidavit\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_TaxAffidavit(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.tax_affidavit == null || obj_personnel.GOVERNMENT_INFO.tax_affidavit.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Government permits</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t \t<table>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd\" disabled.bind=\"_disableForm\" tabindex=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PERMIT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"6\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"7\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"8\" id=\"expiry_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"9\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"\" tabindex=\"10\" />&nbsp;&nbsp; -->\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Permit()\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t \t\t\t\t<div style=\"height:120px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t \t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td class=\"colorCell\">Edit</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.permits\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.expiry_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.poi}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td>-</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Permit(item)\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.permits == null || obj_personnel.GOVERNMENT_INFO.permits.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t \t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t \t\t\t\t</div>\r\n\t\t\t\t\t\t\t \t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Other Government Info</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Classification*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_stat_cd\" tabindex=\"11\" disabled.bind=\"_disableOtherGovernmentInfo\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.VAT_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Registration Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"12\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_reg_dt\" id=\"vat_reg_dt\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">SSS Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"13\" value.bind=\"obj_personnel.GOVERNMENT_INFO.sss_no\" id=\"_sss\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_sss', '__-_______-_')\" placeholder=\"00-0000000-00\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">PAG-IBIG Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"14\" value.bind=\"obj_personnel.GOVERNMENT_INFO.pagibig_no\" id=\"_pagibig\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_pagibig', '____-____-____')\" placeholder=\"0000-0000-0000\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Philhealth</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"15\" value.bind=\"obj_personnel.GOVERNMENT_INFO.philhealth_no\" id=\"_philhealth\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_philhealth', '__-_________-_')\" placeholder=\"00-000000000-0\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">National ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"16\" value.bind=\"obj_personnel.GOVERNMENT_INFO.national_id\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Voter's ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"17\" value.bind=\"obj_personnel.GOVERNMENT_INFO.voters_id\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"!_disableOtherGovernmentInfo\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>\r\n\t\t\t\t\t\t\t\t\t\t\t\tNOTE:FORM WAS DISABLED, CALL HR ADMIN [ROMEL PALCES LOC. 4594 OR TRISH CRUZ LOC. 4356] IF YOU WISH TO CHANGE YOUR INFO.\r\n\t\t\t\t\t\t\t\t\t\t\t</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" tabindex=\"18\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/gov_info_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 500px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table style=\"width: 100%\">\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Tax Information</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax ID Number(TIN)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled value.bind=\"obj_personnel.GOVERNMENT_INFO.tin\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Exemption<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.tax_exempt_cd\" tabindex=\"1\"  >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.TAX_EXEMPT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Type</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.input_tax_cd\" tabindex=\"2\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.INPUT_TAX\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"4\" id=\"affidavit_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelTaxAffidavit.affidavit_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<!--</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>-->\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_TaxAffidavit()\" tabindex=\"5\"  />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 120px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Tax Affidavit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.tax_affidavit\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.affidavit_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_TaxAffidavit(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.tax_affidavit == null || obj_personnel.GOVERNMENT_INFO.tax_affidavit.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<br/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Government permits</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t \t<table>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_cd\" disabled.bind=\"_disableForm\" tabindex=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PERMIT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"6\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"7\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.permit_no\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"8\" id=\"expiry_dt\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.expiry_dt\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.modelPermit.place_of_issue\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"9\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"\" tabindex=\"10\" />&nbsp;&nbsp; -->\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Permit()\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t\t<tr>\r\n\t\t\t\t\t\t\t \t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t \t\t\t\t<div style=\"height:120px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t \t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Gov't Permit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permit Number</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Expiry Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Place Issued</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td class=\"colorCell\">Edit</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GOVERNMENT_INFO.permits\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.permit_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.expiry_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.poi}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!-- <td>-</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Permit(item)\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GOVERNMENT_INFO.permits == null || obj_personnel.GOVERNMENT_INFO.permits.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"5\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t \t\t\t\t\t\t\r\n\t\t\t\t\t\t\t \t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t \t\t\t\t</div>\r\n\t\t\t\t\t\t\t \t\t\t</td>\r\n\t\t\t\t\t\t\t \t\t</tr>\r\n\t\t\t\t\t\t\t \t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Other Government Info</h5>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Classification<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_stat_cd\" tabindex=\"11\" disabled.bind=\"_disableOtherGovernmentInfo\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.VAT_STAT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">VAT Registration Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"12\" value.bind=\"obj_personnel.GOVERNMENT_INFO.vat_reg_dt\" id=\"vat_reg_dt\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">SSS Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"13\" value.bind=\"obj_personnel.GOVERNMENT_INFO.sss_no\" id=\"_sss\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_sss', '__-_______-_')\" placeholder=\"00-0000000-00\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">PAG-IBIG Number</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"14\" value.bind=\"obj_personnel.GOVERNMENT_INFO.pagibig_no\" id=\"_pagibig\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_pagibig', '____-____-____')\" placeholder=\"0000-0000-0000\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Philhealth</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"15\" value.bind=\"obj_personnel.GOVERNMENT_INFO.philhealth_no\" id=\"_philhealth\" keypress.trigger=\"isDigit($event)\" keyup.trigger=\"input_mask('_philhealth', '__-_________-_')\" placeholder=\"00-000000000-0\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">National ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"16\" value.bind=\"obj_personnel.GOVERNMENT_INFO.national_id\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t \t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Voter's ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"17\" value.bind=\"obj_personnel.GOVERNMENT_INFO.voters_id\" disabled.bind=\"_disableOtherGovernmentInfo\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"!_disableOtherGovernmentInfo\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>\r\n\t\t\t\t\t\t\t\t\t\t\t\tNOTE:FORM WAS DISABLED, CALL HR ADMIN [ROMEL PALCES LOC. 4594 OR TRISH CRUZ LOC. 4356] IF YOU WISH TO CHANGE YOUR INFO.\r\n\t\t\t\t\t\t\t\t\t\t\t</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" tabindex=\"18\">Save</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/group.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"./group_main\"></require>\r\n\t<require from=\"./main_contact\"></require>\r\n\t<!-- <require from=\"./main_educational\"></require> -->\r\n\t<require from=\"./main_skills\"></require>\r\n\t<!-- <require from=\"./main_language\"></require> -->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center;\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#group_main\" aria-controls=\"group_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_group(0)\">Group details</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#group_contact\" aria-controls=\"group_contact\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_group(1)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Contact</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" ><a href=\"#group_educ_achievement\" aria-controls=\"group_educ_achievement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_group(2)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Educational Achievement</a></li>\t\t\t -->\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#group_skills_talent\" aria-controls=\"group_skills_talent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_group(4)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Skills/Talent</a></li>\r\n\t\t\t<!-- <li role=\"presentation\" style=\"\"><a href=\"#group_lang_dialect\" aria-controls=\"group_lang_dialect\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_group(5)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Language/Dialect</a></li>\t\t\t -->\r\n\t\t</ul>\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"group_main\"  style=\"height:550px; margin-left:auto; margin-right:auto;\" >\r\n\t\t\t\t<br/>\r\n\t\t\t\t<group_main></group_main>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"group_contact\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\" >\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_contact></main_contact>\r\n\t\t\t</div>\r\n\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"group_educ_achievement\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\" >\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_educational></main_educational>\r\n\t\t\t</div> -->\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"group_skills_talent\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\" >\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_skills></main_skills>\r\n\t\t\t</div>\r\n\r\n\t\t\t<!-- <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"group_lang_dialect\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\" >\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_language></main_language>\r\n\t\t\t</div> -->\r\n\t\t</div>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/group_main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.GROUP_INFO.model.country_cd\" tabindex=\"1\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Group Name*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.GROUP_INFO.model.group_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: top; padding-top: 4px;\" class=\"text-left\">Country Base</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.GROUP_INFO.model.country_base_cd\" tabindex=\"6\" >\r\n\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">TIN*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.GROUP_INFO.model.tin\" id=\"_tin\" keypress.trigger=\"DigitOnly($event)\" keyup.trigger=\"mask('_tin', '___-___-___-___')\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Founding Date*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"fDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.GROUP_INFO.model.establish_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location Base</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.GROUP_INFO.model.location_base_cd\" tabindex=\"7\" >\r\n\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">GLOBAL ID*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled value.bind=\"obj_personnel.GROUP_INFO.model.global_id\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.GROUP_INFO.model.status_cd\" tabindex=\"8\" >\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"status of obj_personnel.STATUS\" value.bind=\"status.value\">${status.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.GROUP_INFO.model.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t<td colspan=\"2\" class=\"text-center\"><strong>Suspension Date</strong></td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.GROUP_INFO.model.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">From</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionFrom\" value.bind=\"obj_personnel.GROUP_INFO.model.suspension_start\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.GROUP_INFO.model.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">To</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionTo\" value.bind=\"obj_personnel.GROUP_INFO.model.suspension_end\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSearch\" click.trigger=\"fnGroup('EDIT')\">EDIT GROUP</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableCreate\" click.trigger=\"fnGroup('CREATE')\" >CREATE GROUP</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableClear\" click.trigger=\"fnGroup('CLEAR')\" >CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<!--<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableResetData\" click.trigger=\"fnPersonnel('RESET')\">RESET/REFRESH</button>&nbsp;&nbsp;-->\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSave\" click.trigger=\"fnGroup('SAVE')\">${_lblBtnSave} GROUP</button>&nbsp;&nbsp;\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<br/>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Members</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<br/>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableAddMember\" click.trigger=\"btnAddNewMember()\">ADD NEW MEMBER</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableCreatePersonnel\" click.trigger=\"btnAddNewPersonnel()\" >ADD NEW PERSONNEL</button>&nbsp;&nbsp;\t\t\t\t\t\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 230px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Member's Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.GROUP_INFO.members\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.fullname}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >View Profile</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemoveMember(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.GROUP_INFO.members == null || obj_personnel.GROUP_INFO.members.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n</template>"; });
-define('text!ppid/forms/main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./main_contact\"></require>\r\n\t<require from=\"./main_educational\"></require>\r\n\t<require from=\"./main_skills\"></require>\r\n\t<require from=\"./main_language\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center;\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main_main\" aria-controls=\"main_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(0)\">Employee Personal Info</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_contact\" aria-controls=\"main_contact\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(1)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Contact</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_educ_achievement\" aria-controls=\"main_educ_achievement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(2)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Educational Achievement</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_char_interest\" aria-controls=\"main_char_interest\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(3)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Characteristic/Interest</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_skills_talent\" aria-controls=\"main_skills_talent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(4)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Skills/Talent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_lang_dialect\" aria-controls=\"main_lang_dialect\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(5)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Language/Dialect</a></li>\t\t\t\r\n\t\t</ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main_main\"  style=\"height:550px; margin-left:auto; margin-right:auto;\" >\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t\t<table style=\"margin-left: 25px;\">\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_cd\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Surname*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.last_name\" disabled.bind=\"_disableForm\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr style=\"height:35px;\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gender*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<label repeat.for=\"g of gender\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"_gender\" value.bind=\"g\" checked.bind=\"selectedGender\" disabled.bind=\"_disableForm\" tabindex=\"6\" />${g}\r\n\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<span style=\"margin: 20px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"M\" checked.bind=\"selectedGender\" />Male \r\n\t\t\t\t\t\t\t\t\t\t\t</span>\r\n\t\t\t\t\t\t\t\t\t\t\t<span>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"F\" checked.bind=\"selectedGender\" />Female\r\n\t\t\t\t\t\t\t\t\t\t\t</span>-->\r\n\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth place</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.birth_place\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Civil Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.civil_status\" disabled.bind=\"_disableForm\" tabindex=\"12\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CIVIL_STATUS\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"15\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_citizenship\" class='ddCitizenship' disabled.bind=\"_disableForm\" tabindex=\"18\" id=\"citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CITIZENSHIP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Citizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllCitizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"citi of obj_personnel.HEADER.citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeCitizenship(citi)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n\t\t\t\t\t\t\t\t<table style=\"padding: 0px; margin: 0px;\">\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Global ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\"  value.bind=\"obj_personnel.HEADER.global_indiv_id\" readonly />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.given_name\" disabled.bind=\"_disableForm\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Alias/NickName</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.alias\" disabled.bind=\"_disableForm\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"birthDate\" value.bind=\"obj_personnel.HEADER.birth_dt\" disabled.bind=\"_disableForm\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Religion*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.religion_cd\" disabled.bind=\"_disableForm\" tabindex=\"13\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELIGION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">If Alien, ACR No.</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.acr_no\" disabled.bind=\"_disableForm\" tabindex=\"16\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Group Name(s)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_group\" class=\"ddGroup\" disabled.bind=\"_disableForm\" tabindex=\"19\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.GROUP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Group()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr></tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>-->\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width: 300px;\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllGroup()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"grp of obj_personnel.HEADER.group\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeGroup(grp)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table style=\"margin: 0px; padding: 0px;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">TIN*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.tin\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"2\" id=\"_tin\" keypress.trigger=\"DigitOnly($event)\" keyup.trigger=\"mask('_tin', '___-___-___-___')\" />\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Middle Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.middle_name\" disabled.bind=\"_disableForm\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle; padding: 0px;\" class=\"text-left\">Mother's Maiden Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.mother_maiden_name\" disabled.bind=\"_disableForm\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  readonly value.bind=\"obj_personnel.HEADER.age\" disabled.bind=\"_disableForm\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.location_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"14\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">STATUS</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.status_cd\" disabled.bind=\"_disableForm\" tabindex=\"17\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"status of obj_personnel.STATUS\" value.bind=\"status.value\">${status.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\" class=\"text-center\"><strong>Suspension Date</strong></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionFrom\" value.bind=\"obj_personnel.HEADER.suspension_start\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionTo\" value.bind=\"obj_personnel.HEADER.suspension_end\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<!-- -   <img if.bind=\"cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=abslogo_BIG.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/>  -->\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"width: 150px; height: 150px; border: dashed 2px black;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<img src.bind=\"primary_img\" style=\"height: 100%; width: 100%;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"btnUpload()\">Add/Edit Photo</button>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<h5>\r\n\t\t\t\t\t\t( <strong>Note</strong> : * is required )\r\n\t\t\t\t\t</h5>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSearchPersonnel\" click.trigger=\"fnPersonnel('EDIT')\">EDIT PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableCreatePersonnel\" click.trigger=\"fnPersonnel('CREATE')\" >CREATE PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableClearData\" click.trigger=\"fnPersonnel('CLEAR')\" >CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<!--<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableResetData\" click.trigger=\"fnPersonnel('RESET')\">RESET/REFRESH</button>&nbsp;&nbsp;-->\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"fnPersonnel('SAVE')\">SAVE PERSONNEL</button>&nbsp;&nbsp;\r\n\r\n\t\t\t\t</div>\r\n\r\n\t\t\t\t<br/>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${obj_personnel.HEADER.created_by +' '+ obj_personnel.HEADER.created_dt}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${obj_personnel.HEADER.last_updated_by +' '+ obj_personnel.HEADER.last_updated_dt }</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!-- <td>\r\n\t\t\t\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<strong>${obj_personnel.USER.USER_ID}</strong> \r\n\t\t\t\t\t\t\t</td> -->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_contact\"  style=\"height:550px; margin-left:auto; margin-right:auto;  overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_contact></main_contact>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_educ_achievement\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll; \">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_educational></main_educational>\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_char_interest\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_skills_talent\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_skills></main_skills>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_lang_dialect\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_language></main_language>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t</div>\r\n\r\n\r\n\r\n\t\t</div>\r\n\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/main_contact.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div >\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Address</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.unit_no\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.bldg_name\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.barangay\" tabindex=\"7\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.state_province\" tabindex=\"10\" disabled.bind=\"_disableForm\" change.delegate=\"dd_provinceChanged()\">\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\t\t\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.state_province\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.country_cd\" tabindex=\"13\" disabled.bind=\"_disableForm\">\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.country_cd\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.house_no\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street/Phase</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.street_name\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.district\" tabindex=\"8\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.region\" change.delegate=\"dd_regionChanged()\" tabindex=\"11\" disabled.bind=\"_disableForm\" >\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\" >${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\" disabled.bind=\"obj_personnel.CONTACT.modelAddress.country_cd!='PH' && obj_personnel.CONTACT.modelAddress.country_cd.length>0\">${item.text}</option> -->\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\" hidden.bind=\"item.group=='US'\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\" >${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\" disabled.bind=\"obj_personnel.CONTACT.modelAddress.country_cd!='US' && obj_personnel.CONTACT.modelAddress.country_cd.length>0\" >${item.text}</option> -->\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Present Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.present_fl\" tabindex=\"14\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk Lot</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.block_lot\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd/Vill</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.sub_village\" tabindex=\"6\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.city_town\" tabindex=\"9\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip Code</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.zipcode\" tabindex=\"12\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permanent Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.permanent_fl\" tabindex=\"15\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\t\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" colspan=\"1\">Remarks</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.remarks\" tabindex=\"18\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Upload Sketch</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Upload</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Attach</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd_Address()\" disabled.bind=\"_disableBtnAdd\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validateAddress()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearAddressData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Address</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Present</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permanent</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Sketch</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.address\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.full_address}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.present_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.permanent_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td >\r\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"\" hidden.bind=\"item.sketch_path!=0\">Link</a>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnEdit_Address(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnRemoveAddress(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.address == null || obj_personnel.CONTACT.address.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"7\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\r\n\t\t\t\t<tr colspan=\"3\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<br />\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; margin-left: 10px; margin-right: 0px; margin-top: 10px; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Contact</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"2\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 100px; vertical-align: middle;\" class=\"text-left\">Contact</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"float:left;\">\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px;\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_type\" >\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CONTACT_TYPE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Area Code\" value.bind=\"obj_personnel.CONTACT.modelContact.area_cd\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px; \" type=\"text\" placeholder=\"Phone No.\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Ext.\" value.bind=\"obj_personnel.CONTACT.modelContact.local_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value.bind=\"obj_personnel.CONTACT.statusContact\" class=\"btn btn-xs customButton\" click.trigger=\"validateContact()\" style=\"width: 45px;\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"Clear\" class=\"btn btn-xs customButton\" click.trigger=\"clearContactData()\" style=\"width: 60px;\" />\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 240px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Contact Type</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Area Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Phone No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Ext.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!--<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"\" />-->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.contact\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_type_text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.area_cd}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.local_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.contact == null || obj_personnel.CONTACT.contact.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Email</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.email_addr\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Email</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.email\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.email == null || obj_personnel.CONTACT.email.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Website</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.url\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Website</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.website\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.website == null || obj_personnel.CONTACT.website.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/main_educational.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\" height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Educational Achievement</h5>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; width: 100%;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Level</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LEVEL\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr> \t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year Start</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year End</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">School</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 100%;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.SCHOOLS\" value.bind=\"item.school_cd\">${item.school_name}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Degree / Major</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Awards / Achievement</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Completed</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" tabindex=\"15\" disabled.bind=\"_disableForm\" checked.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd()\" disabled.bind=\"_disableBtnAdd\" >Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" disabled.bind=\"_disableBtnSave\" >Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 280px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Level</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">School</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Degree/Major</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Awards</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Completed</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.EDUCATIONAL_ACHIEVEMENT.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.level_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.school_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.course}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.honor_awards}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.start_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.end_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.completed_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.list == null || obj_personnel.EDUCATIONAL_ACHIEVEMENT.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/main_language.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\t\t\t\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Language / Dialect</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Language*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.lang_dialect_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Write*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.write_rating_cd\" disabled.bind=\"_disableForm\" tabindex=\"3\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE_RATING\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Speak*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.speak_rating_cd\" disabled.bind=\"_disableForm\" tabindex=\"2\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE_RATING\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Read*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.read_rating_cd\" disabled.bind=\"_disableForm\" tabindex=\"4\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE_RATING\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Language / Dialect</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Speak</td>\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Write</td>\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Read</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.LANGUAGE_DIALECT.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.lang_dialect_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.speak_rating_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.write_rating_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.read_rating_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.LANGUAGE_DIALECT.list == null || obj_personnel.LANGUAGE_DIALECT.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/main.html', ['module'], function(module) { module.exports = "<template>\r\n\t<require from=\"converters/datepattern\"></require>\r\n\t<require from=\"./main_contact\"></require>\r\n\t<require from=\"./main_educational\"></require>\r\n\t<require from=\"./main_skills\"></require>\r\n\t<require from=\"./main_language\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center;\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main_main\" aria-controls=\"main_main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(0)\">Employee Personal Info</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_contact\" aria-controls=\"main_contact\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(1)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Contact</a></li>\r\n\t\t\t<li role=\"presentation\" ><a href=\"#main_educ_achievement\" aria-controls=\"main_educ_achievement\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(2)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\">Educational Achievement</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_char_interest\" aria-controls=\"main_char_interest\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(3)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Characteristic/Interest</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_skills_talent\" aria-controls=\"main_skills_talent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(4)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Skills/Talent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#main_lang_dialect\" aria-controls=\"main_lang_dialect\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_main(5)\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" >Language/Dialect</a></li>\t\t\t\r\n\t\t</ul>\r\n\t\t\r\n\t\t<div class='tab-content'>\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main_main\"  style=\"height:550px; margin-left:auto; margin-right:auto;\" >\r\n\t\t\t\t<br/>\r\n\r\n\t\t\t\t<table style=\"margin-left: 25px;\">\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country<label style=\"color: red;\"><label style=\"color: red;\">*</label></label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_cd\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Surname<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.last_name\" disabled.bind=\"_disableForm\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr style=\"height:35px;\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Gender<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<label repeat.for=\"g of gender\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"_gender\" value.bind=\"g\" checked.bind=\"selectedGender\" disabled.bind=\"_disableForm\" tabindex=\"6\" />${g}\r\n\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<span style=\"margin: 20px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"M\" checked.bind=\"selectedGender\" />Male \r\n\t\t\t\t\t\t\t\t\t\t\t</span>\r\n\t\t\t\t\t\t\t\t\t\t\t<span>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"gender\" value.bind=\"F\" checked.bind=\"selectedGender\" />Female\r\n\t\t\t\t\t\t\t\t\t\t\t</span>-->\r\n\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth place</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.birth_place\" disabled.bind=\"_disableForm\" tabindex=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Civil Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.civil_status\" disabled.bind=\"_disableForm\" tabindex=\"12\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CIVIL_STATUS\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.country_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"15\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_citizenship\" class='ddCitizenship' disabled.bind=\"_disableForm\" tabindex=\"18\" id=\"citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CITIZENSHIP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Citizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Citizenship</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllCitizenship()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"citi of obj_personnel.HEADER.citizenship\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${citi.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeCitizenship(citi)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n\t\t\t\t\t\t\t\t<table style=\"padding: 0px; margin: 0px;\">\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Global ID</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\"  value.bind=\"obj_personnel.HEADER.global_indiv_id\" readonly />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.given_name\" disabled.bind=\"_disableForm\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Alias/NickName</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.alias\" disabled.bind=\"_disableForm\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"birthDate\" value.bind=\"obj_personnel.HEADER.birth_dt\" disabled.bind=\"_disableForm\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Religion<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.religion_cd\" disabled.bind=\"_disableForm\" tabindex=\"13\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELIGION\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">If Alien, ACR No.</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.acr_no\" disabled.bind=\"_disableForm\" tabindex=\"16\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Group Name(s)</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" value.bind=\"selected_group\" class=\"ddGroup\" disabled.bind=\"_disableForm\" tabindex=\"19\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.GROUP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_Group()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t<!--<table>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr></tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</table>-->\r\n\t\t\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"height: 150px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width: 300px;\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Group Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeAllGroup()\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"grp of obj_personnel.HEADER.group\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.value}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${grp.text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"removeGroup(grp)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table style=\"margin: 0px; padding: 0px;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">TIN<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.tin\" disabled.bind=\"obj_personnel.editing_status=='EDIT' || _disableForm\" tabindex=\"2\" id=\"_tin\" keypress.trigger=\"DigitOnly($event)\" keyup.trigger=\"mask('_tin', '___-___-___-___')\" />\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Middle Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.middle_name\" disabled.bind=\"_disableForm\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle; padding: 0px;\" class=\"text-left\">Mother's Maiden Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  value.bind=\"obj_personnel.HEADER.mother_maiden_name\" disabled.bind=\"_disableForm\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\"  readonly value.bind=\"obj_personnel.HEADER.age\" disabled.bind=\"_disableForm\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Location Base</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.location_base_cd\" disabled.bind=\"_disableForm\" tabindex=\"14\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LOCATIONS\" value.bind=\"item.LOCATION_CD\">${item.LOCATION_DESC}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">STATUS</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.HEADER.status_cd\" disabled.bind=\"_disableForm\" tabindex=\"17\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"status of obj_personnel.STATUS\" value.bind=\"status.value\">${status.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\" class=\"text-center\"><strong>Suspension Date</strong></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionFrom\" value.bind=\"obj_personnel.HEADER.suspension_start\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr hidden.bind=\"obj_personnel.HEADER.status_cd!='SUSPEND'\">\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"suspensionTo\" value.bind=\"obj_personnel.HEADER.suspension_end\"/>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\" >\r\n\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<!-- -   <img if.bind=\"cache_obj.USER.USER_ID!==undefined\" src=\"/ViewFile/GetFile?fileName=abslogo_BIG.png&token=${fnSerializeCode(_cache_obj.USER.USER_ID+':'+_cache_obj.USER.HASH)}\"/>  -->\r\n\t\t\t\t\t\t\t\t\t\t\t<div style=\"width: 150px; height: 150px; border: dashed 2px black;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<img src.bind=\"primary_img\" style=\"height: 100%; width: 100%;\">\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"btnUpload()\">Add/Edit Photo</button>\r\n\t\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<h5>\r\n\t\t\t\t\t\t( <strong>Note</strong> : <label style=\"color: red;\">*</label> is required )\r\n\t\t\t\t\t</h5>\r\n\t\t\t\t</div>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSearchPersonnel\" click.trigger=\"fnPersonnel('EDIT')\">EDIT PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableCreatePersonnel\" click.trigger=\"fnPersonnel('CREATE')\" >CREATE PERSONNEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableClearData\" click.trigger=\"fnPersonnel('CLEAR')\" >CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<!--<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableResetData\" click.trigger=\"fnPersonnel('RESET')\">RESET/REFRESH</button>&nbsp;&nbsp;-->\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableSavePersonnel\" click.trigger=\"fnPersonnel('SAVE')\">SAVE PERSONNEL</button>&nbsp;&nbsp;\r\n\r\n\t\t\t\t</div>\r\n\r\n\t\t\t\t<br/>\r\n\t\t\t\t<div>\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${obj_personnel.HEADER.created_by +' '+ obj_personnel.HEADER.created_dt}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${obj_personnel.HEADER.last_updated_by +' '+ obj_personnel.HEADER.last_updated_dt }</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!-- <td>\r\n\t\t\t\t\t\t\t\tLOGGED AS:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<strong>${obj_personnel.USER.USER_ID}</strong> \r\n\t\t\t\t\t\t\t</td> -->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_contact\"  style=\"height:550px; margin-left:auto; margin-right:auto;  overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_contact></main_contact>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_educ_achievement\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll; \">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_educational></main_educational>\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_char_interest\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_skills_talent\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_skills></main_skills>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"main_lang_dialect\"  style=\"width:980px;height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<main_language></main_language>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t</div>\r\n\r\n\r\n\r\n\t\t</div>\r\n\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/main_contact.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div >\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Address</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.unit_no\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.bldg_name\" tabindex=\"4\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.barangay\" tabindex=\"7\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.state_province\" tabindex=\"10\" disabled.bind=\"_disableForm\" change.delegate=\"dd_provinceChanged()\">\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\t\t\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.state_province\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.country_cd\" tabindex=\"13\" disabled.bind=\"_disableForm\">\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.address.country_cd\" /> -->\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.house_no\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street/Phase</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.street_name\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.district\" tabindex=\"8\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.CONTACT.modelAddress.region\" change.delegate=\"dd_regionChanged()\" tabindex=\"11\" disabled.bind=\"_disableForm\" >\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\" >${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\" disabled.bind=\"obj_personnel.CONTACT.modelAddress.country_cd!='PH' && obj_personnel.CONTACT.modelAddress.country_cd.length>0\">${item.text}</option> -->\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\" hidden.bind=\"item.group=='US'\">\r\n\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\" >${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\" disabled.bind=\"obj_personnel.CONTACT.modelAddress.country_cd!='US' && obj_personnel.CONTACT.modelAddress.country_cd.length>0\" >${item.text}</option> -->\r\n\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Present Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.present_fl\" tabindex=\"14\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk Lot</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.block_lot\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd/Vill</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.sub_village\" tabindex=\"6\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.city_town\" tabindex=\"9\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip Code</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.zipcode\" tabindex=\"12\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Permanent Address</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" checked.bind=\"obj_personnel.CONTACT.modelAddress.permanent_fl\" tabindex=\"15\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\t\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" colspan=\"1\">Remarks</td>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelAddress.remarks\" tabindex=\"18\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Upload Sketch</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled.bind=\"_disableForm\"/>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Upload</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableForm\" click.trigger=\"\">Attach</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd_Address()\" disabled.bind=\"_disableBtnAdd\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validateAddress()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearAddressData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Address</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Present</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Permanent</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Sketch</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remarks</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.address\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.full_address}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.present_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.permanent_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td >\r\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"\" hidden.bind=\"item.sketch_path!=0\">Link</a>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.remarks}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnEdit_Address(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" disabled.bind=\"_disableAddressTable\" click.trigger=\"btnRemoveAddress(item)\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.address == null || obj_personnel.CONTACT.address.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"7\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\r\n\t\t\t\t<tr colspan=\"3\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<br />\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr colspan=\"3\" style=\"border: 1px solid #4d9cd5; margin-left: 10px; margin-right: 0px; margin-top: 10px; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Contact</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"2\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 100px; vertical-align: middle;\" class=\"text-left\">Contact</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<td style=\"float:left;\">\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px;\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_type\" >\r\n\t\t\t\t\t\t\t\t\t\t<option></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.CONTACT_TYPE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Area Code\" value.bind=\"obj_personnel.CONTACT.modelContact.area_cd\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100px; \" type=\"text\" placeholder=\"Phone No.\" value.bind=\"obj_personnel.CONTACT.modelContact.phone_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 80px; \" type=\"text\" placeholder=\"Ext.\" value.bind=\"obj_personnel.CONTACT.modelContact.local_no\" keypress.trigger=\"isNumberKey($event)\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value.bind=\"obj_personnel.CONTACT.statusContact\" class=\"btn btn-xs customButton\" click.trigger=\"validateContact()\" style=\"width: 45px;\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"Clear\" class=\"btn btn-xs customButton\" click.trigger=\"clearContactData()\" style=\"width: 60px;\" />\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 240px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Contact Type</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Area Code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Phone No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Ext.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<!--<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"\" />-->\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.contact\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_type_text}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.area_cd}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.phone_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.local_no}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Contact(item)\" disabled.bind=\"_disableContactTable\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.contact == null || obj_personnel.CONTACT.contact.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"6\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td colspan=\"1\" style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Email</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.email_addr\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Email</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.email\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, true)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.email == null || obj_personnel.CONTACT.email.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Website</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 143px;\" type=\"text\" value.bind=\"obj_personnel.CONTACT.modelInternet.url\" />\r\n\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"+\" class=\"btn btn-xs customButton\" click.trigger=\"btnAdd_EmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<div style=\"height: 100px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Website</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_AllEmailWeb(false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.CONTACT.website\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>${item.web_addr}</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"X\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_EmailWeb(item.internet_id, false)\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.CONTACT.website == null || obj_personnel.CONTACT.website.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/main_educational.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\" height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr style=\"border: 1px solid #4d9cd5; width: 100%;\" class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Educational Achievement</h5>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; width: 100%;\">\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Level<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.education_level\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LEVEL\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr> \t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year Start<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.start_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Year End<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 167px;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.end_yr\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.YEAR\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">School<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff; padding: 5px; width: 100%;\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.school_cd\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.SCHOOLS\" value.bind=\"item.school_cd\">${item.school_name}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Degree / Major<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.course\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Awards / Achievement<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.honor_awards\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td style=\"vertical-align: left;\">\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Completed</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" tabindex=\"15\" disabled.bind=\"_disableForm\" checked.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.model.completed_fl\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"btnAdd()\" disabled.bind=\"_disableBtnAdd\" >Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\" disabled.bind=\"_disableBtnSave\" >Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearData()\">Clear/Reset</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"border-left: 1px solid #4d9cd5; border-right: 1px solid #4d9cd5; border-bottom: 1px solid #4d9cd5;\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 280px; overflow: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Level</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">School</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Degree/Major</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Awards</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date From</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Date To</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Completed</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.EDUCATIONAL_ACHIEVEMENT.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.level_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.school_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.course}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.honor_awards}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.start_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.end_yr}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" type=\"checkbox\" disabled checked.bind=\"item.completed_fl=='1'\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"-\" class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<input type=\"button\" value=\"x\" class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\" />\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.EDUCATIONAL_ACHIEVEMENT.list == null || obj_personnel.EDUCATIONAL_ACHIEVEMENT.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/main_language.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\t\t\t\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Language / Dialect</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Language<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.lang_dialect_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Write<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.write_rating_cd\" disabled.bind=\"_disableForm\" tabindex=\"3\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE_RATING\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Speak<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.speak_rating_cd\" disabled.bind=\"_disableForm\" tabindex=\"2\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE_RATING\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Read<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.LANGUAGE_DIALECT.model.read_rating_cd\" disabled.bind=\"_disableForm\" tabindex=\"4\">\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.LANGUAGE_RATING\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Language / Dialect</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Speak</td>\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Write</td>\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Read</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.LANGUAGE_DIALECT.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.lang_dialect_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.speak_rating_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.write_rating_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.read_rating_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.LANGUAGE_DIALECT.list == null || obj_personnel.LANGUAGE_DIALECT.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/main_skills.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\t\t\t\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Skills / Talent</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Skill / Talent*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.SKILLS.model.skill_talent_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.SKILL_TALENT\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td colspan=\"1\">\r\n\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Rating*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" value.bind=\"obj_personnel.SKILLS.model.rating_cd\" disabled.bind=\"_disableForm\" tabindex=\"1\">\r\n\t\t\t\t\t\t\t\t\t<!-- <option value=\"\"></option> -->\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RATING\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\t\t\t\t\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Exam Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Rating/Grade (%)</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.SKILLS.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.skill_talent_nm}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.rating_nm}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.SKILLS.list == null || obj_personnel.SKILLS.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\t\t\t\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/miscellaneous.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Hello from Miscellaneous.</h3>\t\r\n\t<div style=\"background:orange; width:100px; height:100px;\">\r\n\t</div>\r\n</template>"; });
 define('text!ppid/forms/relative.html', ['module'], function(module) { module.exports = "<template>\r\n\t<!-- <require from=\"converters/datepattern\"></require> -->\r\n\t<require from=\"./relative_parent\"></require>\r\n\t<require from=\"./relative_siblings\"></require>\r\n\t<require from=\"./relative_spouse\"></require>\r\n\t<require from=\"./relative_children\"></require>\r\n\t<require from=\"./relative_emergency\"></require>\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" id=\"tab0\"><a href=\"#relative_parent\" aria-controls=\"relative_parent\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(0)\">Parent</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\" id=\"tabs1\"><a href=\"#relative_siblings\" aria-controls=\"relative_siblings\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(1)\" >Siblings</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\" id=\"tabs2\"><a href=\"#relative_spouse\" aria-controls=\"relative_spouse\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(2)\" >Spouse</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\" id=\"tabs3\"><a href=\"#relative_children\" aria-controls=\"relative_children\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(3)\" >Children</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\" id=\"tabs4\"><a href=\"#relative_in_case\" aria-controls=\"relative_in_case\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab_relative(4)\" >In Case of Emergency</a></li>\t\t\t\r\n        </ul>\r\n\t\t\r\n\t\t<div class='tab-content' id=\"relative\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"relative_parent\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll; \">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_parent></relative_parent>\r\n\t\t\t\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_siblings\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<relative_siblings></relative_siblings>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_spouse\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t\t<relative_spouse></relative_spouse>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_children\"  style=\"height:550px; margin-left:auto; margin-right:auto;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\"> -->\r\n\t\t\t\t<relative_children></relative_children>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_in_case\"  style=\"height:550px; margin-left:auto; margin-right:auto; overflow-y: scroll;\">\r\n\t\t\t\t<br/>\r\n\t\t\t\t<!-- <img src.bind=\"_404_img\" style=\"width: 100%; height: 100%;\">-->\r\n\t\t\t\t<relative_emergency></relative_emergency>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_children.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Children</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.RELATIVE.children.model.last_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"children_birth_dt\" tabindex=\"4\" value.bind=\"obj_personnel.RELATIVE.children.model.birth_dt\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" value.bind=\"obj_personnel.RELATIVE.children.model.given_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled value.bind=\"obj_personnel.RELATIVE.children.model.age\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"children_dependent\" change.delegate=\"checkChange(0)\" disabled.bind=\"_disableForm\" />Dependent\r\n\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"children_deceased\" change.delegate=\"checkChange(1)\" disabled.bind=\"_disableForm\" />Deceased\r\n\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.RELATIVE.children.model.middle_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" tabindex=\"5\" value.bind=\"obj_personnel.RELATIVE.children.model.relative_cd\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELATIONSHIP\" if.bind=\"item.group=='CHILDREN'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"children_deceased_dt\" tabindex=\"6\" disabled.bind=\"_disableDeceasedDt || _disableForm\" value.bind=\"obj_personnel.RELATIVE.children.model.deceased_dt\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.RELATIVE.children.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.last_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.given_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.middle_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.birth_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.age}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.status}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.deceased_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.RELATIVE.children.list == null || obj_personnel.RELATIVE.children.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_emergency.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">In Case of Emergency</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.last_name\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" tabindex=\"4\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.relative_cd\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELATIONSHIP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.unit_no\" tabindex=\"7\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg Name</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.bldg_name\" tabindex=\"10\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.barangay\" tabindex=\"13\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(true)\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.state_province\" tabindex=\"16\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.given_name\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Phone No*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.phone_no\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.house_no\" tabindex=\"8\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.street_name\" tabindex=\"11\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.district\" tabindex=\"14\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(true)\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.region\" tabindex=\"17\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.middle_name\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip Code</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.zipcode\" tabindex=\"6\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Block Lot</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.block_lot\" tabindex=\"9\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.sub_village\" tabindex=\"12\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City Town</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.city_town\" tabindex=\"15\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.country_cd\" tabindex=\"18\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Given Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Relationship</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Phone No.</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Address</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.RELATIVE.emergency_contact.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.last_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.given_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.middle_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.relative_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.phone_no}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.address}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.RELATIVE.emergency_contact.list == null || obj_personnel.RELATIVE.emergency_contact.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_parent.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 900px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Mother</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.last_name\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.mother.birth_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.unit_no\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.bldg_name\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.barangay\" tabindex=\"13\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.state_province\" tabindex=\"16\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.mother.country_cd\" tabindex=\"19\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.given_name\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.occupation\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.house_no\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.street_name\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.district\" tabindex=\"14\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.region\" tabindex=\"17\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_dependent\" change.delegate=\"checkChange(true, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_deceased\" change.delegate=\"checkChange(true, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.middle_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.employer\" tabindex=\"6\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.block_lot\" tabindex=\"9\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.sub_village\" tabindex=\"12\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.city_town\" tabindex=\"15\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.zipcode\" tabindex=\"18\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.mother.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.mother.deceased_dt\" tabindex=\"21\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Father</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.last_name\" tabindex=\"22\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.father.birth_dt\" tabindex=\"25\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.unit_no\" tabindex=\"28\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.bldg_name\" tabindex=\"31\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.barangay\" tabindex=\"34\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.state_province\" tabindex=\"37\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.father.country_cd\" tabindex=\"40\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.given_name\" tabindex=\"23\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.occupation\" tabindex=\"26\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.house_no\" tabindex=\"29\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.street_name\" tabindex=\"32\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.district\" tabindex=\"35\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.region\" tabindex=\"38\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <label repeat.for=\"s of status\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"fstatus\" value.bind=\"s\" checked.bind=\"obj_personnel.RELATIVE.parents.father.status\" change.delegate=\"checkChange(false, s)\" />${s}\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_dependent\" change.delegate=\"checkChange(false, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_deceased\" change.delegate=\"checkChange(false, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.middle_name\" tabindex=\"24\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.employer\" tabindex=\"27\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.block_lot\" tabindex=\"30\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.sub_village\" tabindex=\"33\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.city_town\" tabindex=\"36\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.zipcode\" tabindex=\"39\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.father.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.father.deceased_dt\" tabindex=\"42\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\t\t\t\t\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_siblings.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Siblings</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.RELATIVE.siblings.model.last_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"birth_dt\" tabindex=\"4\" value.bind=\"obj_personnel.RELATIVE.siblings.model.birth_dt\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" value.bind=\"obj_personnel.RELATIVE.siblings.model.given_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled value.bind=\"obj_personnel.RELATIVE.siblings.model.age\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"status_dependent\" change.delegate=\"checkChange(0)\" disabled.bind=\"_disableForm\" />Dependent\r\n\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"status_deceased\" change.delegate=\"checkChange(1)\" disabled.bind=\"_disableForm\" />Deceased\r\n\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.RELATIVE.siblings.model.middle_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" tabindex=\"5\" value.bind=\"obj_personnel.RELATIVE.siblings.model.relative_cd\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELATIONSHIP\" if.bind=\"item.group=='SIBLING'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"deceased_dt\" tabindex=\"6\" disabled.bind=\"_disableDeceasedDt || _disableForm\" value.bind=\"obj_personnel.RELATIVE.siblings.model.deceased_dt\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd_Siblings()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.RELATIVE.siblings.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.last_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.given_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.middle_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.birth_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.age}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.status}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.deceased_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit_Siblings(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Siblings(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.RELATIVE.siblings.list == null || obj_personnel.RELATIVE.siblings.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
-define('text!ppid/forms/relative_spouse.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Spouse</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.last_name\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"spouse_birth_dt\" value.bind=\"obj_personnel.RELATIVE.spouse.birth_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.unit_no\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.bldg_name\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.barangay\" tabindex=\"13\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged()\" value.bind=\"obj_personnel.RELATIVE.spouse.state_province\" tabindex=\"16\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.spouse.country_cd\" tabindex=\"19\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.given_name\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.occupation\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.house_no\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.street_name\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.district\" tabindex=\"14\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged()\" value.bind=\"obj_personnel.RELATIVE.spouse.region\" tabindex=\"17\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"spouse_dependent\" change.delegate=\"checkChange(0)\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"spouse_deceased\" change.delegate=\"checkChange(1)\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.middle_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.employer\" tabindex=\"6\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.block_lot\" tabindex=\"9\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.sub_village\" tabindex=\"12\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.city_town\" tabindex=\"15\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.zipcode\" tabindex=\"18\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"spouse_deceased_dt\" disabled.bind=\"_disableDeceasedDt\" value.bind=\"obj_personnel.RELATIVE.spouse.deceased_dt\" tabindex=\"21\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative_children.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Children</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.RELATIVE.children.model.last_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"children_birth_dt\" tabindex=\"4\" value.bind=\"obj_personnel.RELATIVE.children.model.birth_dt\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" value.bind=\"obj_personnel.RELATIVE.children.model.given_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled value.bind=\"obj_personnel.RELATIVE.children.model.age\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"children_dependent\" change.delegate=\"checkChange(0)\" disabled.bind=\"_disableForm\" />Dependent\r\n\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"children_deceased\" change.delegate=\"checkChange(1)\" disabled.bind=\"_disableForm\" />Deceased\r\n\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.RELATIVE.children.model.middle_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" tabindex=\"5\" value.bind=\"obj_personnel.RELATIVE.children.model.relative_cd\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELATIONSHIP\" if.bind=\"item.group=='CHILDREN'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"children_deceased_dt\" tabindex=\"6\" disabled.bind=\"_disableDeceasedDt || _disableForm\" value.bind=\"obj_personnel.RELATIVE.children.model.deceased_dt\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.RELATIVE.children.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.last_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.given_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.middle_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.birth_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.age}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.status}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.deceased_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.RELATIVE.children.list == null || obj_personnel.RELATIVE.children.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative_emergency.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto;\">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div>\r\n\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">In Case of Emergency</h5>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.last_name\" tabindex=\"1\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" tabindex=\"4\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.relative_cd\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELATIONSHIP\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.unit_no\" tabindex=\"7\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg Name</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.bldg_name\" tabindex=\"10\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.barangay\" tabindex=\"13\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(true)\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.state_province\" tabindex=\"16\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.given_name\" tabindex=\"2\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Phone No<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.phone_no\" tabindex=\"5\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.house_no\" tabindex=\"8\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.street_name\" tabindex=\"11\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.district\" tabindex=\"14\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(true)\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.region\" tabindex=\"17\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>\r\n\t\t\t\t\t<table>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.middle_name\" tabindex=\"3\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip Code</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.zipcode\" tabindex=\"6\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Block Lot</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.block_lot\" tabindex=\"9\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.sub_village\" tabindex=\"12\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City Town</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.city_town\" tabindex=\"15\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.emergency_contact.model.country_cd\" tabindex=\"18\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Given Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Relationship</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Phone No.</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Address</td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.RELATIVE.emergency_contact.list\">\r\n\t\t\t\t\t\t\t\t\t<td>${item.last_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.given_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.middle_name}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.relative_cd}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.phone_no}</td>\r\n\t\t\t\t\t\t\t\t\t<td>${item.address}</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.RELATIVE.emergency_contact.list == null || obj_personnel.RELATIVE.emergency_contact.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t\t<tr>\r\n\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</table>\r\n\t\t\t\t</td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative_parent.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 900px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Mother</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.last_name\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.mother.birth_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.unit_no\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.bldg_name\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.barangay\" tabindex=\"13\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.state_province\" tabindex=\"16\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.mother.country_cd\" tabindex=\"19\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.given_name\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.occupation\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.house_no\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.street_name\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.district\" tabindex=\"14\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.region\" tabindex=\"17\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_dependent\" change.delegate=\"checkChange(true, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_deceased\" change.delegate=\"checkChange(true, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.middle_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.employer\" tabindex=\"6\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.block_lot\" tabindex=\"9\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.sub_village\" tabindex=\"12\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.city_town\" tabindex=\"15\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.zipcode\" tabindex=\"18\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.mother.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.mother.deceased_dt\" tabindex=\"21\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Father</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.last_name\" tabindex=\"22\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.father.birth_dt\" tabindex=\"25\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.unit_no\" tabindex=\"28\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.bldg_name\" tabindex=\"31\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.barangay\" tabindex=\"34\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.state_province\" tabindex=\"37\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.father.country_cd\" tabindex=\"40\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.given_name\" tabindex=\"23\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.occupation\" tabindex=\"26\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.house_no\" tabindex=\"29\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.street_name\" tabindex=\"32\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.district\" tabindex=\"35\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.region\" tabindex=\"38\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <label repeat.for=\"s of status\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"fstatus\" value.bind=\"s\" checked.bind=\"obj_personnel.RELATIVE.parents.father.status\" change.delegate=\"checkChange(false, s)\" />${s}\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_dependent\" change.delegate=\"checkChange(false, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_deceased\" change.delegate=\"checkChange(false, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.middle_name\" tabindex=\"24\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.employer\" tabindex=\"27\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.block_lot\" tabindex=\"30\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.sub_village\" tabindex=\"33\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.city_town\" tabindex=\"36\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.zipcode\" tabindex=\"39\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.father.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.father.deceased_dt\" tabindex=\"42\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\t\t\t\t\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative_siblings.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Siblings</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.RELATIVE.siblings.model.last_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"birth_dt\" tabindex=\"4\" value.bind=\"obj_personnel.RELATIVE.siblings.model.birth_dt\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" value.bind=\"obj_personnel.RELATIVE.siblings.model.given_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled value.bind=\"obj_personnel.RELATIVE.siblings.model.age\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"status_dependent\" change.delegate=\"checkChange(0)\" disabled.bind=\"_disableForm\" />Dependent\r\n\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"status_deceased\" change.delegate=\"checkChange(1)\" disabled.bind=\"_disableForm\" />Deceased\r\n\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.RELATIVE.siblings.model.middle_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" tabindex=\"5\" value.bind=\"obj_personnel.RELATIVE.siblings.model.relative_cd\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELATIONSHIP\" if.bind=\"item.group=='SIBLING'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"deceased_dt\" tabindex=\"6\" disabled.bind=\"_disableDeceasedDt || _disableForm\" value.bind=\"obj_personnel.RELATIVE.siblings.model.deceased_dt\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd_Siblings()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.RELATIVE.siblings.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.last_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.given_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.middle_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.birth_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.age}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.status}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.deceased_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit_Siblings(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Siblings(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.RELATIVE.siblings.list == null || obj_personnel.RELATIVE.siblings.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/forms/relative_spouse.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Spouse</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.last_name\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"spouse_birth_dt\" value.bind=\"obj_personnel.RELATIVE.spouse.birth_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.unit_no\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.bldg_name\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.barangay\" tabindex=\"13\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged()\" value.bind=\"obj_personnel.RELATIVE.spouse.state_province\" tabindex=\"16\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.spouse.country_cd\" tabindex=\"19\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name<label style=\"color: red;\">*</label></td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.given_name\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.occupation\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.house_no\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.street_name\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.district\" tabindex=\"14\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged()\" value.bind=\"obj_personnel.RELATIVE.spouse.region\" tabindex=\"17\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"spouse_dependent\" change.delegate=\"checkChange(0)\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"spouse_deceased\" change.delegate=\"checkChange(1)\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.middle_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.employer\" tabindex=\"6\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.block_lot\" tabindex=\"9\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.sub_village\" tabindex=\"12\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.city_town\" tabindex=\"15\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.zipcode\" tabindex=\"18\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"spouse_deceased_dt\" disabled.bind=\"_disableDeceasedDt\" value.bind=\"obj_personnel.RELATIVE.spouse.deceased_dt\" tabindex=\"21\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/contract/contract_form.html', ['module'], function(module) { module.exports = "<template>\r\n  <require from=\"converters/datepattern\"></require>\r\n  <br/>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:900px;height: 300px;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:880px;height:38px;\">\r\n        <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">UTILIZATION</strong>\r\n      </ul>\r\n      <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n        <tbody >\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Global ID</td>\r\n                    <td>\r\n                      <input value.bind=\"GLOBAL_ID1\" style=\"width: 160px;text-align:center\" readonly.bind=\"!_disableEditContract || _cache_contract. CONTRACT_STATUS!='ACTIVE'\"/>\r\n                      <input type=\"button\" class=\"btn btn-xs customButton\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\" disabled.bind='!_disableCancelContract' click.trigger=\"searchContract()\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:55px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract Status</td>\r\n                    <td>\r\n                      <select value.bind=\"CONTRACT_STATUS1\" style=\"width:260px;\" disabled.bind=\"_disableEditContract || _cache_contract.ISNEWCONTRACT\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of CONTRACT_STATUS\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value=\"EXPIRED\" style=\"width:260px; padding-left: 3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Personnel Name</td>\r\n                    <td>\r\n                      <div>\r\n                        <input value.bind=\"EMPLOYEE_NAME\" style=\"width:300px;padding-left: 3px;\"  readonly.bind=\"_disableEditContract || !_cache_contract.ISNEWCONTRACT\" focus.trigger=\"onfocusName()\" blur.trigger=\"lostfocusName()\" change.delegate=\"onchangeName()\"/>\r\n                        <div style=\"position: absolute;z-index: 999;\" show.bind=\"menuNameShow\">\r\n                          <a repeat.for=\"item of NAME_ARRAY\" style=\"width:300px;\" value.bind=\"item.ref\" class=\"list-group-item\" click.trigger=\"name_change(item.ref, item.desc)\" >${item.desc}</a>\r\n                        </div>\r\n                      </div>\r\n                      <!--<auto-complete items.bind=\"languages\"></auto-complete>-->\r\n                      <!--<select value.bind=\"MSTR_LIST1\" style=\"width:300px;\" change.delegate=\"name_change()\" disabled.bind=\"_disableEditContract || !_cache_contract.ISNEWCONTRACT\">\r\n                        <option repeat.for=\"item of MSTR_LIST\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>-->\r\n                    </td>\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Alias</td>\r\n                    <td>\r\n                      <div>\r\n                        <input value.bind=\"EMPLOYEE_ALIAS\" style=\"width:260px;padding-left: 3px; text-transform:uppercase; \"  readonly.bind=\"_disableEditContract\" focus.trigger=\"onfocusAlias()\" blur.trigger=\"lostfocusAlias()\" change.delegate=\"onchangeAlias()\"/>\r\n                        <div style=\"position: absolute;z-index: 999;\" show.bind=\"menuAliasShow\">\r\n                          <a repeat.for=\"item of ALIAS_ARRAY\" style=\"width:260px;\" value.bind=\"item\" class=\"list-group-item\" click.trigger=\"alias_change(item)\" >${item}</a>\r\n                        </div>\r\n                      </div>\r\n\r\n                      <!--<select value.bind=\"ALIAS_NAME1\" style=\"width:260px;\" disabled.bind=\"_disableEditContract\">\r\n                        <option repeat.for=\"item of ALIAS\" value.bind=\"item\">\r\n                          ${item}\r\n                        </option>\r\n                      </select>-->\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Company Name</td>\r\n                    <td>\r\n                      <input value.bind=\"COMPANY_NAME1\" style=\"width: 260px;padding-left: 3px;\" readonly.bind=\"true\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:40px\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Division</td>\r\n                    <td>\r\n                      <select value.bind=\"DIVISION1\" style=\"width:260px;\" change.delegate=\"division_change()\" disabled.bind=\"_disableEditContract\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of DIVISION\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value.bind=\"DIVISION_NAME1\" style=\"width:260px; padding-left:3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Job</td>\r\n                    <td>\r\n                      <select value.bind=\"JOB1\" style=\"width:260px;\"  change.delegate=\"job_change()\"  disabled.bind=\"_disableEditContract\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\">\r\n                        <option repeat.for=\"item of JOB\" value.bind=\"item.ref\">\r\n                          ${item.desc}\r\n                        </option>\r\n                      </select>\r\n                      <input value.bind=\"JOB_NAME1\" style=\"width:260px; padding-left: 3px;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\" />\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:40px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Job Group</td>\r\n                    <td>\r\n                      <input value.bind=\"JOB_GRP_NAME1\" style=\"width: 260px; padding-left: 3px;\" readonly.bind=\"true\"/>\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n          <tr>\r\n            <table>\r\n              <tbody>\r\n                <tr>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract Start Date</td>\r\n                    <td>\r\n                      <input id=\"dtPicker1\" value.bind=\"CONTRACT_START_DT1\"  style=\"width: 80px; text-align:center;\" readonly.bind=\"_disableEditContract\"  change.delegate=\"checkDate()\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\"/>\r\n                      <input value.bind=\"CONTRACT_START_DT1\"  style=\"width: 80px; text-align:center;\" readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:95px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Contract End Date</td>\r\n                    <td>\r\n                      <input id=\"dtPicker2\" value.bind=\"CONTRACT_END_DT1\" style=\"width: 80px; text-align:center;\"  readonly.bind=\"_disableEditContract\" change.delegate=\"checkDate()\" show.bind=\"_cache_contract.CONTRACT_STATUS!='EXPIRED'\"/>\r\n                      <input value.bind=\"CONTRACT_END_DT1\" style=\"width: 80px; text-align:center;\"   readonly.bind=\"true\" show.bind=\"_cache_contract.CONTRACT_STATUS=='EXPIRED'\"/>\r\n                    </td>\r\n                  </td>\r\n                  <td style=\"width:100px;\">\r\n                  </td>\r\n                  <td>\r\n                    <td class=\"text-left\" style=\"width:140px;\">Duration Months</td>\r\n                    <td>\r\n                      <input readonly.bind=\"true\" value.bind=\"DURATION_MONTHS1\" style=\"width: 50px; text-align: center;\" />\r\n                    </td>\r\n                  </td>\r\n                </tr>\r\n              </tbody>\r\n            </table>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n      <br/>\r\n      <br/>\r\n      <div style=\"margin-left:100px;\">\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('create')\" disabled.bind=\"_disableCreateContract || !_disableCancelContract\">NEW RECORD</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('save')\" disabled.bind=\"_disableCancelContract || _cache_contract.CONTRACT_STATUS!='ACTIVE'\">SAVE</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnContract('cancel')\" disabled.bind=\"_disableRefreshContract\">CANCEL</button>&nbsp;&nbsp;\r\n      </div>\r\n      <div style=\"margin-left:25%;\">\r\n      <br/>\r\n      <table class= \"table-bordered\">\r\n        <tr>\r\n            <td>\r\n                CREATED BY:\r\n            </td>\r\n            <td>\r\n                ${CREATED_BY1}\r\n            </td>\r\n            <td>\r\n                LAST UPDATED BY:\r\n            </td>\r\n            <td>\r\n                ${LAST_UPDATED_BY1}\r\n            </td>\r\n        </tr>\r\n      </table>\r\n      </div>\r\n</div>\r\n\r\n</template>\r\n"; });
+define('text!ppid/contract/contract_search.html', ['module'], function(module) { module.exports = "<template>\r\n\r\n  <ux-dialog>\r\n    <!--    <button type=\"button\" click.trigger=\"controller.cancel()\" class=\"close\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button> -->\r\n    <!--<ux-dialog-header class=\"colorHeader\">\r\n\r\n                    <h4 class=\"modal-title\">BUDGET TEMPLATES</h4>\r\n</ux-dialog-header>-->\r\n    <ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>CONTRACT TEMPLATE</b></span></ux-dialog-header>\r\n  <ux-dialog-body>\r\n  <require from=\"converters/take\"></require>\r\n  <require from=\"converters/sorttext\"></require>\r\n  <require from=\"tools/gridpaging\"></require>\r\n  <div style=\"height:350px;overflow: auto;\">\r\n    <table class=\"table table-hover table-condensed table-bordered\">\r\n        <thead class=\"table-default\">\r\n            <tr>\r\n                <td class=\"colorCell2\">\r\n                    GLOBAL ID\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    LAST NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    GIVEN NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    MIDDLE NAME\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    STATUS\r\n                </td>\r\n            </tr>\r\n            <tr ref=\"_rCONTRACT_TITLE\">\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGLOBAL_ID\" searchable=\"_sGLOBAL_ID\"   keyup.delegate=\"fnKeyup($event,'')\" />\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bLAST_NAME\" searchable=\"_sLAST_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bGIVEN_NAME\" searchable=\"_sGIVEN_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                    <input class=\"input-sm form-control\" value.bind=\"_bMIDDLE_NAME\" searchable=\"_sMIDDLE_NAME\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n                <td class=\"colorCell2\">\r\n                  <input class=\"input-sm form-control\" value.bind=\"_bCONTRACT_STATUS\" searchable=\"_sCONTRACT_STATUS\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n                </td>\r\n\r\n            </tr>\r\n        </thead>\r\n        <tbody>\r\n            <tr repeat.for=\"item of varFilterArray | take:20:pageindex\"  click.delegate=\"$parent.selectedContract(item)\">\r\n                <td>\r\n                    ${item.GLOBAL_ID}\r\n                </td>\r\n                <td>\r\n                    ${item.LAST_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.GIVEN_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.MIDDLE_NAME}\r\n                </td>\r\n                <td>\r\n                    ${item.CONTRACT_STATUS}\r\n                </td>\r\n\r\n            </tr>\r\n        </tbody>\r\n    </table>\r\n</div>\r\n<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"20\"></gridpaging>\r\n\r\n</ux-dialog-body>\r\n\r\n<ux-dialog-footer>\r\n<button text=\"Cancel\" click.trigger=\"controller.cancel()\">Close</button>\r\n</ux-dialog-footer>\r\n</ux-dialog>\r\n</template>\r\n"; });
+define('text!ppfcs/budget/guest.html', ['module'], function(module) { module.exports = "<template>\r\n            <require from=\"converters/filtercustom\"></require>\r\n            <require from=\"converters/signals\"></require>\r\n            <table class=\"table table-hover table-condensed table-bordered table-striped\" style=\"width:70%;\" ref=\"tblData\">\r\n                <thead>\r\n                    <tr><td class=\"colorCell\">PAY MODE</td>\r\n                        <td class=\"colorCell\">BUDGET</td>\r\n                        <td class=\"colorCell\">PAY MODE FACTOR</td>\r\n                        <td class=\"colorCell\">REMARKS</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr repeat.for=\"item of _cache_budget.GUEST | filtercustom:'visible':true:_signal\">\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:auto !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,$index)\"  focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/></td>\r\n                      <td> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:auto !important;\"/></td>\r\n                      <td>  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:auto !important;\"/></td>\r\n                      <td> <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea></td>\r\n                </tr>\r\n                </tbody>\r\n            </table>  \r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableAdd\" click.delegate=\"fnAddGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Add Guest</button>\r\n              <button class=\"btn btn-xs customButton\" if.bind=\"_enableRemove\"click.delegate=\"fnRemoveGuest()\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Remove Guest</button>\r\n              <button class=\"btn btn-xs customButton\" click.delegate=\"saveGuest(0)\" disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button>\r\n</template>"; });
+define('text!ppfcs/budget/main-header.html', ['module'], function(module) { module.exports = "<template>\r\n    <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n    <!-- <require from=\"modals/confirm_dialog\"></require> -->\r\n\r\n    <require from=\"converters/datepattern\"></require>\r\n   \r\n     <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n            <tbody >\r\n                <tr>\r\n                    <td style=\"vertical-align: top;\">\r\n                        <table>\r\n                             <tr>\r\n                                <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\" >Budget ID</td>\r\n                                <td>\r\n                                 <input value.bind=\"_cache_budget.HEADER.BDGT_TMPL_ID\" style=\"width: 80px;\" keyup.delegate=\"inputChanged($event,_cache_budget.HEADER.BDGT_TMPL_ID)\" readonly.bind=\"_disableBudgetId\"/>\r\n                                 <!-- <modalcontainer to.bind=\"modalBudget\"></modalcontainer> -->\r\n                                 <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"budgetDisabled\" click.trigger=\"fnDialogBudget()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                             </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td style=\"width: 120px;\">Program Name/CC</td>\r\n                                <td style=\"width: auto;\">\r\n                                    <input readonly=\"readonly\" value.bind=\"_cache_budget.HEADER.PROGRAM_MSTR.PROGRAM_TITLE\"style=\"width: 250px;\"/>*\r\n                                    <!-- <modalcontainer to.bind=\"modalProgram\"></modalcontainer> -->\r\n                                    <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"programDisabled\" click.trigger=\"fnDialogProgram()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program IO/CC#</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.CHARGE_CD\" readonly=\"readonly\" /></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Program Genre</td>\r\n                                <td>\r\n                                    <select value.bind=\"_cache_budget.HEADER.PROGRAM_GENRE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _PROGRAM_GENRE_MSTR\" value.bind=\"item.PROGRAM_GENRE_CD\">\r\n                                            ${item.PROGRAM_GENRE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Telecast Mode</td>\r\n                                <td>\r\n                                      <select value.bind=\"_cache_budget.HEADER.TELECAST_MODE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _TELECAST_MODE_MSTR\" value.bind=\"item.TELECAST_MODE_CD\">\r\n                                            ${item.TELECAST_MODE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Episode Type</td>\r\n                                <td>\r\n                                       <select value.bind=\"_cache_budget.HEADER.EPISODE_TYPE_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _EPISODE_TYPE_MSTR\" value.bind=\"item.EPISODE_TYPE_CD\">\r\n                                            ${item.EPISODE_TYPE_CD}\r\n                                        </option>\r\n                                    </select>*\r\n                                    </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>No. of Episodes</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.EPISODES\" class=\"col-md-3 text-right\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\"/>*</td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>No. of Taping days</td>\r\n                                <td>\r\n                                    <input value.bind=\"_cache_budget.HEADER.TAPING_DAYS\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" class=\"col-md-3 text-right\"/>*</td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n                    <td style=\"vertical-align: top; text-align: left; margin: 0px 0px 0px 0px;\">\r\n                        <table style=\"padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;\">\r\n                            <tr>\r\n                                <td class=\"text-center\" colspan=2><strong>Template Validity</strong></td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Start Date</td>\r\n                                <td>\r\n                                    <input id=\"refFrom\"  readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_FROM\" blur.trigger=\"checkDate('refFrom')\"/>*\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>End Date</td>\r\n                                <td>\r\n                                    <!-- trigger does not accept '', set the string id w/out '' -->\r\n                                   <input id=\"refTo\" readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.BDGT_TO\" blur.trigger=\"checkDate('refTo')\"/>*</td>\r\n                            </tr>\r\n                             <tr><td colspan=2 style=\"height:20px;\"></td></tr>\r\n                            <tr>\r\n                                <td>TV Station</td>\r\n                                <td>\r\n                                   <select disabled.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.STATION_ID\">\r\n                                        <option repeat.for=\"item of _STATIONS\" value.bind=\"item\">\r\n                                            ${item}\r\n                                        </option>\r\n                                    </select>(For <strong>RNG</strong>*)\r\n                                </td>\r\n                            </tr>\r\n                            <tr>\r\n                                <td>Status</td>\r\n                                <td>\r\n                                     <select value.bind=\"_cache_budget.HEADER.APPR_STAT_CD\" disabled.bind=\"_cache_budget.STATUS=='APPROVED'\">\r\n                                        <option repeat.for=\"item of _STATUS\" value.bind=\"item.REF_CD\">\r\n                                            ${item.REF_DESC}\r\n                                        </option>\r\n                                    </select>*\r\n                                     <!-- value.bind=\"options: EPISODE_MODE_LIST, EPISODE_MODE_SELECTED, optionsText: 'text'\" -->\r\n                                </td>\r\n                            </tr>\r\n                             <tr>\r\n                                <td>Remarks</td>\r\n                                <td rowspan=3>\r\n                                    <textarea readonly.bind=\"_cache_budget.STATUS=='APPROVED'\" value.bind=\"_cache_budget.HEADER.REMARKS\" style=\"width:200px!important;\" >\r\n                                    </textarea>\r\n                                </td>\r\n                            </tr>\r\n                        </table>\r\n                    </td>\r\n\r\n                </tr>\r\n\r\n            </tbody>\r\n        </table>\r\n        <br/>\r\n        <br/>\r\n        <div style=\"margin-left:350px;\"><h5>( <strong>Note</strong> : * is required )</h2></div>\r\n        <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n        <div style=\"margin-left:100px;\">\r\n            <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('create')\" disabled.bind=\"_disableCreateBudget\" if.bind=\"!_disableCreateBudget\">CREATE BUDGET</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('cancel')\" disabled.bind=\"_disableCancelBudget\">CLEAR/CANCEL</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.STATUS!='APPROVED'\" style=\"width:150px;\" click.delegate=\"fnBudget('refresh')\" disabled.bind=\"_disableRefreshBudget\">REFRESH</button>&nbsp;&nbsp;\r\n        <button class=\"btn btn-xs customButton\" if.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-EXPIRED'\" style=\"width:150px;\" click.delegate=\"fnBudget('save')\" if.bind=\"!_disableSaveBudget\" disabled.bind=\"_disableSaveBudget\">SAVE BUDGET</button>\r\n        <button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('print')\" disabled.bind=\"_disablePrintBudget\" disabled.bind=\"!_disablePrintBudget\">PRINT BUDGET</button>\r\n        <button if.bind=\"_cache_budget.HEADER.APPR_STAT_CD=='APP-EXPIRED' || _cache_budget.HEADER.APPR_STAT_CD=='APP-CLOSED'\" class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('copy')\" disabled.bind=\"_disableCopyBudget\">COPY TEMPLATE</button>\r\n        <button if.bind=\"_cache_budget.STATUS=='APPROVED'\"  class=\"btn btn-xs customButton\" style=\"width:150px;\" click.delegate=\"fnBudget('close')\" disabled.bind=\"_disablePrintBudget\">SET AS CLOSED</button>\r\n         <!-- <confirm_dialog to.bind=\"modalConfirm\"></confirm_dialog> -->\r\n        </div>\r\n              <br/>\r\n        <br/>\r\n        <br/>   \r\n        <br/>\r\n\r\n        \r\n \r\n</template>"; });
+define('text!ppfcs/budget/mainview.html', ['module'], function(module) { module.exports = " \r\n\r\n <template>\r\n\r\n <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n <require from=\"ppfcs/budget/main-header\"></require>\r\n <require from=\"ppfcs/budget/personnel\"></require>\r\n <require from=\"ppfcs/budget/guest\"></require>\r\n <require from=\"ppfcs/budget/summary\"></require>\r\n    <br/>\r\n      \r\n <!--stylemainstayft:20px;margin-right:20px;margin-bottom:10px;margin-top:10px;\"-->\r\n     <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 686px;\">\r\n          <!-- Nav tabs -->\r\n          <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n              <li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(0)\">Program Budget</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#regular\" aria-controls=\"regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(1)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\" >Regular</a>\r\n              </li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#semi_regular\" aria-controls=\"semi_regular\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"clickTab(2)\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Semi-Regular</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#staff\" aria-controls=\"staff\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(3)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Staff</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#guest\" aria-controls=\"guest\" role=\"tab\" data-toggle=\"tab\" click.trigger=\"clickTab(4)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Guest</a></li>\r\n              <li role=\"presentation\" style=\"\"><a href=\"#summary\" aria-controls=\"summary\" role=\"tab\" data-toggle=\"tab\"click.trigger=\"clickTab(5)\" style=\"margin-top:6px;\" disabled.bind=\"_cache_budget.STATUS=='NONE'\">Budget Summary</a></li>\r\n          </ul>\r\n\r\n          <!-- Tab panes -->\r\n          <div class=\"tab-content\">\r\n              <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1024px;height:620px;\"><br/><main-header></main-header>\r\n                <br/>\r\n                <br/>\r\n                <br/>\r\n          <!--<div style=\"margin-left:40%;\">\r\n             <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"loginDisabled\" value=\"LOG-IN\" style=\"padding-left:15px;padding-right:15px;\" click.trigger=\"fnLogin()\"/>\r\n                   <input type=\"button\" click.trigger=\"logout()\" value=\"LOG-OUT\"  disabled.bind=\"logoutDisabled\"  css=\"visibility: ${showingLogout}\" class=\"btn btn-xs customButton\"> \r\n          </div>-->\r\n\r\n              <div style=\"margin-left:25%;\">\r\n                <br/>\r\n                <br/>\r\n              <table class= \"table-bordered\">\r\n                <tr>\r\n                    <td>\r\n                        CREATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.CREATED_BY}\r\n                    </td>\r\n                    <td>\r\n                        LAST UPDATED BY:\r\n                    </td>\r\n                    <td>\r\n                        ${_cache_budget.HEADER.LAST_UPDATED_BY}\r\n                    </td>\r\n                    <!--<td>\r\n                        LOGGED AS:\r\n                    </td>\r\n                    <td>\r\n                        <strong>${_cache_budget.USER.USER_ID}</strong> \r\n                    </td>-->\r\n                    </tr>\r\n              </table>\r\n              </div>\r\n\r\n              </div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.REGULAR\" to-person-model.bind=\"{USE:'REGULAR'}\" ></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"semi_regular\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.SEMI_REGULAR\" to-person-model.bind=\"{USE:'SEMI_REGULAR'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"staff\" style=\"width:1024px;\"><personnel to-person.bind=\"_cache_budget.STAFF\"to-person-model.bind=\"{USE:'STAFF'}\"></personnel></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"guest\"  style=\"width:1024px;\"><guest></guest></div>\r\n              <div role=\"tabpanel\" class=\"tab-pane color1\" id=\"summary\" style=\"width:1024px;\">\r\n                <summary></summary>\r\n              </div>\r\n          </div>\r\n            \r\n      </div>\r\n      \r\n    \r\n   <!-- <div class=\"well\">\r\n        <div class=\"input-append date\" id=\"dp3\" data-date=\"12-02-2012\" data-date-format=\"dd-mm-yyyy\">\r\n        <input class=\"span2\" size=\"16\" type=\"text\" value=\"12-02-2012\" readonly=\"\">\r\n        <span class=\"add-on\"><i class=\"icon-calendar\"></i></span>\r\n        </div>\r\n    </div> -->\r\n\r\n\r\n </template>\r\n"; });
+define('text!ppfcs/budget/personnel.html', ['module'], function(module) { module.exports = "<template>\r\n  <!-- <require from=\"modals/modalcontainer\"></require> -->\r\n  <require from=\"converters/number-format\"></require>\r\n  <require from=\"converters/filtercustom\"></require>\r\n  <require from=\"converters/signals\"></require>\r\n                <div style=\"overflow:scroll;height:600px !important; padding-left:10px;padding-top:10px;!important; \" scroll.trigger=\"scrollDiv()\" ref=\"divRegular\">\r\n                 <table class= \"table-hover table-condensed table-bordered table-striped\" style=\"position:absolute;z-index:1000;visibility:hidden;top:100px;\" ref=\"tblHeader\" scroll.trigger=\"scrollDiv()\" >\r\n                <thead>\r\n                    <tr>\r\n                      <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n              </table>\r\n              <table class= \"table-hover table-condensed table-bordered table-striped\" onload=\"myFunction()\"  ref=\"tblData\">\r\n                <thead>\r\n                    <tr>\r\n                        <td style=\"width:51px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-up\" click.trigger=\"moveTrigger('up')\"></div>\r\n                        <div style=\"width:15px !important;cursor: pointer;\" class=\"fa fa-sort-desc\"\" click.trigger=\"moveTrigger('down')\"></div>\r\n                         </td>\r\n                      <td style=\"width:30px !important;background-color: white;\" class=\"text-center colorCell\">\r\n                        <div style=\"width:20px !important;cursor: pointer;\"  click.trigger=\"collapse_expand_head()\"><strong>${_ce_head}</strong></div></td>\r\n                      <td style=\"width:200px !important;background-color: white;\" class=\"colorCell\"><input placeholder=\"PERSONNEL NAME\" value.bind=\"_personnelSearch\" style=\"border:0px !important;\"/></td>\r\n                      <td style=\"width:130px !important;background-color: white;\" class=\"colorCell\">Job</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\" class=\"colorCell\">Pay Mode</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Pay Factor</td>\r\n                      <td style=\"width:110px !important;background-color: white;\" class=\"colorCell\">Contract</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"colorCell\">Rate</td>\r\n                      <td style=\"width:100px !important;background-color: white;\" class=\"text-center colorCell\">Delete</td>\r\n                    </tr>\r\n                </thead>\r\n                <tbody repeat.for=\"item of _Personnel | filtercustom:'visible':true:_signal \">\r\n                    <tr>\r\n                      <td style=\"width:41px !important;\"> \r\n                        <input disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"text-center\" value.one-way=\"$index+1\" style=\"width:40px !important;color:gray;border:0px;\" click.trigger=\"$parent.focusTrigger($index)\"/>\r\n                        </td>\r\n                      <td style=\"width:5px !important;\">\r\n                        <button class=\"btn btn-xs \" click.trigger=\"$parent.collapse_expand(item)\">${item.ce_value}</button></td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"item.GLOBAL_ID\">${item.PERSONNEL_NAME}</td>\r\n                      <td style=\"width:5px !important;\" if.bind=\"!item.GLOBAL_ID\"><input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.BLANK_PERSONNEL_NAME\"/></td>\r\n                      <td style=\"width:5px !important;\">\r\n                         <input readonly disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"jobclass\" value.bind=\"item.JOB_DESC\" style=\"width:120px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'JOB', $index, item.BDGT_TMPL_DTL_ID)\" focus.trigger=\"$parent.fnRegularFocus($index,'JOB')\" />\r\n                      </td>   \r\n                      <td style=\"width:100px !important;\">\r\n                         <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"pymnttrmclass\" value.bind=\"item.PAYMENT_TERM\" style=\"width:90px !important;\" blur.trigger=\"$parent.fnRegularBlurEvt(item,'TERM', $index)\" focus.trigger=\"$parent.fnRegularFocus($index,'TERM')\"/>\r\n                      </td>\r\n                      <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                        <!-- ${item.CONFIDENTIAL_TMP}\r\n                        ${$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL} -->\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <!-- click.delegate=\"$parent.chkRemove(item)\" -->\r\n                      <td style=\"width:100px !important;\" class=\"text-center\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"type=\"checkbox\" checked.bind=\"item.REMOVE\" if.bind=\"item.BDGT_TMPL_DTL_ID && $parent.fnCheckExistingTalents(item.TALENTS,item)\"/>\r\n                          <button class=\"btn btn-xs\" click.trigger=\"$parent.removeRegular($index)\"  if.bind=\"!item.BDGT_TMPL_DTL_ID\">-</button>\r\n                      </td>\r\n                    </tr>\r\n                     <tr>\r\n                      <td colspan=9 style.bind=\"item.styleString\">\r\n                        <div>\r\n                         <table style=\"margin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                          <tr>\r\n                            <td>CATEGORY</td>\r\n                            <td>CONFIDENTIAL</td>\r\n                            <td>STAFF WORK</td>\r\n                            <td>REMARKS</td>\r\n                            <td>TALENT MANAGER</td>\r\n                            <!-- <td>TALENTS</td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\">IS POOL</td>\r\n                          </tr>\r\n                          <tr>\r\n                            <td>${item.CATEGORY_DESC}</td>\r\n                            <td class=\"text-center\">\r\n                               <!-- if.bind=\"$parent._cache_budget.ALLOW_PASS_CONFIDENTIAL\" -->\r\n                               <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.CONFIDENTIAL_TMP\" />\r\n                            </td>\r\n                            <td>\r\n                              <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.STAFF_WORK_TMP\"/>\r\n                            </td>\r\n                            <td>\r\n                              <textarea  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.REMARKS\" style=\"height:20px !important;\"></textarea>\r\n                            </td>\r\n                            <td> \r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"!item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.showTalentMngr(item)\" >+</button>\r\n                                <button  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" class=\"btn btn-xs\" if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" click.trigger=\"$parent.removeTalentMngr(item)\">-</button>\r\n                            </td>\r\n                           <!--  <td>\r\n                                 <table class=\"table-hover table-condensed table-bordered table-striped\">\r\n                                    <thead>\r\n                                      <tr>\r\n                                        <td>NAME</td> \r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.showTalents(item)\" >+</button>\r\n                                            \r\n                                        </td>\r\n                                      </tr>\r\n                                    </thead>\r\n                                    <tbody>\r\n                                      <tr repeat.for=\"itemTalent of item.TALENTS\">\r\n                                        <td>${itemTalent.PERSONNEL_NAME}</td>\r\n                                        <td><button class=\"btn btn-xs\" click.trigger=\"$parent.$parent.removeTalent($parent,itemTalent,$index)\">-</button></td>\r\n                                      </tr>\r\n                                    </tbody>\r\n                                 </table>\r\n                            </td> -->\r\n                            <td if.bind=\"!item.PERSONNEL_NAME\"> <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" type=\"checkbox\" checked.bind=\"item.POOL_RECORD_TMP\"/></td>\r\n                          </tr>\r\n                        </table>\r\n                        </div>\r\n                         <div if.bind=\"item.TALENT_MANAGER.PERSONNEL_NAME\" style=\"margin-left:20%;margin-top:5px;\">\r\n                              <table style=\"margin-topin-left:10px !important;\" class=\"table-hover table-condensed table-bordered table-striped\">\r\n                              <tr>\r\n                              <td class=\"colorCell\">Talent Manager</td>\r\n                              <td class=\"colorCell\">Pay Factor</td>\r\n                              <td class=\"colorCell\">Contract</td>\r\n                              <td class=\"colorCell\">Rate</td>\r\n                              <td class=\"colorCell\">Remarks</td>\r\n                              </tr>\r\n                              <tr>\r\n                                   <td> ${item.TALENT_MANAGER.PERSONNEL_NAME}</td>\r\n                               <td style=\"width:50px !important;\" class=\"text-right  \">\r\n                                  <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.PAY_RATE_FACTOR_TMP\"  blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'PAY_RATE_FACTOR_TMP')\" class=\"text-right\"  style=\"width:90px !important;\"/>\r\n                        </td>\r\n\r\n                      <td class=\"text-right \" style=\"width:110px !important;\" >\r\n                          <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.CONTRACT_AMT_TMP\"   blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'CONTRACT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                      <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input   disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\"value.bind=\"item.TALENT_MANAGER.INPUT_AMT_TMP\" blur.trigger=\"$parent.AmountBlur(item.TALENT_MANAGER,'INPUT_AMT_TMP')\" class=\"text-right\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                    <td style=\"width:100px !important;\" class=\"text-right \">\r\n                        <input  disabled.bind=\"$parent._cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\" value.bind=\"item.TALENT_MANAGER.REMARKS\" style=\"width:90px !important;\"/>\r\n                      </td>\r\n                              </tr>\r\n\r\n                              </table>\r\n                          </div>  \r\n                      </td>\r\n                    </tr>\r\n               </tbody>\r\n            </table>\r\n            </div>\r\n           \r\n            <!-- ${_Personnel.length} -->\r\n            \r\n                \r\n               <div style=\"position:absolute;top:20px;left:0px;\">\r\n                <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrTalents\" ></modalcontainer>\r\n                <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstrManager\" ></modalcontainer>\r\n                <modalcontainer to.bind=\"modalJob\"></modalcontainer> -->\r\n         <!--        <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrTalentsDisabled\" click.trigger=\"fnIndivMstrTalents()\" value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isIndivMstrManagerDisabled\"  click.trigger=\"fnIndivMstrManager()\"  value=\"+\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                <input type=\"button\" class=\"btn btn-xs customButton\" disabled.bind=\"isJobDisabled\"  click.trigger=\"fnModalJob()\" value=\"..\" style=\"padding-left:15px;padding-right:15px;\"/> -->\r\n\r\n               </div>   \r\n               <table>\r\n                <tr>\r\n                  <td>\r\n                    <!-- <modalcontainer style=\"text-align:left;\" to.bind=\"modalIndivMstr\"> --></modalcontainer>\r\n                     <input type=\"button\" class=\"btn btn-xs customButton\"  disabled.bind=\"isIndivMstrDisabled\"  click.trigger=\"fnIndivMstrManager()\" value=\"Search Personnel\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n                  </td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"fnBlankPersonnelRegular()\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Blank Personnel</button></td>\r\n                <td><button class=\"btn btn-xs customButton\" click.delegate=\"savePersonnel(0)\"  disabled.bind=\"_cache_budget.HEADER.APPR_STAT_CD!='APP-DRAFT'\">Save</button></td>\r\n               \r\n               \r\n                <td if.bind=\"toPersonModel.USE=='REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                <td if.bind=\"toPersonModel.USE=='SEMI_REGULAR'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Semi-Regular) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_SEMI_REGULAR\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n               <td if.bind=\"toPersonModel.USE=='STAFF'\" style=\"display:compact;text-align:right;width:525px;margin-left:100px;margin-right:0px !important;padding:0px !important;position: relative;\">(Staff) <strong>TOTAL</strong> : <input value.bind=\"_cache_budget._INPUT_AMT_STAFF\" class=\"text-right\" readonly style=\"width:110px;font-weight:bold;\"  /></td>\r\n\r\n                </tr>\r\n                </table>\r\n\r\n</template>\r\n"; });
+define('text!ppfcs/budget/summary.html', ['module'], function(module) { module.exports = "<template>\r\n\t\t\t<table class= \"table-hover table-condensed table-bordered table-striped\" style=\"margin-left:50px;margin-top:40px;margin-botton:20px;\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"width:150px;\">\r\n\t\t\t\t\t\t\t<strong>CLASSIFICATION</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"width:150px;text-align:center;\">\r\n\t\t\t\t\t\t\t<strong>TOTAL PROGRAM</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tMAINSTAY\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_MAINSTAY}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tSTAFF\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_STAFF}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\tGUEST\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;\">\r\n\t\t\t\t\t\t\t${_INPUT_AMT_GUEST}\t\t\t\t\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t<strong>TOTAL</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t\t<td style=\"text-align:right;border-top-width:3px;\">\r\n\t\t\t\t\t\t\t<strong>${_INPUT_AMT_TOTAL}</strong>\r\n\t\t\t\t\t\t</td>\t\r\n\t\t\t\t\t</tr>\t\t\t\t\t\r\n\t\t\t</table>\r\n            <br/>\r\n</template>"; });
 define('text!ppid/modals/add_member.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SEARCH PERSONNEL(S)</b></span></ux-dialog-header>\r\n\t\t\r\n\t\t<ux-dialog-body style=\"background:#E3E3E3;\" class=\".divBackground\">\r\n\t\t\t<require from=\"converters/take\"></require>\r\n\t\t\t<require from=\"converters/sorttext\"></require>\r\n\t\t\t<require from=\"tools/gridpaging\"></require>\t\t\t\r\n\t\t\t<div style=\"height:220px;overflow: auto;\">\r\n\t\t\t\t<table class=\"table table-hover table-condensed table-bordered\">\r\n\t\t\t\t\t<thead class=\"table-default\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GLOBAL ID</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">TIN</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GROUP</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">LAST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">FIRST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">NICKNAME / ALIAS</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">PROJECT NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">COUNTRY</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr ref=\"_rppid_queries\">\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bglobal_indiv_id\" searchable=\"_bglobal_indiv_id\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_btin\" searchable=\"_stin\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bgroup\" searchable=\"_sgroup\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_blast_name\" searchable=\"_slast_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bfirst_name\" searchable=\"_sfirst_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bnickname\" searchable=\"_snickname\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bproject_name\" searchable=\"_sproject_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bcountry\" searchable=\"_scountry\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</thead>\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr repeat.for=\"item of varFilterArray | take:5:pageindex\" click.delegate=\"$parent.selectedPersonnel(item)\">\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GLOBAL_INDIV_ID}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.TIN}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GROUP}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.LAST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.FIRST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.NICK_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.PROJECT_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.COUNTRY}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\t\t\t\r\n\t\t\t<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"5\"></gridpaging>\r\n\t\t\t<br/>\r\n\t\t\t<h3>To be Added</h3>\r\n\t\t\t<div style=\"height: 250px; overflow-y: scroll; background-color: white; \">\r\n\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td class=\"colorCell\">Global ID</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell\">Personnel Full Name</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell\"></td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t</thead>\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr repeat.for=\"item of varToBeAdded\">\r\n\t\t\t\t\t\t\t<td>${item.GLOBAL_INDIV_ID}</td>\r\n\t\t\t\t\t\t\t<td>${item.FIRST_NAME + ' ' + item.LAST_NAME}</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"removePersonnel(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t<tr if.bind=\"varToBeAdded == null || varToBeAdded.length==0\">\r\n\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</ux-dialog-body>\r\n\t\t<ux-dialog-footer>\t\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnAdd()\">Add</button>\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"controller.cancel()\">Cancel</button>\r\n\t\t</ux-dialog-footer>\r\n\t</ux-dialog>\r\n</template>"; });
 define('text!ppid/modals/DialogBox.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body style=\"border-radius: 0px;\" class=\"divBackground\">\r\n\t\t\t<div style=\"white-space: pre;\">${message}</div>\r\n\t\t</ux-dialog-body>\r\n\t\t<ux-dialog-footer>\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.ok()\">Yes</button>&nbsp;&nbsp;\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.cancel()\">No</button>&nbsp;&nbsp;\r\n\t\t</ux-dialog-footer>\r\n\t</ux-dialog>\r\n</template>"; });
 define('text!ppid/modals/group_search.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SEARCH GROUP(S)</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body>\r\n\t\t\t<require from=\"converters/take\"></require>\r\n\t\t\t<require from=\"converters/sorttext\"></require>\r\n\t\t\t<require from=\"tools/gridpaging\"></require>\t\r\n\t\t\t<div style=\"height:350px;overflow: auto;\">\r\n\t\t\t\t<table class=\"table table-hover table-condensed table-bordered\">\r\n\t\t\t\t\t<thead class=\"table-default\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GLOBAL ID</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GROUP NAME</td>\r\n\t\t\t\t\t\t\t<!-- <td class=\"colorCell2\">ESTABLISHED DATE</td> -->\r\n\t\t\t\t\t\t\t<!-- <td class=\"colorCell2\">STATUS</td> -->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr ref=\"_rppid_queries\">\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bglobal_grp_id\" searchable=\"_bglobal_grp_id\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bgroup_name\" searchable=\"_sgroup_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\r\n\t\t\t\t\t\t\t<!-- <td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bestablish_dt\" searchable=\"_bestablish_dt\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td> -->\r\n\t\t\t\t\t\t\t<!-- <td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bstatus_cd\" searchable=\"_sstatus_cd\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td> -->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</thead>\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedGroup(item)\">\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GLOBAL_GRP_ID}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GROUP_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"10\"></gridpaging>\r\n\t\t</ux-dialog-body>\r\n\t</ux-dialog>\r\n</template>"; });
 define('text!ppid/modals/photo_list.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header>class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body>\r\n\t\t\t<div>\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</ux-dialog-body>\r\n\t</ux-dialog>\r\n</template>"; });
 define('text!ppid/modals/ppid_search.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>SEARCH PERSONNEL(S)</b></span></ux-dialog-header>\r\n\t\t\r\n\t\t<ux-dialog-body style=\"background:#E3E3E3;\" class=\".divBackground\">\r\n\t\t\t<require from=\"converters/take\"></require>\r\n\t\t\t<require from=\"converters/sorttext\"></require>\r\n\t\t\t<require from=\"tools/gridpaging\"></require>\t\t\t\r\n\t\t\t<div style=\"height:350px;overflow: auto;\">\r\n\t\t\t\t<table class=\"table table-hover table-condensed table-bordered\">\r\n\t\t\t\t\t<thead class=\"table-default\">\r\n\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GLOBAL ID</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">TIN</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">GROUP</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">LAST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">FIRST NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">NICKNAME / ALIAS</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">PROJECT NAME</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">COUNTRY</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t<tr ref=\"_rppid_queries\">\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bglobal_indiv_id\" searchable=\"_bglobal_indiv_id\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_btin\" searchable=\"_stin\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bgroup\" searchable=\"_sgroup\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_blast_name\" searchable=\"_slast_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bfirst_name\" searchable=\"_sfirst_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bnickname\" searchable=\"_snickname\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bproject_name\" searchable=\"_sproject_name\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td class=\"colorCell2\">\r\n\t\t\t\t\t\t\t\t<input class=\"input-sm form-control\" value.bind=\"_bcountry\" searchable=\"_scountry\"  keyup.delegate=\"fnKeyup($event,'')\"/>\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</thead>\r\n\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t<tr repeat.for=\"item of varFilterArray | take:20:pageindex\" click.delegate=\"$parent.selectedPersonnel(item)\">\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GLOBAL_INDIV_ID}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.TIN}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.GROUP}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.LAST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.FIRST_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.NICK_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<!--<td>\r\n\t\t\t\t\t\t\t\t${item.PROJECT_NAME}\r\n\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t${item.COUNTRY}\r\n\t\t\t\t\t\t\t</td>-->\r\n\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t</tbody>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<gridpaging to.bind=\"varFilterArrayLength\" pageindex.two-way=\"pageindex\"  divby.bind=\"10\"></gridpaging>\r\n\t\t</ux-dialog-body>\r\n\t\t<!--<ux-dialog-footer>\t\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"Submit()\">Search</button>\r\n\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"controller.cancel()\">Close</button>\r\n\t\t</ux-dialog-footer>-->\r\n\t</ux-dialog>\r\n</template>"; });
-define('text!ppid/talent_search/ppid.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Program Personal Information Database</h3>\r\n\t<!-- <div style=\"background:#A2A2D0; width:100%; height:38px; padding:5px;\">\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"FindUsers()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"\" value=\"ADD NEW PROGRAM PERSONNEL\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<label hidden.bind=\"obj_personnel.global_indiv_id.length==0\">Global Id: ${obj_personnel.global_indiv_id}</label>\r\n\t</div> -->\r\n\t<require from=\"./forms/main\"></require>\r\n\t<require from=\"./forms/relative\"></require>\r\n\t<require from=\"./forms/awards_training\"></require>\r\n\t<require from=\"./forms/gov_info\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<!--<require from=\"converters/filtercustom\"></require>\r\n\t<require from=\"converters/sorttext\"></require>-->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Personnel Info</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"company_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"gov_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_character_ref\" aria-controls=\"relative_character_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(1)\">Relative</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#awards_training\" aria-controls=\"awards_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Awards, Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<main></main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_character_ref\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<relative></relative>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"awards_training\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<awards_training></awards_training>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info></gov_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
-define('text!ppid/talent_search/talent_search - Copy.html', ['module'], function(module) { module.exports = "<template>\r\n  <br/>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 410px;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n        <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">SEARCH</strong>\r\n      </ul>\r\n      <div class=\"col-md-6\">\r\n        <strong>General Info</strong>\r\n        <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n          <tbody >\r\n              <tr>\r\n                <td style=\"vertical-align: top;\">\r\n                  <table>\r\n                       <tr>\r\n                         <div clas=\"divtable\" style=\"width:100%\">\r\n                           <div class=\"col-md-3\">Name (Group, Individual)</div>\r\n                           <div class=\"col-md-6\">\r\n                             <select value.bind=\"_CACHE_TALENT._NAME_AND_OR\" style=\"width:70px;\">\r\n                               <option value=\"2\">LIKE ANY OF</option>\r\n                               <option value=\"0\">OR</option>\r\n                             </select>\r\n                             <input value.bind=\"_CACHE_TALENT._NAME\" style=\"width: 119px;\" />\r\n                           </div>\r\n                           <div class=\"col-md-3\">\r\n                             <input type=\"radio\" name=\"_CACHE_TALENT._NAME_RADIO_BUTTON\" value=\"1\" checked=\"true\">AND\r\n                             <input type=\"radio\" name=\"_CACHE_TALENT._NAME_RADIO_BUTTON\" value=\"0\">OR\r\n                           </div>\r\n                         </div>\r\n                      </tr>\r\n                      <tr>\r\n                        <div clas=\"divtable\" style=\"width:100%\">\r\n                          <div class=\"col-md-3\">Age</div>\r\n                          <div class=\"col-md-6\">\r\n                            <select value.bind=\"_CACHE_TALENT._AGE_AND_OR\" style=\"width:70px;\">\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                            <input value.bind=\"_CACHE_TALENT._AGE\" style=\"width: 119px;\" />\r\n                          </div>\r\n                          <div class=\"col-md-3\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._AGE_RADIO_BUTTON\" value=\"1\" checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._AGE_RADIO_BUTTON\" value=\"0\">OR\r\n                          </div>\r\n                        </div>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Citizenship</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._CITIZENSHIP_POP\" value.bind=\"_CACHE_TALENT._CITIZENSHIP\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._CITIZENSHIP_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._CITIZENSHIP_POP\" click.trigger=\"onClick(1, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._CITIZENSHIP_POP\" click.trigger=\"onClick(1, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Religion</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._RELIGION_POP\" value.bind=\"_CACHE_TALENT._RELIGION\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._RELIGION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._RELIGION_POP\" click.trigger=\"onClick(2, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._RELIGION_POP\" click.trigger=\"onClick(2, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Civil Status</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._CIVIL_STATUS_POP\" value.bind=\"_CACHE_TALENT._CIVIL_STATUS\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._CIVIL_STATUS_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._CIVIL_STATUS_POP\" click.trigger=\"onClick(3, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._CIVIL_STATUS_POP\" click.trigger=\"onClick(3, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Gender</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._GENDER_POP\" value.bind=\"_CACHE_TALENT._GENDER\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._GENDER_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._GENDER_POP\" click.trigger=\"onClick(4, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._GENDER_POP\" click.trigger=\"onClick(4, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Country</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._COUNTRY_POP\" value.bind=\"_CACHE_TALENT._COUNTRY\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._COUNTRY_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._COUNTRY_POP\" click.trigger=\"onClick(5, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._COUNTRY_POP\" click.trigger=\"onClick(5, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Location</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._LOCATION_POP\" value.bind=\"_CACHE_TALENT._LOCATION\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._LOCATION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._LOCATION_POP\" click.trigger=\"onClick(6, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._LOCATION_POP\" click.trigger=\"onClick(6, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Talent Supplier</td>\r\n                        <td>\r\n                            <input value.bind=\"_CACHE_TALENT._TALENT_SUPPLIER\" style=\"width: 260px;\" />\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Talent Handler</td>\r\n                        <td>\r\n                            <input value.bind=\"_CACHE_TALENT._TALENT_HANDLER\" style=\"width: 260px;\" />\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Interest</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._INTEREST_POP\" value.bind=\"_CACHE_TALENT._INTEREST\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._INTEREST_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._INTEREST_POP\" click.trigger=\"onClick(7, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._INTEREST_POP\" click.trigger=\"onClick(7, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Skill Talent</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._SKILL_TALENT_POP\" value.bind=\"_CACHE_TALENT._SKILL_TALENT\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._SKILL_TALENT_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._SKILL_TALENT_POP\" click.trigger=\"onClick(8, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._SKILL_TALENT_POP\" click.trigger=\"onClick(8, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                    </table>\r\n                </td>\r\n              </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <div class=\"col-md-6\">\r\n        <strong>Characteristics</strong>\r\n        <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n          <tbody>\r\n              <tr>\r\n                <td style=\"vertical-align: top;\">\r\n                  <table>\r\n                    <tr>\r\n                      <td>Height</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._HEIGHT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Weight</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._WEIGHT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Built</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._BUILT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Eye Color</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._EYE_COLOR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Hair Color</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._HAIR_COLOR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Skintone</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._SKINTONE\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Vital Statistics</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._VITAL_STATISTICS\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Specific Characteristics Keyword</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._SPECIFIC_CHAR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Talent Type</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._TALENT_TYPE\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                  </table>\r\n                </td>\r\n              </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"search_on()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n  </div>\r\n  <div class=\"row\"><br/></div>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 450px;\" if.bind=\"_CACHE_TALENT._HAS_FIRED\">\r\n    <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n      <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">Search Results</strong>\r\n    </ul>\r\n    <div class=\"row\">\r\n      <div class=\"tab-content\" style=\"overflow:scroll;width:97%; height:400px;margin-left:2%;\">\r\n          <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"><br/>\r\n            <div>\r\n              <table class=\"table table-hover table-condensed table-bordered\" style=\"overflow:scroll; width: 100%; left-margin:50px;\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\r\n                  <thead class=\"table-default\">\r\n                      <tr>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              PIC\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              VIDEO\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Part Time Id\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Group Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Last Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Given Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Middle Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Alias Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Country\r\n                          </td>\r\n                      </tr>\r\n                  </thead>\r\n                  <tbody>\r\n                      <tr repeat.for=\"item of _CACHE_TALENT.QUERY_VAL\">\r\n                          <td valign=\"middle\"><a href=\"#\" click.trigger=\"talent_select(item.PT_INDIV_ID, item.SOURCE)\">Select</a></td>\r\n                          <td valign=\"middle\"><div style=\"height:50px; width:50px;\"><img src=\"${item.PIC}\" alt=\"${item.LAST_NAME}\" height=\"50\" width=\"50\"> </div></td>\r\n                          <td valign=\"middle\"><a enabled=\"false\">View Video</a></td>\r\n                          <td valign=\"middle\">\r\n                              ${item.PT_INDIV_ID}\r\n                          </td valign=\"middle\">\r\n                          <td>${item.GROUP_NAME}</td>\r\n                          <td valign=\"middle\">\r\n                              ${item.LAST_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              ${item.GIVEN_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              ${item.MIDDLE_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              <div innerhtml.bind=\"item.ALIAS\"></div>\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                            ${item.COUNTRY}\r\n                          </td>\r\n                      </tr>\r\n                  </tbody>\r\n              </table>\r\n            </div>\r\n          </div>\r\n        </div>\r\n    </div>\r\n  </div>\r\n  <div class=\"row\" if.bind=\"_CACHE_TALENT._HAS_FIRED\">\r\n    <br />\r\n  </div>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 38px;\">\r\n    <button class=\"btn btn-xs customButton\">ADD NEW TALENT SUPPLIERS</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">MAKE NEW SEARCH</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">PRINT</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">EXPORT</button>\r\n  </div>\r\n  <div class=\"row\">\r\n    <br />\r\n    <br />\r\n  </div>\r\n\r\n</template>\r\n"; });
 define('text!ppid/talent_search/talent_search.html', ['module'], function(module) { module.exports = "<template>\r\n  <br/>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 430px;\">\r\n      <div style=\"text-align:center;\">\r\n        <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:30px;padding-top:6px;\">\r\n          <strong class=\"colorHeader\">SEARCH</strong>\r\n        </ul>\r\n      </div>\r\n      <div class=\"col-md-6\">\r\n        <div style=\"backgroud-color: blue\"> <strong >General Info</strong></div>\r\n        <div  style=\"overflow-x:scroll; overflow-y:scroll; height:350px; width:100%;\">\r\n          <table class=\"classIEnable\">\r\n            <tbody>\r\n                <tr style=\"vertical-align: top;\">\r\n                  <td style=\"vertical-align: top;\">\r\n                    <table>\r\n                        <tr>\r\n                           <td style=\"width:15%;\" align=\"right\">Name (Group, Individual)</td>\r\n                           <td style=\"width:20%\">\r\n                             <select value.bind=\"_CACHE_TALENT._NAME_AND_OR\" style=\"width:80px\">\r\n                               <option value=\"2\">LIKE ANY OF</option>\r\n                               <option value=\"0\">OR</option>\r\n                             </select>\r\n                           </td>\r\n                           <td style=\"width: 30%\">\r\n                             <input value.bind=\"_CACHE_TALENT._NAME\" style=\"width:175px\"/>\r\n                           </td>\r\n                           <td style=\"width:3%\">\r\n                           </td>\r\n                           <td style=\"width:19%\">\r\n                             <input type=\"radio\" name=\"_CACHE_TALENT._NAME_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                             <input type=\"radio\" name=\"_CACHE_TALENT._NAME_RADIO_BUTTON\" value=0>OR\r\n                           </td>\r\n                        </tr>\r\n                        <tr>\r\n                          <td style=\"width:15%;\" align=\"right\">Age</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._AGE_AND_OR\"  style=\"width:80px\">\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <input value.bind=\"_CACHE_TALENT._AGE\" style=\"width:175px\"/>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._AGE_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._AGE_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Citizenship</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._CITIZENSHIP_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                              <option value=\"1\">AND</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._CITIZENSHIP_POP\" value.bind=\"_CACHE_TALENT._CITIZENSHIP\" style=\"width:175px;\" if.bind=\"_CACHE_TALENT._CITIZENSHIP_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._CITIZENSHIP_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._CITIZENSHIP_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._CITIZENSHIP_POP\" click.trigger=\"onClick(1, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._CITIZENSHIP_POP\" click.trigger=\"onClick(1, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._CITIZENSHIP_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._CITIZENSHIP_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Religion</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._RELIGION_AND_OR\"  style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._RELIGION_POP\" value.bind=\"_CACHE_TALENT._RELIGION\" style=\"width:175px;\" if.bind=\"_CACHE_TALENT._RELIGION_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._RELIGION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._RELIGION_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._RELIGION_POP\" click.trigger=\"onClick(2, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._RELIGION_POP\" click.trigger=\"onClick(2, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._RELIGION_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._RELIGION_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Civil Status</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._CIVIL_STATUS_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._CIVIL_STATUS_POP\" value.bind=\"_CACHE_TALENT._CIVIL_STATUS\" style=\"width:175px;\" if.bind=\"_CACHE_TALENT._CIVIL_STATUS_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._CIVIL_STATUS_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._CIVIL_STATUS_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._CIVIL_STATUS_POP\" click.trigger=\"onClick(3, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._CIVIL_STATUS_POP\" click.trigger=\"onClick(3, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._CIVIL_STATUS_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._CIVIL_STATUS_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Gender</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._GENDER_AND_OR\"  style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._GENDER_POP\" value.bind=\"_CACHE_TALENT._GENDER\" style=\"width:175px;height:35px;\" if.bind=\"_CACHE_TALENT._GENDER_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._GENDER_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._GENDER_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._GENDER_POP\" click.trigger=\"onClick(4, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._GENDER_POP\" click.trigger=\"onClick(4, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._GENDER_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._GENDER_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Country</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._COUNTRY_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._COUNTRY_POP\" value.bind=\"_CACHE_TALENT._COUNTRY\" style=\"width:175px;height:50px;\" if.bind=\"_CACHE_TALENT._COUNTRY_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._COUNTRY_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._COUNTRY_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._COUNTRY_POP\" click.trigger=\"onClick(5, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._COUNTRY_POP\" click.trigger=\"onClick(5, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._COUNTRY_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._COUNTRY_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Location</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._LOCATION_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._LOCATION_POP\" value.bind=\"_CACHE_TALENT._LOCATION\" style=\"width:175px;\" if.bind=\"_CACHE_TALENT._LOCATION_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._LOCATION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._LOCATION_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._LOCATION_POP\" click.trigger=\"onClick(6, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._LOCATION_POP\" click.trigger=\"onClick(6, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._LOCATION_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._LOCATION_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr>\r\n                          <td style=\"width:15%;\" align=\"right\">Talent Supplier</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._TALENT_SUPPLIER_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                              <option value=\"1\">AND</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <input value.bind=\"_CACHE_TALENT._TALENT_SUPPLIER\" style=\"width: 175px;\" />\r\n                          </td>\r\n                          <td style=\"3%\">\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._TALENT_SUPPLIER_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._TALENT_SUPPLIER_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr>\r\n                          <td style=\"width:15%;\" align=\"right\">Talent Handler</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._TALENT_HANDLER_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                              <option value=\"1\">AND</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <input value.bind=\"_CACHE_TALENT._TALENT_HANDLER\" style=\"width: 175px;\" />\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._TALENT_HANDLER_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._TALENT_HANDLER_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Interest</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._INTEREST_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                              <option value=\"1\">AND</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._INTEREST_POP\" value.bind=\"_CACHE_TALENT._INTEREST\" style=\"width:175px;\" if.bind=\"_CACHE_TALENT._INTEREST_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._INTEREST_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._INTEREST_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._INTEREST_POP\" click.trigger=\"onClick(7, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._INTEREST_POP\" click.trigger=\"onClick(7, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._INTEREST_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._INTEREST_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                        <tr valign=\"top\">\r\n                          <td style=\"width:15%;\" align=\"right\">Skill Talent</td>\r\n                          <td style=\"width:20%\">\r\n                            <select value.bind=\"_CACHE_TALENT._SKILL_TALENT_AND_OR\" style=\"width:80px\">\r\n                              <option value=\"2\">LIKE ANY OF</option>\r\n                              <option value=\"0\">OR</option>\r\n                              <option value=\"1\">AND</option>\r\n                            </select>\r\n                          </td>\r\n                          <td style=\"width: 30%\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._SKILL_TALENT_POP\" value.bind=\"_CACHE_TALENT._SKILL_TALENT\" style=\"width:175px;\" if.bind=\"_CACHE_TALENT._SKILL_TALENT_POP\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._SKILL_TALENT_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                            <input style=\"width:175px\" if.bind=\"!_CACHE_TALENT._SKILL_TALENT_POP\" disabled>\r\n                          </td>\r\n                          <td style=\"width:3%\">\r\n                            <div if.bind=\"!_CACHE_TALENT._SKILL_TALENT_POP\" click.trigger=\"onClick(8, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                            <div if.bind=\"_CACHE_TALENT._SKILL_TALENT_POP\" click.trigger=\"onClick(8, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                          </td>\r\n                          <td style=\"width:19%\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._SKILL_TALENT_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._SKILL_TALENT_RADIO_BUTTON\" value=0>OR\r\n                          </td>\r\n                        </tr>\r\n                      </table>\r\n                  </td>\r\n                </tr>\r\n            </tbody>\r\n          </table>\r\n        </div>\r\n      </div>\r\n      <div class=\"col-md-6\">\r\n        <strong>Characteristics</strong>\r\n        <div  style=\"overflow-x:scroll; overflow-y:scroll; height:350px; width:100%;\">\r\n          <table class=\"classIEnable\">\r\n            <tbody>\r\n                <tr>\r\n                  <td style=\"vertical-align: top;\">\r\n                    <table>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Height</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._HEIGHT_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._HEIGHT\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._HEIGHT_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._HEIGHT_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Weight</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._WEIGHT_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._WEIGHT\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._WEIGHT_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._WEIGHT_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Built</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._BUILT_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._BUILT\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._BUILT_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._BUILT_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Eye Color</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._EYE_COLOR_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._EYE_COLOR\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._EYE_COLOR_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._EYE_COLOR_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Hair Color</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._HAIR_COLOR_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._HAIR_COLOR\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._HAIR_COLOR_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._HAIR_COLOR_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Skintone</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._SKINTONE_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._SKINTONE\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._SKINTONE_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._SKINTONE_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Vital Statistics</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._VITAL_STATISTICS_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._VITAL_STATISTICS\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._VITAL_STATISTICS_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._VITAL_STATISTICS_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Specific Characteristics Keyword</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._SPECIFIC_CHAR_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._SPECIFIC_CHAR\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._SPECIFIC_CHAR_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._SPECIFIC_CHAR_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td style=\"width:15%;\" align=\"right\">Talent Type</td>\r\n                        <td style=\"width:20%\">\r\n                          <select value.bind=\"_CACHE_TALENT._TALENT_TYPE_AND_OR\" style=\"width:80px\">\r\n                            <option value=\"2\">LIKE ANY OF</option>\r\n                            <option value=\"0\">OR</option>\r\n                          </select>\r\n                        </td>\r\n                        <td style=\"width: 30%\">\r\n                          <input value.bind=\"_CACHE_TALENT._TALENT_TYPE\" style=\"width: 175px;\" />\r\n                        </td>\r\n                        <td style=\"width:19%\">\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._TALENT_TYPE_RADIO_BUTTON\" value=1 checked=\"true\">AND\r\n                          <input type=\"radio\" name=\"_CACHE_TALENT._TALENT_TYPE_RADIO_BUTTON\" value=0>OR\r\n                        </td>\r\n                      </tr>\r\n                    </table>\r\n                  </td>\r\n                </tr>\r\n            </tbody>\r\n          </table>\r\n        </div>\r\n      </div>\r\n      <div class=\"row\"><br /></div>\r\n      <div style=\"left-margin:10px;\">\r\n        <p ><strong>* separate multiple search values with comma</strong></p>\r\n      </div>\r\n  </div>\r\n  <div class=\"row\"><br/></div>\r\n  <div style=\"text-align:center\">\r\n    <input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"search_on()\" value=\"SEARCH\"/>\r\n  </div>\r\n  <div class=\"row\"><br/></div>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 450px;\" if.bind=\"_CACHE_TALENT._HAS_FIRED && _CACHE_TALENT.QUERY_VAL.length>0\">\r\n    <div style=\"text-align:center;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:30px;padding-top:6px;\">\r\n        <strong class=\"colorHeader\">Search Results</strong>\r\n      </ul>\r\n    </div>\r\n    <div class=\"row\">\r\n      <div class=\"tab-content\" style=\"overflow:scroll;width:97%; height:400px;margin-left:2%;\">\r\n          <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"><br/>\r\n            <div>\r\n              <table class=\"table table-hover table-condensed table-bordered\" style=\"overflow:scroll; width: 100%; left-margin:50px;\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\r\n                  <thead class=\"table-default\">\r\n                      <tr>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              PIC\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              VIDEO\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Part Time Id\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Group Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Last Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Given Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Middle Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Alias Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Country\r\n                          </td>\r\n                      </tr>\r\n                  </thead>\r\n                  <tbody>\r\n                      <tr repeat.for=\"item of _CACHE_TALENT.QUERY_VAL\">\r\n                          <td valign=\"middle\"><a href=\"#\" click.trigger=\"talent_select(item.PT_INDIV_ID, item.SOURCE)\">Select</a></td>\r\n                          <td valign=\"middle\"><div style=\"height:50px; width:50px;\"><img src=\"${item.PIC}\" alt=\"${item.LAST_NAME}\" height=\"50\" width=\"50\"> </div></td>\r\n                          <td valign=\"middle\"><a enabled=\"false\">View Video</a></td>\r\n                          <td valign=\"middle\">\r\n                              ${item.PT_INDIV_ID}\r\n                          </td valign=\"middle\">\r\n                          <td>${item.GROUP_NAME}</td>\r\n                          <td valign=\"middle\">\r\n                              ${item.LAST_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              ${item.GIVEN_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              ${item.MIDDLE_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              <div innerhtml.bind=\"item.ALIAS\"></div>\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                            ${item.COUNTRY}\r\n                          </td>\r\n                      </tr>\r\n                  </tbody>\r\n              </table>\r\n            </div>\r\n          </div>\r\n        </div>\r\n    </div>\r\n  </div>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 75px;\" if.bind=\"_CACHE_TALENT._HAS_FIRED && _CACHE_TALENT.QUERY_VAL.length==0\">\r\n    <div style=\"text-align:center;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:30px;padding-top:6px;\">\r\n        <strong class=\"colorHeader\">Search Results</strong>\r\n      </ul>\r\n    </div>\r\n    <div class=\"row\">\r\n      <div class=\"tab-content\" style=\"width:97%; height:50px;margin-left:2%; padding-top: 6px;\">\r\n        <div style=\"text-align:center\">Search returned no entry</div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  <div class=\"row\" if.bind=\"_CACHE_TALENT._HAS_FIRED\">\r\n    <br />\r\n  </div>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 38px;text-align:center;\">\r\n    <button class=\"btn btn-xs customButton\">ADD NEW TALENT SUPPLIERS</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">MAKE NEW SEARCH</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">PRINT</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">EXPORT</button>\r\n  </div>\r\n  <div class=\"row\">\r\n    <br />\r\n    <br />\r\n  </div>\r\n\r\n</template>\r\n"; });
 define('text!ppid/talent_search/modals/DialogBox.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body style=\"border-radius: 0px;\" class=\"divBackground\">\r\n\t\t\t<div style=\"white-space: pre;\">${message}</div>\r\n\t\t</ux-dialog-body>\r\n\t\t<ux-dialog-footer>\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.ok()\">Yes</button>&nbsp;&nbsp;\r\n\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\"  click.trigger=\"controller.cancel()\">No</button>&nbsp;&nbsp;\r\n\t\t</ux-dialog-footer>\r\n\t</ux-dialog>\r\n</template>"; });
 define('text!ppid/talent_search/modals/photo_list.html', ['module'], function(module) { module.exports = "<template>\r\n\t<ux-dialog>\r\n\t\t<ux-dialog-header>class=\"colorHeader\"><span style=\"position:relative;top:-8px;\"><b>${title}</b></span></ux-dialog-header>\r\n\t\t<ux-dialog-body>\r\n\t\t\t<div>\r\n\t\t\t\t<table>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</ux-dialog-body>\r\n\t</ux-dialog>\r\n</template>"; });
@@ -32497,4 +32506,6 @@ define('text!ppid/talent_search/forms/relative_emergency.html', ['module'], func
 define('text!ppid/talent_search/forms/relative_parent.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 600px; width: 900px; margin: 5px auto;\">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Mother</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.last_name\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.mother.birth_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.unit_no\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.bldg_name\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.barangay\" tabindex=\"13\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.state_province\" tabindex=\"16\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.mother.country_cd\" tabindex=\"19\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.given_name\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.occupation\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.house_no\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.street_name\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.district\" tabindex=\"14\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(true)\" value.bind=\"obj_personnel.RELATIVE.parents.mother.region\" tabindex=\"17\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_dependent\" change.delegate=\"checkChange(true, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"mstatus_deceased\" change.delegate=\"checkChange(true, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.middle_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.employer\" tabindex=\"6\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.block_lot\" tabindex=\"9\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.sub_village\" tabindex=\"12\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.city_town\" tabindex=\"15\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.mother.zipcode\" tabindex=\"18\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"mDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.mother.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.mother.deceased_dt\" tabindex=\"21\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><br/></td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Father</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.last_name\" tabindex=\"22\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fBirthDate\" disabled.bind=\"_disableForm\" value.bind=\"obj_personnel.RELATIVE.parents.father.birth_dt\" tabindex=\"25\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.unit_no\" tabindex=\"28\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.bldg_name\" tabindex=\"31\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.barangay\" tabindex=\"34\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.state_province\" tabindex=\"37\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.parents.father.country_cd\" tabindex=\"40\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.given_name\" tabindex=\"23\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.occupation\" tabindex=\"26\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.house_no\" tabindex=\"29\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.street_name\" tabindex=\"32\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.district\" tabindex=\"35\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged(false)\" value.bind=\"obj_personnel.RELATIVE.parents.father.region\" tabindex=\"38\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <label repeat.for=\"s of status\" style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"radio\" name=\"fstatus\" value.bind=\"s\" checked.bind=\"obj_personnel.RELATIVE.parents.father.status\" change.delegate=\"checkChange(false, s)\" />${s}\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label> -->\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_dependent\" change.delegate=\"checkChange(false, 'Dependent')\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"fstatus_deceased\" change.delegate=\"checkChange(false, 'Deceased')\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.middle_name\" tabindex=\"24\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.employer\" tabindex=\"27\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.block_lot\" tabindex=\"30\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.sub_village\" tabindex=\"33\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.city_town\" tabindex=\"36\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.parents.father.zipcode\" tabindex=\"39\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"fDeceasedDate\" disabled.bind=\"obj_personnel.RELATIVE.parents.father.status!='Deceased'\" value.bind=\"obj_personnel.RELATIVE.parents.father.deceased_dt\" tabindex=\"42\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\t\t\t\t\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/talent_search/forms/relative_siblings.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table style=\"width: 100%;\">\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Siblings</h5>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" value.bind=\"obj_personnel.RELATIVE.siblings.model.last_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth Date*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"birth_dt\" tabindex=\"4\" value.bind=\"obj_personnel.RELATIVE.siblings.model.birth_dt\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"2\" value.bind=\"obj_personnel.RELATIVE.siblings.model.given_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Age</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" disabled value.bind=\"obj_personnel.RELATIVE.siblings.model.age\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"status_dependent\" change.delegate=\"checkChange(0)\" disabled.bind=\"_disableForm\" />Dependent\r\n\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"status_deceased\" change.delegate=\"checkChange(1)\" disabled.bind=\"_disableForm\" />Deceased\r\n\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"3\" value.bind=\"obj_personnel.RELATIVE.siblings.model.middle_name\" disabled.bind=\"_disableForm\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Relationship*</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" tabindex=\"5\" value.bind=\"obj_personnel.RELATIVE.siblings.model.relative_cd\" disabled.bind=\"_disableForm\" >\r\n\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.RELATIONSHIP\" if.bind=\"item.group=='SIBLING'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" id=\"deceased_dt\" tabindex=\"6\" disabled.bind=\"_disableDeceasedDt || _disableForm\" value.bind=\"obj_personnel.RELATIVE.siblings.model.deceased_dt\" />\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnAdd\" click.trigger=\"btnAdd_Siblings()\">Add</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" disabled.bind=\"_disableBtnSave\" click.trigger=\"validate()\">Save</button>&nbsp;&nbsp;\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"clearField()\">Clear/Reset</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<div style=\"height: 300px; overflow-y: scroll;\">\r\n\t\t\t\t\t\t\t<table class=\"table table-hover table-condensed table-bordered table-striped\" ref=\"tblData\">\r\n\t\t\t\t\t\t\t\t<thead style=\"display: table-header-group;\">\r\n\t\t\t\t\t\t\t\t\t<tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Last Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">First Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Birth Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Age</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Status</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Edit</td>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"colorCell\">Remove</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</thead>\r\n\t\t\t\t\t\t\t\t<tbody>\r\n\t\t\t\t\t\t\t\t\t<tr repeat.for=\"item of obj_personnel.RELATIVE.siblings.list\">\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.last_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.given_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.middle_name}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.birth_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.age}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.status}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>${item.deceased_dt}</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnEdit_Siblings(item)\" disabled.bind=\"_disableTable\" >-</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" click.trigger=\"btnRemove_Siblings(item)\" disabled.bind=\"_disableTable\">X</button>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t<tr if.bind=\"obj_personnel.RELATIVE.siblings.list == null || obj_personnel.RELATIVE.siblings.list.length==0\">\r\n\t\t\t\t\t\t\t\t\t\t<td colspan=\"9\">\r\n\t\t\t\t\t\t\t\t\t\t\t<b>No current entry.</b>\r\n\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</tbody>\r\n\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
 define('text!ppid/talent_search/forms/relative_spouse.html', ['module'], function(module) { module.exports = "<template>\r\n\t<div style=\"height: 550px; width: 913px; margin: 5px auto; \">\r\n\t\t<table>\r\n\t\t\t<tbody>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table style=\"width: 100%;\">\r\n\t\t\t\t\t\t\t<tr class=\"backroundTab\">\r\n\t\t\t\t\t\t\t\t<td colspan=\"3\">\r\n\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t<h5 style=\"margin: 10px; text-align: left; color: white;\">Spouse</h5>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t<tr style=\"vertical-align: top;\">\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Last Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.last_name\" tabindex=\"1\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Birth date*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"spouse_birth_dt\" value.bind=\"obj_personnel.RELATIVE.spouse.birth_dt\" tabindex=\"4\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Unit No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.unit_no\" tabindex=\"7\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Bldg name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.bldg_name\" tabindex=\"10\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Barangay</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.barangay\" tabindex=\"13\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Province/State</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_provinceChanged()\" value.bind=\"obj_personnel.RELATIVE.spouse.state_province\" tabindex=\"16\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.PROVINCE\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Country*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" value.bind=\"obj_personnel.RELATIVE.spouse.country_cd\" tabindex=\"19\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.COUNTRY\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Given Name*</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.given_name\" tabindex=\"2\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Occupation</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.occupation\" tabindex=\"5\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">House No.</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.house_no\" tabindex=\"8\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Street / Phase</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.street_name\" tabindex=\"11\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">District</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.district\" tabindex=\"14\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Region</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<select style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;\" change.delegate=\"dd_regionChanged()\" value.bind=\"obj_personnel.RELATIVE.spouse.region\" tabindex=\"17\" >\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<option value=\"\"></option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"Philippines\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='PH'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<optgroup label=\"United States of America\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t<option repeat.for=\"item of obj_personnel.REGION\" if.bind=\"item.group=='US'\" value.bind=\"item.value\">${item.text}</option>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t</optgroup>\r\n\t\t\t\t\t\t\t\t\t\t\t\t</select>\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<!-- <td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Status</td> -->\r\n\t\t\t\t\t\t\t\t\t\t\t<td colspan=\"2\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"spouse_dependent\" change.delegate=\"checkChange(0)\" />Dependent\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t\t\t<label style=\"margin-left: 10px; margin-right: 10px;\">\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"checkbox\" id=\"spouse_deceased\" change.delegate=\"checkChange(1)\" />Deceased\r\n\t\t\t\t\t\t\t\t\t\t\t\t</label>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<table>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Middle Name</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.middle_name\" tabindex=\"3\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Employer</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.employer\" tabindex=\"6\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Blk lot</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.block_lot\" tabindex=\"9\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Subd / Village</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.sub_village\" tabindex=\"12\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">City/Town</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.city_town\" tabindex=\"15\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Zip code</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" value.bind=\"obj_personnel.RELATIVE.spouse.zipcode\" tabindex=\"18\" />\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t\t<td style=\"width: 120px; vertical-align: middle;\" class=\"text-left\">Deceased Date</td>\r\n\t\t\t\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t\t\t\t<input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px;\" id=\"spouse_deceased_dt\" disabled.bind=\"_disableDeceasedDt\" value.bind=\"obj_personnel.RELATIVE.spouse.deceased_dt\" tabindex=\"21\" />\r\n\t\t\t\t\t\t\t\t\t\t\t\t<!-- <input style=\"border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;\" type=\"text\" tabindex=\"1\" /> -->\r\n\t\t\t\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t\t</table>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t</tr>\t\t\t\t\t\t\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button class=\"btn btn-xs customButton\" style=\"width:150px;\" click.trigger=\"validate()\">Save</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\t\t\t\t\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<table class= \"table-bordered\" style=\" width: 500px; margin-left: auto; margin-right: auto;\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tCREATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblCreatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\tLAST UPDATED BY:\r\n\t\t\t\t\t\t\t\t</td>\r\n\t\t\t\t\t\t\t\t<td>\r\n\t\t\t\t\t\t\t\t\t<b>${lblUpdatedBy}</b>\r\n\t\t\t\t\t\t\t\t</td>\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t</tbody>\r\n\t\t</table>\r\n\t</div>\r\n</template>"; });
+define('text!ppid/talent_search/ppid.html', ['module'], function(module) { module.exports = "<template>\r\n\t<h3>Program Personal Information Database</h3>\r\n\t<!-- <div style=\"background:#A2A2D0; width:100%; height:38px; padding:5px;\">\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"FindUsers()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"\" value=\"ADD NEW PROGRAM PERSONNEL\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n\t\t<label hidden.bind=\"obj_personnel.global_indiv_id.length==0\">Global Id: ${obj_personnel.global_indiv_id}</label>\r\n\t</div> -->\r\n\t<require from=\"./forms/main\"></require>\r\n\t<require from=\"./forms/relative\"></require>\r\n\t<require from=\"./forms/awards_training\"></require>\r\n\t<require from=\"./forms/gov_info\"></require>\r\n\t<require from=\"./forms/company_info\"></require>\t\r\n\t<!--<require from=\"converters/filtercustom\"></require>\r\n\t<require from=\"converters/sorttext\"></require>-->\r\n\t<div style=\"margin-left:0%!important;margin-right:0%!important;margin-top:0%;text-align:center\" class=\"text-center divBackground\" >\r\n\t\t<ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:100%;height:38px;\">\r\n\t\t\t<li role=\"presentation\" class=\"active\" ><a href=\"#main\" aria-controls=\"main\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" click.trigger=\"changeTab(0)\">Personnel Info</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#company_info\" aria-controls=\"company_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(4)\">Company</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#gov_info\" aria-controls=\"gov_info\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(3)\">Gov. Related Info.</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#relative_character_ref\" aria-controls=\"relative_character_ref\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(1)\">Relative</a></li>\r\n\t\t\t<li role=\"presentation\" style=\"\"><a href=\"#awards_training\" aria-controls=\"awards_training\" role=\"tab\" data-toggle=\"tab\" style=\"margin-top:6px;\" disabled.bind=\"obj_personnel.global_indiv_id.length==0\" click.trigger=\"changeTab(2)\">Awards, Seminars / Training and Workshops</a></li>\r\n        </ul>\r\n\r\n        <div class=\"tab-content\">\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"  style=\"width:1200px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<main></main>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"relative_character_ref\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<relative></relative>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"awards_training\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<awards_training></awards_training>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"gov_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<gov_info></gov_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t\t<div role=\"tabpanel\" class=\"tab-pane color1\" id=\"company_info\"  style=\"width:1024px;height:620px; margin-left:auto; margin-right:auto;\"><br/>\r\n\t\t\t\t<company_info></company_info>\r\n\t\t\t</div>\r\n\t\t\t\r\n\t\t</div>\r\n\t\t\r\n\t</div>\r\n</template>"; });
+define('text!ppid/talent_search/talent_search - Copy.html', ['module'], function(module) { module.exports = "<template>\r\n  <br/>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 410px;\">\r\n      <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n        <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">SEARCH</strong>\r\n      </ul>\r\n      <div class=\"col-md-6\">\r\n        <strong>General Info</strong>\r\n        <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n          <tbody >\r\n              <tr>\r\n                <td style=\"vertical-align: top;\">\r\n                  <table>\r\n                       <tr>\r\n                         <div clas=\"divtable\" style=\"width:100%\">\r\n                           <div class=\"col-md-3\">Name (Group, Individual)</div>\r\n                           <div class=\"col-md-6\">\r\n                             <select value.bind=\"_CACHE_TALENT._NAME_AND_OR\" style=\"width:70px;\">\r\n                               <option value=\"2\">LIKE ANY OF</option>\r\n                               <option value=\"0\">OR</option>\r\n                             </select>\r\n                             <input value.bind=\"_CACHE_TALENT._NAME\" style=\"width: 119px;\" />\r\n                           </div>\r\n                           <div class=\"col-md-3\">\r\n                             <input type=\"radio\" name=\"_CACHE_TALENT._NAME_RADIO_BUTTON\" value=\"1\" checked=\"true\">AND\r\n                             <input type=\"radio\" name=\"_CACHE_TALENT._NAME_RADIO_BUTTON\" value=\"0\">OR\r\n                           </div>\r\n                         </div>\r\n                      </tr>\r\n                      <tr>\r\n                        <div clas=\"divtable\" style=\"width:100%\">\r\n                          <div class=\"col-md-3\">Age</div>\r\n                          <div class=\"col-md-6\">\r\n                            <select value.bind=\"_CACHE_TALENT._AGE_AND_OR\" style=\"width:70px;\">\r\n                              <option value=\"0\">OR</option>\r\n                            </select>\r\n                            <input value.bind=\"_CACHE_TALENT._AGE\" style=\"width: 119px;\" />\r\n                          </div>\r\n                          <div class=\"col-md-3\">\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._AGE_RADIO_BUTTON\" value=\"1\" checked=\"true\">AND\r\n                            <input type=\"radio\" name=\"_CACHE_TALENT._AGE_RADIO_BUTTON\" value=\"0\">OR\r\n                          </div>\r\n                        </div>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Citizenship</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._CITIZENSHIP_POP\" value.bind=\"_CACHE_TALENT._CITIZENSHIP\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._CITIZENSHIP_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._CITIZENSHIP_POP\" click.trigger=\"onClick(1, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._CITIZENSHIP_POP\" click.trigger=\"onClick(1, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Religion</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._RELIGION_POP\" value.bind=\"_CACHE_TALENT._RELIGION\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._RELIGION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._RELIGION_POP\" click.trigger=\"onClick(2, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._RELIGION_POP\" click.trigger=\"onClick(2, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Civil Status</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._CIVIL_STATUS_POP\" value.bind=\"_CACHE_TALENT._CIVIL_STATUS\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._CIVIL_STATUS_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._CIVIL_STATUS_POP\" click.trigger=\"onClick(3, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._CIVIL_STATUS_POP\" click.trigger=\"onClick(3, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Gender</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._GENDER_POP\" value.bind=\"_CACHE_TALENT._GENDER\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._GENDER_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._GENDER_POP\" click.trigger=\"onClick(4, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._GENDER_POP\" click.trigger=\"onClick(4, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Country</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._COUNTRY_POP\" value.bind=\"_CACHE_TALENT._COUNTRY\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._COUNTRY_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._COUNTRY_POP\" click.trigger=\"onClick(5, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._COUNTRY_POP\" click.trigger=\"onClick(5, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Location</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._LOCATION_POP\" value.bind=\"_CACHE_TALENT._LOCATION\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._LOCATION_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._LOCATION_POP\" click.trigger=\"onClick(6, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._LOCATION_POP\" click.trigger=\"onClick(6, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Talent Supplier</td>\r\n                        <td>\r\n                            <input value.bind=\"_CACHE_TALENT._TALENT_SUPPLIER\" style=\"width: 260px;\" />\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Talent Handler</td>\r\n                        <td>\r\n                            <input value.bind=\"_CACHE_TALENT._TALENT_HANDLER\" style=\"width: 260px;\" />\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Interest</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._INTEREST_POP\" value.bind=\"_CACHE_TALENT._INTEREST\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._INTEREST_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._INTEREST_POP\" click.trigger=\"onClick(7, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._INTEREST_POP\" click.trigger=\"onClick(7, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                      <tr>\r\n                        <td>Skill Talent</td>\r\n                        <td>\r\n                          <div class=\"col-md-9\">\r\n                            <select multiple.bind=\"_CACHE_TALENT._SKILL_TALENT_POP\" value.bind=\"_CACHE_TALENT._SKILL_TALENT\" style=\"width:230px;\">\r\n                              <option repeat.for=\"item of _CACHE_TALENT._SKILL_TALENT_ARR\" value.bind=\"item.ref\">\r\n                                ${item.desc}\r\n                              </option>\r\n                            </select>\r\n                          </div>\r\n                          <div class=\"col-md-3\" if.bind=\"!_CACHE_TALENT._SKILL_TALENT_POP\" click.trigger=\"onClick(8, true)\"><img src=\"/styles/images/expand.jpg\"></div>\r\n                          <div class=\"col-md-3\" if.bind=\"_CACHE_TALENT._SKILL_TALENT_POP\" click.trigger=\"onClick(8, false)\"><img src=\"/styles/images/collapse.jpg\"></div>\r\n                        </td>\r\n                      </tr>\r\n                    </table>\r\n                </td>\r\n              </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <div class=\"col-md-6\">\r\n        <strong>Characteristics</strong>\r\n        <table style=\"margin-left: 25px; \" class=\"classIEnable\">\r\n          <tbody>\r\n              <tr>\r\n                <td style=\"vertical-align: top;\">\r\n                  <table>\r\n                    <tr>\r\n                      <td>Height</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._HEIGHT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Weight</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._WEIGHT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Built</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._BUILT\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Eye Color</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._EYE_COLOR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Hair Color</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._HAIR_COLOR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Skintone</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._SKINTONE\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Vital Statistics</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._VITAL_STATISTICS\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Specific Characteristics Keyword</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._SPECIFIC_CHAR\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                    <tr>\r\n                      <td>Talent Type</td>\r\n                      <td>\r\n                          <input value.bind=\"_CACHE_TALENT._TALENT_TYPE\" style=\"width: 260px;\" />\r\n                      </td>\r\n                    </tr>\r\n                  </table>\r\n                </td>\r\n              </tr>\r\n          </tbody>\r\n        </table>\r\n      </div>\r\n      <input type=\"button\" class=\"btn btn-xs customButton\" click.trigger=\"search_on()\" value=\"SEARCH\" style=\"padding-left:15px;padding-right:15px;\"/>\r\n  </div>\r\n  <div class=\"row\"><br/></div>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 450px;\" if.bind=\"_CACHE_TALENT._HAS_FIRED\">\r\n    <ul class=\"nav nav-tabs backroundTab\" role=\"tablist\" style=\"width:1024px;height:38px;\">\r\n      <strong class=\"colorHeader\" style=\"vertical-align:middle;position:relative;top:8px;\">Search Results</strong>\r\n    </ul>\r\n    <div class=\"row\">\r\n      <div class=\"tab-content\" style=\"overflow:scroll;width:97%; height:400px;margin-left:2%;\">\r\n          <div role=\"tabpanel\" class=\"tab-pane active color1\" id=\"main\"><br/>\r\n            <div>\r\n              <table class=\"table table-hover table-condensed table-bordered\" style=\"overflow:scroll; width: 100%; left-margin:50px;\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\r\n                  <thead class=\"table-default\">\r\n                      <tr>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              PIC\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              VIDEO\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Part Time Id\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Group Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Last Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Given Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Middle Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Alias Name\r\n                          </td>\r\n                          <td class=\"colorCell2\" style=\"font-weight:bold;\">\r\n                              Country\r\n                          </td>\r\n                      </tr>\r\n                  </thead>\r\n                  <tbody>\r\n                      <tr repeat.for=\"item of _CACHE_TALENT.QUERY_VAL\">\r\n                          <td valign=\"middle\"><a href=\"#\" click.trigger=\"talent_select(item.PT_INDIV_ID, item.SOURCE)\">Select</a></td>\r\n                          <td valign=\"middle\"><div style=\"height:50px; width:50px;\"><img src=\"${item.PIC}\" alt=\"${item.LAST_NAME}\" height=\"50\" width=\"50\"> </div></td>\r\n                          <td valign=\"middle\"><a enabled=\"false\">View Video</a></td>\r\n                          <td valign=\"middle\">\r\n                              ${item.PT_INDIV_ID}\r\n                          </td valign=\"middle\">\r\n                          <td>${item.GROUP_NAME}</td>\r\n                          <td valign=\"middle\">\r\n                              ${item.LAST_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              ${item.GIVEN_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              ${item.MIDDLE_NAME}\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                              <div innerhtml.bind=\"item.ALIAS\"></div>\r\n                          </td>\r\n                          <td valign=\"middle\">\r\n                            ${item.COUNTRY}\r\n                          </td>\r\n                      </tr>\r\n                  </tbody>\r\n              </table>\r\n            </div>\r\n          </div>\r\n        </div>\r\n    </div>\r\n  </div>\r\n  <div class=\"row\" if.bind=\"_CACHE_TALENT._HAS_FIRED\">\r\n    <br />\r\n  </div>\r\n  <div class=\"divBackground\" style=\"margin-left:10%;width:1035px;height: 38px;\">\r\n    <button class=\"btn btn-xs customButton\">ADD NEW TALENT SUPPLIERS</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">MAKE NEW SEARCH</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">PRINT</button>&nbsp;&nbsp;\r\n    <button class=\"btn btn-xs customButton\">EXPORT</button>\r\n  </div>\r\n  <div class=\"row\">\r\n    <br />\r\n    <br />\r\n  </div>\r\n\r\n</template>\r\n"; });
 //# sourceMappingURL=app-bundle.js.map
