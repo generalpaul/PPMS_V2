@@ -103,7 +103,6 @@ export class mainpage {
                                // this._ppfcs_modules.push(this._application[i]);
                             }
                         }
-                        console.log(this._ppi_modules);
 
                         this.fnCheckAccess();
                     });

@@ -98,6 +98,33 @@ export class MainHeaderCustomElement {
        }
     });
 
+
+    this._cache_budget.OBSERVERS.verify_copied_budget.push(() => {
+        toastr.info("Verifying copied template..", "Budget Template");
+
+        $.post(settings.serviceNameBase + "/Home/Compare_Copied_Template", {
+            "BDGT_TMPL_COPIED": this._cache_budget.tmp_bdgt_copied,
+            "BDGT_TMPL_NEW": this._cache_budget.HEADER.BDGT_TMPL_ID
+        }).done((response) => {
+           
+           if(response!="True")
+           {
+              alert("There is a problem on copying the template. Please check after loading..")
+           }
+           else
+           {
+              //toastr.clear();
+              // toastr.success("Copy template successful.", "Budget Template");
+               alert("Copy template successful. Please check..")
+           }
+
+           this.fnBudget('refresh');
+        });
+
+    });
+    
+
+
     this._toastr = toastr;
     
     
@@ -614,10 +641,11 @@ export class MainHeaderCustomElement {
       {
         
 
-                this.dialogService.open({ viewModel: confirm_dialog, model: 'Copy Template?' }).whenClosed(response => {
+          this.dialogService.open({ viewModel: confirm_dialog, model: 'Copy Template?' }).whenClosed(response => {
           if (!response.wasCancelled) {
              //console.log(response.output);
 
+              this._cache_budget.tmp_bdgt_copied  = this._cache_budget.HEADER.BDGT_TMPL_ID;
 
               var varGetHeader = EntityQuery().from('BDGT_TMPL_HDR').where('BDGT_TMPL_ID', '==', this._cache_budget.HEADER.BDGT_TMPL_ID);
 

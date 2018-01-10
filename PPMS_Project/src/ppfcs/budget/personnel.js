@@ -1372,7 +1372,7 @@ setPersonnelValues(obj,varJobLength,varCategoryLength)
 EntityManager().saveChanges().then((success) => {
   this.fnCheckBudget(this._cache_budget.HEADER.BDGT_TMPL_ID);
   toastr.success("Succesfully Saved", this.toPersonModel.USE);
-
+  
   if(tag==1)
     this.fnSequenceDispatch();
 
@@ -1383,7 +1383,8 @@ EntityManager().saveChanges().then((success) => {
     if (errors.length > 0)
       console.log(errors);
   });
-  console.log(fail);
+  
+  //console.log(fail);
   toastr.error("Error Occured",
     fail);
 
@@ -1426,7 +1427,6 @@ fnSequenceDispatch()
   }
   else if (this.toPersonModel.USE == "STAFF")
   {
-
     this._cache_budget.OBSERVERS.copy_template_guest.forEach((all)=>{
      all();
    }); 

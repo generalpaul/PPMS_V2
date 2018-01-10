@@ -66,7 +66,7 @@ export class login {
         	this._user_content.push({});
 
             found.results.forEach((all) => {
-            this._user_content.push(all);
+            //this._user_content.push(all);
               
 			// if(all.ROLE_CD==null || all.ROLE_CD==undefined)
 			// {
