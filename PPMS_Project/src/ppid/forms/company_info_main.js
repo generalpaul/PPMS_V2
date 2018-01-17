@@ -781,6 +781,9 @@ export class company_info_main{
 
 				if(lastYear != currentYear){
 					LastID = currentYear + "0001";		
+				}else{
+					var index = parseInt(LastID.toString());
+					LastID = index+1;
 				}
 			}
 			
@@ -823,7 +826,7 @@ export class company_info_main{
 					settings.isNavigating = false;
 					toastr.success("", "Record saved.");					
 					this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
-					if(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8){
+					if(!(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8)){
 						this.updateCompanyIndex(company_id, LastID);	
 					}
 				}, (e3)=>{
@@ -1128,8 +1131,10 @@ export class company_info_main{
 					.where("COMPANY_SPECIFIC_ID", "==", company_id);
 		EntityManager().executeQuery(query).then((s)=>{
 			if(s.results.length>0){
-				var company_index = parseInt(s.results[0].COMPANY_INDEX.toString());
-				s.results[0].COMPANY_INDEX = company_index+1;
+				// var company_index = parseInt(s.results[0].COMPANY_INDEX.toString());
+				// s.results[0].COMPANY_INDEX = company_index+1;
+				var index = parseInt(lastIndex.toString());
+				s.results[0].COMPANY_INDEX = index;
 				EntityManager().saveChanges().then((s1)=>{
 					//Do nothing.
 					console.log("index was updated.");
