@@ -15,7 +15,7 @@ export class App {
       { route: 'buh', name: 'buh', moduleId: 'buh', nav: true, title:'BUH' },
       { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information' },
       { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title:'Utilization' },
-      { route: 'talent_search', name: 'talent_search', moduleId: 'ppid/talent_search/talent_search', nav: true, title:'Talent Search' },
+      { route: 'talent_search', name: 'talent_search', moduleId: 'talent_search/talent_search', nav: true, title:'Talent Search' },
       { route: 'ppid_group', name: 'ppid_group', moduleId: 'ppid/ppid_group', nav: true, title: 'PPID GROUP'}
     ]);
 
