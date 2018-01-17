@@ -134,11 +134,8 @@ export class SummaryCustomElement {
     this._INPUT_AMT_GUEST=0;
     this._cache_budget.GUEST.forEach((all) => 
     {
-
-      if(all.GROUP_ORDER!==-1)    
         if(all.INPUT_AMT_TMP!="" && all.INPUT_AMT_TMP!=null && all.INPUT_AMT_TMP!=undefined)
-       // if(this._cache_budget.ALLOW_PASS_CONFIDENTIAL)
-     this._INPUT_AMT_GUEST += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, '')) * all.PAY_RATE_FACTOR;
+           this._INPUT_AMT_GUEST += parseFloat(all.INPUT_AMT_TMP.replace(/,/g, '')) * all.PAY_RATE_FACTOR;
 
    });
 
