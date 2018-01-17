@@ -149,7 +149,6 @@ export class mainpage {
                     }
 
 
-                    console.log(this._application);
                     this._application.sort(OrderByNo);
 
                     this.fnCheckAccess();
