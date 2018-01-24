@@ -98,6 +98,7 @@
                                             ${item}
                                         </option>
                                     </select>(For <strong>RNG</strong>*)
+                                     <button if.bind="_cache_budget.STATUS=='APPROVED' && _cache_budget.HEADER.STATION_ID!==undefined && _cache_budget.HEADER.STATION_ID!=='' && _cache_budget.HEADER.STATION_ID!==null"  click.delegate="fnBudget('push')" disabled.bind="_disablePrintBudget" style="width:80px!important;padding:1px!important;font-size:9px!important;background-color:blue;color:white!important;" class="btn btn-xs">PUSH BUDGET</button>
                                 </td>
                             </tr>
                             <tr>

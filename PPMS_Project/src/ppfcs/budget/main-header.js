@@ -690,6 +690,31 @@ export class MainHeaderCustomElement {
         });
 
       }
+      case "push":{
+
+          console.log(this._cache_budget.HEADER.STATION_ID);
+          return;
+            $.ajax({
+            
+                url: "http://absppms2:8089/Home/PushBudget?intBudget="+this._cache_budget.HEADER.BDGT_TMPL_ID+"&branch="+this._cache_budget.HEADER.STATION_ID,
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                //data: "{ 'intBudget': '"+$(".hidBdgtClass").val()+"' }",
+                data: "{}",
+                dataType: "text",
+                success: (data) => {
+                    if(data=="True")
+                       toastr.success("Succesfully Saved", "Push Budget");
+                    else
+                       toastr.error("Failed..", "Push Budget");
+                },
+                error: (a) => {
+                    toastr.error("Push Budget to Branch failed..", "Push Budget");
+                    console.log(a);
+                }
+            });
+
+      }
       break;
 
 
