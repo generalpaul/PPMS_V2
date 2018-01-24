@@ -70,6 +70,9 @@ export class relative_parent{
 					.where(finalPred);
 		EntityManager().executeQuery(query).then((s1)=>{
 			
+			this.obj_personnel.RELATIVE.parents.mother = {};
+			this.obj_personnel.RELATIVE.parents.father = {};			 
+
 			_.each(s1.results, (result)=>{
 				var birthDt = moment.utc(result.BIRTH_DT).format("MM/DD/YYYY");
 				if(moment(result.DECEASED_DT).isValid()){

@@ -353,7 +353,8 @@ export class main
 
 	validateHeader(passed_status){
 
-		console.log(this.obj_personnel.HEADER.tin);
+		this.obj_personnel.HEADER.birth_dt = $("#birthDate").val();
+		// console.log(this.obj_personnel.HEADER.tin);
 		var strValidation="";
 		if(this.obj_personnel.HEADER.country_cd == undefined || this.obj_personnel.HEADER.country_cd == null || this.obj_personnel.HEADER.country_cd.length==0){
 			strValidation+="No Country specified.<br/>";
@@ -408,9 +409,9 @@ export class main
 			strValidation += "No birth date specified.<br/>";
 		}
 
-		if(this.obj_personnel.HEADER.religion_cd == undefined || this.obj_personnel.HEADER.religion_cd==null || this.obj_personnel.HEADER.religion_cd.length == 0){
-			strValidation += "No religion specified.<br/>";
-		}
+		// if(this.obj_personnel.HEADER.religion_cd == undefined || this.obj_personnel.HEADER.religion_cd==null || this.obj_personnel.HEADER.religion_cd.length == 0){
+		// 	strValidation += "No religion specified.<br/>";
+		// }
 
 		if(this.obj_personnel.HEADER.status_cd == "SUSPEND"){
 
@@ -468,6 +469,7 @@ export class main
 			if(last_nm != null)
 				this.obj_personnel.HEADER.last_name = last_nm.toUpperCase();
 		}
+		// console.log(this.obj_personnel.HEADER);
 
 		if(passed_status.includes("INSERT")){
 			var query = EntityQuery().from("GLOBAL_MSTR")
@@ -1022,6 +1024,26 @@ export class main
 		this._disableSearchPersonnel = false;
 		this.obj_personnel.global_indiv_id = "";
 		this.obj_personnel.HEADER = {
+			country_cd:"",
+			last_name:"",
+			gender:"",
+			birth_place:"",
+			civil_status:"",
+			country_base_cd:"",
+			global_indiv_id:"",
+			given_name:"",
+			alias:"",
+			birth_dt:"",
+			religion_cd:"",
+			acr_no:"",
+			tin:"",
+			middle_name:"",
+			mother_maiden_name:"",
+			age:"",
+			location_base_cd:"",
+			status_cd:"ACTV",
+			suspension_start:"",
+			suspension_end:"",
 			citizenship:[],
 			group:[]
 		};
