@@ -89,14 +89,22 @@ export class MainHeaderCustomElement {
     });
 
     this._cache_budget.OBSERVERS.budget_loaded.push(() => {
-       if(this._disableSaveBudget==true)
+        
+      if(this._cache_budget.OBSERVERS.loaded_results.length==5)
+      {
+            settings.isNavigating = false;
+            toastr.clear();
+            toastr.success("Budget has been successfully loaded.", "Budget Template");
+      }
+
+      if(this._disableSaveBudget==true)
        {
           this._disableSaveBudget = false;
           this._disableCopyBudget = false;
-          settings.isNavigating = false;
-          toastr.success("Budget has been successfully loaded.", "Budget Template");
+
        }
     });
+
 
 
     this._cache_budget.OBSERVERS.verify_copied_budget.push(() => {
@@ -255,6 +263,8 @@ export class MainHeaderCustomElement {
     // this._cache_budget.CALLER.ACTION='budget.dialog';
 
     settings.isNavigating = true;
+    console.log(settings.isNavigating);
+    this._cache_budget.OBSERVERS.loaded_results=[];
     this._cache_obj.OBSERVERS.budget_dialog.forEach((all)=>{
       all(this._cache_budget.HEADER.BDGT_TMPL_ID);
     });
@@ -411,6 +421,13 @@ export class MainHeaderCustomElement {
         this._cache_budget.HEADER.BDGT_FROM=moment(new Date(this._cache_budget.HEADER.BDGT_FROM)).format('MM-DD-YYYY');
         this._cache_budget.HEADER.BDGT_TO=moment(new Date(this._cache_budget.HEADER.BDGT_TO)).format('MM-DD-YYYY');
         
+        this._cache_budget.OBSERVERS.loaded_results.push('HEADER');
+
+        
+        this._cache_budget.OBSERVERS.budget_loaded.forEach((all) => {
+            all(true);
+          });
+
         this._disableBudgetId=true;
         //update buttons
         this._disableCreateBudget=true;
@@ -562,6 +579,7 @@ export class MainHeaderCustomElement {
       case "cancel":
       {
         this.fnClearHeader();
+        this._cache_budget.OBSERVERS.loaded_results=[];
         this._disableCreateBudget=false;
         this._disableCancelBudget=false;
         this._disableRefreshBudget=true;
@@ -592,6 +610,8 @@ export class MainHeaderCustomElement {
         this._cache_obj.OBSERVERS.budget_dialog.forEach((all) => {
           all(this._cache_budget.HEADER.BDGT_TMPL_ID);
         });
+
+         this._cache_budget.OBSERVERS.loaded_results=[];
 
         this.budgetDisabled=true;
         this.programDisabled=false;
@@ -696,7 +716,7 @@ export class MainHeaderCustomElement {
           return;
             $.ajax({
             
-                url: "http://absppms2:8089/Home/PushBudget?intBudget="+this._cache_budget.HEADER.BDGT_TMPL_ID+"&branch="+this._cache_budget.HEADER.STATION_ID,
+                url: "http://absppms2:8084/Home/PushBudget?intBudget="+this._cache_budget.HEADER.BDGT_TMPL_ID+"&branch="+this._cache_budget.HEADER.STATION_ID,
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
                 //data: "{ 'intBudget': '"+$(".hidBdgtClass").val()+"' }",
@@ -809,13 +829,14 @@ export class MainHeaderCustomElement {
 
                   var varTmpFrom = new Date(all.ACTUAL_FROM.getFullYear(), all.ACTUAL_FROM.getMonth(), all.ACTUAL_FROM.getDate());
                   var varTmpTo = new Date(all.ACTUAL_TO.getFullYear(), all.ACTUAL_TO.getMonth(), all.ACTUAL_TO.getDate());
-
+                  var validationFrom = moment(varTmpFrom).format('MM-DD-YYYY');
+                  var validationTo = moment(varTmpTo).format("MM-DD-YYYY");
                 if ((varTmpFrom <= new Date(this._cache_budget.HEADER.BDGT_FROM) && varTmpFrom >= new Date(this._cache_budget.HEADER.BDGT_TO)) ||
                       (varTmpTo <= new Date(this._cache_budget.HEADER.BDGT_FROM) && varTmpTo >= new Date(this._cache_budget.HEADER.BDGT_TO)) ||
                       (varTmpFrom >= new Date(this._cache_budget.HEADER.BDGT_TO)) ||
                       (varTmpFrom >= new Date(this._cache_budget.HEADER.BDGT_FROM) && varTmpTo <= new Date(this._cache_budget.HEADER.BDGT_TO))
                     ) {
-                      toastr.error("Please enter range beyond the created budget (AC:" + all.ACTUAL_COST_ID + ")");
+                      toastr.error("Please enter range beyond the created budget (AC:" + all.ACTUAL_COST_ID + ", "+validationFrom+"-"+validationTo+")");
                       reject_2(false); 
                     }
 
@@ -1456,7 +1477,7 @@ export class MainHeaderCustomElement {
       }).whenClosed(response => {
          
         if (!response.wasCancelled) {
-            settings.isNavigating = true;
+     
         } else {
           
         }

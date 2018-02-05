@@ -10,8 +10,10 @@ import toastr from "toastr";
 import {cache_obj} from 'cache_obj';
 import { DialogController } from 'aurelia-dialog';
 import breeze from 'breeze-client';
+import { cache_budget } from 'ppfcs/cache_budget';
+import settings from 'settings';
 
-@inject(MultiObserver,ObserverLocator,Element,cache_obj,DialogController)
+@inject(MultiObserver,ObserverLocator,Element,cache_obj,DialogController, cache_budget)
 export class budget {
 	items = [];
 	observerLocator = null;
@@ -22,10 +24,13 @@ export class budget {
 	_cache_obj;
 	lstPredicates=[];
 	controller=null;
-	constructor(multiObserver,observerLocator,Element,cache_obj,controller) {
+	_cache_budget=null;
+	constructor(multiObserver,observerLocator,Element,cache_obj,controller,cache_budget) {
 		this.controller=controller;
 		//this._dispatcher=Dispatcher;
 		this._cache_obj=cache_obj;
+		this._cache_budget=cache_budget;
+		
 		this.observerLocator=observerLocator;
 		
 		this.items=getLookups().BDGT_TMPL_HDR;
@@ -158,10 +163,14 @@ export class budget {
 	}
 
 	selectedBudget(item){
-		
+		 this._cache_budget.OBSERVERS.loaded_results=[];
+		 settings.isNavigating = true;
+      
+
 		this._cache_obj.OBSERVERS.budget_dialog.forEach((all)=>{
 			all(item.BDGT_TMPL_ID);
 		});
+
 
 		this.controller.ok();
 

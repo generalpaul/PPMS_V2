@@ -148,13 +148,15 @@ export class SummaryCustomElement {
     this._INPUT_AMT_TOTAL=numeral(this._INPUT_AMT_TOTAL).format('0,0.00');    
 
     this._cache_budget.TOTAL = this._INPUT_AMT_TOTAL;
+    
+   
 
     if(this._cache_budget._LOADING_BUDGET==1 && this._cache_budget.TOTAL!=0)
     {
       this._cache_budget_LOADING_BUDGET=0;
-      this._cache_budget.OBSERVERS.budget_loaded.forEach((all)=>{
-        all();
-      });
+      // this._cache_budget.OBSERVERS.budget_loaded.forEach((all)=>{
+      //   all();
+      // });
     }
     
   }

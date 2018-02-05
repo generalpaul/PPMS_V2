@@ -403,7 +403,7 @@ fnCheckBudget(BDGT_TMPL_ID)
       });
       
 
-
+      
       if (this.toPersonModel.USE == "REGULAR") 
       {
 
@@ -444,6 +444,12 @@ fnCheckBudget(BDGT_TMPL_ID)
 
       }
 
+
+      this._cache_budget.OBSERVERS.loaded_results.push(this.toPersonModel.USE);
+      this._cache_budget.OBSERVERS.budget_loaded.forEach((all) => {
+            all(true);
+          });
+      
       this._signal = generateID();
       
 

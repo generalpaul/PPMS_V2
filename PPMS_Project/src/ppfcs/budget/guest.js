@@ -122,6 +122,10 @@ export class GuestCustomElement {
         toastr.success("GUEST PERSONNEL", "Loading Successful.");
       //this._dispatcher.dispatch('reset.summary');
 
+       this._cache_budget.OBSERVERS.loaded_results.push('GUEST');
+       this._cache_budget.OBSERVERS.budget_loaded.forEach((all) => {
+            all(true);
+          });
     });
 
   }
