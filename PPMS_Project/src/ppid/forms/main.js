@@ -24,6 +24,8 @@ export class main
 	_disableClearData = true;
 	_disableResetData = true;
 	_disableForm = true;
+	_hideSavePersonnel = false;
+	_hideCreatePersonnel = false;
 	_isActiveTab=true;
 
 	gender=["Male", "Female"];
@@ -39,7 +41,9 @@ export class main
 		this.obj_personnel = obj_personnel;
 		this.dialogService = dialogService;
 		this.cache_obj = cache_obj;
+
 		this.obj_personnel.USER = this.cache_obj.USER;
+		// console.log(this.obj_personnel.USER);
 		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num, global_id)=>{
 			// this.loadData(global_id);
 		});
@@ -47,6 +51,14 @@ export class main
 		this.obj_personnel.OBSERVERS.ppid_dialog.push((val)=>{			
 			this.loadData(val);
 		});
+
+		// if(this.obj_personnel.USER.ROLE_CD != "PPID-VIEW"){
+		// 	this._hideSavePersonnel = false;
+		// 	this._hideCreatePersonnel = false;
+		// }else{
+		// 	this._hideSavePersonnel = true;
+		// 	this._hideCreatePersonnel = true;
+		// }
 
 		// this.obj_personnel.OBSERVERS.clear_ppid.push(()=>{
 		// 	this.clearData();
@@ -316,11 +328,16 @@ export class main
 						if(!response.wasCancelled)
 						{
 							this._disableSearchPersonnel = true;
-							this._disableCreatePersonnel = true;
 							this._disableResetData = false;
 							this._disableClearData = false;
-							this._disableSavePersonnel = false;
+							this._disableCreatePersonnel = true;
+							this._disableSavePersonnel = false;							
 							this._disableForm = false;
+							// if(!this.obj_personnel.USER.ROLE_CD == "PPID-VIEW"){
+							// 	this._disableCreatePersonnel = true;
+							// 	this._disableSavePersonnel = false;							
+							// 	this._disableForm = false;
+							// }
 							this.obj_personnel.editing_status = 'EDIT';
 						}else{
 							console.log('search was cancelled.');

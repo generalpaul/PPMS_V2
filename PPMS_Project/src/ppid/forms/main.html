@@ -291,10 +291,10 @@
 				</div>
 				<div>
 					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableSearchPersonnel" click.trigger="fnPersonnel('EDIT')">EDIT PERSONNEL</button>&nbsp;&nbsp;
-					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableCreatePersonnel" click.trigger="fnPersonnel('CREATE')" >CREATE PERSONNEL</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" hidden.bind="_hideCreatePersonnel" disabled.bind="_disableCreatePersonnel" click.trigger="fnPersonnel('CREATE')" >CREATE PERSONNEL</button>&nbsp;&nbsp;
 					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableClearData" click.trigger="fnPersonnel('CLEAR')" >CLEAR/CANCEL</button>&nbsp;&nbsp;
 					<!--<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableResetData" click.trigger="fnPersonnel('RESET')">RESET/REFRESH</button>&nbsp;&nbsp;-->
-					<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableSavePersonnel" click.trigger="fnPersonnel('SAVE')">SAVE PERSONNEL</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" hidden.bind="_hideSavePersonnel" disabled.bind="_disableSavePersonnel" click.trigger="fnPersonnel('SAVE')">SAVE PERSONNEL</button>&nbsp;&nbsp;
 
 				</div>
 

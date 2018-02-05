@@ -5,6 +5,7 @@ import {EntityManager,EntityQuery} from '../../entity-manager-factory';
 import breeze from 'breeze-client';
 import {DialogService} from 'aurelia-dialog'
 import {DialogBox} from "../modals/DialogBox";
+import {DialogBox2} from "../modals/DialogBox2";
 import moment from 'moment';
 import {getLookups} from '../../masterfiles';
 import {isDigit} from "../../helpers";
@@ -26,11 +27,17 @@ export class company_info_main{
 	ddCompany=[];
 	lblCreatedBy=null;
 	lblUpdatedBy=null;
+	old_status = "";
 	alreadyLoaded = false;
+	updateIndex=false;
 	accreditation_status="";
 	accreditation_joblist=[];
 
 	constructor(obj_personnel, toastr, DialogService){
+
+		// var remarks = undefined;
+		// toastr.success("Test trim", $.trim(remarks).length+":length");
+
 		this.obj_personnel = obj_personnel;
 		this.DialogService = DialogService;
 		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num, global_id)=>{
@@ -209,6 +216,8 @@ export class company_info_main{
 				if(suspended_start_dt.length>0)
 				{
 					$("#suspended_start_dt").datepicker("setValue", suspended_start_dt);
+				}else{
+					$("#suspended_start_dt").val("");
 				}
 
 				var suspended_end_dt = moment.utc(suspend[0].end_dt).format("MM/DD/YYYY");
@@ -216,6 +225,8 @@ export class company_info_main{
 				if(suspended_start_dt.length>0)
 				{						
 					$("#suspended_end_dt").datepicker("setValue", suspended_end_dt);
+				}else{
+					$("#suspended_end_dt").val("");
 				}
 			}
 			settings.isNavigating = false;
@@ -446,9 +457,11 @@ export class company_info_main{
 						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = startDt;
 						$("#_start_dt").datepicker("setValue", new Date(startDt));
 					}else{
+						$("#_start_dt").val("");
 						this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
 					}
 				}else{
+					$("#_start_dt").val("");
 					this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";
 				}
 
@@ -458,9 +471,11 @@ export class company_info_main{
 						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = endDt;
 						$("#_end_dt").datepicker("setValue", new Date(endDt));
 					}else{
+						$("#_end_dt").val("");
 						this.obj_personnel.COMPANY_SPECIFIC.model.end_dt="";
 					}
 				}else{
+					$("#_end_dt").val("");
 					this.obj_personnel.COMPANY_SPECIFIC.model.end_dt="";
 				}
 
@@ -470,9 +485,11 @@ export class company_info_main{
 						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = kapamilya_dt;
 						$("#kapamilya_dt").datepicker("setValue", new Date(kapamilya_dt));
 					}else{
+						$("#kapamilya_dt").val("");
 						this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
 					}
 				}else{
+					$("#kapamilya_dt").val("");
 					this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
 				}
 
@@ -482,9 +499,11 @@ export class company_info_main{
 						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = membership_dt;
 						$("#membership_dt").datepicker("setValue", new Date(membership_dt));
 					}else{
+						$("#membership_dt").val("");
 						this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
 					}
 				}else{
+					$("#membership_dt").val("");
 					this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
 				}
 
@@ -493,6 +512,7 @@ export class company_info_main{
 					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = cessation_dt;
 					$("#cessation_end_dt").datepicker("setValue", new Date(cessation_dt));
 				}else{
+					$("#cessation_end_dt").val("");
 					this.obj_personnel.COMPANY_SPECIFIC.model.cessation_dt = "";
 				}
 
@@ -518,6 +538,7 @@ export class company_info_main{
 				this.loadPersonnelBank(global_company.global_company_id);
 				this.loadLog(global_company.global_company_id);
 				this.obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd = global_company.inactive_reason_cd;
+				this.old_status = global_company.status_cd;
 
 			}else{
 				this._disableStatus = true;
@@ -525,12 +546,19 @@ export class company_info_main{
 				// this.obj_personnel.COMPANY_SPECIFIC.model = {};
 				this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.status_cd="ACTV";
-				this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";								
+				this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = "";				
 				this.obj_personnel.COMPANY_SPECIFIC.model.end_dt= "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt = "";
+				$("#_start_dt").val("");
+				$("#_end_dt").val("");
+				$("#kapamilya_dt").val("");
+				$("#membership_dt").val("");
+				$("#suspended_start_dt").val("");
+				$("#suspended_end_dt").val("");
+				$("#cessation_end_dt").val("");
 				this.obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.remarks = "";
 				this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = false;
@@ -563,6 +591,7 @@ export class company_info_main{
 				}
 
 				this.obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd = "";
+				this.old_status = "";
 
 			}
 
@@ -738,10 +767,53 @@ export class company_info_main{
 			// console.log(this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
 			var cid = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
 			var gcid = this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id;
+			// console.log(gcid);
 			if(gcid.length==0){
 				this.saveCompany(cid);
 			}else{
-				this.updateCompany(gcid);
+
+				if(cid == 2 || cid == 3 || cid == 4  || cid==7 || cid == 8){					
+					this.updateCompany(gcid);
+				}else if(this.old_status.length>0 && this.old_status == "INACTV" && (this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "ACTV" || this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "SUSPEND" )){
+
+					this.DialogService.open({ viewModel: DialogBox2, model: { title:"Generate new ID Number?.", message:"Do you want to generate a new ID Number for this record?" } })
+					.whenClosed(response=>{
+						if(!response.wasCancelled){
+							// console.log(response.output);
+							if(response.output){
+								this.updateIndex = true;
+								var currentYear = (new Date()).getFullYear().toString().substring(2,4);
+								var query = EntityQuery().from("COMPANY_SPECIFIC_INDEX")
+									.where("COMPANY_SPECIFIC_ID", "==", cid).take(1);
+								EntityManager().executeQuery(query).then((s)=>{
+
+									var LastID = s.results[0].COMPANY_INDEX;
+									var lastYear = LastID.toString().substring(0,2);
+
+									if(lastYear != currentYear){
+										LastID = currentYear + "0001";		
+									}else{
+										var index = parseInt(LastID.toString());
+										LastID = index+1;
+									}
+									// console.log(LastID);
+									this.obj_personnel.COMPANY_SPECIFIC.model.id_no = LastID;
+									this.updateCompany(gcid);
+
+								}, (e)=>{
+									toastr.clear();
+									toastr.error(e, "Error in generating new ID No.");
+								});
+							}else{
+								this.updateIndex = false;
+								this.updateCompany(gcid);
+							}
+						}
+					});
+
+				}else{
+					this.updateCompany(gcid);
+				}
 			}
 		}
 	}
@@ -796,6 +868,9 @@ export class company_info_main{
 					maxID = s2.results[0].GLOBAL_COMPANY_ID+1;
 				}
 
+				this.obj_personnel.COMPANY_SPECIFIC.model.global_id = this.obj_personnel.global_indiv_id;
+				this.obj_personnel.COMPANY_SPECIFIC.model.id_no = LastID;
+				this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id = maxID;
 				var global_company_mstr = {
 					GLOBAL_ID: this.obj_personnel.global_indiv_id,
 					START_DT: lstart_dt.length==0?null: lstart_dt,
@@ -823,12 +898,15 @@ export class company_info_main{
 				var entity = EntityManager().createEntity("GLOBAL_COMPANY_MSTR", global_company_mstr);
 				EntityManager().addEntity(entity);
 				EntityManager().saveChanges().then((s3)=>{
-					settings.isNavigating = false;
-					toastr.success("", "Record saved.");					
-					this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
 					if(!(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8)){
 						this.updateCompanyIndex(company_id, LastID);	
 					}
+
+					this.AuditCompany(null, this.obj_personnel.COMPANY_SPECIFIC.model);
+
+					settings.isNavigating = false;
+					toastr.success("", "Record saved.");					
+					this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
 				}, (e3)=>{
 					settings.isNavigating = false;
 					if(entity != null){
@@ -860,6 +938,7 @@ export class company_info_main{
 
 		settings.isNavigating = true;
 		var dateToday = null;    
+		var oldData = null;
   		dateToday = new moment(new Date()).add(8, 'hours');
   		dateToday = new Date(dateToday);
 
@@ -874,12 +953,11 @@ export class company_info_main{
 
 		var query = EntityQuery().from("GLOBAL_COMPANY_MSTR")
 					.where("GLOBAL_COMPANY_ID", "==", global_company_id);
-		EntityManager().executeQuery(query).then((s)=>{
+		EntityManager().executeQuery(query).then((s)=>{			
 
-			if(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8){
-				s.results[0].ID_NO = this.obj_personnel.COMPANY_SPECIFIC.model.id_no;
-			}
+			oldData = $.extend({}, s.results[0]);			
 
+			s.results[0].ID_NO = this.obj_personnel.COMPANY_SPECIFIC.model.id_no;
 			s.results[0].START_DT = lstart_dt;
 			s.results[0].END_DT = lend_dt;
 			s.results[0].KAPAMILYA_DT = lkapamilya_dt;
@@ -941,6 +1019,10 @@ export class company_info_main{
 					
 				}
 
+				if(this.updateIndex && !(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8)){
+					this.updateCompanyIndex(company_id, this.obj_personnel.COMPANY_SPECIFIC.model.id_no);	
+				}
+				this.AuditCompany(oldData, this.obj_personnel.COMPANY_SPECIFIC.model);
 				this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
 				settings.isNavigating = false;
 				toastr.success("","Record saved.");
@@ -1053,6 +1135,7 @@ export class company_info_main{
 			EntityManager().addEntity(entity);
 			EntityManager().saveChanges().then((s2)=>{
 				this.loadPersonnelBank(global_company_id);
+				this.AuditBankDetails(null, personnel_bank_trx);
 				// toastr.success("","");
 				// console.log("personnel bank save success.");
 			},(e2)=>{
@@ -1080,6 +1163,15 @@ export class company_info_main{
 					.where("PERSONNEL_BANK_ID", "==", personnel_bank_id);
 		EntityManager().executeQuery(query).then((q1)=>{
 
+			var oldData = $.extend({}, q1.results[0]);
+
+			var newData = {
+				PERSONNEL_BANK_ID: personnel_bank_id,
+				BANK_ID: bank_id.length==0? q1.results[0].BANK_ID: bank_id,
+				ACCOUNT_NAME: acct_name,
+				ACCOUNT_NO: account_no
+			};
+
 			if(q1.results.length==0){
 				toastr.error("", "No personnel bank with an ID of "+personnel_bank_id+" found.");
 				return;
@@ -1096,6 +1188,7 @@ export class company_info_main{
 			EntityManager().saveChanges().then((s2)=>{
 				// toastr.success("", "Bank info");
 				this.loadPersonnelBank(this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
+				this.AuditBankDetails(oldData, newData);
 				console.log("", "bank info has been updated.");
 			}, (e2)=>{
 				settings.isNavigating = false;
@@ -1371,5 +1464,488 @@ export class company_info_main{
 		if(a.text.toUpperCase() > b.text.toUpperCase())
 			return 1;
 		return 0;
+	}
+
+	AuditCompany(_old, _new){
+
+		// console.log(_old.EXCLUSIVE_FL);
+		// console.log(_new.exclusive_fl);
+		var user_id = this.obj_personnel.USER.USER_ID;
+		var event = "";
+		if(_old == null){
+			event = "NEW";
+		}else{
+			event = "UPDATE";
+		}
+		var table_name = "GLOBAL_COMPANY_MSTR";
+		var primary_key = "GLOBAL_COMPANY_ID";
+		var pk_value = _new.global_company_id;
+		var dateToday = null;    
+  		dateToday = new moment(new Date()).add(8, 'hours');
+  		dateToday = new Date(dateToday);
+  		var changes = [];
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "ID_NO",
+  				old_value: null,
+  				new_value: _new.id_no
+  			});
+  		}else if(_old.ID_NO != _new.id_no){
+  			changes.push({
+  				col_name: "ID_NO",
+  				old_value: _old.ID_NO,
+  				new_value: _new.id_no
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "COMPANY_ID",
+  				old_value: null,
+  				new_value: _new.company_id
+  			});
+  		}
+
+  		if((_old == null || _old.START_DT == null) && moment(_new.start_dt).isValid()){
+  			changes.push({
+  				col_name: "START_DT",
+  				old_value: "",
+  				new_value: _new.start_dt
+  			});
+  		}else if((_old != null && _old.START_DT != null) && $.trim(_new.start_dt)!=""){
+  			var tempDt = moment.utc(_old.START_DT).format("MM/DD/YYYY");
+  			if(tempDt != _new.start_dt){
+  				changes.push({
+  					col_name: "START_DT",
+  					old_value: tempDt,
+  					new_value: _new.start_dt
+  				});
+  			}
+  		}else if(_old != null && _old.START_DT != null && $.trim(_new.start_dt)=="") {
+  			var tempDt = moment.utc(_old.START_DT).format("MM/DD/YYYY");
+  			changes.push({
+  				col_name: "START_DT",
+  				old_value:tempDt,
+  				new_value:""
+  			});
+  		}
+
+		if((_old == null || _old.END_DT == null) && moment(_new.end_dt).isValid()){
+  			changes.push({
+  				col_name: "END_DT",
+  				old_value: "",
+  				new_value: _new.end_dt
+  			});
+  		}else if((_old != null && _old.END_DT != null) && $.trim(_new.end_dt)!=""){
+  			var tempDt = moment.utc(_old.END_DT).format("MM/DD/YYYY");
+  			if(tempDt != _new.end_dt){
+  				changes.push({
+  					col_name: "END_DT",
+  					old_value: tempDt,
+  					new_value: _new.end_dt
+  				});
+  			}
+  		}else if(_old != null && _old.END_DT != null && $.trim(_new.end_dt)=="") {
+  			var tempDt = moment.utc(_old.END_DT).format("MM/DD/YYYY");
+  			changes.push({
+  				col_name: "END_DT",
+  				old_value:tempDt,
+  				new_value:""
+  			});
+  		}
+
+  		if((_old == null || _old.KAPAMILYA_DT == null) && moment(_new.kapamilya_dt).isValid()){
+  			changes.push({
+  				col_name: "KAPAMILYA_DT",
+  				old_value: "",
+  				new_value: _new.kapamilya_dt
+  			});
+  		}else if((_old != null && _old.KAPAMILYA_DT != null) && $.trim(_new.kapamilya_dt)!=""){
+  			var tempDt = moment.utc(_old.KAPAMILYA_DT).format("MM/DD/YYYY");
+  			if(tempDt != _new.kapamilya_dt){
+  				changes.push({
+  					col_name: "KAPAMILYA_DT",
+  					old_value: tempDt,
+  					new_value: _new.kapamilya_dt
+  				});
+  			}
+  		}else if(_old != null && _old.KAPAMILYA_DT != null && $.trim(_new.kapamilya_dt)=="") {
+  			var tempDt = moment.utc(_old.KAPAMILYA_DT).format("MM/DD/YYYY");
+  			changes.push({
+  				col_name: "KAPAMILYA_DT",
+  				old_value:tempDt,
+  				new_value:""
+  			});
+  		}
+
+  		if((_old == null || _old.MEMBERSHIP_DT == null) && moment(_new.membership_dt).isValid()){
+  			changes.push({
+  				col_name: "MEMBERSHIP_DT",
+  				old_value: "",
+  				new_value: _new.membership_dt
+  			});
+  		}else if((_old!=null && _old.MEMBERSHIP_DT != null) && $.trim(_new.membership_dt)!=""){
+  			var tempDt = moment.utc(_old.MEMBERSHIP_DT).format("MM/DD/YYYY");
+  			if(tempDt != _new.membership_dt){
+  				changes.push({
+  					col_name: "MEMBERSHIP_DT",
+  					old_value: tempDt,
+  					new_value: _new.membership_dt
+  				});
+  			}
+  		}else if(_old != null && _old.MEMBERSHIP_DT != null && $.trim(_new.membership_dt)=="") {
+  			var tempDt = moment.utc(_old.MEMBERSHIP_DT).format("MM/DD/YYYY");
+  			changes.push({
+  				col_name: "MEMBERSHIP_DT",
+  				old_value:tempDt,
+  				new_value:""
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "EXCLUSIVE_FL",
+  				old_value: null,
+  				new_value: _new.exclusive_fl? "1":"0"
+  			});
+  		}else if((_old.EXCLUSIVE_FL == 1 && _new.exclusive_fl == false) || (_old.EXCLUSIVE_FL == 0 && _new.exclusive_fl == true)) {
+  			changes.push({
+  				col_name: "EXCLUSIVE_FL",
+  				old_value: _old.EXCLUSIVE_FL,
+  				new_value: _new.exclusive_fl?"1":"0"
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name:"DIVISION_ID",
+  				old_value: null,
+  				new_value: _new.division_id
+  			});
+  		}else if(_old.DIVISION_ID != _new.division_id){
+  			changes.push({
+  				col_name: "DIVISION_ID",
+  				old_value: _old.DIVISION_ID,
+  				new_value: _new.division_id
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "LOCATION_CD",
+  				old_value: null,
+  				new_value: _new.location_cd
+  			});
+  		}else if(_old.LOCATION_CD != _new.location_cd){
+  			changes.push({
+  				col_name: "LOCATION_CD",
+  				old_value: _old.LOCATION_CD,
+  				new_value: _new.location_cd
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "CATEGORY_ID",
+  				old_value: null,
+  				new_value: _new.category_id
+  			});
+  		}else if(_old.CATEGORY_ID != _new.category_id){
+  			changes.push({
+  				col_name: "CATEGORY_ID",
+  				old_value: _old.CATEGORY_ID,
+  				new_value: _new.category_id
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "JOB_ID",
+  				old_value: null,
+  				new_value: _new.job_id
+  			});
+  		}else if(_old.JOB_ID != _new.job_id){
+  			changes.push({
+  				col_name: "JOB_ID",
+  				old_value: _old.JOB_ID,
+  				new_value: _new.job_id
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "PAYROLL_GRP_ID",
+  				old_value: null,
+  				new_value: _new.payroll_grp_id
+  			});
+  		}else if(_old.PAYROLL_GRP_ID != _new.payroll_grp_id){
+  			changes.push({
+  				col_name: "PAYROLL_GRP_ID",
+  				old_value: _old.PAYROLL_GRP_ID,
+  				new_value: _new.payroll_grp_id
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "PROFESSIONAL_TYPE_CD",
+  				old_value: null,
+  				new_value: _new.professional_type_cd
+  			});
+  		}else if(_old.PROFESSIONAL_TYPE_CD != _new.professional_type_cd){
+  			changes.push({
+  				col_name: "PROFESSIONAL_TYPE_CD",
+  				old_value: _old.PROFESSIONAL_TYPE_CD,
+  				new_value: _new.professional_type_cd
+  			});
+  		}
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "STATUS_CD",
+  				old_value: null,
+  				new_value: _new.status_cd
+  			});
+  		}else if(_old.STATUS_CD != _new.status_cd){
+  			changes.push({
+  				col_name: "STATUS_CD",
+  				old_value: _old.STATUS_CD,
+  				new_value: _new.status_cd
+  			});
+  		}
+
+  		if(_old == null && (_new.cessation_reason_cd != undefined && $.trim(_new.cessation_reason_cd).length>0)){
+  			changes.push({
+  				col_name: "CESSATION_REASON_CD",
+  				old_value: null,
+  				new_value: _new.cessation_reason_cd
+  			});  			
+  		}else if(_old != null && $.trim(_old.CESSATION_REASON_CD) != $.trim(_new.cessation_reason_cd)){
+  			changes.push({
+  				col_name: "CESSATION_REASON_CD",
+  				old_value: _old.CESSATION_REASON_CD,
+  				new_value: _new.cessation_reason_cd
+  			});
+  		}
+
+		if((_old == null || _old.CESSATION_END_DATE == null) && moment(_new.cessation_end_dt).isValid()){
+  			changes.push({
+  				col_name: "CESSATION_END_DATE",
+  				old_value: "",
+  				new_value: _new.cessation_end_dt
+  			});
+  		}else if((_old != null && _old.CESSATION_END_DATE != null) && $.trim(_new.cessation_end_dt)!=""){
+  			var tempDt = moment.utc(_old.CESSATION_END_DATE).format("MM/DD/YYYY");
+  			if(tempDt != _new.cessation_end_dt){
+  				changes.push({
+  					col_name: "CESSATION_END_DATE",
+  					old_value: tempDt,
+  					new_value: _new.cessation_end_dt
+  				});
+  			}
+  		}else if(_old != null && _old.CESSATION_END_DATE != null && $.trim(_new.cessation_end_dt)=="") {
+  			var tempDt = moment.utc(_old.CESSATION_END_DATE).format("MM/DD/YYYY");
+  			changes.push({
+  				col_name: "CESSATION_END_DATE",
+  				old_value:tempDt,
+  				new_value:""
+  			});
+  		}
+
+  		if(_old == null && $.trim(_new.remarks).length>0){
+  			changes.push({
+  				col_name: "REMARKS",
+  				old_value: null,
+  				new_value: _new.remarks
+  			});  			
+  		}else if((_old != null && _old.REMARKS != undefined && $.trim(_old.REMARKS)>0) && (_new.remarks != undefined && $.trim(_new.remarks)>0)){
+  			if($.trim(_old.REMARKS) != $.trim(_new.remarks))
+  			{
+  				changes.push({
+  					col_name: "REMARKS",
+  					old_value: _old.REMARKS,
+  					new_value: _new.remarks
+  				});
+  			}
+  		}else if((_old != null && _old.REMARKS != undefined && $.trim(_old.REMARKS)>0) && (_new.remarks == undefined || $.trim(_new.remarks)==0)){
+  			if($.trim(_old.REMARKS) != $.trim(_new.remarks))
+  			{
+  				changes.push({
+  					col_name: "REMARKS",
+  					old_value: _old.REMARKS,
+  					new_value: null
+  				});
+  			}
+  		}
+
+  		// console.log(changes);
+
+  		var query = EntityQuery().from("AUDIT_TRAIL_TRX")
+  		.orderByDesc("AUDIT_TRAIL_ID").take(1);
+  		EntityManager().executeQuery(query).then((s1)=>{
+
+  			var audit_id = 1;
+  			if(s1.results.length>0){
+  				audit_id = s1.results[0].AUDIT_TRAIL_ID+1;
+  			}
+
+  			var newlyAdded = [];
+  			_.each(changes, (val)=>{
+
+  				var audit_trail = {
+  					AUDIT_TRAIL_ID: audit_id,
+  					USER_ID: user_id,
+  					EVENT: event,
+  					TABLE_NAME: table_name,
+  					PRIMARY_KEY: primary_key,
+  					PK_VALUE: pk_value,
+  					COL_NAME: val.col_name,
+  					OLD_VALUE: val.old_value,
+  					NEW_VALUE: val.new_value,
+  					SYS_DT: dateToday
+  				};
+
+  				var entity = EntityManager().createEntity("AUDIT_TRAIL_TRX", audit_trail);
+  				EntityManager().addEntity(entity);
+  				newlyAdded.push(entity);
+  				audit_id+=1;
+  			});
+
+  			if(newlyAdded.length>0){
+  				EntityManager().saveChanges().then((s2)=>{
+  					console.log("Changes has been logged.");
+  				}, (e2)=>{
+	  				console.log(newlyAdded);
+  					_.each(newlyAdded, (ent)=>{
+  						if(ent != null){
+  							ent.entityAspect.setDeleted();
+	  					}
+  					});
+  					console.log(e2);
+  				}); 
+  			}
+
+		},(e1)=>{
+  			console.log(e1);
+  		});
+
+	}
+
+	AuditBankDetails(_old, _new){
+
+		var user_id = this.obj_personnel.USER.USER_ID;
+		var event = "";
+		if(_old == null){
+			event = "NEW";
+		}else{
+			event = "UPDATE";
+		}
+		var table_name = "PERSONNEL_BANK_TRX";
+		var primary_key = "PERSONNEL_BANK_ID";
+		var pk_value = _new.PERSONNEL_BANK_ID;
+		var dateToday = null;    
+  		dateToday = new moment(new Date()).add(8, 'hours');
+  		dateToday = new Date(dateToday);
+  		var changes = [];
+
+  		if(_old == null){
+  			changes.push({
+  				col_name: "GLOBAL_COMPANY_ID",
+  				old_value: null,
+  				new_value: _new.GLOBAL_COMPANY_ID
+  			});
+
+  			changes.push({
+  				col_name: "BANK_ID",
+  				old_value: null,
+  				new_value: _new.BANK_ID
+  			});
+
+  			changes.push({
+  				col_name: "ACCOUNT_NO",
+  				old_value: null,
+  				new_value: _new.ACCOUNT_NO
+  			});
+
+  			changes.push({
+  				col_name: "ACCOUNT_NAME",
+  				old_value: null,
+  				new_value: _new.ACCT_NAME
+  			});
+  		}
+
+  		if(_old != null && _old.BANK_ID != undefined && $.trim(_old.BANK_ID).length>0 && $.trim(_new.BANK_ID).length>0){
+  			if(_old.BANK_ID != _new.BANK_ID){
+  				changes.push({
+  					col_name: "BANK_ID",
+  					old_value: _old.BANK_ID,
+  					new_value: _new.BANK_ID
+  				});
+  			}
+  		}
+
+  		if(_old != null && _old.ACCOUNT_NO != undefined && $.trim(_old.ACCOUNT_NO).length>0 && $.trim(_new.ACCOUNT_NO).length>0){
+  			if(_old.ACCOUNT_NO != _new.ACCOUNT_NO){
+  				changes.push({
+  					col_name: "ACCOUNT_NO",
+  					old_value: _old.ACCOUNT_NO,
+  					new_value: _new.ACCOUNT_NO
+  				});
+  			}
+  		}
+
+  		var query = EntityQuery().from("AUDIT_TRAIL_TRX")
+  					.orderByDesc("AUDIT_TRAIL_ID").take(1);
+  		EntityManager().executeQuery(query).then((s1)=>{
+
+  			var audit_id = 1;
+  			if(s1.results.length>0){
+  				audit_id = s1.results[0].AUDIT_TRAIL_ID+1;
+  			}
+
+  			var newlyAdded = [];
+  			_.each(changes, (val)=>{
+
+  				var audit_trail = {
+  					AUDIT_TRAIL_ID: audit_id,
+  					USER_ID: user_id,
+  					EVENT: event,
+  					TABLE_NAME: table_name,
+  					PRIMARY_KEY: primary_key,
+  					PK_VALUE: pk_value,
+  					COL_NAME: val.col_name,
+  					OLD_VALUE: val.old_value,
+  					NEW_VALUE: val.new_value,
+  					SYS_DT: dateToday
+  				};
+
+  				var entity = EntityManager().createEntity("AUDIT_TRAIL_TRX", audit_trail);
+  				EntityManager().addEntity(entity);
+  				newlyAdded.push(entity);
+  				audit_id+=1;
+  			});
+
+  			if(newlyAdded.length>0){
+  				EntityManager().saveChanges().then((s2)=>{
+  					console.log("Changes has been logged.");
+  				}, (e2)=>{
+	  				console.log(newlyAdded);
+  					_.each(newlyAdded, (ent)=>{
+  						if(ent != null){
+  							ent.entityAspect.setDeleted();
+	  					}
+  					});
+  					console.log(e2);
+  				}); 
+  			}
+
+		},(e1)=>{
+  			console.log(e1);
+  		});
+
+
+
+
 	}
 }
