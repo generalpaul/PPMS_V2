@@ -16,7 +16,8 @@ export class App {
       { route: 'ppid', name: 'ppid', moduleId: 'ppid/ppid', nav: true, title: 'Program Personnel Information' },
       { route: 'contract_form', name: 'contract_form', moduleId: 'ppid/contract/contract_form', nav: true, title:'Utilization' },
       { route: 'talent_search', name: 'talent_search', moduleId: 'talent_search/talent_search', nav: true, title:'Talent Search' },
-      { route: 'ppid_group', name: 'ppid_group', moduleId: 'ppid/ppid_group', nav: true, title: 'PPID GROUP'}
+      { route: 'ppid_group', name: 'ppid_group', moduleId: 'ppid/ppid_group', nav: true, title: 'PPID GROUP'},
+      { route: 'user_management', name: 'user_management', moduleId: "security/user_management/user_mainpage", nav: true, title: "USER MANAGEMENT"}
     ]);
 
     this.router = router;

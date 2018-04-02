@@ -112,8 +112,11 @@ export class obj_personnel
 		govinfo_tab_changed:[],
 		relative_tab_changed:[],
 		award_training_tab_changed:[]
-
 	};
+
+	ACCESS_ROLE = [
+		
+	];
 
 	//Dropdown
 	STATUS=[];

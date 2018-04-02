@@ -34,10 +34,10 @@ export class ppid
 		this.obj_personnel.HEADER = {
     		citizenship:[],
     		group:[]
-    	};
+    	};    	
 		this.LoadDropdown();
 
-		this.LoginPassed(this.obj_personnel.USER);
+		// this.LoginPassed(this.cach.USER);
 	}
 
 	LoadDropdown()
@@ -494,6 +494,7 @@ export class ppid
 	}
 
 	LoginPassed(user){
+		console.log(user);
 		// console.log(user);
 		// this.obj_personnel.USER = user;
 	}

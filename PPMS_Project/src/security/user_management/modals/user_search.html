@@ -1,0 +1,45 @@
+<template>
+	<ux-dialog>
+		<ux-dialog-header class="colorHeader"><span style="position:relative;top:-8px;"><b>SEARCH USER(S)</b></span></ux-dialog-header></ux-dialog>
+		<ux-dialog-body style="background:#E3E3E3;" class=".divBackground">
+			<require from="converters/take"></require>
+			<require from="converters/sorttext"></require>
+			<require from="tools/gridpaging"></require>
+			<div style="height:350px;overflow: auto;">
+				<table class="table table-hover table-condensed table-bordered">
+					<thead class="table-default">
+						<tr>
+							<td class="colorCell2">USER ID</td>							
+							<td class="colorCell2">EMPLOYEE ID</td>
+							<td class="colorCell2">NAME</td>
+						</tr>
+						<tr ref="_rppid_queries">							
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_buser_id" searchable="_suser_id"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bemployee_id" searchable="_semployee_id"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>
+							<td class="colorCell2">
+								<input class="input-sm form-control" value.bind="_bname" searchable="_sname"  keyup.delegate="fnKeyup($event,'')"/>
+							</td>							
+						</tr>
+					</thead>
+					<tbody>
+						<tr repeat.for="item of varFilterArray | take:20:pageindex" click.delegate="$parent.selectedPersonnel(item)">
+							<td>
+								${item.USER_ID}
+							</td>
+							<td>
+								${item.EMPLOYEE_ID}
+							</td>
+							<td>
+								${item.NAME}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</ux-dialog-body>
+	</ux-dialog>
+</template>

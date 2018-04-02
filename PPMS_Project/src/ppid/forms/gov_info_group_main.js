@@ -465,7 +465,7 @@ export class gov_info_group_main{
 		// 	// this.obj_personnel.GOVERNMENT_INFO.philhealth_no = "00-000000000-0";
 		// }
 
-		// this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = $("#vat_reg_dt").val();
+		this.obj_personnel.GOVERNMENT_INFO.vat_reg_dt = $("#vat_reg_dt").val();
 
 		if(strValidation.length>0){
 			toastr.clear();			

@@ -1,0 +1,73 @@
+<template>
+	<div style="height: 550px; width: 913px; margin: 5px auto;">
+		<table style="width: 100%;">			
+			<tr>
+				<td style="vertical-align: top;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Company<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">User ID<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Given Name<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Email Address<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Start Date<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td style="vertical-align: bottom;">
+					<table>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Last Name<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Employee ID<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">End Date<label style="color: red;">*</label></td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" value.bind="obj_personnel.RELATIVE.children.model.last_name" disabled.bind="_disableForm" />
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<button class="btn btn-xs customButton" style="width:150px;" click.trigger="fnUser('EDIT')" >EDIT USER</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" >CREATE USER</button>&nbsp;&nbsp;
+					<button class="btn btn-xs customButton" style="width:150px;" >CLEAR/CANCEL</button>&nbsp;&nbsp;
+					<!--<button class="btn btn-xs customButton" style="width:150px;" disabled.bind="_disableResetData" click.trigger="fnPersonnel('RESET')">RESET/REFRESH</button>&nbsp;&nbsp;-->
+					<button class="btn btn-xs customButton" style="width:150px;" >SAVE RECORD</button>&nbsp;&nbsp;
+				</td>
+			</tr>
+		</table>
+	</div>
+</template>

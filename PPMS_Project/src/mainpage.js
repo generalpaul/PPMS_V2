@@ -13,6 +13,7 @@ import { checkCookie, setCookie, removeCookie, getCookie, OrderByNo} from './hel
 import settings from './settings';
 import { Router } from 'aurelia-router';
 import _ from 'underscore';
+
 @inject(toastr, cache_obj, DialogService, Router) //MultiObserver
 export class mainpage {
 
@@ -34,13 +35,25 @@ export class mainpage {
         { order_no: 4, ref: 'PPFCS MAINTENANCE', desc: 'PROGRAM PERSONNEL FREE CAPTURE SYSTEM' },
         { order_no: 5, ref: 'TSDB', desc: 'TALENT SUPPLIER INFORMATION DATABASE' },
         { order_no: 6, ref: 'UTILIZATION', desc: 'UTILIZATION'},
+        { order_no: 8, ref: 'PPMS MAINTENANCE', desc: 'REFERENCE DATA MAINTENANCE'},
+        { order_no: 7, ref: 'SECURITY MAINTENANCE', desc: 'SECURITY MAINTENANCE'}
         // { ref: 'PPID', desc: 'PROGRAM PERSONNEL INFORMATION DATABASE' },
         // { ref: "PPID_GROUP", desc: 'PROGRAM PERSONNEL INFORMATION DATABASE GROUP'}
         
     ];
-    _remove = ['PROGRAM BUDGET TEMPLATE', 'ACTUALS COST PROCESSING', "PROGRAM PERSONNEL INFORMATION DATABASE", "PROGRAM PERSONNEL INFORMATION GROUP"];    
+    _remove = ['PROGRAM BUDGET TEMPLATE'
+             , 'ACTUALS COST PROCESSING'
+             , "PROGRAM PERSONNEL INFORMATION DATABASE"
+             , "PROGRAM PERSONNEL INFORMATION GROUP"
+             , "USER MANAGEMENT"
+             , "ROLE MANAGEMENT"
+             , "ROLE MASTER"
+             , "APPLICATION MASTER"
+             , "MODULE MASTER"
+             ];    
     _ppfcs_modules = [];
     _ppi_modules=[];
+    _security_modules=[];
 
     //    { APPLICATION_DESC: 'SPECIAL PROVISION MASTERLIST' },
     //{ APPLICATION_DESC: 'MAINTAINED FEE ADJUSTMENT' },
@@ -52,6 +65,7 @@ export class mainpage {
     _roles = [];
     _application_on = true;
     _ppi_off = true;
+    _security_off = true;
     constructor(toastr, cache_obj, dialogService, Router) { //multiObserver
 
         this._cache_obj = cache_obj;
@@ -91,7 +105,7 @@ export class mainpage {
                                 }else{
                                     var doesExist = this._application_desc.some((x)=>x.desc == this._application[i].APPLICATION_DESC);
                                     if(!doesExist){
-                                        this._application[i].ORDER_NO = 7;  
+                                        this._application[i].ORDER_NO = 9;  
                                     }
                                 }
                             }
@@ -106,6 +120,27 @@ export class mainpage {
                                     case "PROGRAM PERSONNEL INFORMATION GROUP":
                                         this._ppi_modules.push(this._application[i]);
                                         break;
+                                    case "USER MANAGEMENT": 
+                                        this._application[i].ORDER_NO = 1;
+                                        this._security_modules.push(this._application[i]);
+                                        break;
+                                    case "ROLE MANAGEMENT": 
+                                        this._application[i].ORDER_NO = 2;
+                                        this._security_modules.push(this._application[i]);
+                                        break;
+                                    case "ROLE MASTER": 
+                                        this._application[i].ORDER_NO = 3;
+                                        this._security_modules.push(this._application[i]);
+                                        break;
+                                    case "APPLICATION MASTER": 
+                                        this._application[i].ORDER_NO = 4;
+                                        this._security_modules.push(this._application[i]);
+                                        break;
+                                    case "MODULE MASTER": 
+                                        this._application[i].ORDER_NO = 5;
+                                        this._security_modules.push(this._application[i]);
+                                        break;
+
                                 }
                                // this._ppfcs_modules.push(this._application[i]);
                             }
@@ -113,12 +148,15 @@ export class mainpage {
                         
 
                         this._application.sort(OrderByNo);
+                        this._security_modules.sort(OrderByNo);
                         this.fnCheckAccess();
+                        // console.log(this._application);
                     });
                 }
                 else
                 {
                     this._application = this._cache_obj._ACCESS.APPLICATION;
+
 
                     for (var i = 0; i < this._application.length; i++) {
                         for (var j = 0; j < this._application_desc.length; j++) {
@@ -144,6 +182,13 @@ export class mainpage {
                                     case "PROGRAM PERSONNEL INFORMATION GROUP":
                                         this._ppi_modules.push(this._application[i]);
                                         break;
+                                    case "USER MANAGEMENT":
+                                    case "ROLE MANAGEMENT":
+                                    case "ROLE MASTER":
+                                    case "APPLICATION MASTER":
+                                    case "MODULE MASTER":
+                                        this._security_modules.push(this._application[i]);
+                                        break;
                                 }
                         }
                     }
@@ -164,6 +209,9 @@ export class mainpage {
                 //    //this.actualAccess = true;
                 //    this.headerVisible = true;
                 //}
+
+                // this.checkAccess(this._cache_obj.USER);
+                // console.log(this._security_modules);
 
             }
 
@@ -225,6 +273,9 @@ export class mainpage {
         else if(item.APPLICATION_DESC == "PROGRAM PERSONNEL INFORMATION"){
             this._roles = this._cache_obj._ACCESS.ROLES.filter((all)=> all.APPLICATION_ID == item.APPLICATION_ID);
             this._ppi_off = false;
+        }else if(item.APPLICATION_DESC == "SECURITY MAINTENANCE"){
+            this._roles = this._cache_obj._ACCESS.ROLES.filter((all)=> all.APPLICATION_ID == item.APPLICATION_ID);
+            this._security_off = false;
         }
         else
         {
@@ -232,11 +283,10 @@ export class mainpage {
             this.router.navigateToRoute(item.APPLICATION_URL.replace('.ASPX','').toLowerCase());
         }
 
-
     }
 
     rolesClick(item, group) {
-        //console.log(item.APPLICATION_URL);
+        // console.log(item.APPLICATION_URL);
         if(group == "PPFCS"){
             if (item.APPLICATION_URL == "PROGRAMBUDGETTEMPLATE.ASPX")
             {
@@ -251,6 +301,10 @@ export class mainpage {
             }else if(item.APPLICATION_URL == "PPID_GROUP.ASPX"){
                 this.router.navigateToRoute("ppid_group");
             }
+        }else if(group == "SECURITY"){
+            if(item.APPLICATION_URL == "USERMANAGEMENT.ASPX"){
+                this.router.navigateToRoute("user_management");
+            }
         }
     }
 
@@ -258,6 +312,7 @@ export class mainpage {
     {
         this._application_on = true;
         this._ppi_off = true;
+        this._security_off = true;
     }
 
     fnCheckAccess()

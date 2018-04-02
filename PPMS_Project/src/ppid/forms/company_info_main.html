@@ -13,21 +13,28 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Start Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="1" id="_start_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.start_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="3" id="_start_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.start_dt" />
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Kapamilya Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="kapamilya_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="5" id="kapamilya_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 120px; vertical-align: middle;" class="text-left">Email</td>
+							<td>
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="8" value.bind="obj_personnel.COMPANY_SPECIFIC.model.email_addr" />
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">is Exclusive?</td>
 							<td>
-								<input type="checkbox" tabindex="1" checked.bind="obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl">
+								<input type="checkbox" tabindex="7" checked.bind="obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl">
 							</td>
 						</tr>
+						
 					</table>
 				</td>
 				<td>
@@ -35,7 +42,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Company</td>
 							<td>
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" change.delegate="dd_companyChanged()" value.bind="obj_personnel.COMPANY_SPECIFIC.model.company_id" >
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" tabindex="2" change.delegate="dd_companyChanged()" value.bind="obj_personnel.COMPANY_SPECIFIC.model.company_id" >
 									<!-- <option value=""></option> -->
 									<!-- <option repeat.for="item of obj_personnel.COMPANY" value.bind="item.id">${item.text}</option> -->
 									<option repeat.for="item of ddCompany" value.bind="item.id">${item.text}</option>
@@ -45,13 +52,13 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">End Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.end_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="4" id="_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.end_dt" />
 							</td>
 						</tr>
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Membership Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="membership_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.membership_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="6" id="membership_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.membership_dt" />
 							</td>
 						</tr>
 					</table>
@@ -61,7 +68,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Status</td>
 							<td>								
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd" disabled.bind="_disableStatus" change.delegate="dd_statusChanged()">
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" tabindex="9" value.bind="obj_personnel.COMPANY_SPECIFIC.model.status_cd" disabled.bind="_disableStatus" change.delegate="dd_statusChanged()">
 									<!-- <option value=""></option> -->
 									<option repeat.for="item of obj_personnel.STATUS" value.bind="item.value">${item.text}</option>
 								</select>
@@ -70,7 +77,7 @@
 						<tr hidden.bind="_hideInactiveField">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Reason for Cessation</td>
 							<td>
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd" change.delegate="dd_cessationStatusChanged()" >
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" tabindex="10" value.bind="obj_personnel.COMPANY_SPECIFIC.model.cessation_reason_cd" change.delegate="dd_cessationStatusChanged()" >
 									<option value=""></option>
 									<option repeat.for="item of obj_personnel.CESSATION" value.bind="item.value">${item.text}</option>
 								</select>
@@ -79,7 +86,7 @@
 						<tr hidden.bind="_hideInactiveReason">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Reason for Inactivity</td>
 							<td>
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd" >
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 167px;" tabindex="11" value.bind="obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd" >
 									<option value=""></option>
 									<option repeat.for="item of obj_personnel.INACTIVE_REASON" value.bind="item.value">${item.text}</option>
 								</select>
@@ -88,26 +95,26 @@
 						<tr hidden.bind="_hideInactiveField || _hideCessationDate">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Cessation date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="cessation_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="12" id="cessation_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt" />
 							</td>
 						</tr>
 						<tr hidden.bind="_hideInactiveField">
 							<td style="width: 120px; vertical-align: top;" class="text-left">Remarks</td>
 							<td>
-								<textarea style="overflow-y: scroll; resize: vertical;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.remarks" > </textarea>
+								<textarea style="overflow-y: scroll; resize: vertical;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.remarks" tabindex="13" > </textarea>
 								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
 							</td>
 						</tr>
 						<tr hidden.bind="_hideSuspendField">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Suspension Start Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="suspended_start_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="14" id="suspended_start_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.suspended_start_dt" />
 							</td>
 						</tr>
 						<tr hidden.bind="_hideSuspendField">
 							<td style="width: 120px; vertical-align: middle;" class="text-left" >Suspension End Date</td>
 							<td>
-								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" id="suspended_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt" />
+								<input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="15" id="suspended_end_dt" value.bind="obj_personnel.COMPANY_SPECIFIC.model.suspended_end_dt" />
 							</td>
 						</tr>
 					</table>
@@ -126,7 +133,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Home Division</td>
 							<td>
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" change.delegate="dd_divisionChanged()" value.bind="obj_personnel.COMPANY_SPECIFIC.model.division_id">
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="16" change.delegate="dd_divisionChanged()" value.bind="obj_personnel.COMPANY_SPECIFIC.model.division_id">
 									<!-- <option value=""></option> -->
 									<option repeat.for="item of obj_personnel.DIVISION" value.bind="item.id">${item.text}</option>
 								</select>
@@ -136,7 +143,7 @@
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Location(RNG only)</td>
 							<td>
 								
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" disabled.bind="_disableLocations" value.bind="obj_personnel.COMPANY_SPECIFIC.model.location_cd" >
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="17" disabled.bind="_disableLocations" value.bind="obj_personnel.COMPANY_SPECIFIC.model.location_cd" >
 									<option value="--NONE--">--NONE--</option>
 									<option repeat.for="item of obj_personnel.LOCATIONS_RNG" value.bind="item.value">${item.text}</option>
 								</select>
@@ -146,7 +153,7 @@
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Home Category</td>
 							<td>
 								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.category_id">									
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="18" value.bind="obj_personnel.COMPANY_SPECIFIC.model.category_id">									
 									<option repeat.for="item of obj_personnel.CATEGORY" value.bind="item.id">${item.text}</option>
 								</select>
 							</td>
@@ -155,7 +162,7 @@
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Home Job</td>
 							<td>
 								<!-- <input style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" type="text" tabindex="1" /> -->
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.job_id">
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="19" value.bind="obj_personnel.COMPANY_SPECIFIC.model.job_id">
 									<option repeat.for="item of obj_personnel.JOB" value.bind="item.value">${item.text}</option>
 								</select>
 							</td>
@@ -163,7 +170,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Payroll Group</td>
 							<td>
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id">
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="20" value.bind="obj_personnel.COMPANY_SPECIFIC.model.payroll_grp_id">
 									<option repeat.for="item of obj_personnel.PAYROLL_GROUP" value.bind="item.id">${item.text}</option>
 								</select>
 							</td>
@@ -171,7 +178,7 @@
 						<tr>
 							<td style="width: 120px; vertical-align: middle;" class="text-left">Professional Type</td>
 							<td>
-								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" value.bind="obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd">
+								<select style="border: 1px solid #e2e2e2; background: #fff;padding: 5px; width: 100%;" tabindex="21" value.bind="obj_personnel.COMPANY_SPECIFIC.model.professional_type_cd">
 									<option repeat.for="item of obj_personnel.PROFESSIONAL_TYPE" value.bind="item.value">${item.text}</option>
 								</select>
 							</td>

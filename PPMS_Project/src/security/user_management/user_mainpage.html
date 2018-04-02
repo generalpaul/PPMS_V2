@@ -1,0 +1,23 @@
+<template>
+
+	<require from="./forms/user_main"></require>
+	<require from="./user_acl"></require>
+	<div style="margin-left:10%!important; margin-top: 15px; text-align:center; width: 80%; height: 500px;" class="text-center divBackground" >
+		<ul class="nav nav-tabs backroundTab" role="tablist" style="width:100%;height:38px;">
+			<li role="presentation" class="active" ><a href="#user_security_header" aria-controls="user_security_header" role="tab" data-toggle="tab" style="margin-top:6px;" >User details</a></li>
+			<li role="presentation" style=""><a href="#user_access" aria-controls="user_access" role="tab" data-toggle="tab" style="margin-top:6px;" >Access Rights</a></li>			
+        </ul>
+
+        <div class="tab-content">
+			<div role="tabpanel" class="tab-pane active color1" id="user_security_header"  style="width:90%;height:620px; margin-left:auto; margin-right:auto;"><br/>
+				<user_main></user_main>
+			</div>
+
+			<div role="tabpanel" class="tab-pane color1" id="user_access"  style="width:90%;height:620px; margin-left:auto; margin-right:auto;"><br/>
+				<user_acl></user_acl>
+			</div>
+
+		</div>
+    </div>
+
+</template>

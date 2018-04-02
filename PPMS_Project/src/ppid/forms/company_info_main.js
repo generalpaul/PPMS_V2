@@ -120,7 +120,8 @@ export class company_info_main{
 					payroll_grp_id: r.PAYROLL_GRP_ID,
 					professional_type_cd: r.PROFESSIONAL_TYPE_CD,
 					cessation_end_dt: r.CESSATION_END_DATE,
-					inactive_reason_cd: r.INACTIVE_REASON_CD
+					inactive_reason_cd: r.INACTIVE_REASON_CD,
+					email_address: r.EMAIL_ADDRESS
 					// accreditation: accreditation
 					// suspend_id: suspend.length==0?0: suspend[0].suspend_id,
 					// suspended_start_dt: suspend.length==0?"":suspend[0].start_dt,
@@ -128,6 +129,7 @@ export class company_info_main{
 				});
 			});
 			this.obj_personnel.COMPANY_SPECIFIC.list = tmp;
+			// console.log(tmp);
 			toastr.clear();
 			toastr.success("", "Company info has been loaded...");
 			if(this.obj_personnel.COMPANY.length>0){
@@ -267,6 +269,36 @@ export class company_info_main{
 			settings.isNavigating = false;
 			toastr.error(e1, "Error in querying personnel bank info.");
 		});
+	}
+
+	loadEmail(global_id, company_id){
+
+		settings.isNavigating = true;
+		var pred1 = breeze.Predicate.create('GLOBAL_ID', '==', global_id);				
+		var pred2 = breeze.Predicate.create("COMPANY_ID", "==", company_id);
+		var finalPred = breeze.Predicate.and([pred1, pred2]);
+		var query = EntityQuery().from("PP_EMAIL_MSTR")
+					.where(finalPred).orderByDesc("PP_EMAIL_ID").take(1);
+		EntityManager().executeQuery(query).then((s1)=>{
+
+			// console.log(s1.results);
+			if(s1.results.length>0){
+				this.obj_personnel.COMPANY_SPECIFIC.model.pp_email_id = s1.results[0].PP_EMAIL_ID;
+				console.log(s1.results[0].STATUS);
+				if(s1.results[0].STATUS == "A"){
+					this.obj_personnel.COMPANY_SPECIFIC.model.email_addr = s1.results[0].EMAIL_ADDR;
+				}else{
+					this.obj_personnel.COMPANY_SPECIFIC.model.email_addr = "";
+				}
+			}else{
+				this.obj_personnel.COMPANY_SPECIFIC.model.pp_email_id = 0;
+				this.obj_personnel.COMPANY_SPECIFIC.model.email_addr = "";
+			}
+
+		}, (e2)=>{			
+			toastr.error("Error in querying email address.", e2);
+		});
+
 	}
 
 	loadLog(global_company_id){
@@ -537,8 +569,10 @@ export class company_info_main{
 				this.loadAccreditation(global_company.global_company_id);
 				this.loadPersonnelBank(global_company.global_company_id);
 				this.loadLog(global_company.global_company_id);
+				this.loadEmail(global_company.global_id, global_company.company_id);
 				this.obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd = global_company.inactive_reason_cd;
 				this.old_status = global_company.status_cd;
+				this.obj_personnel.COMPANY_SPECIFIC.model.email_addr = global_company.email_addr;
 
 			}else{
 				this._disableStatus = true;
@@ -591,7 +625,9 @@ export class company_info_main{
 				}
 
 				this.obj_personnel.COMPANY_SPECIFIC.model.inactive_reason_cd = "";
-				this.old_status = "";
+				this.old_status = "";				
+				this.obj_personnel.COMPANY_SPECIFIC.model.pp_email_mstr_id = 0;
+				this.obj_personnel.COMPANY_SPECIFIC.model.email_addr = "";
 
 			}
 
@@ -675,6 +711,7 @@ export class company_info_main{
 
 	validate(){
 
+		settings.isNavigating = true;
 		this.obj_personnel.COMPANY_SPECIFIC.model.start_dt = $("#_start_dt").val();
 		this.obj_personnel.COMPANY_SPECIFIC.model.cessation_end_dt = $("#cessation_end_dt").val();
 		var strValidation = "";
@@ -750,46 +787,69 @@ export class company_info_main{
 			if(account_no == undefined || account_no.length==0){
 				strValidation+= "No account number specified.<br/>";
 			}else if(account_no.length!=10){
-				strValidation+="Account number must be 10 digit.<br/>";
+				strValidation+= "Account number must be 10 digit.<br/>";
 			}
+		}
+
+		if(this.obj_personnel.COMPANY_SPECIFIC.model.email_addr != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.email_addr.length>0 && !this.validateEmail(this.obj_personnel.COMPANY_SPECIFIC.model.email_addr)){
+			strValidation+="The Email is not valid.<br/>";
+		}
+
+		
+
+		var pred1 = breeze.Predicate.create("GLOBAL_ID", "!=", this.obj_personnel.global_indiv_id);
+		var pred2 = breeze.Predicate.create("EMAIL_ADDR", "==", this.obj_personnel.COMPANY_SPECIFIC.model.email_addr.toLowerCase());
+		var pred3 = breeze.Predicate.create("STATUS", "==", "A");		
+		var finalPred = breeze.Predicate.and([pred1, pred2, pred3]);
+
+
+		var validate = EntityQuery().from("PP_EMAIL_MSTR")
+						.where(finalPred).take(1);
+		EntityManager().executeQuery(validate).then((x)=>{
+
+
+
+		if(x.results.length>0 && $.trim(this.obj_personnel.COMPANY_SPECIFIC.model.email_addr).length>0){
+			strValidation+="The Email is already in used by "+ x.results[0].GLOBAL_ID;
 		}
 
 		if(strValidation.length>0){
 			toastr.clear();
 			toastr.error("", strValidation);
+			settings.isNavigating = false;
 		}else{
+
 			this.obj_personnel.COMPANY_SPECIFIC.model.end_dt = $("#_end_dt").val();
 			this.obj_personnel.COMPANY_SPECIFIC.model.kapamilya_dt = $("#kapamilya_dt").val();
 			this.obj_personnel.COMPANY_SPECIFIC.model.membership_dt = $("#membership_dt").val();
-			if(this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl == undefined)
+
+			if(this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl == undefined){
 				this.obj_personnel.COMPANY_SPECIFIC.model.exclusive_fl = false;
-			// console.log(this.obj_personnel.COMPANY_SPECIFIC.model.company_id);
-			// console.log(this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id);
+			}
+				
 			var cid = this.obj_personnel.COMPANY_SPECIFIC.model.company_id;
 			var gcid = this.obj_personnel.COMPANY_SPECIFIC.model.global_company_id;
-			// console.log(gcid);
 			if(gcid.length==0){
 				this.saveCompany(cid);
 			}else{
+				if(cid == 2 || cid == 3 || cid == 4  || cid==7 || cid == 8){	
 
-				if(cid == 2 || cid == 3 || cid == 4  || cid==7 || cid == 8){					
 					this.updateCompany(gcid);
+
 				}else if(this.old_status.length>0 && this.old_status == "INACTV" && (this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "ACTV" || this.obj_personnel.COMPANY_SPECIFIC.model.status_cd == "SUSPEND" )){
 
 					this.DialogService.open({ viewModel: DialogBox2, model: { title:"Generate new ID Number?.", message:"Do you want to generate a new ID Number for this record?" } })
 					.whenClosed(response=>{
 						if(!response.wasCancelled){
-							// console.log(response.output);
+						// console.log(response.output);
 							if(response.output){
 								this.updateIndex = true;
 								var currentYear = (new Date()).getFullYear().toString().substring(2,4);
 								var query = EntityQuery().from("COMPANY_SPECIFIC_INDEX")
 									.where("COMPANY_SPECIFIC_ID", "==", cid).take(1);
 								EntityManager().executeQuery(query).then((s)=>{
-
 									var LastID = s.results[0].COMPANY_INDEX;
 									var lastYear = LastID.toString().substring(0,2);
-
 									if(lastYear != currentYear){
 										LastID = currentYear + "0001";		
 									}else{
@@ -799,7 +859,6 @@ export class company_info_main{
 									// console.log(LastID);
 									this.obj_personnel.COMPANY_SPECIFIC.model.id_no = LastID;
 									this.updateCompany(gcid);
-
 								}, (e)=>{
 									toastr.clear();
 									toastr.error(e, "Error in generating new ID No.");
@@ -816,6 +875,10 @@ export class company_info_main{
 				}
 			}
 		}
+
+		},(z)=>{
+			toastr.error(z, "Error in validation.");
+		});
 	}
 
 	convertToGMT8(date){
@@ -893,20 +956,26 @@ export class company_info_main{
 					CESSATION_END_DATE: lcessation_end_dt.length==0? null: lcessation_end_dt,					
 					CREATED_BY: this.obj_personnel.USER.USER_ID,
 					CREATED_DT: dateToday
+					// ,EMAIL_ADDRESS: this.obj_personnel.COMPANY_SPECIFIC.model.email_address
 				};
 				
 				var entity = EntityManager().createEntity("GLOBAL_COMPANY_MSTR", global_company_mstr);
 				EntityManager().addEntity(entity);
-				EntityManager().saveChanges().then((s3)=>{
+				EntityManager().saveChanges().then((s3)=>{					
+
 					if(!(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8)){
 						this.updateCompanyIndex(company_id, LastID);	
 					}
 
-					this.AuditCompany(null, this.obj_personnel.COMPANY_SPECIFIC.model);
+					// if(this.obj_personnel.COMPANY_SPECIFIC.model.email_addr != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.email_addr != null && this.obj_personnel.COMPANY_SPECIFIC.model.email_addr.length>0){
+						this.insertEmail(this.obj_personnel.COMPANY_SPECIFIC.model.global_id, company_id, this.obj_personnel.COMPANY_SPECIFIC.model.email_addr);
+					// }
 
-					settings.isNavigating = false;
-					toastr.success("", "Record saved.");					
-					this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
+					// this.AuditCompany(null, this.obj_personnel.COMPANY_SPECIFIC.model);
+					// settings.isNavigating = false;
+					// toastr.success("", "Record saved.");					
+					// this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
+
 				}, (e3)=>{
 					settings.isNavigating = false;
 					if(entity != null){
@@ -986,6 +1055,7 @@ export class company_info_main{
 			}
 			s.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
 			s.results[0].LAST_UPDATED_DT = dateToday;
+			
 
 			EntityManager().saveChanges().then((s1)=>{
 
@@ -1015,17 +1085,25 @@ export class company_info_main{
 						this.updatePersonnelBank(pbi, bank_id, account_name, "CHECK");
 					}else{
 						this.updatePersonnelBank(pbi, bank_id, account_name, account_no);
-					}
-					
+					}					
 				}
+
+
 
 				if(this.updateIndex && !(company_id == 2 || company_id == 3 || company_id == 4  || company_id==7 || company_id == 8)){
 					this.updateCompanyIndex(company_id, this.obj_personnel.COMPANY_SPECIFIC.model.id_no);	
 				}
+
+				if(this.obj_personnel.COMPANY_SPECIFIC.model.pp_email_id != undefined && this.obj_personnel.COMPANY_SPECIFIC.model.pp_email_id != null && this.obj_personnel.COMPANY_SPECIFIC.model.pp_email_id > 0){
+					this.updateEmail(this.obj_personnel.COMPANY_SPECIFIC.model.pp_email_id, this.obj_personnel.COMPANY_SPECIFIC.model.email_addr);
+				}else{
+					this.insertEmail(this.obj_personnel.global_indiv_id, company_id, this.obj_personnel.COMPANY_SPECIFIC.model.email_addr);
+				}
+
 				this.AuditCompany(oldData, this.obj_personnel.COMPANY_SPECIFIC.model);
-				this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
-				settings.isNavigating = false;
-				toastr.success("","Record saved.");
+				// this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
+				// settings.isNavigating = false;
+				// toastr.success("","Record saved.");
 
 			},(e1)=>{
 				settings.isNavigating = false;
@@ -1034,6 +1112,129 @@ export class company_info_main{
 		},(e)=>{
 			settings.isNavigating = false;
 			toastr.error(e, "Error in updating global company.");
+		});
+	}
+
+	insertEmail(global_id, company_id, email){
+
+		var dateToday = new Date(moment(new Date()).add(8, "hours"));
+		var query = EntityQuery().from("PP_EMAIL_MSTR")
+					.orderByDesc("PP_EMAIL_ID").take(1);
+		EntityManager().executeQuery(query).then((s1)=>{
+
+			var maxID = 1;
+			if(s1.results.length>0){
+				maxID = s1.results[0].PP_EMAIL_ID + 1; 
+			}
+			var status = 'I';
+			if(email != undefined && email != null && $.trim(email).length>0){
+				status = 'A';
+			}
+
+			var email_addr = {
+				PP_EMAIL_ID: maxID,
+				COMPANY_ID: company_id,
+				GLOBAL_ID: global_id,
+				PWD_DEFAULT: "-",
+				STATUS: status,
+				EMAIL_ADDR: email.toLowerCase(),
+				CREATED_BY: this.obj_personnel.USER.USER_ID,
+				CREATED_DT: dateToday
+			};
+
+			var entity = EntityManager().createEntity("PP_EMAIL_MSTR", email_addr);
+			EntityManager().addEntity(entity);
+			EntityManager().saveChanges().then((s2)=>{
+
+				console.log("Email address saved.");
+				if(status == "A"){
+					$.post(settings.serviceNameBase+"/Web/EmailClientPassword", {
+						"pp_email_id": maxID,
+						"global_id": this.obj_personnel.global_indiv_id
+					}).done((response)=>{
+						if (response == "" || response == "false") {
+                    		toastr.error("Error in sending the password to the client.", "Email Client Error");
+                		}else {           
+
+                		}
+                	
+                		settings.isNavigating = false;
+					});
+				}
+				this.AuditCompany(null, this.obj_personnel.COMPANY_SPECIFIC.model);
+				settings.isNavigating = false;
+				toastr.success("", "Record saved.");					
+				this.loadGlobalCompany(this.obj_personnel.global_indiv_id);		
+
+			}, (e2)=>{
+				toastr.clear(e2, "Error in saving email address.");
+			});
+
+		}, (e1)=>{
+			toastr.clear(e1, "Error in generating email id.");
+		});
+
+	}
+
+	updateEmail(pp_email_id, email){
+
+		var dateToday = new Date(moment(new Date()).add(8, "hours"));
+		var query = EntityQuery().from("PP_EMAIL_MSTR")
+					.where("PP_EMAIL_ID", "==", pp_email_id);
+		var emailClient = false;
+		EntityManager().executeQuery(query).then((s1)=>{
+
+			if($.trim(s1.results[0].EMAIL_ADDR).toUpperCase() === $.trim(email.toUpperCase())){
+				if(s1.results[0].STATUS === "A"){
+					emailClient = false;
+				}else if(s1.results[0].STATUS === "I"){
+					emailClient = true;
+				}
+			}else{
+				emailClient = true;
+			}
+
+
+			if(email != undefined && email != null && $.trim(email).length>0){
+				s1.results[0].EMAIL_ADDR = email.toLowerCase();
+				s1.results[0].STATUS = "A";
+			}else{
+				// emailClient = false;
+				s1.results[0].STATUS = "I";
+			}
+
+			s1.results[0].LAST_UPDATED_BY = this.obj_personnel.USER.USER_ID;
+			s1.results[0].LAST_UPDATED_DT = dateToday;
+
+
+			EntityManager().saveChanges().then((s2)=>{
+
+				if(emailClient){
+					$.post(settings.serviceNameBase+"/Web/EmailClientPassword", {
+					"pp_email_id": pp_email_id,
+					"global_id": this.obj_personnel.global_indiv_id
+					}).done((response)=>{
+						if (response == "" || response == "false") {
+                    		toastr.error("Error in sending the password to the client.", "Email Client Error");
+                		}else {           
+
+                		}
+                	
+                		settings.isNavigating = false;
+					});
+				}
+
+				settings.isNavigating = false;
+				toastr.success("", "Record saved.");
+				this.loadGlobalCompany(this.obj_personnel.global_indiv_id);
+
+			}, (e2)=>{
+				toastr.error(e2, "Error in updating email address.");
+			});
+
+		}, (e1)=>{
+			toastr.error(e1, "Error in finding email id.");
+
 		});
 	}
 
@@ -1603,6 +1804,32 @@ export class company_info_main{
   			});
   		}
 
+  		// if(_old == null && $.trim(_new.email_address).length>0){
+  		// 	changes.push({
+  		// 		col_name: "EMAIL_ADDRESS",
+  		// 		old_value: null,
+  		// 		new_value: _new.email_address
+  		// 	});  			
+  		// }else if((_old != null && _old.EMAIL_ADDRESS != undefined && $.trim(_old.EMAIL_ADDRESS).length>0) && (_new.email_address != undefined && $.trim(_new.email_address).length>0)){
+  		// 	if($.trim(_old.EMAIL_ADDRESS) != $.trim(_new.email_address))
+  		// 	{
+  		// 		changes.push({
+  		// 			col_name: "EMAIL_ADDRESS",
+  		// 			old_value: _old.EMAIL_ADDRESS,
+  		// 			new_value: _new.email_address
+  		// 		});
+  		// 	}
+  		// }else if((_old != null && _old.EMAIL_ADDRESS != undefined && $.trim(_old.EMAIL_ADDRESS).length>0) && (_new.email_address == undefined || $.trim(_new.email_address).length==0)){
+  		// 	if($.trim(_old.EMAIL_ADDRESS) != $.trim(_new.email_address))
+  		// 	{
+  		// 		changes.push({
+  		// 			col_name: "EMAIL_ADDRESS",
+  		// 			old_value: _old.EMAIL_ADDRESS,
+  		// 			new_value: null
+  		// 		});
+  		// 	}
+  		// }
+
   		if(_old == null){
   			changes.push({
   				col_name: "EXCLUSIVE_FL",
@@ -1759,7 +1986,7 @@ export class company_info_main{
   				old_value: null,
   				new_value: _new.remarks
   			});  			
-  		}else if((_old != null && _old.REMARKS != undefined && $.trim(_old.REMARKS)>0) && (_new.remarks != undefined && $.trim(_new.remarks)>0)){
+  		}else if((_old != null && _old.REMARKS != undefined && $.trim(_old.REMARKS).length>0) && (_new.remarks != undefined && $.trim(_new.remarks).length>0)){
   			if($.trim(_old.REMARKS) != $.trim(_new.remarks))
   			{
   				changes.push({
@@ -1768,7 +1995,7 @@ export class company_info_main{
   					new_value: _new.remarks
   				});
   			}
-  		}else if((_old != null && _old.REMARKS != undefined && $.trim(_old.REMARKS)>0) && (_new.remarks == undefined || $.trim(_new.remarks)==0)){
+  		}else if((_old != null && _old.REMARKS != undefined && $.trim(_old.REMARKS).length>0) && (_new.remarks == undefined || $.trim(_new.remarks).length==0)){
   			if($.trim(_old.REMARKS) != $.trim(_new.remarks))
   			{
   				changes.push({
@@ -1944,8 +2171,10 @@ export class company_info_main{
   			console.log(e1);
   		});
 
+	}
 
-
-
+	validateEmail(email) {
+  		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  		return re.test(email);
 	}
 }

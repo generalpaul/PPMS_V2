@@ -43,6 +43,7 @@ export class main
 		this.cache_obj = cache_obj;
 
 		this.obj_personnel.USER = this.cache_obj.USER;
+		this.checkAccess(this.obj_personnel.USER);
 		// console.log(this.obj_personnel.USER);
 		this.obj_personnel.OBSERVERS.tab_changed.push((tab_num, global_id)=>{
 			// this.loadData(global_id);
@@ -66,6 +67,20 @@ export class main
 
 		// this.LoginPassed(this.obj_personnel.USER);
         //this.obj_personnel.OBSERVERS.ppid_dialog.length;
+    }
+
+    checkAccess(user){
+
+    	// var query = EntityQuery().from("MODULE_ACCESS_TRX").expand("MODULE_MSTR")
+    	// 			.where("APPLICATION_ID", "==", 2);
+    	// EntityManager().executeQuery(query).then((s1)=>{
+
+    	// 	console.log(s1.results);
+
+    	// }, (e1)=>{
+    	// 	console.log(e1);
+    	// });
+
     }
 
 	//https://stackoverflow.com/questions/4060004/calculate-age-in-javascript
@@ -332,7 +347,7 @@ export class main
 							this._disableClearData = false;
 							this._disableCreatePersonnel = true;
 							this._disableSavePersonnel = false;							
-							this._disableForm = false;
+							this._disableForm = false;														
 							// if(!this.obj_personnel.USER.ROLE_CD == "PPID-VIEW"){
 							// 	this._disableCreatePersonnel = true;
 							// 	this._disableSavePersonnel = false;							
